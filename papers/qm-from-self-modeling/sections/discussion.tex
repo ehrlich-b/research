@@ -168,11 +168,50 @@ independently satisfies the main theorem, so the assumption restricts
 to irreducible systems rather than excluding composite ones.
 
 \medskip\noindent
-We emphasize that this is a philosophical argument, not a derivation.
-The mathematical theorem requires the four assumptions as stated.  But
-the assumptions are not arbitrary: they are the structural shape that
-self-modeling takes in a finite-capacity system.  The ``axiomatic
-corridor'' identified by the theorem is, we contend, the corridor of
+We emphasize that the above is a philosophical argument, not a
+derivation.  The mathematical theorem requires the four assumptions as
+stated.  But the assumptions are not arbitrary: they are the structural
+shape that self-modeling takes in a finite-capacity system.
+
+The following observation makes the relationship precise.
+
+\begin{corollary}[Characterization]\label{cor:equivalence}
+  Among simple finite-dimensional EJAs, a type admits a faithful
+  self-model whose minimal composite is locally tomographic if and
+  only if it is $\Mnsa{n}$ for some $n \geq 2$.
+\end{corollary}
+
+\begin{proof}
+  The forward direction is the main theorem.  For the converse,
+  take $V_{M} = V_{B} = \Mnsa{n}$ with $\varphi = \mathrm{id}$.
+  The minimal composite of $\Mnsa{n}$ with itself is
+  $M_{n^{2}}(\mathbb{C})^{\mathrm{sa}}$, which satisfies
+  $\dim = n^{4} = (n^{2})^{2} = [\dim(V_{B})]^{2}$.  Local
+  tomography holds, and the product-form sequential product inherits
+  S1--S7 from the factors.
+\end{proof}
+
+\begin{remark}[Why the other types fail]
+  The converse fails for every non-complex simple EJA type.
+  For real matrices ($n \ge 2$), the minimal composite has
+  $\dim > [\dim(V)]^{2}$: product measurements leave an entangled
+  sector unresolved, so the self-model has \emph{blind spots} about
+  body--model correlations.  For quaternionic matrices ($n \ge 2$),
+  $\dim < [\dim(V)]^{2}$: product effects are linearly dependent,
+  so the self-model's observations are \emph{redundant}.  For spin
+  factors and the Albert algebra, no locally tomographic composite
+  exists at all.  Complex quantum mechanics is the unique theory in
+  which a finite-dimensional system can have complete self-knowledge
+  through product measurements on the body--model composite.
+\end{remark}
+
+\noindent
+Corollary~\ref{cor:equivalence} says that the conditions of our
+theorem are not merely sufficient for complex quantum mechanics---they
+\emph{characterize} it.  There is no simple finite-dimensional EJA
+satisfying our conditions that is not complex QM, and no complex QM
+system that fails to satisfy them.  The ``axiomatic corridor''
+identified by the theorem is, in this precise sense, the corridor of
 self-modeling itself.
 
 
