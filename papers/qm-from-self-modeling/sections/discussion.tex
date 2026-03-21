@@ -1,0 +1,339 @@
+% Section 7: Discussion
+% \input-able LaTeX file for Paper 5
+% Conventions: a \sp b = sequential product (dot notation matching vdW)
+%   C_p = Alfsen-Shultz compression (P-projection)
+%   Axiom source: arXiv:1803.11139 Definition 2 EXCLUSIVELY
+
+\section{Discussion}\label{sec:discussion}
+
+%--------------------------------------------------------------------
+\subsection{Summary of Results}\label{subsec:summary}
+
+We have shown that a finite-dimensional spectral order unit space
+admitting a faithful self-model---an isomorphic internal copy through
+which the system can operationally probe and update its own state---is
+necessarily described by the algebra $\Mnsa{n}$ for some $n \geq 2$,
+equipped with the L\"uders sequential product
+$\seqp{a}{b} = \sqrt{a}\, b\, \sqrt{a}$ and the conjugate-transpose
+involution $X^{*} = X^{\dagger}$.  The derivation proceeds through a
+chain of eight implications (see \Cref{fig:chain}): self-modeling
+yields a sequential product on the effect space; the product satisfies
+the seven axioms of van de Wetering, forcing Euclidean Jordan algebra
+structure; the faithful tracking constraint implies local tomography
+for the body--model composite; local tomography excludes all
+non-complex Jordan types; and the surviving algebra promotes to a
+$C^{*}$-algebra via published theorems of van de
+Wetering~\cite{vandeWetering2019b},
+Barnum--Wilce~\cite{BarnumWilce2014}, and
+Hanche-Olsen~\cite{HancheOlsen1985}.
+
+The complex field, the Jordan product, the $C^{*}$-involution, and
+local tomography are all \emph{consequences} of self-modeling, not
+independent postulates.  This reduces the premise count from the 3--6
+axioms typical of competing reconstruction programs to a single
+operational premise, supplemented by four standing structural
+assumptions which we now discuss.
+
+
+%--------------------------------------------------------------------
+\subsection{Standing Assumptions}\label{subsec:assumptions}
+
+Our derivation relies on one operational premise (faithful
+self-modeling) and four structural assumptions.  We analyze each
+assumption's role, restrictiveness, and the consequences of weakening
+it.
+
+\paragraph{Assumption~\ref{ass:finite}: Finite-dimensional spectral OUS.}
+This is the most restrictive assumption.  The spectral decomposition
+$a = \sum_{i} \lambda_{i}\, p_{i}$, which underlies the entire
+product construction~\eqref{eq:general-product}, requires a
+well-behaved spectral theory.  In finite dimensions, this is
+guaranteed by the Alfsen--Shultz theory~\cite{AlfsenShultz2003}.  In
+infinite dimensions, spectral theory introduces domain issues: the
+spectral measure replaces the finite sum, unbounded effects arise, and
+the Peirce decomposition becomes a conditional-expectation-valued
+integral.  We expect the core argument to extend to type~I factors
+(direct integrals of matrix algebras), where the spectral
+decomposition retains its essential features.  Extension to type~II
+or~III von~Neumann algebras would require substantially new techniques,
+particularly for the Peirce feedback construction and the facial
+orthogonality argument for~\ref{ax:S4}.
+
+\paragraph{Assumption~\ref{ass:faithful}: Faithful self-model.}
+Faithfulness means $\varphi: V_{B} \to V_{M}$ is an order
+isomorphism---the model is a perfect internal copy.  This is what
+selects the maximal mixing function
+$f = \sqrt{\lambda_{i}\, \lambda_{j}}$ in
+\Cref{prop:faithful}.  An approximate self-model, where
+$\varphi$ is injective but not surjective, or is merely
+$\varepsilon$-isometric, would yield $|f| < \sqrt{\lambda_{i}\,
+\lambda_{j}}$ without saturating the positivity
+bound~\eqref{eq:pos-bound}.  The resulting product would be a
+``partially coherent'' sequential product---intermediate between the
+classical (pinching) limit $f = 0$ and the fully quantum
+$f = \sqrt{\lambda_{i}\, \lambda_{j}}$.  Such products may
+describe systems with intrinsic decoherence or limited
+self-knowledge.  Exploring this landscape of approximate self-models
+is a natural direction for future work.
+
+\paragraph{Assumption~\ref{ass:minimal}: Minimal composite.}
+The body--model composite $V_{BM}$ is defined as the minimal order
+unit space carrying product states, product effects, non-signaling
+constraints, and a product-form sequential product.  For complex
+quantum mechanics, the minimal and maximal composites coincide: the
+Hilbert space tensor product $M_{nm}(\mathbb{C})^{\mathrm{sa}}$ is
+the unique composite satisfying
+(C1)--(C4)~\cite{Barnum2023}.  This is a
+feature of the complex case, not a coincidence: it means Assumption~\ref{ass:minimal}
+is not restrictive for the theory we derive.
+For a priori exploration, one could ask whether maximal composites
+yield different conclusions.  For the real and quaternionic cases,
+minimal $\neq$ maximal: the difference manifests as a failure of local
+tomography (the real composite has ``hidden entangled states'' that
+product measurements cannot resolve).  Thus the minimal composite
+assumption is precisely what enforces local tomography, which in turn
+excludes the non-complex types.
+
+\paragraph{Assumption~\ref{ass:simple}: Simple EJA.}
+The trace form non-degeneracy argument in
+\Cref{prop:nondeg} requires the EJA to be
+simple---having no nontrivial Jordan ideal.  An EJA with a direct sum
+decomposition $V = V_{1} \oplus V_{2}$ would have a degenerate trace
+form on the whole space (the cross terms $\tau(a_{1} \circ a_{2}) = 0$
+for $a_{1} \in V_{1}$, $a_{2} \in V_{2}$).  However, each simple
+summand satisfies our theorem independently: if $V_{1}$ and $V_{2}$
+each admit faithful self-models, they are each $\Mnsa{n_{i}}$ by the
+main theorem applied to each summand.  The direct sum then describes a
+system with superselection sectors, each governed by complex quantum
+mechanics.  Thus Assumption~\ref{ass:simple} restricts to irreducible
+systems, which is the generic case.
+
+
+%--------------------------------------------------------------------
+\subsection{Comparison with Other Programs}\label{subsec:comparison}
+
+\Cref{tab:comparison} provides a summary comparison.  We now discuss
+several programs in more depth.
+
+\paragraph{Masanes--M\"uller (2011--2013).}
+The Masanes--M\"uller program~\cite{MasanesMueller2011,MasanesMueller2013}
+achieves the closest rival in parsimony, using three postulates:
+the existence of an information unit, continuous reversibility, and
+tomographic locality.  The key difference is that their tomographic
+locality postulate assumes local tomography (effectively selecting the
+complex field as input), whereas we \emph{derive} local tomography
+from faithful tracking via the EJA trace form non-degeneracy argument
+(\Cref{thm:local-tomo}).  Their continuous reversibility axiom---that
+every reversible transformation can be continuously connected to the
+identity---has no analogue in our framework; instead, the
+reversibility structure emerges from the $C^{*}$-algebra promotion.
+On the other hand, their framework handles infinite dimensions more
+naturally than ours, and their postulates have a cleaner operational
+interpretation in terms of information processing.
+
+\paragraph{Chiribella--D'Ariano--Perinotti (2011).}
+The CDP program~\cite{CDP2011} uses six axioms, with Purification as
+the central workhorse: every mixed state of a system arises as the
+marginal of a pure state of a larger system.  Purification is a
+powerful constraint that immediately selects complex quantum mechanics
+from the landscape of GPTs.  We derive the $C^{*}$-algebraic structure
+without assuming purification; purification then follows as a
+\emph{theorem} of $\Mnsa{n}$, not a postulate.  However, the CDP
+framework provides a complete categorical description of quantum
+theory (including channels, instruments, and higher-order maps) that
+goes well beyond our algebraic result.
+
+\paragraph{Van de Wetering's effectus theory (2019).}
+Our work relies heavily on van de Wetering's
+theorems~\cite{vandeWetering2019b}, but the relationship to his
+effectus-theoretic reconstruction~\cite{vandeWetering2019} is
+complementary rather than subsumptive.  The effectus approach uses
+approximately five axioms on the categorical structure of a theory
+(effect algebra homomorphisms, images, compressions, quotients, sharp
+effects).  Our approach is more operational: we replace categorical
+axioms with a single physical premise (self-modeling) and derive the
+sequential product structure that feeds into van de Wetering's
+classification theorems.  The two programs share a common downstream
+engine (Theorems~1 and~3 of~\cite{vandeWetering2019b}) but differ in
+what they take as input.
+
+\paragraph{Alfsen--Shultz geometry.}
+The Alfsen--Shultz program~\cite{AlfsenShultz2003} characterizes
+$C^{*}$-algebras via the geometry of state spaces, using the concept
+of an \emph{orientation} on the state space.  Their characterization
+is geometrically elegant: a JB-algebra is the self-adjoint part of a
+$C^{*}$-algebra if and only if its state space admits a consistent
+orientation (a choice of ``which way around'' each face).  In our
+framework, the orientation is not an input but emerges from the
+self-modeling construction: the tracking map $\varphi$ provides a
+canonical correspondence between faces of $V_{B}$ and faces of $V_{M}$
+that implicitly defines an orientation.  Making this connection precise
+is a direction for future investigation.
+
+
+%--------------------------------------------------------------------
+\subsection{Future Directions}\label{subsec:future}
+
+\paragraph{Infinite-dimensional extension.}
+The most important open problem is extending the result to
+infinite-dimensional systems.  The key obstacles are:
+\begin{enumerate}[label=(\roman*)]
+  \item the spectral decomposition becomes a spectral measure, and the
+    Peirce feedback
+    formula~\eqref{eq:general-product} becomes an operator-valued
+    integral;
+  \item the facial orthogonality argument for \ref{ax:S4} relies on
+    Alfsen--Shultz propositions that may require modification in
+    infinite dimensions;
+  \item the minimal composite construction must be replaced by an
+    appropriate operator-algebraic tensor product.
+\end{enumerate}
+We conjecture that the result extends to type~I factors, and that the
+self-modeling condition for type~III algebras is vacuous (no faithful
+finite-dimensional self-model exists).
+
+\paragraph{Approximate self-models and decoherence.}
+If the tracking map $\varphi$ is only approximately faithful (e.g.,
+$\|\varphi(a) - a\| \leq \varepsilon\|a\|$ for small
+$\varepsilon$), the mixing function $f$ would not saturate the
+positivity bound.  The resulting ``partially coherent'' sequential
+product interpolates between classical ($f = 0$, full decoherence) and
+quantum ($f = \sqrt{\lambda_{i}\lambda_{j}}$, full coherence).  This
+suggests a connection between self-modeling fidelity and decoherence:
+a system that imperfectly models itself would exhibit intrinsic
+decoherence proportional to the modeling error.  Formalizing this
+connection could provide an operational account of the
+quantum-to-classical transition.
+
+\paragraph{Categorical formulation.}
+The self-modeling construction could be formulated in the language of
+effectus theory or process
+theories~\cite{SelbyScandaloCoecke2021}, where the tracking
+map $\varphi$ becomes a morphism in a suitable category and the
+product construction becomes a functor.  This would clarify the
+relationship to the categorical reconstruction programs and might
+reveal additional structure (e.g., whether self-modeling systems form a
+subcategory of effectus algebras with special properties).
+
+\paragraph{Connection to stochastic--quantum bijection.}
+Barandes~\cite{Barandes2025} has established a bijection between
+stochastic processes and quantum dynamics, showing that unitary quantum
+evolution can be recast as a stochastic process with indivisibility
+constraints.  If a faithful self-model generates a stochastic process
+(via the sequential test--update--test cycle), the Barandes bijection
+would map it to a quantum channel.  Investigating whether the
+self-modeling premise can be rephrased in stochastic terms---and
+whether the Barandes bijection provides an alternative derivation
+route---is an intriguing direction.
+
+\paragraph{Non-Markovian self-models.}
+Our construction assumes a memoryless update cycle: testing $p$
+triggers a single compression $\comp{\varphi(p)}$, with no dependence
+on prior measurements.  A non-Markovian self-model, where the update
+depends on a history of prior tests, would introduce memory effects
+and might connect to quantum memory channels or process matrices.
+
+
+%--------------------------------------------------------------------
+\subsection{Anticipated Objections}\label{subsec:objections}
+
+We address several objections that a careful reader might raise.
+
+\begin{remark}[``Isn't $\sqrt{\cdot}$ importing Hilbert space structure?'']
+\label{rem:sqrt-objection}
+No.  The square root in the mixing function operates on \emph{real
+eigenvalues} $\lambda_{i}, \lambda_{j} \in [0,1]$: it is the
+elementary real-valued function $\sqrt{x} : [0,1] \to [0,1]$, the
+unique non-negative real number whose square is $x$.  No operator
+square root, no spectral theorem for self-adjoint operators on a
+Hilbert space, no functional calculus of $C^{*}$-algebras, and no
+trace operation is invoked.  The distinction is between a scalar
+function on the reals (which we use) and an operator function on a
+$C^{*}$-algebra (which we do not).  See \Cref{sec:circularity} for a
+complete inventory of the mathematical objects used in the
+construction.
+\end{remark}
+
+\begin{remark}[``Isn't the minimal composite assumption too strong?'']
+\label{rem:minimality-objection}
+For the theory we derive (complex quantum mechanics), the minimal and
+maximal composites coincide---this is a theorem, not an
+assumption~\cite{Barnum2023}.  So the assumption is \emph{exactly}
+right for the complex case.  For the non-complex types, minimal $\neq$
+maximal, and using the maximal composite would destroy local
+tomography, producing a different theory.  The minimality assumption is
+therefore a design choice that selects theories in which product
+measurements suffice to determine all joint states.  Whether this is
+``too strong'' depends on one's physical priors: if one believes that
+product measurements should be tomographically complete, minimality is
+the natural choice.
+\end{remark}
+
+\begin{remark}[``What about infinite dimensions?'']
+\label{rem:infty-objection}
+Our result is restricted to finite-dimensional systems
+(\Cref{ass:finite}).  This is stated explicitly in the abstract, in
+the main theorem (\Cref{thm:main}), and in the discussion above.  The
+finite-dimensional restriction is genuine, not cosmetic: the spectral
+decomposition, the Peirce feedback construction, and the facial
+orthogonality argument all rely on finite-dimensional spectral theory.
+We view the infinite-dimensional extension as the most important open
+problem; see \Cref{subsec:future}.
+\end{remark}
+
+\begin{remark}[``How does this compare to effectus theory?'']
+\label{rem:effectus-objection}
+Van de Wetering's effectus-theoretic
+reconstruction~\cite{vandeWetering2019} uses categorical axioms on
+effect algebras to arrive at the same classification theorems we
+invoke.  The relationship is complementary: we provide a \emph{single
+physical premise} (self-modeling) that generates the sequential
+product structure which effectus theory axiomatizes directly.  Our
+approach trades categorical generality for operational specificity.
+Both programs ultimately rely on the same downstream theorems
+(Theorems~1 and~3 of~\cite{vandeWetering2019b}), so they are
+complementary rather than competing.
+\end{remark}
+
+\begin{remark}[``Is faithful self-modeling physically motivated?'']
+\label{rem:motivation-objection}
+Self-modeling is motivated by the observation that quantum systems are
+routinely used to model other quantum systems (quantum simulation, quantum
+error correction, quantum tomography).  The faithfulness condition---that
+the model captures all operationally accessible structure---is the
+requirement that the simulation is \emph{exact}, not approximate.  In
+quantum computation, a universal quantum computer can faithfully
+simulate any quantum system of equal or smaller dimension; our premise
+asks only that the system can simulate \emph{itself}.  A companion
+paper~\cite{Ehrlich2026measure} constructs an experiential measure on
+isomorphism classes of self-modeling dynamical structures, where the
+density functional $\rho = I(B;M)(1 - I/H)$ peaks at intermediate
+self-modeling fidelity.  The present result sharpens that framework:
+$\rho$ selects self-modelers, and the algebraic consequences of
+self-modeling (this paper) produce quantum mechanics by theorem.
+The connection to the consciousness literature (where self-modeling
+has been studied under different names) is suggestive but not
+load-bearing: our result is a mathematical theorem about order unit
+spaces, independent of interpretive commitments.
+\end{remark}
+
+
+%--------------------------------------------------------------------
+\subsection{Conclusion}\label{subsec:conclusion}
+
+We have shown that a single operational premise---the existence of a
+faithful self-model---is sufficient to derive the full structure of
+complex quantum mechanics for finite-dimensional systems.  Starting from
+a finite-dimensional spectral order unit space and the operational
+cycle of testing, updating, and re-testing through an isomorphic
+internal copy, we constructed a sequential product on the effect
+algebra.  This product satisfies van de Wetering's seven axioms,
+forcing Euclidean Jordan algebra structure.  The faithful tracking
+constraint implies local tomography for the body--model composite,
+which excludes all non-complex EJA types and, via the theorems of
+van de Wetering, Barnum--Wilce, and Hanche-Olsen, promotes the algebra
+to $\Mnsa{n}$ with the conjugate-transpose involution.
+
+The complex field, the Jordan product, the $C^{*}$-involution, and
+local tomography are not independent postulates of quantum theory.
+They are consequences of self-modeling.

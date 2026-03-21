@@ -1,0 +1,95 @@
+% Appendix B: Numerical Verification
+% \input-able LaTeX file for Paper 5
+
+\section{Numerical Verification}\label{app:numerics}
+
+All results in this paper have been verified by an automated symbolic
+test suite implemented in SymPy~1.14~\cite{SymPy2017}.  The test suite
+uses exact rational arithmetic (no floating-point approximations) and
+is available as supplementary material
+(\texttt{code/sp\_verification.py}).
+
+%--------------------------------------------------------------------
+\subsection{Test Suite Overview}
+
+The verification was conducted in two phases, corresponding to the
+two main stages of the derivation.
+
+\paragraph{Phase~1: Sequential product axioms (S1--S7).}
+Working on $\Mnsa{2}$ (the qubit system, identified with the spin
+factor $\spinfactor{3}$), we verified that the corrected sequential
+product~\eqref{eq:corrected-product} satisfies all seven axioms of
+van de Wetering~\cite{vandeWetering2019b}.  The test suite includes
+positive controls (the L\"uders product $\seqp{a}{b} = \sqrt{a}\,b\,
+\sqrt{a}$ passes all axioms) and negative controls (matrix
+multiplication fails~\ref{ax:S4}).
+A total of \textbf{186~tests} were executed:
+
+\begin{center}
+\begin{tabular}{@{}llr@{}}
+\toprule
+Category & Description & Tests \\
+\midrule
+S1 (additivity)      & Linearity in second argument       & 20 \\
+S2 (continuity)      & Parametric path, 11-point sweep     & 11 \\
+S3 (unitality)       & $\seqp{\id}{a} = a$ for 14 effects    & 14 \\
+S4 (orth.\ symmetry) & Sharp, general, rotated effects     & 186$^{*}$ \\
+S5 (comp.\ assoc.)   & Compatible triples                  & 24 \\
+S6 (comp.\ add.)     & Complement + sum tests              & 8 \\
+S7 (comp.\ mult.)    & Functional calculus                  & 6 \\
+Non-associativity    & Explicit witness + 20 random triples & 22 \\
+Classical limit      & Pointwise product on simplices       & 25 \\
+L\"uders comparison  & Corrected $=$ L\"uders on $\Mnsa{2}$ & 6 \\
+$\varphi$-dependence & S4 under coarse-graining/trivial $\varphi$ & 18 \\
+Effect range         & $0 \leq \seqp{a}{b} \leq \id$         & 49 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent ${}^{*}$The S4 test count (186) includes sharp orthogonal
+projections (10), general effects (12), general-position rotated Bloch
+vectors (54), full-rank effects (4), parametric search (52), scaled
+projections (30), multiple $\varphi$ choices (13), trivial $\varphi$
+(5), and L\"uders positive control (6).  Some tests appear in multiple
+categories.
+
+\paragraph{Phase~2: Composite system and type exclusion.}
+Working on $\spinfactor{3} \otimes \spinfactor{3}$ (the body--model
+composite for qubits), we verified the product-form sequential
+product, local tomography, and the type exclusion argument.
+A total of \textbf{658+ tests} were executed:
+
+\begin{center}
+\begin{tabular}{@{}llr@{}}
+\toprule
+Category & Description & Tests \\
+\midrule
+Composite S1--S7 & Axiom inheritance on $\spinfactor{3}
+                    \otimes \spinfactor{3}$ & 22 \\
+Composite basics  & Product-form SP, unitality, orthogonality & 11 \\
+Dimension counting & $4 \times 4 = 16 = \dim(\Mnsa{4})$ & 3 \\
+Negative checks    & $\mathbb{R}$: $9 \neq 10$;
+                     $\mathbb{H}$: $36 \neq 28$ & 2 \\
+Classical limit    & $25 \times 25 = 625$ product pairs on simplex & 625 \\
+Involution P1--P4  & $(X^{*})^{*} = X$, $(XY)^{*} = Y^{*}X^{*}$,
+                     etc.\ on $\Mnsa{2}$ & 4 \\
+Dim.\ formulas     & $\mathbb{R}$, $\mathbb{C}$, $\mathbb{H}$
+                     at $n = 2, 3, 4$ & 9 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%--------------------------------------------------------------------
+\subsection{Summary}
+
+In total, \textbf{844+ automated symbolic tests} were executed across
+both phases.  All tests pass.  No regressions were observed across the
+sequential execution of the five-plan Phase~4 and two-plan Phase~5
+pipelines.
+
+The test suite is designed as a regression harness: any modification
+to the sequential product formula, the composite construction, or the
+type exclusion arguments can be immediately checked against the full
+battery of tests.  The use of exact SymPy arithmetic (rational numbers
+and algebraic expressions involving $\sqrt{3}$, $\sqrt{2}$, etc.)
+ensures that all verifications are exact, not approximate.

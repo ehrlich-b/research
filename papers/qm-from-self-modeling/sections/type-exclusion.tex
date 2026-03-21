@@ -1,0 +1,269 @@
+% Section 6: Type Exclusion and C*-Algebra Promotion
+% \input-able LaTeX file for Paper 5
+% Conventions: a \sp b = sequential product (dot notation matching vdW)
+%   JVW = Jordan-von Neumann-Wigner classification
+%   X* = X^dagger = conjugate transpose
+
+\section{Type Exclusion and $C^*$-Algebra Promotion}\label{sec:exclusion}
+
+%--------------------------------------------------------------------
+\subsection{The Jordan--von Neumann--Wigner
+Classification}\label{subsec:jvw}
+
+By Theorem~\ref{thm:EJA}, the state space~$V$ is a Euclidean Jordan
+algebra (EJA). The Jordan--von Neumann--Wigner
+classification~\cite{JordanVonNeumannWigner1934} asserts that every finite-dimensional
+simple EJA belongs to one of five families:
+
+\begin{center}
+\begin{tabular}{lllcl}
+\toprule
+Type & Notation & $\dim$ & LT? & Exclusion mechanism \\
+\midrule
+Real & $M_n(\mathbb{R})^{\mathrm{sa}}$ & $n(n{+}1)/2$
+  & Only $n{=}1$ & Dimension mismatch \\
+Complex & $M_n(\mathbb{C})^{\mathrm{sa}}$ & $n^2$
+  & All $n$ & --- \\
+Quaternionic & $M_n(\mathbb{H})^{\mathrm{sa}}$ & $n(2n{-}1)$
+  & Only $n{=}1$ & Dimension mismatch \\
+Spin factor & $V_n$ \,($n \ge 3$) & $n{+}1$
+  & Only $V_3$ & Barnum--Wilce \\
+Albert & $M_3(\mathbb{O})^{\mathrm{sa}}$ & $27$
+  & Never & No composite exists \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The spin factors overlap with the matrix types at low dimensions:
+$V_2 \cong M_2(\mathbb{R})^{\mathrm{sa}}$,
+$V_3 \cong M_2(\mathbb{C})^{\mathrm{sa}}$, and
+$V_5 \cong M_2(\mathbb{H})^{\mathrm{sa}}$.
+
+%--------------------------------------------------------------------
+\subsection{Excluding Non-Complex Types}\label{subsec:exclusion}
+
+We now show that local tomography (Theorem~\ref{thm:local-tomo})
+excludes every non-complex type.
+
+\medskip
+\noindent
+\textbf{Real matrices, $M_n(\mathbb{R})^{\mathrm{sa}}$ ($n \ge 2$).}
+The local tomography condition $[\dim(V)]^2 = \dim(\text{composite})$
+becomes
+\[
+  \left[\tfrac{n(n+1)}{2}\right]^2
+  = \tfrac{n^2(n^2+1)}{2}\,.
+\]
+Simplifying: $(n+1)^2 = 2(n^2+1)$, which reduces to
+$(n-1)^2 = 0$, forcing $n = 1$ (trivial,
+one-dimensional). For $n \ge 2$, the real composite is strictly larger
+than the product-effect span: $d^2 < \dim(\text{composite})$, and product
+measurements leave an entangled sector
+unresolved~\cite{BarnumWilce2014}.
+
+\medskip
+\noindent
+\textbf{Quaternionic matrices,
+$M_n(\mathbb{H})^{\mathrm{sa}}$ ($n \ge 2$).}
+The analogous condition yields
+$[n(2n-1)]^2 = n^2(2n^2-1)$, which again reduces to
+$(n-1)^2 = 0$, forcing $n = 1$ (trivial). For $n \ge 2$,
+the quaternionic composite has \emph{fewer} dimensions than $d^2$:
+product effects are linearly dependent on the joint
+system~\cite{BarnumWilce2014}.
+
+\medskip
+\noindent
+\textbf{Spin factors, $V_n$ ($n \ge 4$).}
+The cross-identifications $V_2\cong M_2(\mathbb{R})^{\mathrm{sa}}$ and
+$V_5\cong M_2(\mathbb{H})^{\mathrm{sa}}$ are already excluded above.
+For $V_n$ with $n\ge 4$ and $n\ne 5$, these are ``pure'' spin factors not
+isomorphic to any $M_k(\mathbb{K})^{\mathrm{sa}}$.
+Barnum and Wilce~\cite{BarnumWilce2014} prove that no locally tomographic
+composite exists for these types (Theorem~4.1 of~\cite{BarnumWilce2014}).
+
+\medskip
+\noindent
+\textbf{Albert algebra, $M_3(\mathbb{O})^{\mathrm{sa}}$.}
+The exclusion here is the strongest: Barnum, Graydon, and
+Wilce~\cite{BarnumUdudeckVdW2020} prove that no non-signaling composite with product
+states exists for any EJA containing an Albert algebra summand
+(Theorem~1 of~\cite{BarnumUdudeckVdW2020}). The 27-dimensional exceptional Jordan
+algebra cannot form \emph{any} consistent bipartite system, even a
+non-locally-tomographic one.
+
+\medskip
+\noindent
+\textbf{Complex matrices, $M_n(\mathbb{C})^{\mathrm{sa}}$ ($n \ge 1$).}
+$\dim(M_n(\mathbb{C})^{\mathrm{sa}}) = n^2$, and the composite
+$M_{n^2}(\mathbb{C})^{\mathrm{sa}}$ has dimension $(n^2)^2 = n^4 =
+(n^2)^2$. Local tomography holds for all~$n$: the dimension formula
+$d = n^2$ is \emph{multiplicatively stable}. The complex type is the
+unique survivor.
+
+%--------------------------------------------------------------------
+\subsection{C*-Algebra Promotion}\label{subsec:cstar}
+
+Three published theorems, each with independently verifiable hypotheses,
+promote the surviving EJA to a C*-algebra.
+
+\begin{theorem}[{C*-algebra structure;
+  \cite[Theorem~3]{vandeWetering2019b}}]\label{thm:vdW3}
+Let $V$ be a sequential product space satisfying S1--S7. If the
+composite $V\otimes V$, equipped with the product-form sequential
+product, is also a sequential product space and the composite is locally
+tomographic, then $V$ is the self-adjoint part of a C*-algebra.
+\end{theorem}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Hypothesis} & \textbf{Status} & \textbf{Established in} \\
+\midrule
+$V$ satisfies S1--S7
+  & Verified & Section~\ref{sec:axioms} \\
+$V\otimes V$ with product-form SP satisfies S1--S7
+  & Verified & Proposition~\ref{prop:inheritance} \\
+Composite is locally tomographic
+  & Verified & Theorem~\ref{thm:local-tomo} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{theorem}[{Complex type identification;
+  \cite{BarnumWilce2014}}]\label{thm:BW}
+Let $(V, \cdot)$ be a finite-dimensional EJA embedded as a system type
+in a locally tomographic dagger-compact probabilistic theory containing
+a qubit ($V_3 \cong M_2(\mathbb{C})^{\mathrm{sa}}$) as a subsystem.
+Then $V \cong M_n(\mathbb{C})^{\mathrm{sa}}$ for some $n \ge 1$.
+\end{theorem}
+
+\noindent
+The qubit hypothesis requires care: the type exclusions above have
+already eliminated real ($n \ge 2$), quaternionic ($n \ge 2$), spin
+factors ($n \ge 4$, $n \ne 3$), and the Albert algebra. The only
+surviving simple EJA types are $\mathbb{R}$ (trivial) and
+$M_n(\mathbb{C})^{\mathrm{sa}}$ for $n \ge 2$. For $n \ge 2$, any
+orthogonal pair $\{p, p^\perp\}$ of projective units defines a two-level
+face that is isomorphic to $V_3 \cong M_2(\mathbb{C})^{\mathrm{sa}}$ ---
+this identification is valid precisely because the non-complex types have
+already been excluded. The categorical structure (dagger-compact
+probabilistic theory) is provided by the composite $V_{BM}$ with its
+product-form sequential product and the dagger given by the involution
+exhibited below.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Hypothesis} & \textbf{Status} & \textbf{Established in} \\
+\midrule
+$V$ is a finite-dimensional EJA
+  & Verified & Theorem~\ref{thm:EJA} \\
+Locally tomographic composite
+  & Verified & Theorem~\ref{thm:local-tomo} \\
+Qubit subsystem $V_3$
+  & Verified & Type exclusion above \\
+  & & (only complex survives; \\
+  & & two-level faces are $V_3$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{theorem}[{Jordan-to-C* promotion;
+  \cite{HancheOlsen1985}}]\label{thm:HO}
+Let $E$ be a JB-algebra. If $E \otimes E_2$ can be given the structure
+of a JB-algebra such that the Jordan product satisfies the factorization
+identities $(a \otimes 1) \circ (b \otimes 1) = (a \circ b) \otimes 1$
+and $(1 \otimes x) \circ (1 \otimes y) = 1 \otimes (x \circ y)$,
+where $E_2 = M_2(\mathbb{C})^{\mathrm{sa}}$, then $E$ is the
+self-adjoint part of a C*-algebra.
+\end{theorem}
+
+\noindent
+The hypotheses of Theorem~\ref{thm:HO} are satisfied: $V$ is a
+finite-dimensional EJA (hence a JB-algebra), and the qubit subsystem
+$E_2 = M_2(\mathbb{C})^{\mathrm{sa}}$ is available by the type
+identification above. The composite $V_{BM}$ with its product-form
+sequential product provides the JB-algebra tensor product, and the
+product-form condition $\sp{(a\otimes b)}{(c\otimes d)}
+= \sp{a}{c} \otimes \sp{b}{d}$ implies the required Jordan-product
+factorization identities.
+This theorem is consistent with Theorems~\ref{thm:vdW3}
+and~\ref{thm:BW} and provides an independent route to the C*-algebra
+conclusion.
+
+%--------------------------------------------------------------------
+\subsection{The Involution}\label{subsec:involution}
+
+Theorems~\ref{thm:vdW3}--\ref{thm:BW} establish that
+$V = M_n(\mathbb{C})^{\mathrm{sa}}$ is the self-adjoint part of the
+C*-algebra $A = M_n(\mathbb{C})$. The C*-algebra involution is the
+conjugate transpose:
+\[
+  X^* \;=\; X^\dagger \;=\; \overline{X}^{\,T}.
+\]
+This involution satisfies four defining properties:
+\begin{enumerate}
+\item[\emph{(P1)}] \textbf{Involutive:} $(X^*)^* = X$.
+\item[\emph{(P2)}] \textbf{Anti-multiplicative:} $(XY)^* = Y^*X^*$.
+\item[\emph{(P3)}] \textbf{Fixed-point set:}
+  $\{X \in M_n(\mathbb{C}) : X^* = X\}
+  = M_n(\mathbb{C})^{\mathrm{sa}}$.
+\item[\emph{(P4)}] \textbf{C*-identity:}
+  $\|X^*X\| = \|X\|^2$ (operator norm).
+\end{enumerate}
+Property (P3) identifies the self-adjoint part recovered from the
+self-modeling construction with the standard notion of Hermitian matrices.
+Property (P4) equips $M_n(\mathbb{C})$ with its C*-norm, completing the
+C*-algebra structure.
+
+%--------------------------------------------------------------------
+\subsection{Main Theorem}\label{subsec:main-theorem}
+
+We can now state the central result.
+
+\begin{theorem}[Self-modeling implies complex quantum
+mechanics]\label{thm:main}
+Let $(V, \le, \mathbf{1})$ be a finite-dimensional spectral order unit
+space. If $V$ admits a faithful self-model $\varphi\colon V \to V_M$
+with $V_M$ an isomorphic copy, and if the minimal composite $V_{BM}$
+satisfies non-signaling and product-form sequential product inheritance,
+then:
+\begin{enumerate}
+\item $V \cong M_n(\mathbb{C})^{\mathrm{sa}}$ for some $n \ge 2$;
+\item the sequential product is the L\"uders product
+  $\sp{a}{b} = \sqrt{a}\, b\, \sqrt{a}$;
+\item $M_n(\mathbb{C})$ carries the conjugate-transpose involution
+  $X^* = X^\dagger$.
+\end{enumerate}
+\end{theorem}
+
+In particular, the complex field, the Jordan product, the C*-involution,
+and local tomography are all \emph{derived} from the single operational
+premise of faithful self-modeling.
+
+\begin{proof}[Proof outline]
+\mbox{}%
+\begin{enumerate}
+\item The self-modeling constraint yields a sequential product on
+  $V$ via the ``test--update--test'' operational
+  semantics (Section~\ref{sec:sp}).
+\item The corrected product formula~\eqref{eq:corrected-product},
+  incorporating the Peirce $1$-space feedback selected by faithful
+  tracking, satisfies S1--S7
+  (Section~\ref{sec:axioms}).
+\item By Theorem~\ref{thm:EJA} (van de Wetering), $V$ is an EJA.
+\item The composite $V_{BM}$ with the product-form SP inherits
+  S1--S7 (Proposition~\ref{prop:inheritance}), and the
+  non-degeneracy of the EJA trace form combined with minimality yields
+  local tomography (Theorem~\ref{thm:local-tomo}).
+\item Dimension counting excludes all non-complex simple EJA types
+  (Section~\ref{subsec:exclusion}).
+\item Theorem~\ref{thm:vdW3} (C*-promotion),
+  Theorem~\ref{thm:BW} (complex type), and
+  Theorem~\ref{thm:HO} (Jordan-to-C* consistency) yield
+  $V = M_n(\mathbb{C})^{\mathrm{sa}}$ with the conjugate-transpose
+  involution. \qed
+\end{enumerate}
+\end{proof}

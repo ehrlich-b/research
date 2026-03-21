@@ -1,0 +1,96 @@
+% Derivation chain figure -- TikZ
+% Shows the logical chain from self-modeling to complex QM
+% Color code: blue = novel (this paper), gray = published theorem
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  % Node styles
+  novel/.style={
+    rectangle, rounded corners=3pt, draw=blue!70!black, fill=blue!8,
+    text width=18em, minimum height=2.4em, align=center,
+    font=\small
+  },
+  published/.style={
+    rectangle, rounded corners=3pt, draw=gray!70!black, fill=gray!8,
+    text width=18em, minimum height=2.4em, align=center,
+    font=\small
+  },
+  % Arrow style
+  arr/.style={->, >=stealth, thick, draw=black!70},
+  % Annotation style
+  annot/.style={font=\scriptsize\itshape, text=gray!70!black, align=left},
+  % Assumption style
+  assump/.style={font=\scriptsize, text=red!60!black, align=right}
+]
+
+% Nodes (top to bottom)
+\node[novel] (L4)
+  {\textbf{Self-modeling premise}\\
+   (Assumptions~1--2)};
+
+\node[novel, below=0.6cm of L4] (SP)
+  {\textbf{Sequential product on} $\boldsymbol{E(V)}$\\
+   Corrected product via Peirce feedback};
+
+\node[novel, below=0.6cm of SP] (S17)
+  {\textbf{S1--S7 verified}\\
+   186 SymPy tests};
+
+\node[published, below=0.6cm of S17] (EJA)
+  {\textbf{Euclidean Jordan algebra}};
+
+\node[novel, below=0.6cm of EJA] (LT)
+  {\textbf{Local tomography}\\
+   Faithful tracking $\to$ trace form non-degeneracy};
+
+\node[novel, below=0.6cm of LT] (TE)
+  {\textbf{Type exclusion}\\
+   $\mathbb{R}$, $\mathbb{H}$, spin, Albert excluded};
+
+\node[published, below=0.6cm of TE] (CStar)
+  {$\boldsymbol{C^*}$\textbf{-algebra} $\boldsymbol{M_n(\mathbb{C})}$};
+
+\node[published, below=0.6cm of CStar] (INV)
+  {\textbf{Involution} $X^* = X^\dagger$\\
+   L\"uders product recovered};
+
+% Arrows
+\draw[arr] (L4) -- (SP);
+\draw[arr] (SP) -- (S17);
+\draw[arr] (S17) -- (EJA);
+\draw[arr] (EJA) -- (LT);
+\draw[arr] (LT) -- (TE);
+\draw[arr] (TE) -- (CStar);
+\draw[arr] (CStar) -- (INV);
+
+% Right-side annotations (published theorem citations)
+\node[annot, right=0.8cm of EJA]
+  {van de Wetering, Thm.~1\\
+   \cite{vandeWetering2019b}};
+
+\node[annot, right=0.8cm of CStar]
+  {van de Wetering, Thm.~3\\
+   Barnum--Wilce~\cite{BarnumWilce2014}\\
+   Hanche-Olsen~\cite{HancheOlsen1985}};
+
+% Left-side annotations (standing assumptions)
+\node[assump, left=0.8cm of LT]
+  {Assumptions~3--4\\(minimal composite,\\simple EJA)};
+
+% Legend
+\node[novel, minimum height=1.4em, text width=6em,
+      below left=1.2cm and 0.2cm of INV] (leg1)
+  {\footnotesize Novel (this paper)};
+\node[published, minimum height=1.4em, text width=7em,
+      right=0.4cm of leg1] (leg2)
+  {\footnotesize Published theorem};
+
+\end{tikzpicture}
+\caption{Logical chain of the derivation.  Blue nodes indicate novel
+contributions of this paper; gray nodes indicate conclusions drawn from
+published theorems (cited).  The four standing assumptions enter at the
+points indicated.  Every step in the chain is either proved in the main
+text or deferred to \Cref{app:proofs}.}
+\label{fig:chain}
+\end{figure}

@@ -1,0 +1,195 @@
+% Section 5: Composite Systems and Local Tomography
+% \input-able LaTeX file for Paper 5
+% Conventions: a \sp b = sequential product (dot notation matching vdW)
+%   C_p = Alfsen-Shultz compression
+%   tau = normalized EJA trace
+%   phi = tracking isomorphism (self-model)
+
+\section{Composite Systems and Local Tomography}\label{sec:composite}
+
+%--------------------------------------------------------------------
+\subsection{The Body--Model Composite}\label{subsec:composite-def}
+
+Having established that the state space $V$ of the body $B$ (and
+isomorphically the model $M$) carries EJA structure, we now formalize the
+composite system $V_{BM}$ using only generalized probabilistic theory
+(GPT) primitives~\cite{Plavala2023,Barnum2023}.
+
+\begin{definition}[Composite OUS]\label{def:composite}
+Let $V_B$ and $V_M$ be finite-dimensional order unit spaces, each
+equipped with a sequential product satisfying S1--S7. The
+\emph{composite order unit space} $V_{BM}$ is defined by:
+\begin{enumerate}
+\item[\emph{(C1)}] \textbf{Vector space.}
+  $V_{BM}$ is a finite-dimensional real vector space containing
+  $V_B \otimes V_M$ (the algebraic tensor product of real vector
+  spaces) as a subspace.
+\item[\emph{(C2)}] \textbf{Order unit.}
+  $\mathbf{1}_{BM} = \mathbf{1}_B \otimes \mathbf{1}_M$.
+\item[\emph{(C3)}] \textbf{Product states.}
+  For every state $\omega_B$ on $V_B$ and $\omega_M$ on $V_M$, the
+  product state $\omega_B \otimes \omega_M$ belongs to $\mathcal{S}(V_{BM})$,
+  defined by $(\omega_B\otimes\omega_M)(a\otimes b)
+  = \omega_B(a)\,\omega_M(b)$.
+\item[\emph{(C4)}] \textbf{Non-signaling.}
+  For every joint state $\omega \in \mathcal{S}(V_{BM})$, the marginals
+  $\omega_B(a) \coloneqq \omega(a\otimes\mathbf{1}_M)$ and
+  $\omega_M(b) \coloneqq \omega(\mathbf{1}_B\otimes b)$ are well-defined
+  states, independent of what is measured on the other subsystem.
+\end{enumerate}
+\end{definition}
+
+\begin{assumption}[Minimal composite]\label{ass:minimal-composite}
+$V_{BM}$ is the \emph{minimal} order unit space satisfying
+(C1)--(C4) and the product-form sequential product
+(Definition~\ref{def:product-sp} below).
+\end{assumption}
+
+This construction uses only real vector spaces, compact convex state
+spaces, affine functionals, and the non-signaling constraint --- no
+Hilbert space tensor products, complex numbers, or density matrices.
+
+%--------------------------------------------------------------------
+\subsection{Product-Form Sequential Product}\label{subsec:product-sp}
+
+\begin{definition}[Product-form SP]\label{def:product-sp}
+The sequential product on $V_{BM}$ is defined on product effects by
+\begin{equation}\label{eq:product-sp}
+  \seqp{(a \otimes b)}{(c \otimes d)}
+  = (\seqp{a}{c}) \otimes (\seqp{b}{d}),
+\end{equation}
+where $\seqp{\cdot}{\cdot}$ on the right-hand side denotes the
+factor-level sequential product~\eqref{eq:sp-explicit}.
+\end{definition}
+
+\begin{proposition}[S1--S7 inheritance]\label{prop:inheritance}
+If the factor sequential products on $V_B$ and $V_M$ each satisfy
+S1--S7, then the product-form sequential product on $V_{BM}$ satisfies
+S1--S7.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Axioms S1 (additivity), S2 (continuity), and S3 (unitality) follow
+directly from the corresponding factor-level axioms and the bilinearity
+of the tensor product. Axioms S5--S7 (compatible associativity,
+additivity, multiplicativity) reduce to the factor-level axioms because
+compatibility of product effects
+$a\otimes b$ and $c\otimes d$ follows from factor-wise compatibility
+$\seqp{a}{c}=\seqp{c}{a}$ and $\seqp{b}{d}=\seqp{d}{b}$.
+
+The inheritance of S4 (orthogonality symmetry) is more subtle. If
+$\seqp{(a\otimes b)}{(c\otimes d)} = 0$, then
+$(\seqp{a}{c})\otimes(\seqp{b}{d}) = 0$. In an order unit space, states
+separate points (Alfsen--Shultz~\cite{AlfsenShultz2003}, Theorem~1.23):
+for product states $\omega_B\otimes\omega_M$, the evaluation
+$\omega_B(\seqp{a}{c})\,\omega_M(\seqp{b}{d}) = 0$ for all
+$\omega_B,\omega_M$ forces either $\seqp{a}{c} = 0$ or $\seqp{b}{d} = 0$.
+By the factor-level S4, the corresponding reverse products vanish, giving
+$\seqp{(c\otimes d)}{(a\otimes b)} = 0$.
+\end{proof}
+
+%--------------------------------------------------------------------
+\subsection{From Faithful Tracking to Local
+Tomography}\label{subsec:lt-proof}
+
+The key step is showing that faithful self-modeling forces the composite
+to be locally tomographic: product measurements suffice to determine all
+joint states.
+
+\begin{assumption}[Simple EJA]\label{ass:simple-eja}
+The EJA $V$ is \emph{simple} (not a nontrivial direct sum of EJAs).
+\end{assumption}
+
+This assumption is needed for the non-degeneracy of the trace form below.
+
+\begin{definition}[Correlation bilinear form]\label{def:corr-form}
+Let $\tau$ denote the normalized trace functional on the EJA~$V$
+(Faraut--Kor\'anyi~\cite{FarautKoranyi1994}, Ch.~III) and let $\circ$
+denote the Jordan product. Define the \emph{correlation bilinear form}
+\begin{equation}\label{eq:corr-form}
+  B(a,b) \;=\; \tau\!\left(a \circ \varphi^{-1}(b)\right),
+\end{equation}
+where $\varphi^{-1} \colon V_M \to V_B$ is the inverse of the tracking
+isomorphism.
+\end{definition}
+
+\begin{proposition}[Non-degeneracy]\label{prop:nondeg}
+On a simple EJA, the bilinear form $B(a,b)$ is non-degenerate.
+\end{proposition}
+
+\begin{proof}
+On a simple EJA, the trace form $(a,c) \mapsto \tau(a\circ c)$ is
+non-degenerate (Faraut--Kor\'anyi~\cite{FarautKoranyi1994},
+Proposition~III.4.2). Since $\varphi\colon V_B\to V_M$ is an
+isomorphism (faithful self-modeling), $\varphi^{-1}$ is a bijection,
+so $B(a,b) = \tau(a\circ\varphi^{-1}(b))$ is non-degenerate: if
+$B(a,b) = 0$ for all $a$, then $\varphi^{-1}(b) = 0$, hence $b=0$.
+\end{proof}
+
+\begin{theorem}[Local tomography]\label{thm:local-tomo}
+Under Assumptions~\ref{ass:minimal-composite} and~\ref{ass:simple-eja},
+\[
+  \dim(V_{BM}) \;=\; \dim(V_B)\cdot\dim(V_M).
+\]
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The non-degeneracy of $B$ implies that the product effects
+$\{a_i\otimes b_j\}$, where $\{a_i\}$ and $\{b_j\}$ are bases for $V_B$
+and $V_M$ respectively, are linearly independent in $V_{BM}$. Indeed, if
+$\sum_{i,j}\alpha_{ij}\,a_i\otimes b_j = 0$, then for any fixed~$a$,
+the map $b \mapsto \sum_j \alpha_{ij}\,B(a,b_j) = 0$ forces all
+$\alpha_{ij}=0$ by non-degeneracy.
+
+This gives the lower bound $\dim(V_{BM}) \ge \dim(V_B)\cdot\dim(V_M)$.
+By minimality (Assumption~\ref{ass:minimal-composite}), the composite
+contains no structure beyond what is forced by axioms (C1)--(C4) and
+the product-form SP. Since the product effects span a
+$\dim(V_B)\cdot\dim(V_M)$-dimensional subspace, and the SP preserves
+this subspace (product effects map to product effects
+under~\eqref{eq:product-sp}), minimality gives the upper bound
+$\dim(V_{BM}) \le \dim(V_B)\cdot\dim(V_M)$.
+\end{proof}
+
+%--------------------------------------------------------------------
+\subsection{The Entangled Sector}\label{subsec:entangled}
+
+The \emph{entangled sector} consists of states in $V_{BM}$ not reachable
+as convex combinations of product states. Minimality
+(Assumption~\ref{ass:minimal-composite}) eliminates this sector by
+construction: $V_{BM}$ is defined as the smallest OUS satisfying the
+composite axioms, so it contains no ``hidden'' entangled structure beyond
+what the sequential product and non-signaling constraints require.
+
+For complex quantum mechanics ($V = M_n(\mathbb{C})^{\mathrm{sa}}$),
+the minimal and maximal composites
+coincide~\cite{Barnum2023}: the standard Hilbert space
+tensor product $M_{nm}(\mathbb{C})^{\mathrm{sa}}$ is the unique composite
+satisfying (C1)--(C4). This is why minimality is not a restrictive
+assumption for the complex case.
+
+For real or quaternionic quantum mechanics, the minimal and maximal
+composites differ. This discrepancy manifests as a failure of local
+tomography and is the mechanism by which these types are excluded:
+
+\begin{remark}[Negative checks]\label{rem:negative-checks}
+Dimension counting reveals that local tomography fails for all
+non-complex types at $n=2$:
+\begin{center}
+\begin{tabular}{lcccl}
+\toprule
+Type & $d = \dim(V)$ & $d^2$ & $\dim(\text{composite})$
+& Local tomography? \\
+\midrule
+$M_2(\mathbb{R})^{\mathrm{sa}}$ & $3$ & $9$ & $10$ & No\; ($9 < 10$) \\
+$M_2(\mathbb{C})^{\mathrm{sa}}$ & $4$ & $16$ & $16$ & Yes\; ($16 = 16$)\\
+$M_2(\mathbb{H})^{\mathrm{sa}}$ & $6$ & $36$ & $28$ & No\; ($36 > 28$)\\
+\bottomrule
+\end{tabular}
+\end{center}
+The real composite is ``too large'' (product measurements cannot
+distinguish all joint states), while the quaternionic composite is ``too
+small'' (product measurements are linearly dependent on the joint system).
+Only the complex type achieves the exact match $d^2 =
+\dim(\text{composite})$.
+\end{remark}

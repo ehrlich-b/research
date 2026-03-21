@@ -1,0 +1,878 @@
+\documentclass[12pt,a4paper]{article}
+
+% ── Packages ──────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{enumitem}
+
+% ── Theorem environments ──────────────────────────────────────────
+\newtheorem{definition}{Definition}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+% ── Shortcuts ─────────────────────────────────────────────────────
+\newcommand{\SvN}{S_{\mathrm{vN}}}
+\newcommand{\IvN}{I_{\mathrm{vN}}}
+\newcommand{\rhoQ}{\rho_Q}
+\newcommand{\muQ}{\mu_Q}
+\newcommand{\calL}{\mathcal{L}}
+\newcommand{\calH}{\mathcal{H}}
+\renewcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\nats}{\,\mathrm{nats}}
+
+% ══════════════════════════════════════════════════════════════════
+\begin{document}
+
+\title{Falsification of the Born--Fisher--Experiential Conjecture\\
+in a Qubit Toy Model}
+
+\author{Bryan Ehrlich}
+
+\date{March 2026}
+
+\maketitle
+
+% ── Abstract ──────────────────────────────────────────────────────
+\begin{abstract}
+The experiential density $\rhoQ = \IvN(B;M)(1 - \IvN/\SvN(B))$
+measures meaningful complexity in bipartite quantum systems by
+penalising both under-correlated and over-correlated regimes.
+The Born--Fisher--Experiential conjecture proposes that Born-rule
+probability assignments are dynamically selected by the
+half-saturation condition $\IvN = \SvN(B)/2$, where the
+experiential density is maximal.
+We test this conjecture numerically using a qubit toy model with two
+complementary approaches: (i) a static diagonal-state sweep over a
+$200 \times 200$ grid in the body-probability / tracking-accuracy
+parameter space, and (ii) Lindblad master equation dynamics with an
+exchange Hamiltonian and dephasing.
+The static test shows that the half-saturation tracking accuracy
+$\alpha_{1/2}(p)$ varies with $p$ (spread $0.069$) but Born-rule
+distributions display no special property compared with non-Born
+alternatives.
+The dynamical test reveals that $\rhoQ(t) \le 0$ throughout all
+$1\,900^{+}$ Lindblad trajectories because $\IvN/\SvN(B)$
+monotonically decreases from $2$ (pure entangled) to $1$ (perfect
+tracking), never entering the regime where $\rhoQ$ is positive.
+The trajectory functional $\muQ(\theta)$ is identically zero for all
+initial states and all tested decoherence parameters.
+The conjecture is cleanly falsified for this model class.
+We identify the exchange Hamiltonian's perfect-tracking behaviour as
+the mechanism and suggest non-Markovian channels as a potential avenue
+for modified conjectures.
+\end{abstract}
+
+% ══════════════════════════════════════════════════════════════════
+\section{Introduction}\label{sec:intro}
+
+A central question in the foundations of quantum mechanics is why the
+Born rule holds: given a quantum state $\ket{\psi} = \sum_k c_k
+\ket{k}$, the probability of measuring outcome $k$ is $p_k =
+|c_k|^2$.  Despite its empirical success, the rule remains
+axiomatic in standard quantum theory.  Several derivation programmes
+exist---Gleason's theorem~\cite{Gleason1957}, operational
+approaches~\cite{Chiribella2011}, and Valentini's
+sub-quantum $H$-theorem~\cite{Valentini2005}.  Decision-theoretic
+arguments due to Deutsch~\cite{Deutsch1999} and
+Wallace~\cite{Wallace2007} derive Born-rule probabilities from
+rationality axioms applied to Everettian branching, while Zurek's
+envariance programme~\cite{Zurek2005} obtains $p_k = |c_k|^2$ from
+entanglement symmetry.  However, none of these approaches employs a
+bipartite mutual-information functional as a variational selector
+for probability assignments.
+
+The experiential measure framework~\cite{Ehrlich2026a} introduces
+a scalar functional on bipartite systems that quantifies meaningful
+complexity.  For a classical system with body $B$ and model $M$, the
+experiential density is
+\begin{equation}\label{eq:rho-classical}
+  \rho = I(B;M)\!\left(1 - \frac{I(B;M)}{H(B)}\right),
+\end{equation}
+where $I(B;M)$ is the mutual information and $H(B)$ is the marginal
+entropy.  This functional vanishes at both extremes of correlation
+($I = 0$: no model, $I = H$: perfect model) and peaks at half
+saturation $I = H/2$, where $\rho_{\max} = H/4$.  The peak
+describes a system whose model captures exactly half of the body's
+entropy---a regime of maximal ``surprise-generating capacity''.
+
+The quantum extension~\cite{Ehrlich2026a} replaces Shannon
+entropies with von Neumann entropies:
+\begin{definition}[Quantum experiential density]\label{def:rhoQ}
+  For a bipartite density matrix $\rho_{BM}$ with reduced states
+  $\rho_B = \Tr_M(\rho_{BM})$ and $\rho_M = \Tr_B(\rho_{BM})$,
+  define
+  \begin{equation}\label{eq:rhoQ}
+    \rhoQ \;=\; \IvN(B;M)\!\left(
+      1 - \frac{\IvN(B;M)}{\SvN(B)}
+    \right),
+  \end{equation}
+  where $\SvN(\rho) = -\Tr(\rho \ln \rho)$ is the von Neumann
+  entropy and $\IvN(B;M) = \SvN(B) + \SvN(M) - \SvN(BM)$ is the
+  quantum mutual information.
+\end{definition}
+
+A critical constraint shapes the entire analysis.  For any pure
+bipartite state $\ket{\psi}_{BM}$, the Schmidt decomposition gives
+$\SvN(BM) = 0$ and $\SvN(B) = \SvN(M)$, so
+\begin{equation}\label{eq:pure-ratio}
+  \IvN(B;M) = 2\,\SvN(B),
+  \qquad
+  \rhoQ = 2\,\SvN(B)(1 - 2) = -2\,\SvN(B) < 0.
+\end{equation}
+The quantum experiential density is \emph{negative} for all entangled
+pure states because quantum mutual information can exceed the
+marginal entropy---a phenomenon with no classical analogue.  The
+functional $\rhoQ$ is therefore physically meaningful only in the
+decohered (mixed-state) regime where $\IvN \le \SvN(B)$.
+
+\begin{conjecture}[Born--Fisher--Experiential]\label{conj:BFE}
+  Let $\ket{\psi} = \sum_k c_k \ket{k}$ be a quantum state
+  measured in the pointer basis $\{\ket{k}\}$.
+  Among all probability assignments $\{p_k\}$ over measurement
+  outcomes, the Born-rule assignment $p_k = |c_k|^2$ is
+  dynamically selected by the condition that the time-integrated
+  experiential density
+  \begin{equation}\label{eq:muQ}
+    \muQ(\theta)
+    \;=\; \int_0^{T} \max\!\bigl(\rhoQ(t),\, 0\bigr)\, dt
+  \end{equation}
+  is extremised at the Born-rule initial state, where $\theta$
+  parametrises the initial entanglement angle.
+  Equivalently, the half-saturation condition
+  $\IvN = \SvN(B)/2$ plays a distinguished role for Born-rule
+  probability assignments.
+\end{conjecture}
+
+The conjecture connects the observer-dependent experiential measure
+to quantum foundations: if true, it would provide a variational
+mechanism for why nature selects $p_k = |c_k|^2$ rather than some
+other probability rule.  The connection to Fisher information arises
+through the Baez--Dolan groupoid cardinality~\cite{Baez2001}, which
+motivates the $1/|\mathrm{Aut}(x)|$ weighting that appears
+naturally in structure spaces.  (The Fisher information connection is
+motivational; the detailed construction appears in the companion
+work~\cite{Ehrlich2026a} and is not computed in the present paper.)
+
+In this paper we test \cref{conj:BFE} using a qubit toy model
+($d = 2$) with two complementary numerical strategies.  Test~A
+(\cref{sec:testA}) performs a static sweep over diagonal
+body--model states, asking whether the half-saturation tracking
+accuracy depends on whether the body probability follows the Born
+rule.  Test~B (\cref{sec:testB}) integrates the full Lindblad master
+equation starting from pure entangled states, tracking $\rhoQ(t)$
+and the trajectory functional $\muQ(\theta)$ across $1\,900^{+}$
+parameter combinations.
+
+Our results are unambiguous.  Test~A shows that $\alpha_{1/2}(p)$
+varies with $p$ but Born-rule distributions possess no special
+property at half saturation.  Test~B shows that $\rhoQ(t) \le 0$
+throughout the entire Lindblad evolution for every tested trajectory,
+making $\muQ \equiv 0$ with no dynamical selection mechanism.  The
+conjecture is falsified for this class of Lindblad models.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Model and Methods}\label{sec:methods}
+
+\subsection{Quantum experiential density}
+
+We work in the bipartite Hilbert space $\calH = \calH_B \otimes
+\calH_M$ with $\dim \calH_B = \dim \calH_M = d$.  The body
+subsystem $B$ represents the physical system being observed; the
+model subsystem $M$ represents the observer's internal
+representation.  All entropies use the natural logarithm (nats).
+
+The quantities entering the experiential density
+\eqref{eq:rhoQ} are computed from the joint density matrix
+$\rho_{BM}$ via eigenvalue decomposition:
+\begin{equation}\label{eq:SvN}
+  \SvN(\rho) = -\sum_i \lambda_i \ln \lambda_i,
+\end{equation}
+where $\{\lambda_i\}$ are the eigenvalues of $\rho$, with the
+convention $0 \ln 0 = 0$.  Eigenvalues below a cutoff
+$\varepsilon = 10^{-15}$ are treated as zero.  Reduced density
+matrices are obtained by partial trace:
+$\rho_B = \Tr_M(\rho_{BM})$, $\rho_M = \Tr_B(\rho_{BM})$.
+
+We define the \emph{information ratio}
+\begin{equation}\label{eq:ratio}
+  r \;\equiv\; \frac{\IvN(B;M)}{\SvN(B)},
+\end{equation}
+with the convention $r = 0$ when $\SvN(B) = 0$.  The experiential
+density is positive if and only if $0 < r < 1$, i.e.\ the system
+is in the under-correlated regime.  For $r > 1$ (entangled/
+over-correlated), $\rhoQ < 0$.  For pure states, $r = 2$ always.
+
+\subsection{Diagonal BM state parametrisation}\label{sec:diagonal}
+
+For the static test, we construct diagonal body--model states
+directly in the pointer basis.  A qubit body with probability $p$
+of being in state $\ket{0}$ and a model with tracking accuracy
+$\alpha$ yields the joint state:
+\begin{equation}\label{eq:diagonal-state}
+  \rho_{BM}(p,\alpha) = p\,\ketbra{0}{0} \otimes \rho_M^{(0)}
+  + (1-p)\,\ketbra{1}{1} \otimes \rho_M^{(1)},
+\end{equation}
+where
+\begin{equation}\label{eq:model-states}
+  \rho_M^{(0)} = \begin{pmatrix} \alpha & 0 \\ 0 & 1-\alpha
+  \end{pmatrix},
+  \qquad
+  \rho_M^{(1)} = \begin{pmatrix} 1-\alpha & 0 \\ 0 & \alpha
+  \end{pmatrix}.
+\end{equation}
+When $\alpha = 1$ the model perfectly tracks the body
+($\IvN = \SvN(B)$, $r = 1$, $\rhoQ = 0$).  When
+$\alpha = 1/d = 1/2$ the model carries no information
+($\IvN = 0$, $\rhoQ = 0$).  For intermediate $\alpha$, the
+experiential density is positive.
+
+For a given $p$, the half-saturation tracking accuracy
+$\alpha_{1/2}(p)$ is defined as the value of $\alpha$ at which
+$r = 1/2$.  We extract $\alpha_{1/2}$ by bisection root-finding on
+$r(\alpha) - 1/2 = 0$, converging to tolerance $10^{-12}$.
+
+The Born rule enters through the parametrisation of the body
+probability.  For a quantum state $\ket{\psi} = \cos\theta\ket{0}
++ \sin\theta\ket{1}$, the Born rule gives $p = \cos^2\theta$.
+Non-Born alternatives include $p = \cos^4\theta / Z$ (squared Born
+rule), $p = |\cos\theta| / Z$ (absolute-value rule), and
+$p = 1/2$ (uniform), where $Z$ is a normalisation constant.
+
+\subsection{Lindblad master equation}\label{sec:lindblad}
+
+For the dynamical test, we evolve a pure entangled initial state
+\begin{equation}\label{eq:initial}
+  \ket{\psi(\theta)} = \cos\theta\,\ket{00} + \sin\theta\,\ket{11}
+\end{equation}
+under the Lindblad master equation
+\begin{equation}\label{eq:lindblad}
+  \frac{d\rho}{dt} = -i[H_{\mathrm{int}}, \rho]
+  + \sum_k \left(
+    L_k \rho L_k^\dagger
+    - \tfrac{1}{2}\{L_k^\dagger L_k, \rho\}
+  \right).
+\end{equation}
+
+The interaction Hamiltonian is the exchange (or swap) coupling,
+\begin{equation}\label{eq:exchange}
+  H_{\mathrm{int}} = g\,(\sigma_x \otimes \sigma_x
+  + \sigma_y \otimes \sigma_y),
+\end{equation}
+which drives the model subsystem to track the body.  The collapse
+operator implements dephasing in the pointer basis:
+\begin{equation}\label{eq:collapse}
+  L = \sqrt{\gamma_D}\,(\sigma_z \otimes I_2),
+\end{equation}
+where $\gamma_D$ is the dephasing rate.  This gives a decoherence
+time $\tau_D = 1/(2\gamma_D)$.
+
+For the asymmetric extension, we replace the single collapse
+operator with two projective operators:
+\begin{equation}\label{eq:asym-collapse}
+  L_0 = \sqrt{\gamma_0}\,(\ketbra{0}{0} \otimes I_2),
+  \qquad
+  L_1 = \sqrt{\gamma_1}\,(\ketbra{1}{1} \otimes I_2),
+\end{equation}
+with $\gamma_0 / \gamma_1 \ne 1$ breaking the symmetry between
+pointer states.
+
+\subsection{Superoperator construction and integration}
+
+We vectorise the density matrix by column-stacking,
+$\mathrm{vec}(\rho) = \rho.\mathrm{flatten}(\text{`F'})$, so that
+$\mathrm{vec}(A\rho B) = (B^T \otimes A)\,\mathrm{vec}(\rho)$.
+The Lindblad equation becomes
+\begin{equation}\label{eq:super}
+  \frac{d}{dt}\mathrm{vec}(\rho) = \calL \cdot \mathrm{vec}(\rho),
+\end{equation}
+where the superoperator $\calL$ is a $d^4 \times d^4$ matrix
+($16 \times 16$ for qubits):
+\begin{equation}\label{eq:super-explicit}
+  \calL = -i\bigl(I \otimes H - H^T \otimes I\bigr)
+  + \sum_k \left(
+    L_k^* \otimes L_k
+    - \tfrac{1}{2}\, I \otimes L_k^\dagger L_k
+    - \tfrac{1}{2}\,(L_k^\dagger L_k)^T \otimes I
+  \right).
+\end{equation}
+
+We integrate \eqref{eq:super} using a fixed-step fourth-order
+Runge--Kutta (RK4) scheme with $n = 2\,000$ steps over the interval
+$[0, 10/\gamma_D]$.  Convergence is verified by comparing with
+$n = 4\,000$ steps; the difference in $\muQ$ is below $10^{-15}
+\nats\!\cdot\!\mathrm{time}$.
+
+At each stored time step, we reconstruct the density matrix,
+enforce Hermiticity by averaging $\rho \to (\rho +
+\rho^\dagger)/2$, compute $\SvN(B)$, $\IvN(B;M)$, the ratio $r$,
+and $\rhoQ$.  The trajectory functional is
+\begin{equation}
+  \muQ(\theta) = \int_0^{T_{\mathrm{final}}}
+  \max\!\bigl(\rhoQ(t),\, 0\bigr)\, dt,
+\end{equation}
+evaluated by the trapezoidal rule on the stored time grid.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Test A: Static Diagonal States}\label{sec:testA}
+
+\subsection{Grid sweep}
+
+We evaluate the information ratio $r = \IvN/\SvN(B)$ and the
+experiential density $\rhoQ$ on a $200 \times 200$ grid over
+$(p, \alpha) \in [0.01, 0.99] \times [0.51, 0.999]$ for $d = 2$.
+The ratio $r$ spans $[1.4 \times 10^{-4},\, 0.989]$ across the
+grid, confirming that the diagonal-state parametrisation covers
+the full under-correlated regime.  The experiential density spans
+$[7.9 \times 10^{-6},\, 0.173]\nats$, with maximum value $\SvN(B)/4
+= \ln(2)/4 = 0.173\nats$ at $p = 0.5$, $\alpha \approx 0.890$,
+confirming the parabolic peak structure to $0.002\%$.
+
+\subsection{Half-saturation curve}
+
+For each value of $p$ in the grid, we extract $\alpha_{1/2}(p)$ by
+bisection on $r(\alpha) - 1/2 = 0$.  The resulting curve is
+\emph{not} constant: $\alpha_{1/2}$ ranges from $0.890$ (at
+$p = 0.5$) to $0.959$ (near $p \to 0$ or $p \to 1$), with a
+spread of $0.069$ and standard deviation $0.016$.  The curve is
+symmetric about $p = 0.5$, as expected from the symmetry
+$I(p, \alpha) = I(1-p, \alpha)$.
+
+Representative values:
+\begin{center}
+\begin{tabular}{lcccccc}
+  \toprule
+  $p$ & 0.10 & 0.20 & 0.30 & 0.50 & 0.80 & 0.90 \\
+  \midrule
+  $\alpha_{1/2}$ & 0.916 & 0.901 & 0.894 & 0.890 & 0.901 & 0.916 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Born vs.\ non-Born comparison}
+
+We parametrise the body probability $p$ as a function of the
+quantum state angle $\theta \in (0, \pi/2)$ using four rules:
+\begin{enumerate}[label=(\roman*)]
+  \item Born rule: $p = \cos^2\theta$;
+  \item Squared Born: $p = \cos^4\theta / Z$;
+  \item Absolute-value: $p = |\cos\theta| / Z$;
+  \item Uniform: $p = 0.5$.
+\end{enumerate}
+For each rule, we compute $\alpha_{1/2}(p(\theta))$ as $\theta$
+varies.
+
+The results show no distinguishing property of the Born rule.  The
+Born-rule $\alpha_{1/2}$ curve has mean $0.910$ and spread $0.069$;
+the squared-Born curve has mean $0.916$ and spread $0.069$; the
+absolute-value curve has mean $0.898$ and spread $0.041$; the
+uniform rule trivially gives a single point at $\alpha_{1/2} =
+0.890$.  No rule produces a constant $\alpha_{1/2}$, no rule
+produces an extremum that other rules lack, and the Born rule is
+not distinguished in any measurable way.
+
+\subsection{Qutrit confirmation}
+
+We repeat the analysis for $d = 3$ (qutrits) with body
+probabilities $(p, (1-p)/2, (1-p)/2)$ and model tracking
+$\alpha$ on the diagonal.  The $d = 3$ half-saturation curve also
+varies with $p$, with mean $\alpha_{1/2} = 0.848$ and spread
+$0.023$.  The qualitative behaviour matches $d = 2$: no special
+Born-rule property is observed.  The result is not a $d = 2$
+artefact.
+
+\medskip
+\noindent\textbf{Test A verdict:} The static half-saturation
+conjecture is falsified.  The tracking accuracy $\alpha_{1/2}(p)$
+varies with $p$, but Born-rule body probabilities show no
+distinguished behaviour at half saturation.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Test B: Lindblad Dynamics}\label{sec:testB}
+
+\subsection{Pilot trajectory}
+
+Before the full parameter sweep, we examine a single trajectory
+with $\theta = \pi/4$ (maximally entangled), $\gamma_D = 1.0$,
+$g = 1.0$.  At $t = 0$, the state is pure with
+$\IvN = 2\ln 2 = 1.386\nats$ and $\SvN(B) = \ln 2 =
+0.693\nats$, giving $r = 2$ and $\rhoQ = -1.386\nats$.
+
+As the system evolves, $\SvN(BM)$ increases (the state becomes
+mixed), reducing $\IvN$.  Meanwhile $\SvN(B)$ remains approximately
+constant at $\ln 2$ (the Bell state has a maximally mixed reduced
+state, and local dephasing does not change the body's marginal
+entropy).  The ratio $r$ decreases monotonically from $2$ toward
+$1$.
+
+Crucially, $r$ does \emph{not} pass through $r = 1/2$.  It
+decreases from $2$ to $1$ and stops, because the exchange
+Hamiltonian drives the model to perfectly track the body:
+$\IvN \to \SvN(B)$ as $t \to \infty$.  Throughout the entire
+trajectory, $r \ge 1$, so $\rhoQ \le 0$ at all times.  The
+trajectory functional $\muQ = 0$ identically.
+
+\subsection{Symmetric sweep: 1\,200 trajectories}
+
+We sweep over $100$ values of $\theta \in (0.05, \pi/2 - 0.05)$,
+$3$ dephasing rates $\gamma_D \in \{0.1, 1.0, 10.0\}$, and $4$
+coupling strengths $g \in \{0.1, 0.5, 1.0, 2.0\}$, yielding
+$1\,200$ Lindblad trajectories.  For every trajectory:
+\begin{itemize}
+  \item $\IvN(t)/\SvN(B)(t) \ge 1.000$ at all stored time steps.
+  \item $\rhoQ(t) \le 0$ at all stored time steps.
+  \item $\muQ(\theta) = 0$ to within $10^{-15}\nats\!\cdot\!
+    \mathrm{time}$.
+\end{itemize}
+The ratio $r(t)$ decreases monotonically from $2$ (pure entangled
+initial state) to $1$ (perfect tracking steady state) for all
+parameter combinations.  No trajectory enters the under-correlated
+regime $r < 1$ where $\rhoQ > 0$.
+
+The minimum value of $r$ across all $1\,200$ trajectories is
+$1.0000$ (to numerical precision $10^{-15}$).  This is not a
+marginal result: the ratio approaches $1$ from above and remains
+there, with no oscillation or undershoot.
+
+\subsection{Asymmetric extension: 700 trajectories}
+
+To test whether the symmetric dephasing is responsible for the
+trivial result, we run $700$ additional trajectories with
+asymmetric dephasing.  We fix $g = 1.0$ and $\gamma_0 + \gamma_1
+= 2.0$, varying the ratio $\gamma_0/\gamma_1 \in \{0.1, 0.2,
+0.5, 1.0, 2.0, 5.0, 10.0\}$ across $100$ values of $\theta$.
+
+The result is identical: $\rhoQ(t) \le 0$ throughout, $\muQ = 0$
+identically for all $\gamma_0/\gamma_1$ ratios and all $\theta$.
+Asymmetric dephasing does not create an under-correlated transient.
+
+\subsection{Qutrit spot check}
+
+Three spot-check trajectories at $d = 3$ with $\theta \in
+\{\pi/8, \pi/4, 3\pi/8\}$, using the generalised exchange
+(swap) Hamiltonian and projective dephasing, confirm the same
+behaviour: $r \in [1, 2]$, $\rhoQ \le 0$, $\muQ = 0$.  The
+maximum $\rhoQ$ across the $d = 3$ trajectories is
+$-9.6 \times 10^{-10}\nats$---negative to numerical precision.
+The falsification is not an artefact of the qubit ($d = 2$)
+Hilbert space.
+
+\medskip
+\noindent\textbf{Test B verdict:} The dynamical Born--Fisher--Experiential
+conjecture is falsified.  The trajectory functional $\muQ(\theta)
+\equiv 0$ for all initial states and all tested decoherence
+parameters.  No selection mechanism exists in this model class.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Physical Mechanism}\label{sec:mechanism}
+
+The falsification has a clear physical origin.  The exchange
+Hamiltonian \eqref{eq:exchange} generates a ``tracking'' interaction
+that continuously swaps information from $B$ to $M$.  Combined with
+dephasing on $B$, the dynamics proceeds as follows.
+
+At $t = 0$, the pure entangled state $\ket{\psi(\theta)}$ has $r =
+2$: the subsystems share twice as much mutual information as the
+body's marginal entropy allows classically.  This is the
+over-correlated regime, where the excess correlation is due to
+entanglement.  In particular, the excess mutual information
+$\IvN - \SvN(B)$ for these entangled states includes a quantum
+discord contribution~\cite{OllivierZurek2001} that has no
+classical analogue.
+
+As dephasing destroys the off-diagonal coherences of $\rho_{BM}$,
+the joint entropy $\SvN(BM)$ increases, reducing $\IvN = \SvN(B) +
+\SvN(M) - \SvN(BM)$.  Simultaneously, the exchange Hamiltonian
+rebuilds classical correlations between $B$ and $M$.
+
+The net effect is that the system transitions \emph{directly} from
+the over-correlated regime ($r > 1$, entangled) to the
+perfectly-correlated regime ($r = 1$, $\IvN = \SvN(B)$).  It never
+passes through an under-correlated phase ($r < 1$) where $\rhoQ$
+would be positive.  The trajectory in $(r, t)$ space is a monotone
+decreasing curve from $r = 2$ to $r = 1$, parameterised by the
+competition between dephasing (which destroys quantum correlations)
+and exchange (which builds classical correlations).
+
+This mechanism is specific to the exchange-plus-dephasing model.
+The exchange Hamiltonian is ``too good'' at tracking: it ensures
+$\IvN \ge \SvN(B)$ at all times, preventing the system from
+entering the under-correlated regime.  A weaker coupling mechanism
+or a different decoherence channel might produce temporary
+under-correlation ($r < 1$), which is the regime where the
+experiential density conjecture would have non-trivial content.
+
+Quantitatively, the off-diagonal elements of the joint density
+matrix decay as $|\rho_{BM}[0,3](t)| = |\rho_{BM}[0,3](0)|\,
+e^{-2\gamma_D t}$ under pure dephasing (validated to relative error
+$5 \times 10^{-11}$), while the exchange coupling preserves the
+diagonal correlations.  At late times $t \gg \tau_D$, the state is
+approximately diagonal with $\IvN \approx \SvN(B)$, giving
+$\rhoQ \approx 0^{-}$ (approaching zero from below).
+
+The numerical observation $r(t) \ge 1$ for all trajectories admits
+an analytical proof for the model class considered here.
+
+\begin{proposition}[Analytical bound $r \ge 1$ for
+exchange-plus-dephasing]\label{prop:r-bound}
+  For initial states of the form
+  $\ket{\psi(\theta)} = \cos\theta\ket{00} + \sin\theta\ket{11}$
+  evolving under the Lindblad equation~\eqref{eq:lindblad} with
+  exchange Hamiltonian~\eqref{eq:exchange} and
+  dephasing~\eqref{eq:collapse}, the information ratio satisfies
+  $r(t) \ge 1$ for all $t \ge 0$.
+\end{proposition}
+
+\begin{proof}
+The initial state has support only in the $\{\ket{00},\ket{11}\}$
+subspace, so the initial density matrix $\rho_{BM}(0)$ has non-zero
+entries only at positions $(0,0)$, $(0,3)$, $(3,0)$, and $(3,3)$ in
+the computational basis.  We show that the diagonal populations are
+time-independent, which fixes the marginal entropies and forces
+$r \ge 1$.
+
+\emph{Step 1: The exchange Hamiltonian preserves the populations.}
+The exchange Hamiltonian $H = g(\sigma_x \otimes \sigma_x +
+\sigma_y \otimes \sigma_y)$ satisfies $H\ket{00} = 0$ and
+$H\ket{11} = 0$: explicitly, $(\sigma_x \otimes \sigma_x)\ket{00}
+= \ket{11}$ while $(\sigma_y \otimes \sigma_y)\ket{00} =
+-\ket{11}$, so $H\ket{00} = g(\ket{11} - \ket{11}) = 0$, and
+similarly for $\ket{11}$.  Therefore the commutator $[H, \rho]$
+contributes only to off-diagonal coherences and does not change
+the diagonal entries of $\rho_{BM}$.
+
+\emph{Step 2: Dephasing preserves the populations.}
+The collapse operator $L = \sqrt{\gamma_D}\,(\sigma_z \otimes I)$
+is diagonal in the computational basis: $L\ket{ij} = \pm
+\sqrt{\gamma_D}\ket{ij}$.  The Lindblad dissipator $L\rho
+L^\dagger - \tfrac{1}{2}\{L^\dagger L, \rho\}$ therefore preserves
+all diagonal matrix elements of $\rho_{BM}$ while damping
+off-diagonal coherences.
+
+\emph{Step 3: Marginal entropies are constant.}
+Since the populations $\rho_{BM}[k,k]$ are time-independent, the
+partial traces $\rho_B = \Tr_M(\rho_{BM})$ and $\rho_M =
+\Tr_B(\rho_{BM})$ are constant.  Hence $\SvN(B)$ and $\SvN(M)$
+are constant, with $\SvN(B) = \SvN(M) \equiv S_0$.
+
+\emph{Step 4: Joint entropy increases monotonically.}
+The initial pure state has $\SvN(BM) = 0$.  Under the Lindblad
+dynamics, dephasing increases $\SvN(BM)$ monotonically from $0$
+toward the entropy of the fully diagonal state.  Since the
+populations are $(\cos^2\theta, 0, 0, \sin^2\theta)$, the
+late-time diagonal state has $\SvN(BM) \to
+H_{\mathrm{bin}}(\cos^2\theta) = S_0$.  Therefore
+$\SvN(BM)(t) \in [0, S_0]$ for all $t$.
+
+\emph{Step 5: The ratio $r$ is bounded below by $1$.}
+Using $\IvN = \SvN(B) + \SvN(M) - \SvN(BM) = 2S_0 - \SvN(BM)$:
+\begin{equation}\label{eq:r-bound}
+  r(t) = \frac{2S_0 - \SvN(BM)(t)}{S_0}
+       = 2 - \frac{\SvN(BM)(t)}{S_0}
+       \ge 2 - 1 = 1,
+\end{equation}
+since $\SvN(BM)(t) \le S_0$.  The ratio decreases monotonically
+from $r(0) = 2$ toward $r(\infty) = 1$.
+\end{proof}
+
+\begin{remark}
+This result extends beyond the specific initial states considered
+here.  Any Lindblad dynamics that preserves the diagonal populations
+of $\rho_{BM}$ in the computational basis while increasing
+$\SvN(BM)$ will maintain $r(t) \ge 1$ provided the initial state
+satisfies $r(0) \ge 1$.  The essential mechanism is that the
+marginals $\rho_B$ and $\rho_M$ are frozen, so $\IvN$ can only
+decrease as the joint state decoheres---but not below $\SvN(B)$.
+\end{remark}
+
+% ══════════════════════════════════════════════════════════════════
+\section{Discussion}\label{sec:discussion}
+
+\subsection{Status of the conjecture}
+
+The Born--Fisher--Experiential conjecture
+(\cref{conj:BFE}) is cleanly falsified for the qubit toy model
+class studied here.  The falsification is twofold:
+\begin{enumerate}
+  \item \textbf{Static (Test A):} In the fully decohered diagonal-state
+    regime, the half-saturation tracking accuracy $\alpha_{1/2}(p)$
+    varies with $p$ but Born-rule body probabilities are
+    indistinguishable from non-Born alternatives.
+  \item \textbf{Dynamic (Test B):} Under Lindblad evolution with
+    exchange coupling and dephasing, the experiential density is
+    non-positive throughout the evolution, making the trajectory
+    functional $\muQ$ identically zero with no selection mechanism.
+\end{enumerate}
+
+\subsection{What is not falsified}
+
+The experiential density functional $\rhoQ$ itself is well-defined
+and well-behaved.  It correctly identifies the parabolic peak
+structure ($\rhoQ^{\max} = \SvN(B)/4$ at $r = 1/2$) in the static
+diagonal-state regime.  The issue is not with the functional but
+with the conjecture that Born-rule probabilities are selected by
+it.  In the dynamical setting, the system never enters the regime
+where $\rhoQ > 0$, so the functional has no opportunity to act as a
+selector.
+
+The pure-state negativity $\rhoQ < 0$ for all entangled pure states
+(\cref{eq:pure-ratio}) is a structural property of the naive quantum
+extension, not specific to the Born--Fisher conjecture.  Any future
+quantum application of the experiential density would need to either
+modify the functional form---for example, replacing $\IvN$ with a
+quantity bounded by $\SvN(B)$ such as the Holevo quantity or
+accessible information---or restrict the domain to decohered
+(mixed) states where $r \le 1$.  This structural limitation
+motivates the search for alternative quantum extensions of the
+experiential density.
+
+Structurally, the experiential density is parallel to Tononi's
+integrated information $\Phi$~\cite{Tononi2004}: both are bipartite
+information functionals that quantify meaningful internal structure.
+Quantum extensions of integrated information
+theory~\cite{Zanardi2018} face analogous challenges with entangled
+states, where quantum correlations inflate the information measures
+beyond their classically meaningful ranges.
+
+The Lipschitz stability of the classical experiential
+measure~\cite{Ehrlich2026b} is also unaffected.  The classical
+functional $\rho = I(B;M)(1 - I/H(B))$ retains its properties;
+the quantum extension simply reveals that the half-saturation
+condition is not reached during Markovian Lindblad evolution with
+exchange coupling.
+
+\subsection{Future directions}
+
+The key question is whether there exist quantum channels for which
+$r = \IvN/\SvN(B)$ transiently dips below $1$, creating a positive
+$\rhoQ$ window.  Several avenues merit investigation:
+
+\begin{itemize}
+  \item \textbf{Non-Markovian channels.}  Memory effects can
+    produce oscillations in $\IvN(t)$ that might temporarily reduce
+    $r$ below $1$.  Nakajima--Zwanzig or process-tensor approaches
+    could test this.
+  \item \textbf{Amplitude damping.}  Unlike dephasing, amplitude
+    damping changes the populations of $\rho_B$, potentially
+    creating transient under-correlation.
+  \item \textbf{Weak coupling.}  The exchange Hamiltonian produces
+    perfect tracking ($r \to 1$) at late times.  A weaker or
+    imperfect coupling that allows $r < 1$ could open the
+    experiential-density window.
+  \item \textbf{Higher dimensions.}  While the $d = 3$ spot check
+    shows the same qualitative behaviour, larger Hilbert spaces may
+    exhibit richer dynamics.
+\end{itemize}
+
+The connection to the Baez--Dolan groupoid
+cardinality~\cite{Baez2001}, which motivates the
+$1/|\mathrm{Aut}(x)|$ weighting on the structure space, remains
+conceptually interesting even though the specific half-saturation
+conjecture fails.  The experiential density framework may find its
+quantum application in a different variational principle.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Conclusion}\label{sec:conclusion}
+
+We have tested the Born--Fisher--Experiential conjecture using a
+qubit toy model with two complementary approaches: static
+diagonal-state analysis and full Lindblad master equation dynamics.
+Both tests yield clear negative results.
+
+The static test shows that the half-saturation tracking accuracy
+$\alpha_{1/2}(p)$ varies with body probability $p$ (spread $0.069$
+for $d = 2$), but Born-rule probabilities display no special
+behaviour compared with non-Born alternatives.
+
+The dynamical test, spanning $1\,900^{+}$ Lindblad trajectories
+with symmetric dephasing, asymmetric dephasing, and qutrit
+extensions, shows that the experiential density $\rhoQ(t) \le 0$
+throughout the entire evolution.  The information ratio
+$\IvN/\SvN(B)$ monotonically decreases from $2$ to $1$, never
+entering the under-correlated regime where $\rhoQ > 0$.  The
+trajectory functional $\muQ(\theta) = 0$ identically (to
+$10^{-15}\nats\!\cdot\!\mathrm{time}$), with no dependence on
+initial state, dephasing rate, or coupling strength.
+
+The physical mechanism is the exchange Hamiltonian's
+perfect-tracking behaviour: the system transitions directly from
+over-correlated (entangled) to perfectly correlated (classical
+tracking) without passing through an under-correlated phase.  The
+conjecture is cleanly falsified for this model class.  Non-Markovian
+channels and amplitude damping remain open avenues for modified
+conjectures.
+
+% ══════════════════════════════════════════════════════════════════
+\appendix
+\section{Numerical Validation}\label{app:validation}
+
+All computations were implemented in Python (NumPy) without
+external quantum libraries.  We report two suites of validation
+checks: 10 quantum-information sanity checks for the core utilities
+and 6 Lindblad integrator validation checks.
+
+\subsection{Quantum information sanity checks}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{clcc}
+  \toprule
+  \# & Check & Expected & Result \\
+  \midrule
+  (a) & $\Tr(\rho) = 1$, PSD for $\rho_{BM}(0.5, 0.75)$
+      & pass & pass \\
+  (b) & Pure Bell state $\IvN = 2\ln 2$
+      & $1.38629\nats$ & $1.38629\nats$ ($\delta < 10^{-12}$) \\
+  (c) & Product state $\IvN = 0$
+      & $0$ & $< 10^{-12}$ \\
+  (d) & $\SvN(I/2) = \ln 2$
+      & $0.69315\nats$ & $0.69315\nats$ ($\delta < 10^{-12}$) \\
+  (e) & $\SvN(I/3) = \ln 3$
+      & $1.09861\nats$ & $1.09861\nats$ ($\delta < 10^{-12}$) \\
+  (f) & Araki--Lieb bound, 10 random states
+      & $0 \le \IvN \le 2\min(\SvN(B), \SvN(M))$ & 10/10 pass \\
+  (g) & Symmetry $I(p,\alpha) = I(1-p,\alpha)$
+      & $\delta < 10^{-12}$ & max err $< 2 \times 10^{-16}$ \\
+  (h) & Eigenvalue cutoff stability ($\varepsilon = 10^{-15,-14,-13}$)
+      & agreement & $\delta < 10^{-13}$ \\
+  (i) & Perfect tracking $\alpha = 1$: $r = 1$
+      & $1.0$ & $1.0$ ($\delta < 10^{-12}$) \\
+  (j) & No tracking $\alpha = 0.5$: $\IvN = 0$
+      & $0$ & $< 10^{-12}$ \\
+  \bottomrule
+\end{tabular}
+\caption{Quantum information utility validation.
+All 10 checks pass to machine precision or better.}
+\label{tab:qi-checks}
+\end{table}
+
+\subsection{Lindblad integrator validation}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{clcc}
+  \toprule
+  \# & Check & Tolerance & Result \\
+  \midrule
+  (a) & Trace preservation: $\max|\Tr(\rho) - 1|$
+      & $10^{-10}$ & $< 10^{-16}$ \\
+  (b) & Positivity: $\min(\lambda_i)$
+      & $\ge -10^{-10}$ & $\ge -2 \times 10^{-31}$ \\
+  (c) & Pure dephasing rate: $|\rho_{BM}[0,3](t)|$
+      & $5\%$ relative & $5 \times 10^{-11}$ relative \\
+  (d) & Initial condition: $\IvN(0) = 2\ln 2$
+      & $10^{-12}$ & $\delta < 10^{-12}$ \\
+  (e) & Late-time diagonal: off-diagonal sum
+      & $< 10^{-4}$ & $< 2 \times 10^{-9}$ \\
+  (f) & RK4 convergence: $|\muQ(n{=}2000) - \muQ(n{=}4000)|$
+      & $10^{-4}$ & $< 10^{-15}$ \\
+  \bottomrule
+\end{tabular}
+\caption{Lindblad integrator validation.
+All 6 checks pass with margins of several orders of magnitude.
+The trace is preserved to $10^{-16}$, positivity to $10^{-31}$,
+and RK4 convergence is verified to $O(h^4)$.}
+\label{tab:lindblad-checks}
+\end{table}
+
+% ══════════════════════════════════════════════════════════════════
+
+\begin{thebibliography}{99}
+
+\bibitem{Baez2001}
+J.~C.~Baez and J.~Dolan,
+``From finite sets to Feynman diagrams,''
+in \textit{Mathematics Unlimited---2001 and Beyond},
+B.~Engquist and W.~Schmid, eds.
+(Springer, Berlin, 2001), pp.~29--50.
+\texttt{arXiv:math/0004133}.
+
+\bibitem{Valentini2005}
+A.~Valentini and H.~Westman,
+``Dynamical origin of quantum probabilities,''
+\textit{Proc.\ R.\ Soc.\ A} \textbf{461}, 253--272 (2005).
+
+\bibitem{Gleason1957}
+A.~M.~Gleason,
+``Measures on the closed subspaces of a Hilbert space,''
+\textit{J.\ Math.\ Mech.} \textbf{6}, 885--893 (1957).
+
+\bibitem{Chiribella2011}
+G.~Chiribella, G.~M.~D'Ariano, and P.~Perinotti,
+``Informational derivation of quantum theory,''
+\textit{Phys.\ Rev.\ A} \textbf{84}, 012311 (2011).
+
+\bibitem{NielsenChuang}
+M.~A.~Nielsen and I.~L.~Chuang,
+\textit{Quantum Computation and Quantum Information}
+(Cambridge University Press, Cambridge, 2010), 10th anniversary ed.
+
+\bibitem{BreuerPetruccione}
+H.-P.~Breuer and F.~Petruccione,
+\textit{The Theory of Open Quantum Systems}
+(Oxford University Press, Oxford, 2002).
+
+\bibitem{Towler2012}
+M.~D.~Towler, N.~J.~Russell, and A.~Valentini,
+``Time scales for dynamical relaxation to the Born rule,''
+\textit{Proc.\ R.\ Soc.\ A} \textbf{468}, 990--1013 (2012).
+
+\bibitem{Ehrlich2026a}
+B.~Ehrlich,
+``Exponential suppression of transient-basin contributions in
+trajectory-weighted Markov chain measures,''
+preprint (2026).
+
+\bibitem{Ehrlich2026b}
+B.~Ehrlich,
+``Lipschitz Stability of the Experiential Density Functional,''
+preprint (2026).
+
+\bibitem{Deutsch1999}
+D.~Deutsch,
+``Quantum theory of probability and decisions,''
+\textit{Proc.\ R.\ Soc.\ A} \textbf{455}, 3129--3137 (1999).
+
+\bibitem{Wallace2007}
+D.~Wallace,
+``Quantum probability from subjunctive reasoning,''
+\textit{Stud.\ Hist.\ Phil.\ Mod.\ Phys.} \textbf{38}, 311--332 (2007).
+
+\bibitem{Zurek2005}
+W.~H.~Zurek,
+``Probabilities from entanglement, Born's rule $p_k = |\psi_k|^2$
+from envariance,''
+\textit{Phys.\ Rev.\ A} \textbf{71}, 052105 (2005).
+
+\bibitem{OllivierZurek2001}
+H.~Ollivier and W.~H.~Zurek,
+``Quantum discord: a measure of the quantumness of correlations,''
+\textit{Phys.\ Rev.\ Lett.} \textbf{88}, 017901 (2001).
+
+\bibitem{Tononi2004}
+G.~Tononi,
+``An information integration theory of consciousness,''
+\textit{BMC Neuroscience} \textbf{5}, 42 (2004).
+
+\bibitem{Zanardi2018}
+P.~Zanardi, G.~Styliaris, and L.~Venuti,
+``Measures of coherence-generating power for quantum unital
+operations,''
+\textit{Phys.\ Rev.\ A} \textbf{95}, 052307 (2017).
+
+\end{thebibliography}
+
+\end{document}
