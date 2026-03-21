@@ -55,10 +55,10 @@ Hilbert space tensor products, complex numbers, or density matrices.
 \begin{definition}[Product-form SP]\label{def:product-sp}
 The sequential product on $V_{BM}$ is defined on product effects by
 \begin{equation}\label{eq:product-sp}
-  \seqp{(a \otimes b)}{(c \otimes d)}
-  = (\seqp{a}{c}) \otimes (\seqp{b}{d}),
+  \sp{(a \otimes b)}{(c \otimes d)}
+  = (\sp{a}{c}) \otimes (\sp{b}{d}),
 \end{equation}
-where $\seqp{\cdot}{\cdot}$ on the right-hand side denotes the
+where $\sp{\cdot}{\cdot}$ on the right-hand side denotes the
 factor-level sequential product~\eqref{eq:sp-explicit}.
 \end{definition}
 
@@ -75,18 +75,35 @@ of the tensor product. Axioms S5--S7 (compatible associativity,
 additivity, multiplicativity) reduce to the factor-level axioms because
 compatibility of product effects
 $a\otimes b$ and $c\otimes d$ follows from factor-wise compatibility
-$\seqp{a}{c}=\seqp{c}{a}$ and $\seqp{b}{d}=\seqp{d}{b}$.
+$\sp{a}{c}=\sp{c}{a}$ and $\sp{b}{d}=\sp{d}{b}$.
 
 The inheritance of S4 (orthogonality symmetry) is more subtle. If
-$\seqp{(a\otimes b)}{(c\otimes d)} = 0$, then
-$(\seqp{a}{c})\otimes(\seqp{b}{d}) = 0$. In an order unit space, states
+$\sp{(a\otimes b)}{(c\otimes d)} = 0$, then
+$(\sp{a}{c})\otimes(\sp{b}{d}) = 0$. In an order unit space, states
 separate points (Alfsen--Shultz~\cite{AlfsenShultz2003}, Theorem~1.23):
 for product states $\omega_B\otimes\omega_M$, the evaluation
-$\omega_B(\seqp{a}{c})\,\omega_M(\seqp{b}{d}) = 0$ for all
-$\omega_B,\omega_M$ forces either $\seqp{a}{c} = 0$ or $\seqp{b}{d} = 0$.
+$\omega_B(\sp{a}{c})\,\omega_M(\sp{b}{d}) = 0$ for all
+$\omega_B,\omega_M$ forces either $\sp{a}{c} = 0$ or $\sp{b}{d} = 0$.
 By the factor-level S4, the corresponding reverse products vanish, giving
-$\seqp{(c\otimes d)}{(a\otimes b)} = 0$.
+$\sp{(c\otimes d)}{(a\otimes b)} = 0$.
 \end{proof}
+
+\begin{remark}[Bootstrapping order]\label{rem:bootstrap}
+The verification of S1--S7 on the composite avoids a potential
+circularity.  The product-form sequential
+product~\eqref{eq:product-sp} is first defined on the algebraic
+tensor product $V_B \otimes V_M$ (not on all of~$V_{BM}$) by
+bilinear extension.  Axioms S1--S7 are verified on this subspace
+using only the factor-level axioms and bilinearity---no reference
+to the full composite $V_{BM}$ is needed.  By
+Theorem~\ref{thm:EJA}, the algebraic tensor product equipped with
+this product carries EJA structure.  The trace form non-degeneracy
+argument (Proposition~\ref{prop:nondeg}) then shows that the
+product effects $\{a_i \otimes b_j\}$ are linearly independent,
+giving $\dim(V_{BM}) \ge \dim(V_B) \cdot \dim(V_M)$.  Minimality
+(Assumption~\ref{ass:minimal-composite}) supplies the upper bound,
+yielding $V_{BM} = V_B \otimes V_M$.
+\end{remark}
 
 %--------------------------------------------------------------------
 \subsection{From Faithful Tracking to Local

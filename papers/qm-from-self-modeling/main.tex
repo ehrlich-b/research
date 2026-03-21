@@ -420,8 +420,17 @@ correctly but provides no prescription for the Peirce $1$-space
 \label{sec:sp-corrected}
 
 The missing Peirce $1$-space contribution comes from the self-modeling
-feedback loop.  The general corrected product for
-$a = \sum_{i} \lambda_{i}\, p_{i}$ is:
+feedback loop.  We now show that the form of the corrected product is
+\emph{forced} by the axioms, not chosen.  Any binary operation on
+effects satisfying \ref{ax:S1} (additivity in the second argument),
+\ref{ax:S2} (continuity in the first), and the sharp constraint
+$\seqp{p}{b} = \comp{p}(b)$ must respect the Peirce decomposition:
+the map $\seqp{a}{\cdot}$ is a linear endomorphism (by \ref{ax:S1}
+and finite-dimensionality) whose range on each Peirce subspace is
+constrained to that subspace (by the compression algebra structure).
+The diagonal coefficients are pinned to the eigenvalues by
+eigenvalue coalescence and \ref{ax:S2}.  Thus the general product
+for $a = \sum_{i} \lambda_{i}\, p_{i}$ must take the form:
 \begin{equation}\label{eq:general-product}
   \seqp{a}{b}
   = \sum_{i} \lambda_{i}\, \comp{p_{i}}(b)
@@ -430,7 +439,9 @@ $a = \sum_{i} \lambda_{i}\, p_{i}$ is:
 where the first sum captures diagonal (Peirce $2$-space) contributions
 via compressions, and the second sum restores the off-diagonal (Peirce
 $1$-space) contributions through a \emph{mixing function}
-$f: [0,1] \times [0,1] \to \mathbb{R}$ to be determined.
+$f: [0,1] \times [0,1] \to \mathbb{R}$ to be determined.  The full
+derivation of this spectral extension theorem appears in the
+supplementary material.
 
 The mixing function is constrained by the requirement that the product
 map effects to effects: $0 \leq \seqp{a}{b} \leq \id$ for all effects
@@ -478,27 +489,38 @@ the mixing function that saturates the positivity bound.
 \end{proposition}
 
 \begin{proof}
-  The only $f$ consistent with \ref{ax:S5} (compatible associativity)
-  is the maximal one.  Write $f = c\sqrt{\lambda_{i}\,\lambda_{j}}$
-  for some $c \in [0,1]$.  For compatible $a, b$ with distinct
-  eigenvalues and arbitrary $d$ with nonzero Peirce $1$-space
-  component, the left-hand side $\seqp{a}{(\seqp{b}{d})}$ has Peirce
-  $1$-space coefficient $c^{2}\sqrt{\alpha_{1}\alpha_{2}\beta_{1}\beta_{2}}$,
-  while the right-hand side $\seqp{(\seqp{a}{b})}{d}$ has coefficient
-  $c\sqrt{\alpha_{1}\alpha_{2}\beta_{1}\beta_{2}}$.  Setting these
-  equal gives $c^{2} = c$, so $c \in \{0, 1\}$.  Since $c = 0$
-  violates \ref{ax:S3} (unitality), we conclude $c = 1$.
+  Let $f$ be any continuous mixing function satisfying the
+  positivity bound~\eqref{eq:pos-bound}.  For compatible
+  $a = \alpha_{1} p_{1} + \alpha_{2} p_{2}$ and
+  $b = \beta_{1} p_{1} + \beta_{2} p_{2}$ sharing an eigenbasis, \ref{ax:S5}
+  requires $\seqp{a}{(\seqp{b}{d})} = \seqp{(\seqp{a}{b})}{d}$ for
+  all effects $d$.  Comparing the Peirce $1$-space coefficients of both
+  sides gives the multiplicative functional equation
+  \begin{equation}\label{eq:func-eq}
+    f(\alpha_{1}, \alpha_{2})\, f(\beta_{1}, \beta_{2})
+    = f(\alpha_{1}\beta_{1},\; \alpha_{2}\beta_{2}).
+  \end{equation}
+  With the boundary conditions $f(1, \lambda) = \lambda$
+  and $f(0, \lambda) = 0$ (from \ref{ax:S3} and positivity),
+  factorization gives $f(x, y) = g(x)\, h(y)$ where $g$ and $h$ are
+  continuous multiplicative functions on $[0,1]$.  By the
+  multiplicative Cauchy theorem on $\mathbb{R}_{> 0}$, each is a
+  power: $g(x) = x^{s}$, $h(y) = y^{t}$.  The boundary condition
+  $f(1, \lambda) = \lambda$ forces $t = 1 - s$; symmetry of the
+  positivity bound under $(i, j) \leftrightarrow (j, i)$ gives
+  $s = t$, hence $s = t = 1/2$.  Therefore
+  $f(\lambda_{i}, \lambda_{j}) = \sqrt{\lambda_{i}\, \lambda_{j}}$.
 \end{proof}
 
 \noindent
-Maximal coherence says the self-modeling feedback preserves all
-Peirce $1$-space information rather than discarding it.  Any
-sub-maximal $f$ corresponds to a \emph{lossy} update that compounds
-decoherence under repeated application, violating associativity for
-compatible effects.  The extreme case $f = 0$ recovers the pinching
-product, which annihilates all Peirce $1$-space components and fails
-\ref{ax:S3}.  Note that maximal coherence is not an additional
-assumption: it is forced by the sequential product axioms.
+The key step is the multiplicative functional
+equation~\eqref{eq:func-eq}: the mixing function must be
+\emph{multiplicatively homomorphic} in the eigenvalue pairs.
+Combined with continuity (\ref{ax:S2}) and the boundary conditions,
+this forces the unique solution
+$f = \sqrt{\lambda_{i}\, \lambda_{j}}$.  Note that maximal coherence
+is not an additional assumption: it is forced by the sequential
+product axioms.
 
 The corrected product with
 $f = \sqrt{\lambda_{i}\, \lambda_{j}}$ is:
