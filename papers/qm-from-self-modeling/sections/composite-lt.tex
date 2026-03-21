@@ -106,12 +106,13 @@ yielding $V_{BM} = V_B \otimes V_M$.
 \end{remark}
 
 %--------------------------------------------------------------------
-\subsection{From Faithful Tracking to Local
-Tomography}\label{subsec:lt-proof}
+\subsection{Local Tomography}\label{subsec:lt-proof}
 
-The key step is showing that faithful self-modeling forces the composite
-to be locally tomographic: product measurements suffice to determine all
-joint states.
+The key step is showing that the composite is locally tomographic:
+product measurements suffice to determine all joint states.
+Conceptually, faithful self-modeling ensures that body--model
+correlations carry full information (Proposition~\ref{prop:nondeg}
+below); the formal proof then uses state separation and minimality.
 
 \begin{assumption}[Simple EJA]\label{ass:simple-eja}
 The EJA $V$ is \emph{simple} (not a nontrivial direct sum of EJAs).
@@ -142,6 +143,17 @@ isomorphism (faithful self-modeling), $\varphi^{-1}$ is a bijection,
 so $B(a,b) = \tau(a\circ\varphi^{-1}(b))$ is non-degenerate: if
 $B(a,b) = 0$ for all $a$, then $\varphi^{-1}(b) = 0$, hence $b=0$.
 \end{proof}
+
+\begin{remark}[Role of the correlation form]\label{rem:corr-role}
+Non-degeneracy of~$B$ ensures that every model effect~$b$ is
+correlated with some body effect~$a$ through the self-modeling
+isomorphism~$\varphi$.  This is the conceptual reason product
+measurements are tomographically complete: no body--model correlation
+is invisible to product-form observations.  The formal proof below
+establishes the same conclusion via state separation, which requires
+only the composite axioms (C1)--(C4) and avoids working with the
+bilinear form on the composite directly.
+\end{remark}
 
 \begin{theorem}[Local tomography]\label{thm:local-tomo}
 Under Assumptions~\ref{ass:minimal-composite} and~\ref{ass:simple-eja},

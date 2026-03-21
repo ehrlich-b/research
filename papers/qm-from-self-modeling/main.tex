@@ -442,9 +442,22 @@ for $a = \sum_{i} \lambda_{i}\, p_{i}$ must take the form:
 where the first sum captures diagonal (Peirce $2$-space) contributions
 via compressions, and the second sum restores the off-diagonal (Peirce
 $1$-space) contributions through a \emph{mixing function}
-$f: [0,1] \times [0,1] \to \mathbb{R}$ to be determined.  The full
-derivation of this spectral extension theorem appears in the
-supplementary material.
+$f: [0,1] \times [0,1] \to \mathbb{R}$ to be determined.
+
+\emph{Why this form is forced.}
+By \ref{ax:S1}, $\seqp{a}{\cdot}$ is a linear endomorphism of~$V$.
+The Peirce decomposition with respect to the spectral projectors of~$a$
+decomposes $V$ into subspaces $V_2(p_i)$ and $V_1(p_i, p_j)$.  Since
+compressions are projections onto these subspaces
+(Alfsen--Shultz~\cite{AlfsenShultz2003}), linearity forces
+$\seqp{a}{\cdot}$ to act by a scalar on each Peirce subspace.  The
+sharp constraint $\seqp{p}{b} = \comp{p}(b)$ pins the Peirce $2$-space
+scalars to eigenvalues by coalescence (letting $\lambda_i \to \lambda_j$
+and applying \ref{ax:S2}).  Thus~\eqref{eq:general-product} is the
+unique form compatible with \ref{ax:S1}, \ref{ax:S2}, and the
+sharp constraint; only the Peirce $1$-space
+scalars~$f(\lambda_i, \lambda_j)$ remain free.  The detailed
+computation appears in \Cref{app:proofs}.
 
 The mixing function is constrained by the requirement that the product
 map effects to effects: $0 \leq \seqp{a}{b} \leq \id$ for all effects
@@ -523,7 +536,12 @@ Combined with continuity (\ref{ax:S2}) and the boundary conditions,
 this forces the unique solution
 $f = \sqrt{\lambda_{i}\, \lambda_{j}}$.  Note that maximal coherence
 is not an additional assumption: it is forced by the sequential
-product axioms.
+product axioms.  The role of self-modeling in this result is
+\emph{constructive}: the tracking isomorphism~$\varphi$ provides
+the sequential product on which the axioms act
+(\Cref{sec:sp-def}).  Without~$\varphi$, there is no product to
+constrain; once the product exists, the axioms determine~$f$
+uniquely.
 
 The corrected product with
 $f = \sqrt{\lambda_{i}\, \lambda_{j}}$ is:
