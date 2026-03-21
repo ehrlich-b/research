@@ -105,8 +105,8 @@ unique survivor.
 %--------------------------------------------------------------------
 \subsection{C*-Algebra Promotion}\label{subsec:cstar}
 
-Three published theorems, each with independently verifiable hypotheses,
-promote the surviving EJA to a C*-algebra.
+The surviving EJA is promoted to a C*-algebra by a single published
+theorem.
 
 \begin{theorem}[{C*-algebra structure;
   \cite[Theorem~3]{vandeWetering2019b}}]\label{thm:vdW3}
@@ -131,72 +131,51 @@ Composite is locally tomographic
 \end{tabular}
 \end{center}
 
-\begin{theorem}[{Complex type identification;
-  \cite{BarnumWilce2014}}]\label{thm:BW}
-Let $(V, \cdot)$ be a finite-dimensional EJA embedded as a system type
-in a locally tomographic dagger-compact probabilistic theory containing
-a qubit ($V_3 \cong M_2(\mathbb{C})^{\mathrm{sa}}$) as a subsystem.
-Then $V \cong M_n(\mathbb{C})^{\mathrm{sa}}$ for some $n \ge 1$.
-\end{theorem}
-
 \noindent
-The qubit hypothesis requires care: the type exclusions above have
-already eliminated real ($n \ge 2$), quaternionic ($n \ge 2$), spin
-factors ($n \ge 4$, $n \ne 3$), and the Albert algebra. The only
-surviving simple EJA types are $\mathbb{R}$ (trivial) and
-$M_n(\mathbb{C})^{\mathrm{sa}}$ for $n \ge 2$. For $n \ge 2$, any
-orthogonal pair $\{p, p^\perp\}$ of projective units defines a two-level
-face that is isomorphic to $V_3 \cong M_2(\mathbb{C})^{\mathrm{sa}}$ ---
-this identification is valid precisely because the non-complex types have
-already been excluded. The categorical structure (dagger-compact
-probabilistic theory) is provided by the composite $V_{BM}$ with its
-product-form sequential product and the dagger given by the involution
-exhibited below.
+Theorem~\ref{thm:vdW3} combined with the type exclusion of
+Section~\ref{subsec:exclusion} establishes that
+$V \cong M_n(\mathbb{C})^{\mathrm{sa}}$ for some $n \ge 2$.  This is
+the self-adjoint part of the C*-algebra $M_n(\mathbb{C})$, and the
+C*-promotion is complete.
 
-\begin{center}
-\begin{tabular}{lll}
-\toprule
-\textbf{Hypothesis} & \textbf{Status} & \textbf{Established in} \\
-\midrule
-$V$ is a finite-dimensional EJA
-  & Verified & Theorem~\ref{thm:EJA} \\
-Locally tomographic composite
-  & Verified & Theorem~\ref{thm:local-tomo} \\
-Qubit subsystem $V_3$
-  & Verified & Type exclusion above \\
-  & & (only complex survives; \\
-  & & two-level faces are $V_3$) \\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{remark}[Consistency with independent results]\label{rem:consistency}
+Two further published theorems provide independent consistency checks
+on the conclusion $V \cong M_n(\mathbb{C})^{\mathrm{sa}}$.
 
-\begin{theorem}[{Jordan-to-C* promotion;
-  \cite{HancheOlsen1985}}]\label{thm:HO}
-Let $E$ be a JB-algebra. If $E \otimes E_2$ can be given the structure
-of a JB-algebra such that the Jordan product satisfies the factorization
-identities $(a \otimes 1) \circ (b \otimes 1) = (a \circ b) \otimes 1$
-and $(1 \otimes x) \circ (1 \otimes y) = 1 \otimes (x \circ y)$,
-where $E_2 = M_2(\mathbb{C})^{\mathrm{sa}}$, then $E$ is the
-self-adjoint part of a C*-algebra.
-\end{theorem}
+\emph{Barnum--Wilce~\cite{BarnumWilce2014}.}
+Barnum and Wilce prove that in a locally tomographic dagger-compact
+probabilistic theory containing a qubit, every EJA system type is
+$M_n(\mathbb{C})^{\mathrm{sa}}$.  Their hypotheses are categorical
+(they require a full monoidal theory with dagger structure on every
+object, not merely one composite), and we do not construct this
+categorical apparatus here.  However, our conclusion is consistent
+with their result: after establishing $V = M_n(\mathbb{C})^{\mathrm{sa}}$
+via Theorem~\ref{thm:vdW3}, the category of complex matrix algebras
+with Hilbert space tensor products does form a locally tomographic
+dagger-compact theory.
 
-\noindent
-The hypotheses of Theorem~\ref{thm:HO} are satisfied: $V$ is a
-finite-dimensional EJA (hence a JB-algebra), and the qubit subsystem
-$E_2 = M_2(\mathbb{C})^{\mathrm{sa}}$ is available by the type
-identification above. The composite $V_{BM}$ with its product-form
-sequential product provides the JB-algebra tensor product, and the
-product-form condition $\sp{(a\otimes b)}{(c\otimes d)}
-= \sp{a}{c} \otimes \sp{b}{d}$ implies the required Jordan-product
-factorization identities.
-This theorem is consistent with Theorems~\ref{thm:vdW3}
-and~\ref{thm:BW} and provides an independent route to the C*-algebra
-conclusion.
+\emph{Hanche-Olsen~\cite{HancheOlsen1985}.}
+Hanche-Olsen proves that a JB-algebra $E$ whose tensor product
+$E \otimes E_2$ with the qubit algebra
+$E_2 = M_2(\mathbb{C})^{\mathrm{sa}}$ is again a JB-algebra
+(with factorization identities for the Jordan product) must be the
+self-adjoint part of a C*-algebra.  The qubit subsystem $E_2$ is
+available only \emph{after} type exclusion has already established
+the complex type, so this theorem does not provide an independent
+route to the conclusion.  It does, however, confirm the C*-algebra
+structure through entirely different mathematical machinery
+(JB-algebra tensor products rather than sequential product
+classification).
+
+Neither theorem is used in the derivation; both serve as cross-checks
+that the conclusion is robust.
+\end{remark}
 
 %--------------------------------------------------------------------
 \subsection{The Involution}\label{subsec:involution}
 
-Theorems~\ref{thm:vdW3}--\ref{thm:BW} establish that
+Theorem~\ref{thm:vdW3} and the type exclusion of
+Section~\ref{subsec:exclusion} establish that
 $V = M_n(\mathbb{C})^{\mathrm{sa}}$ is the self-adjoint part of the
 C*-algebra $A = M_n(\mathbb{C})$. The C*-algebra involution is the
 conjugate transpose:
@@ -255,15 +234,13 @@ premise of faithful self-modeling.
   (Section~\ref{sec:axioms}).
 \item By Theorem~\ref{thm:EJA} (van de Wetering), $V$ is an EJA.
 \item The composite $V_{BM}$ with the product-form SP inherits
-  S1--S7 (Proposition~\ref{prop:inheritance}), and the
-  non-degeneracy of the EJA trace form combined with minimality yields
-  local tomography (Theorem~\ref{thm:local-tomo}).
+  S1--S7 (Proposition~\ref{prop:inheritance}), and state
+  separation combined with minimality yields local tomography
+  (Theorem~\ref{thm:local-tomo}).
 \item Dimension counting excludes all non-complex simple EJA types
   (Section~\ref{subsec:exclusion}).
-\item Theorem~\ref{thm:vdW3} (C*-promotion),
-  Theorem~\ref{thm:BW} (complex type), and
-  Theorem~\ref{thm:HO} (Jordan-to-C* consistency) yield
-  $V = M_n(\mathbb{C})^{\mathrm{sa}}$ with the conjugate-transpose
-  involution. \qed
+\item Theorem~\ref{thm:vdW3} (C*-promotion via van de Wetering)
+  yields $V = M_n(\mathbb{C})^{\mathrm{sa}}$ with the
+  conjugate-transpose involution. \qed
 \end{enumerate}
 \end{proof}

@@ -97,10 +97,10 @@ bilinear extension.  Axioms S1--S7 are verified on this subspace
 using only the factor-level axioms and bilinearity---no reference
 to the full composite $V_{BM}$ is needed.  By
 Theorem~\ref{thm:EJA}, the algebraic tensor product equipped with
-this product carries EJA structure.  The trace form non-degeneracy
-argument (Proposition~\ref{prop:nondeg}) then shows that the
-product effects $\{a_i \otimes b_j\}$ are linearly independent,
-giving $\dim(V_{BM}) \ge \dim(V_B) \cdot \dim(V_M)$.  Minimality
+this product carries EJA structure.  State separation
+(Theorem~\ref{thm:local-tomo}) then shows that the product effects
+$\{a_i \otimes b_j\}$ are linearly independent, giving
+$\dim(V_{BM}) \ge \dim(V_B) \cdot \dim(V_M)$.  Minimality
 (Assumption~\ref{ass:minimal-composite}) supplies the upper bound,
 yielding $V_{BM} = V_B \otimes V_M$.
 \end{remark}
@@ -150,22 +150,46 @@ Under Assumptions~\ref{ass:minimal-composite} and~\ref{ass:simple-eja},
 \]
 \end{theorem}
 
-\begin{proof}[Proof sketch]
-The non-degeneracy of $B$ implies that the product effects
-$\{a_i\otimes b_j\}$, where $\{a_i\}$ and $\{b_j\}$ are bases for $V_B$
-and $V_M$ respectively, are linearly independent in $V_{BM}$. Indeed, if
-$\sum_{i,j}\alpha_{ij}\,a_i\otimes b_j = 0$, then for any fixed~$a$,
-the map $b \mapsto \sum_j \alpha_{ij}\,B(a,b_j) = 0$ forces all
-$\alpha_{ij}=0$ by non-degeneracy.
+\begin{proof}
+\emph{Lower bound.}
+Let $\{a_1,\ldots,a_d\}$ and $\{b_1,\ldots,b_d\}$ be bases for
+$V_B$ and $V_M$ respectively ($d = \dim V_B = \dim V_M$).
+We show that the $d^2$ product effects
+$\{a_i \otimes b_j\}$ are linearly independent in~$V_{BM}$.
 
-This gives the lower bound $\dim(V_{BM}) \ge \dim(V_B)\cdot\dim(V_M)$.
-By minimality (Assumption~\ref{ass:minimal-composite}), the composite
-contains no structure beyond what is forced by axioms (C1)--(C4) and
-the product-form SP. Since the product effects span a
-$\dim(V_B)\cdot\dim(V_M)$-dimensional subspace, and the SP preserves
-this subspace (product effects map to product effects
-under~\eqref{eq:product-sp}), minimality gives the upper bound
-$\dim(V_{BM}) \le \dim(V_B)\cdot\dim(V_M)$.
+Suppose $\sum_{i,j} \alpha_{ij}\, a_i \otimes b_j = 0$ in $V_{BM}$.
+By axiom~(C3), every product state $\omega_B \otimes \omega_M$
+belongs to the state space of~$V_{BM}$.  Evaluating:
+\[
+  0 = (\omega_B \otimes \omega_M)\!\Bigl(\sum_{i,j} \alpha_{ij}\,
+  a_i \otimes b_j\Bigr)
+  = \sum_{i,j} \alpha_{ij}\, \omega_B(a_i)\, \omega_M(b_j)
+\]
+for all states $\omega_B$ on $V_B$ and $\omega_M$ on $V_M$.
+Fix~$\omega_B$.  Then for all~$\omega_M$:
+\[
+  \omega_M\!\Bigl(\sum_j c_j\, b_j\Bigr) = 0,
+  \qquad c_j \coloneqq \sum_i \alpha_{ij}\, \omega_B(a_i).
+\]
+States separate points in finite-dimensional order unit
+spaces~\cite{AlfsenShultz2003}, so $\sum_j c_j\, b_j = 0$.
+Since $\{b_j\}$ is a basis, $c_j = 0$ for every~$j$, i.e.,
+\[
+  \omega_B\!\Bigl(\sum_i \alpha_{ij}\, a_i\Bigr) = 0
+  \qquad \text{for all } \omega_B \text{ and all } j.
+\]
+State separation again gives $\sum_i \alpha_{ij}\, a_i = 0$ for
+every~$j$, and since $\{a_i\}$ is a basis, $\alpha_{ij} = 0$ for
+all~$i, j$.  Hence the product effects are linearly independent and
+$\dim(V_{BM}) \ge d^2$.
+
+\emph{Upper bound.}
+By minimality (Assumption~\ref{ass:minimal-composite}), $V_{BM}$
+contains no structure beyond what is forced by (C1)--(C4) and the
+product-form SP\@.  The product effects span a $d^2$-dimensional
+subspace, and the SP preserves this subspace (product effects map to
+product effects under~\eqref{eq:product-sp}), so minimality gives
+$\dim(V_{BM}) \le d^2$.
 \end{proof}
 
 %--------------------------------------------------------------------
