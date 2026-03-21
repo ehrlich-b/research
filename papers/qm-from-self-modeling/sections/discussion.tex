@@ -44,7 +44,9 @@ assumption's role, restrictiveness, and the consequences of weakening
 it.
 
 \paragraph{Assumption~\ref{ass:finite}: Finite-dimensional spectral OUS.}
-This is the most restrictive assumption.  The spectral decomposition
+We argue in \Cref{subsec:unified} that this follows from finite
+capacity of the embedding region.  It is the most restrictive
+assumption in the formal sense.  The spectral decomposition
 $a = \sum_{i} \lambda_{i}\, p_{i}$, which underlies the entire
 product construction~\eqref{eq:general-product}, requires a
 well-behaved spectral theory.  In finite dimensions, this is
@@ -77,6 +79,8 @@ self-knowledge.  Exploring this landscape of approximate self-models
 is a natural direction for future work.
 
 \paragraph{Assumption~\ref{ass:minimal}: Minimal composite.}
+We argue in \Cref{subsec:unified} that minimality is the natural
+composite for a maximally efficient self-modeler.
 The body--model composite $V_{BM}$ is defined as the minimal order
 unit space carrying product states, product effects, non-signaling
 constraints, and a product-form sequential product.  For complex
@@ -95,6 +99,9 @@ assumption is precisely what enforces local tomography, which in turn
 excludes the non-complex types.
 
 \paragraph{Assumption~\ref{ass:simple}: Simple EJA.}
+We argue in \Cref{subsec:unified} that simplicity corresponds to
+``whole models whole''---the self-modeler models all of itself, not
+independent parts.
 The trace form non-degeneracy argument in
 \Cref{prop:nondeg} requires the EJA to be
 simple---having no nontrivial Jordan ideal.  An EJA with a direct sum
@@ -107,6 +114,66 @@ main theorem applied to each summand.  The direct sum then describes a
 system with superselection sectors, each governed by complex quantum
 mechanics.  Thus Assumption~\ref{ass:simple} restricts to irreducible
 systems, which is the generic case.
+
+
+%--------------------------------------------------------------------
+\subsection{The Assumptions as Self-Modeling}\label{subsec:unified}
+
+The four structural assumptions are presented above as independent
+conditions, and the honest accounting is: one operational premise plus
+four structural assumptions.  We now argue that this accounting, while
+mathematically correct, obscures a deeper unity.  The four assumptions
+are not independent design choices drawn from a menu of alternatives.
+They are what self-modeling \emph{means} when unpacked into the
+language of order unit spaces.
+
+\paragraph{Finite capacity.}
+A self-modeler that contains an isomorphic copy of itself within itself
+must have finite state-space dimension.  An infinite-dimensional system
+would require an infinite-dimensional internal model, but a subsystem
+embedded in a finite spatial region has finite information
+capacity~\cite{Bekenstein1981}.  The spectral structure
+(distinguishable states, resolutions of unity) is not an abstract
+regularity condition: it is the minimal apparatus for
+\emph{probing}---a system that tests its own state requires states to
+distinguish.  In this sense, Assumption~\ref{ass:finite} is not a
+restriction on the formalism but a structural consequence of what ``can
+probe itself in a finite region'' means operationally.
+
+\paragraph{Faithfulness.}
+This is the operational premise itself.  No further argument is needed.
+
+\paragraph{Efficiency.}
+Assumption~\ref{ass:minimal} (minimal composite) says the body--model
+composite carries exactly the structure needed for faithful tracking
+and no more.  A self-modeler at the fixed point of a self-modeling
+basin---the most efficient tracker---has no reason to maintain excess
+degrees of freedom.  Extra composite structure beyond what product
+measurements require is dead weight: it contributes nothing to
+tracking fidelity and increases the system's complexity without
+improving its self-model.  We do not prove that self-modeling forces
+minimality, but we note that minimality is the composite structure one
+would \emph{expect} of a maximally efficient self-modeler, and that
+for the theory we derive (complex quantum mechanics) the minimal and
+maximal composites coincide~\cite{Barnum2023}.
+
+\paragraph{Irreducibility.}
+Assumption~\ref{ass:simple} (simple EJA) says the algebra has no
+nontrivial ideal---it cannot be decomposed into independent blocks.
+A self-modeler that decomposes into independent subsystems is not
+modeling \emph{all} of itself: each block models only itself, not the
+whole.  Simplicity is the algebraic expression of ``whole models
+whole.''  As noted in \Cref{subsec:assumptions}, each simple summand
+independently satisfies the main theorem, so the assumption restricts
+to irreducible systems rather than excluding composite ones.
+
+\medskip\noindent
+We emphasize that this is a philosophical argument, not a derivation.
+The mathematical theorem requires the four assumptions as stated.  But
+the assumptions are not arbitrary: they are the structural shape that
+self-modeling takes in a finite-capacity system.  The ``axiomatic
+corridor'' identified by the theorem is, we contend, the corridor of
+self-modeling itself.
 
 
 %--------------------------------------------------------------------
@@ -347,4 +414,10 @@ to $\Mnsa{n}$ with the conjugate-transpose involution.
 
 The complex field, the Jordan product, the $C^{*}$-involution, and
 local tomography are not independent postulates of quantum theory.
-They are consequences of self-modeling.
+They are consequences of self-modeling.  The four structural
+assumptions required by the theorem---finite dimensionality,
+faithfulness, minimal composite, and simplicity---are, we have
+argued, not independent additions but the structural shape that
+self-modeling takes in a finite-capacity system.  If this argument is
+accepted, the entire derivation flows from a single source: what it
+means for a system to contain and use a faithful model of itself.
