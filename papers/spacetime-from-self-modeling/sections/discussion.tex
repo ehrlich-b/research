@@ -46,16 +46,16 @@ causal dynamical triangulations, and Regge calculus.  However, its
 applicability to the self-modeling Hamiltonian in $d \geq 2$ is not
 guaranteed---see Gap~1 below.
 
-\emph{Definitional: MVEH via thermal time.}---The maximal vacuum
-entanglement hypothesis does not appear as an assumption in our framework.
-In the absence of pre-existing geometry, the modular flow of the
-self-modeling lattice state \emph{defines} the emergent geometric flow,
-following the thermal time hypothesis~\cite{ConnesRovelli1994}.  The
-state whose modular flow defines a smooth emergent geometry necessarily
-satisfies MVEH: the ``vacuum'' is the geometry-defining state by
-definition.  This parallels the dissolution of the involution assumption
-in Paper~5~\cite{Paper5}, where the algebraic structure produced by
-self-modeling defines the standard rather than matching an external one.
+\emph{Structural identification: MVEH via thermal time.}---The maximal
+vacuum entanglement hypothesis does not appear as a numbered assumption
+in our framework.  In the absence of pre-existing geometry, the modular
+flow of the self-modeling lattice state defines the emergent geometric
+flow, following the thermal time hypothesis~\cite{ConnesRovelli1994}.
+This is the only available identification of geometry with state in a
+pre-geometric framework, and the state so identified necessarily
+satisfies MVEH.  We regard this as a structural identification---necessary
+but not mathematically derived.  The existence and uniqueness of a
+geometry-defining state are open questions.
 Section~\ref{sec:equilibrium} discusses this identification in detail,
 including the Sorce caveat~\cite{Sorce2024} on conformal symmetry
 requirements for geometric modular flow.
@@ -63,9 +63,7 @@ requirements for geometric modular flow.
 \subsection{Remaining gaps}
 \label{sec:gaps}
 
-Two gaps remain in the derivation chain.  Neither is specific to the
-self-modeling framework; both are shared with all lattice approaches to
-emergent gravity.
+Three gaps remain in the derivation chain.
 
 \paragraph{Gap 1: Continuum limit.}
 The Wilsonian argument that the lattice produces a smooth Riemannian
@@ -75,40 +73,50 @@ lattice correlation functions converge (in an appropriate sense) to those
 of a local quantum field theory on a Riemannian manifold as $a \to 0$.
 This is a hard open problem shared by \emph{all} lattice quantum gravity
 programs---lattice QCD, causal dynamical triangulations, Regge
-calculus---and is not specific to self-modeling.  If the continuum limit
-does not exist (no UV fixed point), the entire Jacobson route fails.  If
-it exists but produces non-Riemannian geometry, the result
-changes---possibly to $f(R)$ gravity, torsion theories, or other
-modifications.
+calculus---and is not specific to self-modeling.  The Lovelock route
+(Sec.~\ref{sec:route-b}) removes the CFT requirement but still needs
+this continuum limit to produce smooth geometry.  The infrared behavior
+of the $d \geq 2$ Heisenberg model (likely N\'eel-ordered rather than
+conformal) means the emergent geometry may carry specific
+signatures---e.g., a mass gap corresponding to a cosmological
+constant---rather than being exactly Minkowski.  This is potentially
+interesting rather than problematic.
 
-\paragraph{Gap 2: Conformal approximation.}
+\paragraph{Gap 2: Conformal approximation (Route A only).}
 The Casini--Huerta--Myers conformal modular
-Hamiltonian~\cite{CasiniHuertaMyers2011}, used in
-Sec.~\ref{sec:einstein} to evaluate the matter entropy variation, is
+Hamiltonian~\cite{CasiniHuertaMyers2011}, used in Route~A
+(Sec.~\ref{sec:route-a}) to evaluate the matter entropy variation, is
 exact only for conformal field theories in causal diamonds.  For
-nonconformal fields, corrections of order $O\!\left((m\ell)^{2\Delta}\right)$
-appear~\cite{Speranza2016}, where $m$ is the mass scale breaking
-conformal invariance and $\ell$ is the ball radius.  These corrections
-modify the derived Einstein equation at subleading order.  In the window
-$a \ll \ell \ll 1/m$ (if it exists), the corrections are suppressed.  For
-the one-dimensional antiferromagnetic Heisenberg chain ($n = 2$, $J > 0$),
-which flows to the $SU(2)_1$ Wess--Zumino--Witten conformal field theory
-with central charge $c = 1$, the theory is exactly conformal and this gap
-vanishes.  Jacobson~\cite{Jacobson2016} conjectures that the
-leading-order Einstein equation survives nonconformal corrections; this is
-physically motivated but not proven.
+nonconformal fields, corrections of order
+$O\!\left((m\ell)^{2\Delta}\right)$ appear~\cite{Speranza2016}, where
+$m$ is the mass scale breaking conformal invariance and $\ell$ is the
+ball radius.  In $d = 1$, the $SU(2)_1$ WZW CFT makes this gap vanish.
+In $d \geq 2$, the likely N\'eel order makes the conformal approximation
+problematic.  This gap is specific to Route~A; Route~B
+(Sec.~\ref{sec:route-b}) circumvents it via Lovelock uniqueness.
+
+\paragraph{Gap 3: Tensoriality assumption (Route B only).}
+The Lovelock route assumes that the equation relating entanglement
+perturbations to geometry perturbations is a symmetric, divergence-free
+2-tensor equation built from the metric and its first two derivatives.
+This is physically reasonable---both sides are geometric
+quantities---but it is an assumption, not derived from self-modeling.
+If the entanglement-geometry relation involves higher derivatives or
+non-local terms, Lovelock's theorem does not apply and the resulting
+equation could differ from Einstein's (e.g., Lovelock gravity in
+$d + 1 > 4$).  This gap is specific to Route~B; Route~A derives the
+equation form explicitly.
 
 \paragraph{Note on MVEH.}
-MVEH is no longer listed as a gap.  As discussed in
-Sec.~\ref{sec:equilibrium} and above in Sec.~\ref{sec:derived-vs-input},
-it is reframed as a definitional identification via the thermal time
-hypothesis~\cite{ConnesRovelli1994}.  This reframing is the same logical
-move as the dissolution of the involution in Paper~5~\cite{Paper5}: when
-there is no external structure to match against, the structure produced by
-self-modeling \emph{is} the definition.  Numerical evidence from
-Sec.~\ref{sec:numerical} supports this: all Hamiltonian perturbations
-tested decrease $\ent(A)$, consistent with the self-modeling equilibrium
-state being a maximum of entanglement entropy.
+MVEH is not listed as a gap; it is reframed as a structural
+identification via the Connes--Rovelli thermal time
+hypothesis~\cite{ConnesRovelli1994}
+(Sec.~\ref{sec:equilibrium}).  This identification is necessary
+in a pre-geometric framework---there is no other candidate for
+the vacuum---but it is not a mathematical derivation: the existence
+and uniqueness of a geometry-defining state are open questions.
+Numerical evidence from Sec.~\ref{sec:numerical} is consistent
+with MVEH: all Hamiltonian perturbations tested decrease $\ent(A)$.
 
 \subsection{Comparison with related work}
 \label{sec:comparison}
@@ -120,8 +128,10 @@ Our contribution is the UV completion upstream of these inputs: we
 \emph{derive} the area-law entanglement structure from the self-modeling
 lattice (Links~L1--L5 in Table~\ref{tab:chain}), rather than assuming it.
 Jacobson's derivation was UV-agnostic---it applies to any UV completion
-satisfying its inputs.  We provide a specific, forced UV completion.  The
-downstream derivation (Links~L6--L8) follows Jacobson's argument.
+satisfying its inputs.  We provide a specific, forced UV completion.
+Route~A follows Jacobson's argument directly; Route~B provides an
+independent uniqueness argument via Lovelock's theorem that does not
+require the conformal modular Hamiltonian.
 
 \paragraph{Cao--Carroll--Michalakis (2017)~\cite{CCM2017}.}
 CCM derive the spatial constraint equation (the Hamiltonian constraint of
@@ -160,8 +170,9 @@ Paper~5~\cite{Paper5} showed that faithful self-modeling forces quantum
 mechanics: the state space is $M_n(\mathbb{C})^{sa}$ with the L\"uders
 sequential product and the conjugate-transpose involution.  This paper
 shows that self-modeling forces general relativity: the locality of
-self-modeling produces area-law entanglement, and Jacobson's argument
-converts this to Einstein's equations.
+self-modeling produces area-law entanglement, and either Jacobson's
+argument (Route~A, conformal regime) or Lovelock uniqueness (Route~B,
+$d \geq 2$) converts this to Einstein's equations.
 
 Together, the two papers establish that the self-modeling
 principle---combined with a lattice topology---yields both quantum
@@ -193,11 +204,11 @@ We state explicitly what lies outside the scope of this paper:
   equation~\eqref{eq:einstein} holds without the NEC; only the sign
   interpretation requires it.
 \item \textbf{Proof of MVEH.}  We do not prove the maximal vacuum
-  entanglement hypothesis from self-modeling.  We reframe it as
-  definitional via the thermal time hypothesis.  This reframing is an
-  interpretive argument, not a derivation.  If a state on the
-  self-modeling lattice were found that fails MVEH while still defining a
-  smooth emergent geometry, the definitional argument would need revision.
+  entanglement hypothesis from self-modeling.  We identify it as the
+  only available vacuum selection criterion in a pre-geometric framework
+  via the thermal time hypothesis.  This is a structural identification,
+  not a derivation.  The existence and uniqueness of a geometry-defining
+  state are open questions.
 \end{itemize}
 
 \subsection{Future work}
