@@ -274,6 +274,94 @@ def _kmeans(X, k, max_iter=100, n_init=10):
     return best_labels
 
 
+def peirce_mixing_test(W):
+    """Test whether off-diagonal coupling follows sqrt(lambda_i * lambda_j).
+
+    Paper 5's sequential product has Peirce 1-space coupling proportional
+    to the geometric mean of eigenvalues. If a weight matrix implements
+    this structure, the ratio of actual off-diagonal coupling to predicted
+    should be approximately constant across all eigenvalue pairs.
+
+    Returns dict with 'mean_ratio', 'std_ratio', 'ratios' (per pair),
+    and 'symmetry_ratio' (||W_sym|| / ||W||).
+    """
+    assert W.shape[0] == W.shape[1]
+    N = W.shape[0]
+
+    # Spectral decomposition
+    eigvals, eigvecs = np.linalg.eigh((W + W.T) / 2)  # symmetrize first
+
+    # Sort by descending |eigenvalue|
+    idx = np.argsort(-np.abs(eigvals))
+    eigvals = eigvals[idx]
+    eigvecs = eigvecs[:, idx]
+
+    # Use top k eigenvalues (skip near-zero ones)
+    k = min(10, N)
+    threshold = np.abs(eigvals[0]) * 0.01
+    k = max(2, np.sum(np.abs(eigvals) > threshold))
+    k = min(k, 10)
+
+    ratios = []
+    for i in range(k):
+        for j in range(i + 1, k):
+            li, lj = np.abs(eigvals[i]), np.abs(eigvals[j])
+            if li < 1e-10 or lj < 1e-10:
+                continue
+            expected = np.sqrt(li * lj)
+
+            # Peirce 1-space projection: component of W connecting
+            # eigenspace i and eigenspace j
+            vi = eigvecs[:, i:i+1]  # (N, 1)
+            vj = eigvecs[:, j:j+1]  # (N, 1)
+            # Off-diagonal coupling: vi^T W vj
+            actual = np.abs((vi.T @ W @ vj).item())
+
+            if expected > 1e-10:
+                ratios.append(actual / expected)
+
+    if len(ratios) == 0:
+        return {'mean_ratio': 0.0, 'std_ratio': 0.0, 'n_pairs': 0,
+                'symmetry_ratio': 0.5}
+
+    # Symmetry ratio: how symmetric is W?
+    W_sym = (W + W.T) / 2
+    W_norm = np.linalg.norm(W, 'fro')
+    sym_ratio = float(np.linalg.norm(W_sym, 'fro') / W_norm) if W_norm > 1e-12 else 0.5
+
+    return {
+        'mean_ratio': float(np.mean(ratios)),
+        'std_ratio': float(np.std(ratios)),
+        'n_pairs': len(ratios),
+        'consistency': float(1.0 - np.std(ratios) / (np.mean(ratios) + 1e-10)),
+        'symmetry_ratio': sym_ratio,
+    }
+
+
+def weight_symmetry(model):
+    """Measure symmetric/antisymmetric decomposition of each weight matrix.
+
+    Vanchurin: symmetric weights -> scalar fields, antisymmetric -> spinor.
+    Tracks r_sym = ||W_sym||_F / ||W||_F for each layer.
+
+    Returns dict mapping layer name -> r_sym.
+    """
+    import torch
+    results = {}
+    for name, param in model.named_parameters():
+        if 'weight' in name and param.dim() == 2:
+            w = param.detach().cpu().numpy()
+            if w.shape[0] != w.shape[1]:
+                continue
+            w_sym = (w + w.T) / 2
+            w_norm = np.linalg.norm(w, 'fro')
+            if w_norm > 1e-12:
+                results[name] = float(np.linalg.norm(w_sym, 'fro') / w_norm)
+            else:
+                results[name] = 0.5
+    return results
+
+
 def extract_square_weights(model, min_size=16):
     """Extract square weight matrices from a PyTorch model.
 
@@ -396,6 +484,19 @@ def measure_all(model, method='compose'):
 
     # Weight stats
     results['weight_stats'] = weight_stats(model)
+
+    # Peirce mixing function test (NEW)
+    peirce_results = {}
+    for name, m in zip(names, matrices):
+        peirce_results[name] = peirce_mixing_test(m)
+    results['peirce_mixing'] = peirce_results
+    # Aggregate: mean consistency across all matrices
+    consistencies = [v['consistency'] for v in peirce_results.values()
+                     if v['n_pairs'] > 0]
+    results['peirce_consistency'] = float(np.mean(consistencies)) if consistencies else 0.0
+
+    # Weight symmetry decomposition (NEW)
+    results['weight_symmetry'] = weight_symmetry(model)
 
     results['elapsed_seconds'] = time.time() - t0
     return results
