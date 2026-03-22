@@ -17,10 +17,12 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 cd "$HERE"
 
 echo "Syncing papers..."
-rsync -a --delete "$BLOG/landing/papers/qm-from-self-modeling/" papers/qm-from-self-modeling/ \
-    --exclude='*.aux' --exclude='*.log' --exclude='*.out' --exclude='*.xdv' --exclude='*.bbl' --exclude='*.blg' \
-    --exclude='*.sty' --exclude='*.md' --exclude='.claude'
-for f in experiential-measure-2026 born-fisher-2026 theorem-a-proof theorem-a-lemmas lipschitz-stability; do
+for dir in qm-from-self-modeling spacetime-from-self-modeling; do
+    rsync -a --delete "$BLOG/landing/papers/$dir/" "papers/$dir/" \
+        --exclude='*.aux' --exclude='*.log' --exclude='*.out' --exclude='*.xdv' --exclude='*.bbl' --exclude='*.blg' \
+        --exclude='*.sty' --exclude='*.md' --exclude='.claude'
+done
+for f in experiential-measure-2026 born-fisher-2026 theorem-a-proof theorem-a-lemmas lipschitz-stability spacetime-from-self-modeling-2026; do
     cp "$BLOG/landing/papers/${f}.tex" papers/ 2>/dev/null || true
     cp "$BLOG/landing/papers/${f}.pdf" papers/ 2>/dev/null || true
 done

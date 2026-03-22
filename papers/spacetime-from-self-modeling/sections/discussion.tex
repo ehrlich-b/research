@@ -1,0 +1,232 @@
+% discussion.tex — Paper 6, Section VII: Discussion
+% ASSERT_CONVENTION: natural_units=natural, metric_signature=mostly_plus, entropy_base=nats, modular_hamiltonian=K_minus_ln_rho, coupling_convention=H_sum_hxy, state_normalization=Tr_rho_1
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{What is derived versus what is input}
+\label{sec:derived-vs-input}
+
+The derivation chain summarized in Table~\ref{tab:chain} establishes
+Einstein's field equations from self-modeling through eight links.  It is
+important to state precisely what is derived, what is input, and what is
+standard methodology.
+
+\emph{Derived from self-modeling.}---The local algebra
+$M_n(\mathbb{C})^{sa}$ with the L\"uders sequential product is forced by
+faithful self-modeling~\cite{Paper5}. The SWAP interaction Hamiltonian
+$H = \sum_{\langle x,y\rangle} J\,\swapop$ is forced by diagonal $U(n)$
+covariance and Schur--Weyl duality (Sec.~\ref{sec:lattice}).  The
+area-law entanglement structure follows from the locality of this
+Hamiltonian via the WVCH mutual information
+bound~\cite{WVCH2008}, channel-capacity arguments, and the entanglement
+first law combined with modular Hamiltonian locality
+(Sec.~\ref{sec:arealaw}).  The entanglement first law
+$\delta\ent = \delta\langle\modH\rangle$ is an exact identity of quantum
+information theory, requiring no additional assumptions.
+
+\emph{Input: lattice topology.}---The graph $G = (V, E)$ defining which
+sites are nearest neighbors is not derived from self-modeling.  The paper
+derives the emergent \emph{metric}---the assignment of distances
+compatible with the entanglement structure---but not the
+\emph{topology}.  The spatial dimension is set by the graph structure:
+a $d$-dimensional regular lattice yields $d$ emergent spatial dimensions.
+This is an irreducible input to the framework.
+
+\emph{Input: antiferromagnetic coupling.}---The sign of~$J$ is not
+determined by self-modeling.  Only $J > 0$ (antiferromagnetic) supports
+nontrivial entanglement; the ferromagnetic ground state is a product
+state with zero entanglement (Sec.~\ref{sec:lattice}).  We work with
+$J > 0$ throughout; this is an input.
+
+\emph{Standard methodology: Wilsonian continuum limit.}---The passage
+from a lattice theory to a smooth Riemannian manifold at long wavelengths
+$L \gg a$ (where $a$ is the lattice spacing) employs a Wilsonian
+universality argument.  This is standard methodology in lattice QCD,
+causal dynamical triangulations, and Regge calculus.  However, its
+applicability to the self-modeling Hamiltonian in $d \geq 2$ is not
+guaranteed---see Gap~1 below.
+
+\emph{Definitional: MVEH via thermal time.}---The maximal vacuum
+entanglement hypothesis does not appear as an assumption in our framework.
+In the absence of pre-existing geometry, the modular flow of the
+self-modeling lattice state \emph{defines} the emergent geometric flow,
+following the thermal time hypothesis~\cite{ConnesRovelli1994}.  The
+state whose modular flow defines a smooth emergent geometry necessarily
+satisfies MVEH: the ``vacuum'' is the geometry-defining state by
+definition.  This parallels the dissolution of the involution assumption
+in Paper~5~\cite{Paper5}, where the algebraic structure produced by
+self-modeling defines the standard rather than matching an external one.
+Section~\ref{sec:equilibrium} discusses this identification in detail,
+including the Sorce caveat~\cite{Sorce2024} on conformal symmetry
+requirements for geometric modular flow.
+
+\subsection{Remaining gaps}
+\label{sec:gaps}
+
+Two gaps remain in the derivation chain.  Neither is specific to the
+self-modeling framework; both are shared with all lattice approaches to
+emergent gravity.
+
+\paragraph{Gap 1: Continuum limit.}
+The Wilsonian argument that the lattice produces a smooth Riemannian
+manifold $(M, \gab)$ at long wavelengths is a physical argument, not a
+rigorous construction.  A constructive proof would require showing that
+lattice correlation functions converge (in an appropriate sense) to those
+of a local quantum field theory on a Riemannian manifold as $a \to 0$.
+This is a hard open problem shared by \emph{all} lattice quantum gravity
+programs---lattice QCD, causal dynamical triangulations, Regge
+calculus---and is not specific to self-modeling.  If the continuum limit
+does not exist (no UV fixed point), the entire Jacobson route fails.  If
+it exists but produces non-Riemannian geometry, the result
+changes---possibly to $f(R)$ gravity, torsion theories, or other
+modifications.
+
+\paragraph{Gap 2: Conformal approximation.}
+The Casini--Huerta--Myers conformal modular
+Hamiltonian~\cite{CasiniHuertaMyers2011}, used in
+Sec.~\ref{sec:einstein} to evaluate the matter entropy variation, is
+exact only for conformal field theories in causal diamonds.  For
+nonconformal fields, corrections of order $O\!\left((m\ell)^{2\Delta}\right)$
+appear~\cite{Speranza2016}, where $m$ is the mass scale breaking
+conformal invariance and $\ell$ is the ball radius.  These corrections
+modify the derived Einstein equation at subleading order.  In the window
+$a \ll \ell \ll 1/m$ (if it exists), the corrections are suppressed.  For
+the one-dimensional antiferromagnetic Heisenberg chain ($n = 2$, $J > 0$),
+which flows to the $SU(2)_1$ Wess--Zumino--Witten conformal field theory
+with central charge $c = 1$, the theory is exactly conformal and this gap
+vanishes.  Jacobson~\cite{Jacobson2016} conjectures that the
+leading-order Einstein equation survives nonconformal corrections; this is
+physically motivated but not proven.
+
+\paragraph{Note on MVEH.}
+MVEH is no longer listed as a gap.  As discussed in
+Sec.~\ref{sec:equilibrium} and above in Sec.~\ref{sec:derived-vs-input},
+it is reframed as a definitional identification via the thermal time
+hypothesis~\cite{ConnesRovelli1994}.  This reframing is the same logical
+move as the dissolution of the involution in Paper~5~\cite{Paper5}: when
+there is no external structure to match against, the structure produced by
+self-modeling \emph{is} the definition.  Numerical evidence from
+Sec.~\ref{sec:numerical} supports this: all Hamiltonian perturbations
+tested decrease $\ent(A)$, consistent with the self-modeling equilibrium
+state being a maximum of entanglement entropy.
+
+\subsection{Comparison with related work}
+\label{sec:comparison}
+
+\paragraph{Jacobson (2016)~\cite{Jacobson2016}.}
+Jacobson's entanglement equilibrium derivation assumes three inputs:
+area-law entanglement entropy, the entanglement first law, and MVEH.
+Our contribution is the UV completion upstream of these inputs: we
+\emph{derive} the area-law entanglement structure from the self-modeling
+lattice (Links~L1--L5 in Table~\ref{tab:chain}), rather than assuming it.
+Jacobson's derivation was UV-agnostic---it applies to any UV completion
+satisfying its inputs.  We provide a specific, forced UV completion.  The
+downstream derivation (Links~L6--L8) follows Jacobson's argument.
+
+\paragraph{Cao--Carroll--Michalakis (2017)~\cite{CCM2017}.}
+CCM derive the spatial constraint equation (the Hamiltonian constraint of
+general relativity) from the entanglement structure of a
+finite-dimensional Hilbert space.  Our result gives the full
+\emph{spacetime} Einstein equation, including the dynamical sector, not
+only the spatial constraint.  The spatial part of our Einstein equation is
+consistent with CCM's constraint.  Both approaches share the insight that
+entanglement structure encodes geometry; the key difference is that CCM
+reconstruct spatial geometry from entanglement, while we (following
+Jacobson) derive the full gravitational dynamics from entanglement
+equilibrium.
+
+\paragraph{Lashkari--McDermott--Van Raamsdonk (2014)~\cite{LMVR2014}.}
+LMVR showed that the entanglement first law in holographic conformal field
+theories implies the \emph{linearized} Einstein equation.  Our
+derivation, following Jacobson~\cite{Jacobson2016}, extends this to the
+full \emph{nonlinear} Einstein equation via the entanglement equilibrium
+condition.  The LMVR result is recovered as the linearized limit of our
+Eq.~(\ref{eq:einstein}) around flat space.  Crucially, the LMVR derivation
+assumes AdS/CFT, while ours is non-holographic.
+
+\paragraph{Faulkner \textit{et~al.}\ (2014)~\cite{Faulkner2014}.}
+Faulkner~\textit{et~al.}\ derived the full nonlinear Einstein equations
+from entanglement in the holographic setting, extending LMVR beyond the
+linearized regime.  Their derivation, like LMVR's, assumes the AdS/CFT
+correspondence.  Our approach is non-holographic: the self-modeling
+lattice does not assume a bulk/boundary duality.  The self-modeling
+framework provides a UV completion in its own right, independent of
+holography.
+
+\subsection{Connection to Paper~5}
+\label{sec:paper5-connection}
+
+Paper~5~\cite{Paper5} showed that faithful self-modeling forces quantum
+mechanics: the state space is $M_n(\mathbb{C})^{sa}$ with the L\"uders
+sequential product and the conjugate-transpose involution.  This paper
+shows that self-modeling forces general relativity: the locality of
+self-modeling produces area-law entanglement, and Jacobson's argument
+converts this to Einstein's equations.
+
+Together, the two papers establish that the self-modeling
+principle---combined with a lattice topology---yields both quantum
+mechanics and general relativity as necessary consequences.  Quantum
+mechanics emerges from the algebraic structure of single-site
+self-modeling (the $B$--$M$ boundary interaction).  General relativity
+emerges from the entanglement structure of the multi-site lattice (the
+inter-site boundary interactions).
+
+\subsection{What this paper does not claim}
+\label{sec:not-claimed}
+
+We state explicitly what lies outside the scope of this paper:
+\begin{itemize}
+\item \textbf{Newton's constant.}  The value $\Gnewton = 1/(4\eta)$
+  depends on the entanglement entropy density~$\eta$, which in turn
+  depends on the lattice local dimension~$n$ and the lattice spacing~$a$.
+  These are not determined by self-modeling.
+\item \textbf{Spacetime dimension.}  The spatial dimension~$d$ is set by
+  the lattice topology $G = (V, E)$, which is an irreducible input.
+  Self-modeling does not select $d = 3$.
+\item \textbf{Cosmological constant.}  $\Lambda$ appears as an
+  undetermined integration constant in the Jacobson
+  derivation~\cite{Jacobson2016, JacobsonSperanza2019}.  We do not
+  predict its value.
+\item \textbf{Null energy condition.}  The sign chain producing
+  attractive gravity (Sec.~\ref{sec:einstein}) assumes the NEC
+  ($\Tab\, k^a k^b \geq 0$ for null $k^a$).  The tensor
+  equation~\eqref{eq:einstein} holds without the NEC; only the sign
+  interpretation requires it.
+\item \textbf{Proof of MVEH.}  We do not prove the maximal vacuum
+  entanglement hypothesis from self-modeling.  We reframe it as
+  definitional via the thermal time hypothesis.  This reframing is an
+  interpretive argument, not a derivation.  If a state on the
+  self-modeling lattice were found that fails MVEH while still defining a
+  smooth emergent geometry, the definitional argument would need revision.
+\end{itemize}
+
+\subsection{Future work}
+\label{sec:future}
+
+Several directions are natural extensions of this work.
+
+\emph{Spatial dimension from self-modeling.}---Can constraints on the
+lattice topology $G = (V, E)$ be derived from self-modeling requirements?
+If so, this would reduce the input set further, potentially selecting
+$d = 3$ spatial dimensions.
+
+\emph{Matter content.}---The self-modeling lattice produces a gravitational
+sector.  An important question is whether constraints on matter content
+(gauge groups, fermion representations) also follow from self-modeling,
+analogous to anomaly cancellation constraints in string theory.
+
+\emph{Spectral gap.}---Proving that the self-modeling Hamiltonian has a
+spectral gap above the ground state (for appropriate sign of~$J$ and
+appropriate dimension) would strengthen the area-law argument, bringing
+the Hastings theorem~\cite{Hastings2007} and the Brand\~ao--Horodecki
+result~\cite{BrandaoHorodecki2013} to bear directly.
+
+\emph{Larger numerical simulations.}---The exact diagonalization results
+in Sec.~\ref{sec:numerical} are limited to $N \leq 20$ sites.  Tensor
+network methods (DMRG, TEBD) could push to $N \sim 10^2$--$10^3$ in one
+dimension, providing stronger evidence for the area-law scaling and MVEH.
+
+\emph{Thermodynamic arrow of time.}---The thermal time hypothesis
+identifies physical time with modular flow.  The connection between this
+identification and the thermodynamic arrow of time in the self-modeling
+framework is an open and natural question.

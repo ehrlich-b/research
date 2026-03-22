@@ -1,0 +1,164 @@
+% arealaw.tex — Paper 6, Section III: Area-Law Entanglement
+% ASSERT_CONVENTION: natural_units=natural, metric_signature=mostly_plus, entropy_base=nats, modular_hamiltonian=K_minus_ln_rho, coupling_convention=H_sum_hxy, state_normalization=Tr_rho_1
+\section{Area-Law Entanglement}
+\label{sec:arealaw}
+
+The Jacobson entanglement equilibrium argument~\cite{Jacobson2016}
+requires two inputs from the UV theory: (J1)~the entanglement entropy
+variation $\delta\ent$ scales with the boundary area, not the volume;
+and (J2)~the entanglement first law
+$\delta\ent = \delta\langle\modH\rangle$ holds exactly.  We now
+establish both for the self-modeling lattice.
+
+\subsection{Entanglement first law}
+\label{sec:first-law}
+
+For any quantum state $\rho$ with reduced state
+$\rhoA = \Tr_B(\rho)$ and modular Hamiltonian
+$\modH = -\ln \rhoA$, the first-order change in the von~Neumann
+entropy under a perturbation $\rho \to \rho + \delta\rho$ with
+$\Tr(\delta\rho) = 0$ is
+\begin{equation}
+  \boxed{\delta \ent(A) = \delta\langle \modH \rangle.}
+  \label{eq:first-law}
+\end{equation}
+This is an \emph{exact identity} of quantum information
+theory~\cite{BCHM2013, LMVR2014}: expanding
+$\ent = -\Tr(\rhoA \ln \rhoA)$ to first order in $\delta\rhoA$ and
+using $\Tr(\delta\rhoA) = 0$ gives
+$\delta\ent = -\Tr(\delta\rhoA \ln\rhoA) = \Tr(\delta\rhoA \, \modH)
+= \delta\langle\modH\rangle$.  No approximations or additional
+assumptions are involved.  This establishes Jacobson
+input~(J2).
+
+\subsection{Area-law entanglement bounds}
+\label{sec:area-bounds}
+
+Consider a bipartition of the lattice $V = A \cup B$ with boundary
+$\partial A = \{\langle x,y \rangle \in E : x \in A,\, y \in B\}$ of
+size $|\partial A|$.  We establish area-law bounds from three
+complementary perspectives, covering different state classes and
+requiring different assumptions.
+
+\subsubsection{Thermal mutual information (WVCH)}
+\label{sec:wvch}
+
+\emph{Assumption:}  The state is a Gibbs state
+$\rho_\beta = e^{-\beta H}/Z$ at inverse temperature
+$\beta = 1/T > 0$.
+
+For any Gibbs state of a local Hamiltonian, the quantum mutual
+information $I(A{:}B) = \ent(A) + \ent(B) - \ent(AB)$ satisfies
+the Wolf--Verstraete--Cirac--Hastings (WVCH)
+bound~\cite{WVCH2008}:
+\begin{equation}
+  I(A{:}B) \leq 2\beta \sum_{\substack{X :\, X \cap A \neq \emptyset \\
+  X \cap B \neq \emptyset}} \|\Phi(X)\|.
+  \label{eq:wvch-general}
+\end{equation}
+For the self-modeling Hamiltonian~\eqref{eq:hamiltonian} with
+nearest-neighbor coupling $\|h_{xy}\| = |J|$, this reduces to
+\begin{equation}
+  \boxed{I(A{:}B) \leq 2\beta\, |\partial A|\, |J|.}
+  \label{eq:wvch-bound}
+\end{equation}
+The mutual information scales with the boundary area $|\partial A|$,
+not the volume~$|A|$.  The bound holds in all spatial
+dimensions, requires no spectral gap, and depends on $|J|$ (not
+$\mathrm{sign}(J)$), so it applies equally to the AFM and FM cases.
+
+\subsubsection{Pure-state entanglement entropy (channel capacity)}
+\label{sec:channel-capacity}
+
+\emph{Assumption:}  The global state is a pure state
+$|\psi\rangle \in \mathcal{H}_A \otimes \mathcal{H}_B$.
+
+Self-modeling locality constrains all correlations between $A$ and $B$
+to be mediated by the $|\partial A|$ boundary bonds.  Each bond
+connects two $n$-dimensional systems.  By the Schmidt decomposition,
+the entanglement across a single bond is at most $\log n$~nats (the
+maximum von~Neumann entropy of one factor of $\mathbb{C}^n \otimes
+\mathbb{C}^n$).  By subadditivity, the total entanglement entropy
+contributed by $|\partial A|$ independent bonds satisfies
+\begin{equation}
+  \boxed{\ent(A) \leq \log(n) \cdot |\partial A|.}
+  \label{eq:channel-bound}
+\end{equation}
+This is an area law for the von~Neumann entropy: it scales with the
+boundary, not the volume.  The bound depends only on the graph
+structure~$G$ and the local dimension~$n$, not on the
+Hamiltonian~$h_{xy}$, the coupling~$J$, or the temperature.  The
+coefficient $\log n$ is the maximum entanglement a single bond can
+carry, achieved by a maximally entangled state.  (In the language of
+quantum communication, $\log n$ is the entanglement capacity of one
+bond~\cite{Holevo1973, BennettWiesner1992}; the bound above follows
+from the simpler Schmidt/subadditivity argument.)
+
+\subsubsection{Perturbative $\delta\ent$ (modular Hamiltonian locality)}
+\label{sec:delta-s}
+
+The Jacobson argument requires not that $\ent(A)$ itself obeys an area
+law, but that the \emph{variation} $\delta\ent$ under small
+perturbations scales with $|\partial A|$.  From the entanglement first
+law~\eqref{eq:first-law},
+\begin{equation}
+  \delta\ent = \delta\langle\modH\rangle.
+  \label{eq:delta-s-modH}
+\end{equation}
+If the modular Hamiltonian $\modH = -\ln\rhoA$ is concentrated near
+the boundary~$\partial A$ (i.e., its matrix elements decay rapidly
+with distance from the boundary), then
+$\delta\langle\modH\rangle \sim O(|\partial A|)$ for local
+perturbations, giving
+\begin{equation}
+  \delta\ent \sim O(|\partial A|).
+  \label{eq:delta-s-boundary}
+\end{equation}
+
+Modular Hamiltonian locality is physically motivated by the
+Bisognano--Wichmann theorem~\cite{BisognanoWichmann1976} (the modular
+Hamiltonian of the vacuum in a Rindler wedge is the boost generator,
+localized at the entangling surface) and by Peschel's result for free
+lattice fermions~\cite{Peschel2003} ($\modH$ is a nearest-neighbor
+hopping operator on the entangling surface).  For the self-modeling
+Hamiltonian, numerical evidence (Sec.~\ref{sec:numerical}) supports
+this: the short-range fraction of $\modH$ is $0.9993$ for the
+antiferromagnetic Heisenberg chain at $N = 16$.
+
+This perspective is the weakest of the three, since modular
+Hamiltonian locality is not proven in general for the self-modeling
+lattice.  However, it is the most directly relevant for the Jacobson
+argument: it establishes that $\delta\ent$ is an area-law quantity even
+when $\ent(A)$ itself has logarithmic corrections (as in the gapless
+AFM case).
+
+\subsection{What this establishes}
+\label{sec:area-summary}
+
+The three perspectives complement each other:
+\begin{itemize}
+\item \textbf{Thermal states:} $I(A{:}B) \leq 2\beta|J|\,|\partial A|$
+  (WVCH, no gap required).
+\item \textbf{Pure states:} $\ent(A) \leq \log(n)\,|\partial A|$
+  (channel capacity, Hamiltonian-independent).
+\item \textbf{Any state, perturbatively:}
+  $\delta\ent \sim O(|\partial A|)$ (modular Hamiltonian locality).
+\end{itemize}
+Together, they establish Jacobson input~(J1): the entanglement entropy
+variation $\delta\ent$ scales with the boundary area, not the volume.
+Combined with the entanglement first law~\eqref{eq:first-law}, which
+establishes Jacobson input~(J2), the self-modeling lattice provides the
+two UV inputs required by Jacobson's entanglement equilibrium
+argument.
+
+\emph{Note on Hastings (2007).}---For a comprehensive review of area
+laws in quantum systems, see Ref.~\cite{EisertCramerPlenio2010}.  The
+Hastings area-law theorem~\cite{Hastings2007} for one-dimensional
+gapped ground states
+does not directly apply here: the self-modeling Hamiltonian is gapless
+for both signs of~$J$ in one dimension (the AFM Heisenberg chain
+flows to the $SU(2)_1$ WZW conformal field theory with central
+charge~$c = 1$; the FM ground state is gapped only above the
+degenerate ground-state manifold, with gap $\sim O(1/N^2) \to 0$).
+We cite Hastings for historical context; our area-law arguments via
+WVCH and channel capacity do not require a spectral gap.

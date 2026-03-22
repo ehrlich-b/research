@@ -1,0 +1,220 @@
+% einstein.tex — Paper 6, Section V: Einstein's Equations
+% ASSERT_CONVENTION: natural_units=natural, metric_signature=mostly_plus, entropy_base=nats, modular_hamiltonian=K_minus_ln_rho, coupling_convention=H_sum_hxy, state_normalization=Tr_rho_1
+\section{Einstein's Equations}
+\label{sec:einstein}
+
+We now apply the Jacobson (2016) entanglement equilibrium
+argument~\cite{Jacobson2016} to the self-modeling lattice as UV
+completion.  Links~L1--L5 of Table~\ref{tab:chain} (this work)
+provide the UV inputs; links~L6--L8 follow Jacobson's derivation,
+with the MVEH reframed as definitional
+(Sec.~\ref{sec:equilibrium}).
+
+\subsection{Setup: entropy decomposition}
+\label{sec:setup}
+
+Consider a point $p$ in the emergent spacetime manifold $(M, \gab)$
+obtained from the Wilsonian continuum limit
+(Sec.~\ref{sec:continuum}).  Choose Riemann normal coordinates at $p$
+so that $\gab(p) = \eta_{ab}$ and the Christoffel symbols vanish.  Let
+$B$ be a geodesic ball of proper radius $\ell$ centered at $p$ in the
+spacelike hypersurface $\Sigma = \{x^0 = 0\}$, with $a \ll \ell \ll
+L_{\mathrm{curv}}$ (the curvature radius).  The causal diamond
+$\mathcal{D}(B)$ is the domain of dependence of~$B$.
+
+The entanglement entropy of ball $B$ decomposes as~\cite{Jacobson2016}
+\begin{equation}
+  \ent = \ent_{\mathrm{UV}} + \ent_{\mathrm{mat}},
+  \label{eq:s-decomp}
+\end{equation}
+where $\ent_{\mathrm{UV}} = \eta\, \mathcal{A}$ is the
+area-proportional UV contribution (with $\eta = 1/(4\Gnewton)$ the
+entropy density per unit area and $\mathcal{A}$ the area of
+$\partial B$), and $\ent_{\mathrm{mat}}$ is the finite,
+state-dependent matter contribution.  The UV entropy density $\eta$
+is a constant of the lattice structure; it does not depend on the
+state.
+
+Under a first-order perturbation away from the maximally symmetric
+spacetime (MSS) vacuum:
+\begin{equation}
+  \delta\ent = \delta\ent_{\mathrm{UV}} + \delta\ent_{\mathrm{mat}}
+  = \eta\, \delta\mathcal{A} + \delta\ent_{\mathrm{mat}}.
+  \label{eq:ds-decomp}
+\end{equation}
+
+\subsection{Geometric variation (Raychaudhuri)}
+\label{sec:raychaudhuri}
+
+The change in area $\delta\mathcal{A}$ of the entangling surface
+$\partial B$ due to the curvature perturbation is computed from the
+Raychaudhuri equation for the null generators of the causal
+diamond~\cite{Wald1984, Jacobson2016}.  For a twist-free null geodesic
+congruence with tangent $k^a$ ($k^a k_a = 0$), the expansion
+$\theta = \nabla_a k^a$ satisfies
+\begin{equation}
+  \frac{d\theta}{d\lambda}
+  = -\frac{1}{d-1}\,\theta^2 - \sigma_{ab}\sigma^{ab} - \Rab\, k^a k^b,
+  \label{eq:raychaudhuri}
+\end{equation}
+where $d$ is the number of spatial dimensions and $\lambda$ is the
+affine parameter.
+
+At the bifurcation surface $\partial B$, the unperturbed expansion and
+shear vanish ($\theta = \sigma_{ab} = 0$).  To first order in the
+curvature perturbation, $\theta^2$ and $\sigma^2$ are second order, so
+\begin{equation}
+  \frac{d\theta^{(1)}}{d\lambda} = -\Rab^{(1)}\, k^a k^b.
+  \label{eq:ray-linear}
+\end{equation}
+Integrating over the null congruence emanating from the future tip of
+$\mathcal{D}(B)$ and performing the angular average over null
+directions~\cite{Jacobson2016}, the area variation in the small-ball
+limit ($\ell \ll L_{\mathrm{curv}}$) is
+\begin{equation}
+  \delta\mathcal{A}
+  = -\frac{\Omega_{d-1}\, \ell^{d+1}}{2d}
+  \left[(d+1)\, \Rab\, n^a n^b + \mathcal{R}\right]
+  + O(\ell^{d+3}),
+  \label{eq:delta-area}
+\end{equation}
+where $\Omega_{d-1} = 2\pi^{d/2}/\Gamma(d/2)$ is the area of the unit
+$(d{-}1)$-sphere, $n^a$ is the unit timelike normal to $\Sigma$, and
+$\mathcal{R} = g^{ab}\Rab$ is the Ricci scalar.
+
+The UV entropy variation is therefore
+\begin{equation}
+  \delta\ent_{\mathrm{UV}} = \eta\,\delta\mathcal{A}
+  = -\frac{\eta\,\Omega_{d-1}\, \ell^{d+1}}{2d}
+  \left[(d+1)\,\Rab\, n^a n^b + \mathcal{R}\right].
+  \label{eq:ds-uv}
+\end{equation}
+When $\Rab\, n^a n^b > 0$ (i.e., the null energy condition holds),
+$\delta\ent_{\mathrm{UV}} < 0$: positive energy causes focusing, which
+decreases the area and hence the UV entropy.
+
+For conformal matter, the Weyl tensor contribution to
+$\delta\ent_{\mathrm{UV}}$ is exactly cancelled by a corresponding
+contribution to $\delta\ent_{\mathrm{mat}}$~\cite{Jacobson2016}, so
+only the Ricci part survives.
+
+\subsection{Matter variation (conformal modular Hamiltonian)}
+\label{sec:conformal-approx}
+
+From the entanglement first law~\eqref{eq:first-law},
+$\delta\ent_{\mathrm{mat}} = \delta\langle{\modH}_B\rangle$.  For the
+vacuum state of a conformal field theory restricted to a geodesic ball
+$B$ of radius $\ell$, the Casini--Huerta--Myers (CHM) modular Hamiltonian
+takes the exact form~\cite{CasiniHuertaMyers2011}
+\begin{equation}
+  {\modH}_B = 2\pi \int_B d^d\!x\; \frac{\ell^2 - |\mathbf{x}|^2}{2\ell}\; T_{00}(\mathbf{x}).
+  \label{eq:chm}
+\end{equation}
+Under a perturbation that produces a stress-energy tensor~$\Tab$, in
+the small-ball limit where $T_{00}$ is approximately constant over $B$:
+\begin{equation}
+  \delta\ent_{\mathrm{mat}}
+  = \frac{2\pi\, \Omega_{d-1}}{d(d+2)}\, \ell^{d+1}\, \Tab\, n^a n^b.
+  \label{eq:ds-mat}
+\end{equation}
+For positive energy density ($\Tab\, n^a n^b > 0$),
+$\delta\ent_{\mathrm{mat}} > 0$: matter excitations increase the
+matter sector entropy.
+
+\emph{Conformal approximation.}---The CHM formula~\eqref{eq:chm} is
+exact for conformal field theories in causal
+diamonds~\cite{CasiniHuertaMyers2011}.  For nonconformal fields,
+corrections of order $O\!\left((m\ell)^{2\Delta}\right)$ appear, where
+$m$ is the mass scale breaking conformal invariance and $\Delta$ is
+its scaling dimension~\cite{Speranza2016}.  In the window
+$a \ll \ell \ll 1/m$ (if it exists), these corrections are suppressed.
+For the one-dimensional AFM Heisenberg chain ($n = 2$, $J > 0$),
+which flows to the $SU(2)_1$ WZW CFT with $c = 1$, the theory is
+exactly conformal and this approximation introduces no error.
+Jacobson~\cite{Jacobson2016} conjectures that the leading-order
+Einstein equation survives nonconformal corrections; this is
+physically motivated but not proven.
+
+\subsection{Entanglement equilibrium implies Einstein's equation}
+\label{sec:ee-implies-einstein}
+
+The MVEH---definitional in our framework
+(Sec.~\ref{sec:mveh})---requires entanglement equilibrium:
+\begin{equation}
+  \delta\ent = \delta\ent_{\mathrm{UV}} + \delta\ent_{\mathrm{mat}} = 0.
+  \label{eq:ee}
+\end{equation}
+Substituting Eqs.~\eqref{eq:ds-uv} and~\eqref{eq:ds-mat} and
+cancelling the common factor $\Omega_{d-1}\, \ell^{d+1}/d > 0$:
+\begin{equation}
+  \frac{\eta(d+1)}{2}\, \Rab\, n^a n^b + \frac{\eta\, \mathcal{R}}{2}
+  = \frac{2\pi}{d+2}\, \Tab\, n^a n^b.
+  \label{eq:scalar-ee}
+\end{equation}
+This must hold for \emph{all} unit timelike vectors $n^a$ at every
+point.  A symmetric tensor equation
+$A_{ab}\, n^a n^b = B_{ab}\, n^a n^b$ for all unit timelike $n^a$
+implies $A_{ab} = B_{ab} + f\, \gab$ for some scalar~$f$ (the trace
+freedom arises because $\gab\, n^a n^b = -1$ for all such $n^a$).
+
+Extracting the tensor equation up to this trace freedom, converting to
+the Einstein tensor $\Gab = \Rab - \frac{1}{2} \mathcal{R}\, \gab$, and
+absorbing all $\gab$ terms (including the background MSS curvature)
+into an undetermined cosmological constant~$\Lambda$
+yields~\cite{Jacobson2016}
+\begin{equation}
+  \boxed{\Gab + \Lambda\, \gab = 8\pi\Gnewton\, \Tab}
+  \label{eq:einstein}
+\end{equation}
+with
+\begin{equation}
+  \boxed{\Gnewton = \frac{1}{4\eta}.}
+  \label{eq:newton}
+\end{equation}
+This is the standard Einstein field equation.  The cosmological
+constant $\Lambda$ is \emph{undetermined}: it is an integration
+constant of the derivation, not a predicted
+quantity~\cite{Jacobson2016, JacobsonSperanza2019}.
+
+\emph{Sign chain.}---If the null energy condition (NEC) holds
+($\Tab\, k^a k^b \geq 0$ for all null $k^a$), the derivation produces
+attractive gravity via the following sign chain:
+\begin{enumerate}
+\item Positive energy density (NEC): $\Tab\, n^a n^b > 0$.
+\item Matter entropy increases: $\delta\ent_{\mathrm{mat}} > 0$
+  (Eq.~\ref{eq:ds-mat}).
+\item Entanglement equilibrium: $\delta\ent = 0$ requires
+  $\delta\ent_{\mathrm{UV}} < 0$.
+\item UV entropy decreases: $\delta\ent_{\mathrm{UV}} < 0$ implies
+  $\delta\mathcal{A} < 0$ (area decreases, since $\eta > 0$).
+\item Raychaudhuri focusing: $\delta\mathcal{A} < 0$ implies
+  $\Rab\, k^a k^b > 0$ (null geodesics converge).
+\item Einstein equation: $\Gnewton > 0$ (since $\eta > 0$), and
+  positive $\Tab$ produces positive $\Gab$, giving attractive gravity.
+\end{enumerate}
+The NEC is not derived from self-modeling; it is an input to the sign
+chain.  The tensor equation~\eqref{eq:einstein} itself holds
+independently of the NEC.
+
+\subsection{Parameter identification}
+\label{sec:parameters}
+
+Newton's constant is set by the UV entropy density:
+$\Gnewton = 1/(4\eta)$.  From the lattice-to-continuum mapping
+(Sec.~\ref{sec:continuum}), $\eta = \eta_{\mathrm{lattice}}/a^{d-1}$,
+where $\eta_{\mathrm{lattice}} \leq \log n$ is the entropy per
+boundary bond (from the channel capacity
+bound~\eqref{eq:channel-bound}).  This gives
+\begin{equation}
+  \Gnewton \geq \frac{a^{d-1}}{4\log n},
+  \label{eq:g-bound}
+\end{equation}
+identifying the lattice spacing $a$ with the Planck length up to a
+factor of $\sqrt{\log n}$.  In $d = 3$ spatial dimensions:
+$a \lesssim 2\ell_P\sqrt{\log n}$, where
+$\ell_P = \sqrt{\Gnewton}$.
+
+The Lieb--Robinson velocity $\vlr$ (Eq.~\ref{eq:vlr}) maps to the
+speed of light~$c$ in the continuum limit.  The cosmological
+constant~$\Lambda$ is undetermined; this paper does not predict its
+value.

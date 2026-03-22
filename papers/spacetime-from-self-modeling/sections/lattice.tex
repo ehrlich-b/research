@@ -1,0 +1,172 @@
+% lattice.tex — Paper 6, Section II: The Self-Modeling Lattice
+% ASSERT_CONVENTION: natural_units=natural, metric_signature=mostly_plus, entropy_base=nats, modular_hamiltonian=K_minus_ln_rho, coupling_convention=H_sum_hxy, state_normalization=Tr_rho_1
+\section{The Self-Modeling Lattice}
+\label{sec:lattice}
+
+\subsection{Self-modeling forces quantum mechanics}
+\label{sec:paper5-summary}
+
+Paper~5~\cite{Paper5} established that faithful self-modeling---the
+condition that a physical system $B$ contains a subsystem $M$ that
+tracks the state of $B$ through their shared boundary---forces the
+local state space to be $M_n(\mathbb{C})^{sa}$, the self-adjoint part
+of the $n \times n$ complex matrix algebra, equipped with the
+L\"uders sequential product
+\begin{equation}
+  a \mathbin{\&} b = a^{1/2}\, b\, a^{1/2}.
+  \label{eq:luders}
+\end{equation}
+The real and quaternionic alternatives are excluded by local
+tomography: only complex quantum mechanics has
+$\dim(V_{BM}) = \dim(V_B) \cdot \dim(V_M)$.  The sequential product
+is the unique product compatible with axioms S1--S7 of
+Ref.~\cite{vandeWetering2019}, and it inherits $U(n)$ covariance from
+the self-modeling structure.  We do not re-derive these results here;
+they serve as the starting point for the present paper.
+
+\subsection{Lattice definition}
+\label{sec:lattice-def}
+
+We place self-modeling systems on a lattice described by an undirected
+graph $G = (V, E)$, where $V$ is a countable set of sites and
+$E \subseteq \binom{V}{2}$ is the set of edges encoding nearest-neighbor
+adjacency.  At each site $x \in V$ the local algebra is
+\begin{equation}
+  A_x = M_n(\mathbb{C}),
+  \label{eq:local-algebra}
+\end{equation}
+and for a finite region $\Lambda \subset V$ the regional algebra is
+\begin{equation}
+  A_\Lambda = \bigotimes_{x \in \Lambda} A_x \cong M_{n^{|\Lambda|}}(\mathbb{C}).
+  \label{eq:regional-algebra}
+\end{equation}
+The quasi-local algebra
+$\mathfrak{A} = \overline{\bigcup_{|\Lambda|<\infty} A_\Lambda}^{\|\cdot\|}$
+is a uniformly hyperfinite (UHF) C*-algebra of type~$n^\infty$.
+
+\emph{Background dependence.}---The graph topology $G = (V, E)$ is an
+irreducible \emph{input} to this construction.  Self-modeling
+determines the metric (encoded in the coupling strengths and the
+resulting entanglement structure) on a given topology, but not the
+topology itself.  This is analogous to general relativity, where
+Einstein's equations determine the metric on a given differentiable
+manifold without determining its topology.  The spatial dimension~$d$
+is set by the graph structure: a $d$-dimensional regular lattice
+yields $d$ emergent spatial dimensions.
+
+\subsection{Hamiltonian construction}
+\label{sec:hamiltonian}
+
+The interaction between adjacent sites is encoded in a two-site
+Hamiltonian $h_{xy} \in A_{\{x,y\}}^{sa}$ for each edge
+$\{x, y\} \in E$.  Self-modeling locality---the constraint that model
+and body interact only through their shared boundary---implies that
+$h_{xy} = 0$ for non-adjacent pairs ($\{x,y\} \notin E$), mapping
+self-modeling locality directly to nearest-neighbor Hamiltonian
+locality~\cite{Paper5}.
+
+The L\"uders sequential product~\eqref{eq:luders} is covariant under
+the adjoint action of $U(n)$:
+\begin{equation}
+  U(a \mathbin{\&} c)U^\dagger = (UaU^\dagger) \mathbin{\&} (UcU^\dagger)
+  \qquad \forall\, U \in U(n).
+  \label{eq:covariance}
+\end{equation}
+The composite sequential product
+$(a \otimes b) \mathbin{\&} (c \otimes d) = (a \mathbin{\&} c) \otimes
+(b \mathbin{\&} d)$ is covariant under $U(n) \times U(n)$ (independent
+rotations at each site).  The coupling, however, physically connects
+the two sites through a shared boundary; basis independence requires
+that the same rotation be applied to both sites.  This constrains
+$h_{xy}$ to be invariant under the \emph{diagonal} $U(n)$:
+\begin{equation}
+  (U \otimes U)\, h_{xy}\, (U \otimes U)^\dagger = h_{xy}
+  \qquad \forall\, U \in U(n).
+  \label{eq:diagonal-invariance}
+\end{equation}
+Full $U(n) \times U(n)$ invariance would kill all coupling, leaving
+$h_{xy} \propto \1 \otimes \1$.
+
+By \textbf{Schur--Weyl duality} for the symmetric group $S_2$ acting
+on $(\mathbb{C}^n)^{\otimes 2}$, this space decomposes under the
+diagonal $U(n)$ action into two irreducible representations:
+$\mathrm{Sym}^2(\mathbb{C}^n) \oplus \wedge^2(\mathbb{C}^n)$.  By
+Schur's lemma the commutant of $\{U \otimes U\}$ is
+$\mathrm{span}\{\1, F\}$, where $F$ is the SWAP operator defined by
+\begin{equation}
+  \swapop \ket{i}\ket{j} = \ket{j}\ket{i}.
+  \label{eq:swap-def}
+\end{equation}
+Therefore the most general diagonal-$U(n)$-invariant self-adjoint
+interaction is
+\begin{equation}
+  h_{xy} = \alpha\, \1 \otimes \1 + J\, \swapop,
+  \label{eq:h-general}
+\end{equation}
+with $\alpha, J \in \mathbb{R}$.  The identity term shifts the energy
+zero; setting $\alpha = 0$, the total lattice Hamiltonian is
+\begin{equation}
+  \boxed{H = \sum_{\langle x,y \rangle \in E} J\, \swapop.}
+  \label{eq:hamiltonian}
+\end{equation}
+
+The interaction is \emph{forced}: the form $h_{xy} = J\,\swapop$ is
+the unique diagonal-$U(n)$-invariant coupling (up to the overall
+energy scale~$J$).  Any anisotropy would break the $U(n)$ covariance
+inherited from the L\"uders product.  For $n = 2$, the SWAP operator
+takes the familiar form
+$\swapop = \frac{1}{2}(\1 \otimes \1 + \vec{\sigma} \cdot \vec{\sigma})$,
+and the Hamiltonian~\eqref{eq:hamiltonian} reduces to the isotropic
+Heisenberg model.
+
+The sign of~$J$ is \emph{not} determined by the self-modeling
+constraints: $J > 0$ gives the antiferromagnetic (AFM) Heisenberg
+model, $J < 0$ gives the ferromagnetic (FM) model.  Both signs are
+compatible with the algebraic structure.  However, the FM ground state
+($J < 0$) is a product state with $\ent(A) = 0$ for all subsystem
+sizes, producing no entanglement structure and hence no emergent
+geometry.  Only the AFM case ($J > 0$) supports the nontrivial
+entanglement that drives the Jacobson argument.  We therefore work
+with $J > 0$ throughout; this is an input to the derivation, not
+forced by self-modeling.
+
+\subsection{Lieb--Robinson bounds and emergent causal structure}
+\label{sec:lr-bounds}
+
+The nearest-neighbor Hamiltonian~\eqref{eq:hamiltonian} with finite
+coupling $\|h_{xy}\| = |J|$ satisfies the hypotheses of the
+Lieb--Robinson theorem~\cite{LiebRobinson1972, NachtergaeleSims2006}.
+For any local observables $A_x$ and $B_y$ supported at sites $x$
+and~$y$ separated by graph distance $d(x,y)$, the Heisenberg-picture
+commutator is bounded by
+\begin{equation}
+  \norm{[\tau_t(A_x),\, B_y]}
+  \leq C_{\mathrm{LR}}\, \norm{A}\, \norm{B}\,
+  e^{-\mu(d(x,y) - \vlr |t|)},
+  \label{eq:lr-bound}
+\end{equation}
+where $\tau_t(A) = e^{iHt} A\, e^{-iHt}$ is the Heisenberg evolution,
+$\mu > 0$ is a spatial decay constant, $C_{\mathrm{LR}}$ is a
+dimension-dependent prefactor, and $\vlr$ is the \textbf{Lieb--Robinson
+velocity}---the maximum speed of information propagation on the
+lattice.
+
+For the self-modeling Hamiltonian on a lattice with coordination
+number~$z$, the Nachtergaele--Sims
+framework~\cite{NachtergaeleSims2006} with exponential decay function
+$F_a(r) = e^{-ar}$ at $a = 1$ gives
+\begin{equation}
+  \vlr = \frac{4ze|J|}{e - 1}.
+  \label{eq:vlr}
+\end{equation}
+For the one-dimensional chain ($z = 2$), this is $\vlr = 8e|J|/(e-1)
+\approx 12.66\,|J|$.  Crucially, $\vlr$ is \emph{independent of the
+local dimension~$n$}: the SWAP operator $F$ satisfies $\|F\| = 1$ for
+all $n \geq 2$, so the Lieb--Robinson velocity depends only on the
+coupling strength~$|J|$ and the lattice coordination number~$z$.
+
+The bound~\eqref{eq:lr-bound} defines an effective \emph{light cone}
+on the lattice: correlations outside the cone ($d(x,y) > \vlr |t|$)
+are exponentially suppressed.  In the continuum limit
+(Sec.~\ref{sec:einstein}), $\vlr$ is identified with the emergent
+speed of light~$c$.
