@@ -3,9 +3,9 @@ Copyright (c) 2026 Bryan Ehrlich. All rights reserved.
 Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
-import LeanExplore.SequentialProduct
-import LeanExplore.JordanStructure
-import LeanExplore.LocalTomography
+import RadicalRelativity.SequentialProduct
+import RadicalRelativity.JordanStructure
+import RadicalRelativity.LocalTomography
 import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.Analysis.CStarAlgebra.Spectrum
 import Mathlib.LinearAlgebra.FiniteDimensional.Defs

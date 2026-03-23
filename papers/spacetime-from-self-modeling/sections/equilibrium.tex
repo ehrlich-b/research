@@ -77,18 +77,35 @@ state.
 We regard this as a \emph{structural identification}: in a pre-geometric
 framework, there is no other candidate for the vacuum state, and the
 Connes--Rovelli thermal time hypothesis provides the only available
-identification of geometry with state.  This is \emph{necessary}---there
-is nothing else the vacuum could be---but it is not a mathematical
-derivation.  Specifically, we do not prove the \emph{existence} of a
-state whose modular flow defines a smooth geometry, nor its
-\emph{uniqueness}.  These are open questions.
+identification of geometry with state.
 
-This parallels the dissolution of the involution in
-Paper~5~\cite{Paper5}: in a pre-geometric framework without external
-standards, the structure produced by self-modeling defines the
-standard.  The parallel is suggestive but not exact; the involution
-dissolution was algebraically forced, whereas the MVEH identification
-is a structural argument.
+This identification is strengthened by the
+entanglement--geometry connection established by
+Van~Raamsdonk~\cite{VanRaamsdonk2010}: reducing entanglement between
+two regions increases their effective geometric distance; in the limit
+of zero entanglement, the geometry disconnects entirely.  The
+converse---that \emph{maximal} entanglement at fixed energy produces
+the smoothest, most connected geometry---implies that the
+geometry-defining state (the ``vacuum'') is precisely the state that
+maximizes entanglement at fixed stress-energy.  This \emph{is} the
+MVEH.  The argument runs:
+\begin{enumerate}
+\item In a pre-geometric framework, ``vacuum'' means the state whose
+  modular flow defines a smooth emergent geometry (Connes--Rovelli).
+\item A smooth geometry requires maximal correlations across all regions
+  (Van Raamsdonk: less entanglement $\to$ less connected geometry).
+\item The state with maximal correlations at fixed
+  $\langle\Tab\rangle$ is the maximum-entropy state---i.e., the state
+  satisfying MVEH.
+\end{enumerate}
+MVEH thus follows from combining the thermal time identification
+(Connes--Rovelli) with the entanglement--geometry correspondence
+(Van~Raamsdonk).  We do not claim this as a mathematical proof:
+step~2 relies on the physical intuition that entanglement is the
+``glue'' of geometry, and we do not prove existence or uniqueness of
+the geometry-defining state.  But the argument is stronger than a bare
+structural identification---it provides a physical mechanism
+connecting vacuum selection to entanglement maximization.
 
 MVEH does not appear as a numbered assumption in this paper; it is
 the structural identification that selects which state defines the
@@ -170,7 +187,7 @@ In the continuum limit, the lattice parameters acquire physical
 identifications:
 \begin{itemize}
 \item The lattice spacing $a$ maps to the Planck scale:
-  $a \lesssim 2\ell_P \sqrt{\log n}$ (via the channel capacity
+  $a \lesssim 2\ell_P \sqrt{\log n}$ (via the per-bond entropy
   bound~\eqref{eq:channel-bound} and
   $\Gnewton = 1/(4\eta)$).
 \item The Lieb--Robinson velocity $\vlr$ maps to the speed of

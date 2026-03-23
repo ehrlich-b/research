@@ -3,7 +3,7 @@ Copyright (c) 2026 Bryan Ehrlich. All rights reserved.
 Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
-import LeanExplore.SequentialProduct
+import RadicalRelativity.SequentialProduct
 import Mathlib.Algebra.BigOperators.Fin
 
 set_option linter.style.longLine false

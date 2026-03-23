@@ -3,9 +3,9 @@ Copyright (c) 2026 Bryan Ehrlich. All rights reserved.
 Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
-import LeanExplore.SequentialProduct
-import LeanExplore.Compression
-import LeanExplore.SpectralTheorem
+import RadicalRelativity.SequentialProduct
+import RadicalRelativity.Compression
+import RadicalRelativity.SpectralTheorem
 import Mathlib.Algebra.Jordan.Basic
 
 set_option linter.style.longLine false
