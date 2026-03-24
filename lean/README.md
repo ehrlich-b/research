@@ -78,6 +78,21 @@ Self-modeling premise
   ~1050 lines.
 - `M2CInstance`: Commutative (diagonal) sequential product. All axioms proved.
 
+### Paper 6: Self-Modeling Lattice --> GR (SCAFFOLDING)
+
+The derivation chain: self-modeling lattice with forced Heisenberg Hamiltonian
+produces area-law entanglement, which feeds into Jacobson's 1995 thermodynamic
+argument to yield Einstein's field equations.
+
+| File | Status | Description |
+|------|--------|-------------|
+| `SelfModelingLattice.lean` | SCAFFOLD | Lattice graph, diagonal U(n) covariance, forced H = Σ J·F, Lieb-Robinson |
+| `AreaLaw.lean` | SCAFFOLD | Entanglement first law, WVCH bound, ground-state area law, modular Hamiltonian locality |
+| `JacobsonGR.lean` | SCAFFOLD | Continuum limit, Lorentz invariance, BW/Unruh, 5-step Jacobson → G_ab + Λg_ab = 8πG_N T_ab |
+
+Four gaps (all standard, none bespoke): (1) emergent Lorentz invariance d≥2,
+(2) lattice Bisognano-Wichmann, (3) local equilibrium, (4) continuum limit.
+
 ### Paper 7: h_3(O) --> SM Gauge Group (SCAFFOLDING)
 
 The conceptual chain is complete (both gaps closed, 2026-03-23). Lean formalization
@@ -102,7 +117,7 @@ target theorems stated.
 - **Phase 3**: Non-composability theorem. Universe contains h_3(O).
 - **Phase 4**: F_4, Todorov-Drenska, SM gauge group.
 - **Phase 5**: Chirality via Cl(6) (after GPD verification).
-- **Phase 6**: GR (route TBD).
+- **Phase 6**: GR (Paper 6, scaffold files created).
 
 ## The Key Insight
 
@@ -122,6 +137,7 @@ cd lean && lake build
 
 ## References
 
+- Ehrlich, "Spacetime from Self-Modeling" (Paper 6): [PDF](https://ehrlich.dev/papers/spacetime-from-self-modeling-2026.pdf)
 - Ehrlich, "QM from Self-Modeling" (Paper 5): [PDF](https://ehrlich.dev/papers/qm-from-self-modeling-2026.pdf)
 - van de Wetering, "Sequential product spaces are Jordan algebras," [arXiv:1803.11139](https://arxiv.org/abs/1803.11139)
 - Barnum, Graydon, Wilce, "Composites and Categories of Euclidean Jordan Algebras," [arXiv:1606.09331](https://arxiv.org/abs/1606.09331)
@@ -129,6 +145,10 @@ cd lean && lake build
 - Boyle, "The Standard Model, the Exceptional Jordan Algebra, and Triality," [arXiv:2006.16265](https://arxiv.org/abs/2006.16265)
 - Furey, "SU(3)_C x SU(2)_L x U(1)_Y as a symmetry of division algebraic ladder operators," [arXiv:1806.00612](https://arxiv.org/abs/1806.00612)
 - Krasnov, "SO(9) characterisation of the Standard Model gauge group," [arXiv:1912.11282](https://arxiv.org/abs/1912.11282)
+- Jacobson, "Thermodynamics of spacetime: the Einstein equation of state," PRL 75, 1260 (1995)
+- Lieb, Robinson, "The finite group velocity of quantum spin systems," CMP 28, 251 (1972)
+- Wolf, Verstraete, Cirac, Hastings, "Area Laws in Quantum Systems," PRL 100, 070502 (2008)
+- Hastings, "An area law for one-dimensional quantum systems," JSTAT P08024 (2007)
 
 ## License
 

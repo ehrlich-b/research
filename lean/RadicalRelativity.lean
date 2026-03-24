@@ -1,6 +1,9 @@
 -- Radical Relativity: Lean 4 Formalization
 -- From self-modeling to the Standard Model gauge group.
 
+-- Papers 1-4: Experiential Measure (SCAFFOLD)
+import RadicalRelativity.ExperientialMeasure
+
 -- Paper 5: Self-Modeling → QM (FORMALIZED, 0 sorry's, 3 axioms)
 import RadicalRelativity.OrderUnitSpace
 import RadicalRelativity.SequentialProduct
@@ -15,7 +18,12 @@ import RadicalRelativity.SpectralTheorem
 import RadicalRelativity.M2CInstance
 import RadicalRelativity.SpinFactor
 
--- Paper 7: h_3(O) → SM Gauge Group (SCAFFOLDING)
+-- Paper 6: Self-Modeling Lattice → GR (SCAFFOLD)
+import RadicalRelativity.SelfModelingLattice
+import RadicalRelativity.AreaLaw
+import RadicalRelativity.JacobsonGR
+
+-- Paper 7: h_3(O) → SM Gauge Group (SCAFFOLD)
 import RadicalRelativity.Octonions
 import RadicalRelativity.Albert
 import RadicalRelativity.NonComposability
