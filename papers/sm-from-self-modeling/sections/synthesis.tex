@@ -1,0 +1,297 @@
+% synthesis.tex — Section 4: Synthesis — One Choice, Two Consequences
+% ASSERT_CONVENTION: natural_units=dimensionless, jordan_product=(1/2)(ab+ba), clifford_convention=euclidean_positive, octonion_basis=fano_e1e2=e4, complex_structure=u_equals_e7, spin_representation=S10plus_boyle
+
+%----------------------------------------------------------------------
+\section{Synthesis: One Choice, Two Consequences}\label{sec:synthesis}
+%----------------------------------------------------------------------
+
+The preceding two sections developed the Standard Model gauge group
+and its chiral representation by two apparently different routes:
+the $\Ffour$ intersection (Part~A, via Todorov-Drenska) and the
+$\Cl{6}$/Pati-Salam chain (Part~B, via Furey and Todorov).
+We now prove that both routes share a \emph{single} algebraic input
+and that the second route provides a strict upgrade of the first.
+
+%----------------------------------------------------------------------
+\subsection{The \texorpdfstring{$\Ffour$}{F4} intersection route (Todorov-Drenska)}\label{sec:F4-route}
+%----------------------------------------------------------------------
+
+The choice of $u\in S^6$ splits the octonions
+$\mathbb{O} = \mathbb{C}\oplus\mathbb{C}^3$
+(Section~\ref{sec:oct-split}).  This splitting induces a subgroup
+of $\Ffour = \mathrm{Aut}(\hthree)$: the elements that preserve the
+decomposition of each octonion entry into its $\mathbb{C}$ and
+$\mathbb{C}^3$ parts.  The result, due to Todorov and
+Drenska~\cite{TodorovDrenska2018}
+(see also Yokota~\cite{Yokota2009}), is the maximal-rank subgroup
+\begin{equation}\label{eq:F4-break}
+  \frac{\SU{3}_C\times\SU{3}_J}{\mathbb{Z}_3}
+  \;\subset\; \Ffour,
+  \qquad \dim = 8 + 8 = 16,
+\end{equation}
+where $\SU{3}_C = \mathrm{Stab}_{\Gfour}(u)$ acts on the
+$\mathbb{C}^3$ factor of each octonion entry (the color group)
+and $\SU{3}_J = \mathrm{Aut}(h_3(\mathbb{C}))$ acts on the
+Jordan algebra structure of the $\mathbb{C}$-valued part (a
+``Jordan flavor'' group).  The $\mathbb{Z}_3$ quotient arises
+because the cube-root-of-unity centers of the two $\SU{3}$ factors
+intersect.
+
+The SM gauge group emerges as the intersection of two stabilizers
+within~$\Ffour$:
+\begin{equation}\label{eq:F4-intersection}
+  \mathrm{Stab}_{\Ffour}(E_{11}) \;\cap\;
+  \frac{\SU{3}_C\times\SU{3}_J}{\mathbb{Z}_3}
+  \;=\;
+  \Spin{9} \;\cap\;
+  \frac{\SU{3}_C\times\SU{3}_J}{\mathbb{Z}_3}
+  \;\supset\;
+  \SU{3}_C \times \SU{2} \times \mathrm{U}(1).
+\end{equation}
+The intersection works as follows: $\SU{3}_C\subset\Gfour\subset\Spin{9}$,
+so it passes through the intersection intact.  The
+$\SU{3}_J = \mathrm{Aut}(h_3(\mathbb{C}))$ factor,
+intersected with $\mathrm{Stab}(E_{11})$ (fixing the first diagonal entry),
+reduces to $\mathrm{U}(2)_J = [\SU{2}\times\mathrm{U}(1)]/\mathbb{Z}_2$.
+
+\noindent\textbf{Dimension:}
+$8 + 3 + 1 = 12 = \dim(\SMgauge)$.\ \checkmark
+
+\begin{remark}[No chirality from $\Ffour$]
+The $\Ffour$ route gives the gauge group but does \emph{not}
+provide a chiral representation.  The 27-dimensional representation
+of $\hthree$ under $\Ffour$ is real: there is no natural complex
+structure on $\mathbf{27}$ from the $\Ffour$ perspective alone,
+and therefore no left/right distinction.
+\end{remark}
+
+%----------------------------------------------------------------------
+\subsection{The single-input theorem}\label{sec:single-input}
+%----------------------------------------------------------------------
+
+Both routes begin with the \emph{same} decomposition of
+$\mathrm{Im}(\mathbb{O})$:
+
+\begin{equation}\label{eq:common-split}
+  \mathrm{Im}(\mathbb{O})
+  \;=\;
+  \mathrm{span}\{u\} \;\oplus\; W,
+  \qquad
+  W = u^\perp\cap\mathrm{Im}(\mathbb{O}),
+  \quad \dim(W) = 6.
+\end{equation}
+
+\begin{theorem}[Single input]\label{thm:single-input}
+Let $u\in S^6\subset\mathrm{Im}(\mathbb{O})$ be a unit imaginary
+octonion, and let $E_{11}$ be a rank-1 idempotent in $\hthree$.
+Then the single choice of $u$ determines:
+\begin{enumerate}
+  \item[\textup{(i)}] \textbf{The $\Ffour$ breaking.}\enspace
+    The splitting $\mathbb{O} = \mathbb{C}\oplus\mathbb{C}^3$
+    induces $[\SU{3}_C\times\SU{3}_J]/\mathbb{Z}_3\subset\Ffour$.
+    Its intersection with $\Spin{9} = \mathrm{Stab}_{\Ffour}(E_{11})$
+    contains $\SU{3}_C\times\SU{2}\times\mathrm{U}(1)$
+    \textup{(the SM gauge group, $\dim = 12$)}.
+  \item[\textup{(ii)}] \textbf{The $\Cl{6}$ construction.}\enspace
+    The same $W$ provides the 6 generators of
+    $\Cl{6}\subset\Cl{10}$, whose volume form $\omegasix$ breaks
+    $\Spin{10}\to\SU{4}\times\SU{2}_L\times\SU{2}_R$.
+    The same $u$ further breaks
+    $\SU{4}\to\SU{3}_C\times\mathrm{U}(1)_{B-L}$,
+    giving the SM gauge group with the LEFT chiral embedding.
+\end{enumerate}
+No additional algebraic input beyond $u$ and $E_{11}$ is needed
+for either route.
+\end{theorem}
+
+The two routes use the identical 6-dimensional subspace $W$---the
+same six directions $e_1,\ldots,e_6$ (in the Fano convention with
+$u=e_7$).  Their different outputs arise from different algebraic
+operations on $W$:
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}clll@{}}
+  \toprule
+  & \textbf{Route A} ($\Ffour$ intersection) & \textbf{Route B} ($\Cl{6}$/Pati-Salam) \\
+  \midrule
+  Input & $u\in S^6$ & same $u\in S^6$ \\
+  From $W$ & $J\colon W\to W$ defines $\SU{3}_C = \mathrm{Stab}_{\Gfour}(u)$
+    & $\gamma_1,\ldots,\gamma_6$ generate $\Cl{6}\subset\Cl{10}$ \\
+  Intermediate & $[\SU{3}_C\times\SU{3}_J]/\mathbb{Z}_3\subset\Ffour$
+    & $\omegasix$ breaks $\Spin{10}\to$ Pati-Salam \\
+  Intersect/break & $\cap\;\Spin{9}$
+    & same $u$ breaks $\SU{4}\to\SU{3}_C\times\mathrm{U}(1)$ \\
+  Output & $\SU{3}_C\times\SU{2}\times\mathrm{U}(1)$ ($\dim = 12$)
+    & $\SU{3}_C\times\SU{2}_L\times\mathrm{U}(1)_Y$ ($\dim = 12$) \\
+  Chirality & \textbf{none} (real $\mathbf{27}$)
+    & \textbf{LEFT} (complex $\mathbf{16}$) \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+%----------------------------------------------------------------------
+\subsection{Group matching}\label{sec:group-matching}
+%----------------------------------------------------------------------
+
+We verify that the two routes produce the \emph{same} gauge group
+factor by factor.
+
+\medskip
+\noindent\textbf{$\SU{3}_C$:}
+In both routes, $\SU{3}_C$ is the group of transformations of
+$W\cong\mathbb{C}^3$ preserving the complex structure $J$ defined
+by~$u$.
+\begin{itemize}
+  \item Route~A phrases this as $\mathrm{Stab}_{\Gfour}(u)$:
+    automorphisms of $\mathbb{O}$ fixing $u$, which automatically
+    preserve $J(w)=u\cdot w$.
+  \item Route~B phrases this as $\mathrm{Stab}_{\SU{4}}(u)$:
+    the subgroup of $\SU{4}\cong\Spin{6}$ (acting on the 6
+    directions of $W$) that commutes with $J$.  Since $J$ is
+    an orthogonal complex structure on $W\cong\mathbb{R}^6$,
+    its stabilizer in $\SU{4}$ is $\SU{3}\times\mathrm{U}(1)$.
+\end{itemize}
+Both act on $W\cong\mathbb{C}^3$ via the defining 3-dimensional
+representation.\ $\therefore$ \textbf{Same $\SU{3}_C$.}
+
+\medskip
+\noindent\textbf{$\SU{2}$:}
+\begin{itemize}
+  \item Route~A: $\SU{2}$ from
+    $\mathrm{U}(2)_J = \mathrm{Stab}_{\SU{3}_J}(E_{11})$,
+    the subgroup of the Jordan flavor $\SU{3}_J$ that preserves
+    $E_{11}$.  It acts on the 2nd and 3rd rows/columns of
+    $h_3(\mathbb{C})$.
+  \item Route~B: $\SU{2}_L$ from
+    $\Spin{4} = \SU{2}_L\times\SU{2}_R$, the external part of
+    $\mathrm{Stab}_{\Spin{10}}(\omegasix)$.  It acts on the 4
+    external directions ($\Gamma_7$--$\Gamma_{10}$), which
+    correspond to the $\Vzero$ Peirce sector.
+\end{itemize}
+Both factors arise from the part of $\Spin{9}$ (or $\Spin{10}$
+after complexification) acting on the ``external'' directions---the
+Peirce $\Vzero$ sector rather than $\Vhalf$.
+The $\Cl{6}$/Pati-Salam route provides the additional information
+that this is $\SU{2}_L$ with a chiral action
+($\mathbf{16}\to(\mathbf{4},\mathbf{2},\mathbf{1})\oplus(\bar{\mathbf{4}},\mathbf{1},\mathbf{2})$),
+whereas the $\Ffour$ route sees only a generic $\SU{2}$ without
+left/right distinction.\ $\therefore$ \textbf{Same $\SU{2}$.}
+
+\medskip
+\noindent\textbf{$\mathrm{U}(1)$:}
+\begin{itemize}
+  \item Route~A: $\mathrm{U}(1)$ from the center of
+    $\mathrm{U}(2)_J = [\SU{2}\times\mathrm{U}(1)]/\mathbb{Z}_2$.
+  \item Route~B: $\mathrm{U}(1)_Y$ with hypercharge
+    $Y = (B\!-\!L) + 2J_3^R$.
+\end{itemize}
+Both are determined by rank counting: the rank-4 Cartan subalgebra
+of $\Ffour$ (or equivalently the maximal torus of $\Spin{10}$) has
+4 generators.  After removing the 2 Cartan generators of $\SU{3}_C$
+and the 1 Cartan generator of $\SU{2}$, exactly 1 $\mathrm{U}(1)$
+remains.\ $\therefore$ \textbf{Same $\mathrm{U}(1)$.}
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lllp{4.5cm}@{}}
+  \toprule
+  Factor & Route A & Route B & Identification \\
+  \midrule
+  $\SU{3}_C$ & $\mathrm{Stab}_{\Gfour}(u)$ & $\mathrm{Stab}_{\SU{4}}(u)$
+    & Same: preserves $J\colon W\to W$, acts on $W\cong\mathbb{C}^3$ via $\mathbf{3}$ \\
+  $\SU{2}$ & $\mathrm{U}(2)_J\cap\Spin{9}$ & $\SU{2}_L\subset\Spin{4}$
+    & Same: acts on external ($\Vzero$) directions \\
+  $\mathrm{U}(1)$ & Center of $\mathrm{U}(2)_J$ & $\mathrm{U}(1)_Y$
+    & Same: unique residual Cartan \\
+  \midrule
+  \textbf{Total} & $\dim = 12$ & $\dim = 12$
+    & $\mathfrak{su}(3)\oplus\mathfrak{su}(2)\oplus\mathfrak{u}(1)$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+%----------------------------------------------------------------------
+\subsection{The chiral upgrade theorem}\label{sec:chiral-upgrade}
+%----------------------------------------------------------------------
+
+\begin{theorem}[One choice, two consequences]\label{thm:one-choice}
+Let $\hthree$ be the exceptional Jordan algebra.  Assume:
+\begin{itemize}
+  \item \textup{(Gap~A)} $\hthree$ is identified as the universe
+    algebra via non-composability.
+  \item \textup{(Gap~B, step~1)} An observer selects a rank-1
+    idempotent $e = E_{11}$, breaking $\Ffour\to\Spin{9}$.
+  \item \textup{(Gap~B, step~2)} A complex structure
+    $u\in S^6\subset\mathrm{Im}(\mathbb{O})$ is chosen.
+\end{itemize}
+Then:
+
+\noindent\textup{(a)~\textbf{Gauge group.}}\enspace
+The intersection of $\Spin{9} = \mathrm{Stab}_{\Ffour}(E_{11})$
+with the $u$-preserving subgroup of $\Ffour$ contains the SM gauge
+group $\SU{3}_C\times\SU{2}\times\mathrm{U}(1)$ $(\dim = 12)$.
+
+\noindent\textup{(b)~\textbf{Chirality.}}\enspace
+The same $u$ defines $\Cl{6}\subset\Cl{10}$ whose volume form
+$\omegasix$ selects the chiral \textup{(LEFT)} embedding:
+$\mathbf{16}\to(\mathbf{4},\mathbf{2},\mathbf{1})\oplus
+(\bar{\mathbf{4}},\mathbf{1},\mathbf{2})$ under Pati-Salam,
+with $\SU{2}_L$ on left-handed fermions only.
+
+\noindent\textup{(c)~\textbf{Upgrade.}}\enspace
+The $\Cl{6}$/Pati-Salam route~\textup{(b)} provides a chiral
+representation for the \emph{same} gauge algebra that the $\Ffour$
+intersection~\textup{(a)} provides without chirality.  The
+chirality is not an additional postulate---it is a consequence of
+the same algebraic choice $u$ that gives the gauge group.
+\end{theorem}
+
+The comparison between the two routes is summarized in
+Table~\ref{tab:chiral-upgrade}.
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lll@{}}
+  \toprule
+  & $\Ffour$ intersection & $\Cl{6}$/Pati-Salam \\
+  \midrule
+  Gauge algebra
+    & $\mathfrak{su}(3)\oplus\mathfrak{su}(2)\oplus\mathfrak{u}(1)$ ($\dim=12$)
+    & Same ($\dim=12$) \\
+  Chirality
+    & \textbf{None} --- $\Ffour$ real, $\mathbf{27}$ real
+    & \textbf{LEFT} --- $\omegasix$ provides chirality \\
+  Representation
+    & Acts on $\mathbf{27}$ (no chiral decomposition)
+    & Acts on $\mathbf{16}$ (one generation, definite chirality) \\
+  Input
+    & $E_{11} + u$
+    & Same ($E_{11} + u$) \\
+  Cross-check value
+    & Independent verification of gauge group
+    & Strictly more informative (same algebra $+$ chirality) \\
+  \bottomrule
+\end{tabular}
+\caption{Comparison of the two routes from the single input
+$u\in S^6$.  The $\Cl{6}$/Pati-Salam route provides a strict
+upgrade: it delivers the same gauge algebra plus chirality.
+The $\Ffour$ route serves as an independent cross-check on the
+gauge group from a different algebraic framework.}
+\label{tab:chiral-upgrade}
+\end{table}
+
+\noindent\textbf{The full chain:}
+\begin{equation}\label{eq:full-chain}
+  \text{self-modeling}
+  \;\to\; \hthree
+  \;\xrightarrow{E_{11}}\; \Spin{9}
+  \;\xrightarrow{\text{C*-complexification}}\; \Spin{10}
+  \;\xrightarrow{u\in S^6}\;
+  \SMgauge
+  \;\text{ with LEFT embedding.}
+\end{equation}

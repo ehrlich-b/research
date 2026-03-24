@@ -1,0 +1,249 @@
+% discussion.tex — Section 6: Discussion
+% ASSERT_CONVENTION: natural_units=dimensionless, jordan_product=(1/2)(ab+ba), clifford_convention=euclidean_positive, octonion_basis=fano_e1e2=e4, complex_structure=u_equals_e7, spin_representation=S10plus_boyle, pati_salam=SU4xSU2LxSU2R
+
+%----------------------------------------------------------------------
+\section{Discussion}\label{sec:discussion}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\subsection{The research arc: Papers 5--6--7}\label{sec:arc}
+%----------------------------------------------------------------------
+
+This paper completes a trilogy deriving the three pillars of
+fundamental physics from the self-modeling principle.
+
+\medskip
+\noindent\textbf{Paper~5~\cite{Paper5} --- Quantum mechanics from
+self-modeling.}
+The requirement that a finite-dimensional system contains a faithful
+model of itself, updated through its boundary, forces quantum
+mechanics: the state space is isomorphic to $M_n(\mathbb{C})^{sa}$
+(the self-adjoint part of a matrix C*-algebra).  The result is
+unconditional: the only input is the self-modeling axiom itself.
+
+\medskip
+\noindent\textbf{Paper~6~\cite{Paper6} --- General relativity from
+self-modeling.}
+Self-modeling locality on a lattice---the condition that the
+self-modeling update acts through boundaries---forces area-law
+entanglement entropy.  Combined with the entanglement equilibrium
+argument~\cite{ConnesRovelli1994}, this yields Einstein's field
+equations $G_{ab} + \Lambda g_{ab} = 8\pi G\, T_{ab}$ as the
+leading-order effective description at long wavelengths.  The
+additional inputs are the lattice topology, the antiferromagnetic
+coupling sign, and the Wilsonian continuum limit.
+
+\medskip
+\noindent\textbf{Paper~7 (this work) --- Standard Model chirality
+from $\hthree$.}
+A C*-observer probing the exceptional Jordan algebra $\hthree$
+obtains the SM gauge group $\SMgauge$ with the LEFT chiral
+representation, from a single algebraic choice: a complex structure
+$u\in S^6\subset\mathrm{Im}(\mathbb{O})$.  The additional inputs
+beyond self-modeling are the identification of $\hthree$ as the
+universe algebra (Gap~A) and two symmetry-breaking choices (Gaps~B1
+and~B2).
+
+\medskip
+The trilogy thus covers:
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}llll@{}}
+  \toprule
+  Paper & Target & Key result & Additional inputs \\
+  \midrule
+  5 & QM & $M_n(\mathbb{C})^{sa}$ forced & None \\
+  6 & GR & $G_{ab} + \Lambda g_{ab} = 8\pi G\, T_{ab}$ & Lattice, coupling sign \\
+  7 & SM & $\SMgauge$ + LEFT chirality & $\hthree$, $E_{11}$, $u$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Each successive paper requires additional inputs beyond the
+self-modeling axioms: Paper~5 requires none; Paper~6 requires a
+lattice topology and coupling sign; Paper~7 additionally requires the
+$\hthree$ identification and two symmetry-breaking choices.  The
+increasing number of inputs reflects the increasing specificity of
+the target: quantum mechanics is generic to all self-modeling systems,
+general relativity requires spatial structure, and the specific SM
+gauge group requires exceptional algebraic structure.
+
+%----------------------------------------------------------------------
+\subsection{Relationship to prior work}\label{sec:prior-work}
+%----------------------------------------------------------------------
+
+Several groups have explored the connection between exceptional
+algebraic structures and the Standard Model.  We compare our approach
+with four lines of work.
+
+\medskip
+\noindent\textbf{Todorov and Drenska~\cite{TodorovDrenska2018,
+Todorov2022}.}
+Todorov and Drenska showed that the $\Ffour$ intersection---the
+subgroup of $\Ffour$ that preserves the decomposition
+$\mathbb{O} = \mathbb{C}\oplus\mathbb{C}^3$ induced by a complex
+structure, intersected with $\Spin{9} = \mathrm{Stab}_{\Ffour}(E_{11})$---contains
+the SM gauge group $\SU{3}_C\times\SU{2}\times\mathrm{U}(1)$.
+\emph{Our contribution:} We reproduce this result (Sec.~\ref{sec:F4-route})
+and additionally (i)~derive the complexification step from the
+C*-observer nature rather than assuming it, (ii)~show that the same
+algebraic input $u$ that produces the $\Ffour$ route simultaneously
+produces the $\Cl{6}$ chirality (Theorem~\ref{thm:single-input}), and
+(iii)~embed the result in the self-modeling framework (Paper~5).
+
+\medskip
+\noindent\textbf{Furey~\cite{Furey2018}.}
+Furey showed that the Clifford algebra $\Cl{6}$, via the Witt
+decomposition, produces automatic chirality for one generation of SM
+fermions: the volume form $\omegasix$ separates left-handed from
+right-handed states.
+\emph{Our contribution:} We reproduce this result
+(Sec.~\ref{sec:chirality}) and additionally (i)~trace the $\Cl{6}$
+subalgebra to the choice of complex structure $u$ on
+$\mathrm{Im}(\mathbb{O})$ (it is induced, not postulated),
+(ii)~show that this same $u$ produces the $\Ffour$ route as well
+(the single-input synthesis of Sec.~\ref{sec:synthesis}), and
+(iii)~derive the complexification that provides the 16-dimensional
+complex representation on which $\Cl{6}$ acts.
+
+\medskip
+\noindent\textbf{Boyle~\cite{Boyle2020}.}
+Boyle studied the complexified exceptional Jordan algebra $\hthreeC$
+and its structure group $\Esix$, identifying the Weyl spinor
+$\Stenplus$ and the decomposition
+$\mathbf{27} = \mathbf{1}\oplus\mathbf{10}\oplus\mathbf{16}$ under
+$\Spin{10}$.
+\emph{Our contribution:} We arrive at the same decomposition
+(Sec.~\ref{sec:spin-upgrade}) but \emph{derive} the complexification
+from the C*-observer nature (Sec.~\ref{sec:complexification-arg})
+rather than taking it as a mathematical starting point.  The end
+result is the same identification of $\Vhalf^{\,\mathbb{C}} = \Stenplus$;
+the logical route differs: Boyle assumes complexification, we derive
+it from self-modeling.
+
+\medskip
+\noindent\textbf{Connes, Chamseddine, and Marcolli~\cite{CCM2007}.}
+The spectral triple approach of Connes and collaborators derives the
+SM Lagrangian from noncommutative geometry with the finite algebra
+$\mathbb{C}\oplus\mathbb{H}\oplus M_3(\mathbb{C})$.  The choice of
+this direct-sum algebra is an input matched to observation.  As noted
+in the introduction, simple $M_n(\mathbb{C})$ algebras cannot
+reproduce the SM within this framework---this is the v4.0
+structural obstruction~\cite{Barrett2007} that motivates our turn to
+$\hthree$.
+\emph{Our contribution:} The present work provides the algebraic
+input---gauge group and chiral representation---from the $\hthree$
+structure.  The spectral action computation (deriving the full
+GR + SM Lagrangian from an $\hthree$-based spectral triple) is
+identified as Gap~SA and deferred to future work.  If successful,
+this would provide a non-perturbative completion of the CCM program
+with the finite algebra determined by the self-modeling principle
+rather than chosen by hand.
+
+\medskip
+\noindent\textbf{Dubois-Violette~\cite{DuboisViolette1995}.}
+Dubois-Violette was among the earliest to connect $\hthree$ to the
+Standard Model, studying the algebra's internal symmetries and their
+relation to gauge groups.
+\emph{Our contribution:} We provide the self-modeling framework
+(Paper~5) that motivates $\hthree$ as the universe algebra via
+non-composability, rather than adopting it as a mathematical starting
+point.
+
+%----------------------------------------------------------------------
+\subsection{Novelty delineation}\label{sec:novelty}
+%----------------------------------------------------------------------
+
+The individual algebraic components of our derivation are established
+results.  The contribution of this paper lies in three new
+connections.
+
+\begin{enumerate}
+\item \textbf{Complexification derived from C*-observer nature (new).}
+  The upgrade $\Spin{9}\to\Spin{10}$ and $\Ffour\to\Esix$ follows
+  from the self-modeling requirement that the observer be a C*-algebra
+  system (Paper~5~\cite{Paper5}), which forces extension of scalars on
+  every space the observer probes.  This replaces the assumption of
+  complexification in~\cite{Boyle2020} with a derivation.
+
+\item \textbf{$\Cl{6}$ chirality and $\Ffour$ intersection traced to
+  the same input $u$ (new).}
+  The literature treats the $\Cl{6}$/Furey route and the
+  $\Ffour$/Todorov--Drenska route as separate approaches.
+  Theorem~\ref{thm:single-input} proves they share the same algebraic
+  input ($u\in S^6$) and produce the same gauge group, with the
+  $\Cl{6}$ route additionally providing chirality
+  (Theorem~\ref{thm:one-choice}).
+
+\item \textbf{Complete chain from self-modeling to chiral SM (new).}
+  No prior work connects the self-modeling axioms (Paper~5) through
+  $\hthree$ complexification (Part~A) to the chiral SM representation
+  (Part~B) in a single derivation chain with explicit gap
+  identification (Table~\ref{tab:chain}, Table~\ref{tab:gaps}).
+\end{enumerate}
+
+\noindent
+The established components on which we build include: the JvNW
+classification of formally real Jordan
+algebras~\cite{JvNW1934,Albert1934}, the structure of $\hthree$ and
+its automorphism group $\Ffour$~\cite{Baez2002,Yokota2009}, the
+$\Cl{6}\to\text{Pati-Salam}\to\text{SM}$
+chain~\cite{Furey2018,Todorov2022}, the $\Ffour$ intersection
+route~\cite{TodorovDrenska2018}, and the
+$\hthreeC/\Esix$ analysis~\cite{Boyle2020}.
+
+%----------------------------------------------------------------------
+\subsection{Outlook}\label{sec:outlook}
+%----------------------------------------------------------------------
+
+We identify five concrete directions for extending the present result,
+each tied to a specific gap.
+
+\medskip
+\noindent\textbf{1. Closing Gap~B1: observer selection principle.}
+Is there a principle within the self-modeling framework that selects
+which rank-1 idempotent the observer occupies?  A natural candidate is
+an extremality condition: the observer occupies the idempotent that
+maximizes some measure of self-modeling fidelity.  Since all rank-1
+idempotents are $\Ffour$-conjugate, any such principle would need to
+invoke additional structure (e.g., the presence of matter or
+interactions) to break the symmetry.
+
+\medskip
+\noindent\textbf{2. Closing Gap~B2: dynamics on $S^6$.}
+Does the spectral action on an $\hthree$-based spectral triple
+produce a potential on $S^6$ that selects a preferred complex
+structure?  The manifold $S^6$ is a natural candidate for a moduli
+space, and the spectral action might generate an effective potential
+whose minimum determines $u$.  This would connect Gap~B2 to Gap~SA.
+
+\medskip
+\noindent\textbf{3. Generation structure.}
+The ``3'' in $h_3(\mathbb{O})$ (the algebra consists of
+$3\times 3$ matrices) is suggestive: three off-diagonal octonion
+entries might correspond to three generations.  However, no mechanism
+producing three copies of the $\mathbf{16}$ representation has been
+established.  Furey~\cite{Furey2018} proposed a route via the full
+octonion algebra $\mathbb{O}$ acting on $\Cl{6}$; Boyle~\cite{Boyle2020}
+explored triality.  Making this connection rigorous within the
+self-modeling framework is an open challenge.
+
+\medskip
+\noindent\textbf{4. Spectral action.}
+Computing the full GR + SM Lagrangian from the algebraic data
+established here---the $\hthree$-based spectral triple with
+$\SMgauge$ gauge group and chiral representation---is the most
+direct extension.  The spectral action
+principle~\cite{CCM2007} provides the framework; the challenge is
+constructing the Dirac operator and evaluating the action for the
+exceptional algebra, which is non-associative.
+
+\medskip
+\noindent\textbf{5. Connection to other exceptional structures.}
+The exceptional groups $G_2$, $\Ffour$, $\Esix$, $E_7$, $E_8$
+appear throughout this work.  Their role in the exceptional magic
+square~\cite{Baez2002} and in higher-dimensional extensions (e.g.,
+$E_8\times E_8$ in string theory) suggests further structure beyond
+the SM that the self-modeling framework might illuminate.

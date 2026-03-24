@@ -1,0 +1,55 @@
+% main.tex — Paper 7: Chirality from h_3(O)
+% ASSERT_CONVENTION: natural_units=dimensionless, jordan_product=(1/2)(ab+ba), clifford_convention=euclidean_positive, octonion_basis=fano_e1e2=e4, complex_structure=u_equals_e7, spin_representation=S10plus_boyle, pati_salam=SU4xSU2LxSU2R
+\documentclass[aps,prd,twocolumn,superscriptaddress,nofootinbib]{revtex4-2}
+
+\input{preamble.sty}
+
+\begin{document}
+
+\title{Chirality from $\hthree$: Standard Model Gauge Group\\
+and Chiral Representation from Self-Modeling\\
+via Exceptional Jordan Algebra}
+
+\author{Bryan Ehrlich}
+\affiliation{Independent researcher}
+
+\date{\today}
+
+\begin{abstract}
+Self-modeling---the requirement that a physical system contains a
+faithful model of itself---forces quantum mechanics with
+$M_n(\mathbb{C})^{sa}$ state spaces~\cite{Paper5}. We argue that the
+exceptional Jordan algebra $\hthree$ is the unique candidate for the
+``universe algebra'' via its non-composability (it cannot be a subsystem of
+a larger system). A C*-observer probing $\hthree$ induces a Peirce
+decomposition under a rank-1 idempotent $E_{11}$, and the observer's
+C*-algebra nature forces complexification of the Peirce half-space,
+upgrading the symmetry from $\Spin{9}$ to $\Spin{10}$ acting on a
+16-dimensional complex Weyl spinor $\Stenplus$. A single additional
+algebraic choice---a complex structure $u \in S^6 \subset
+\mathrm{Im}(\mathbb{O})$---simultaneously determines both the Standard
+Model gauge group $\SMgauge$ via $\Ffour$ intersection and the chiral
+(left-handed) fermion representation via the $\Cl{6}$ volume form. The
+result is conditional on three inputs: the identification of $\hthree$ as
+the universe algebra, the choice of rank-1 idempotent, and the choice of
+complex structure. We present the complete 9-link chain from self-modeling
+axioms to the chiral Standard Model representation, with explicit
+classification of each link as proved, established, or an open gap.
+\end{abstract}
+
+\maketitle
+
+\input{sections/introduction}
+\input{sections/complexification}
+\input{sections/chirality}
+\input{sections/synthesis}
+\input{sections/gaps}
+\input{sections/discussion}
+
+\begin{acknowledgments}
+[Acknowledgments placeholder.]
+\end{acknowledgments}
+
+\bibliography{refs}
+
+\end{document}

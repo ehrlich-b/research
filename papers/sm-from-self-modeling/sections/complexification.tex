@@ -1,0 +1,359 @@
+% complexification.tex — Section 2: Part A — Complexification from C*-Observer
+% ASSERT_CONVENTION: natural_units=dimensionless, jordan_product=(1/2)(ab+ba), clifford_convention=euclidean_positive, octonion_basis=fano_e1e2=e4, complex_structure=u_equals_e7, spin_representation=S10plus_boyle
+
+%----------------------------------------------------------------------
+\section{Part A: Complexification from C*-Observer}\label{sec:complexification}
+%----------------------------------------------------------------------
+
+The first half of the derivation shows that the observer's algebraic
+nature---specifically, the fact that self-modeling forces a C*-algebra
+structure---automatically complexifies the Peirce half-space of the
+exceptional Jordan algebra, upgrading the symmetry from
+$\Spin{9}$ to $\Spin{10}$ and identifying the 16-dimensional
+spinor representation that will carry one generation of fermions.
+
+%----------------------------------------------------------------------
+\subsection{The exceptional Jordan algebra \texorpdfstring{$\hthree$}{h3(O)}}\label{sec:h3O}
+%----------------------------------------------------------------------
+
+The exceptional Jordan algebra $\hthree$ (the Albert algebra)
+consists of $3\times 3$ Hermitian matrices over the octonions $\mathbb{O}$:
+\begin{equation}\label{eq:h3O-element}
+  X \;=\;
+  \begin{pmatrix}
+    \alpha & \bar{x}_3 & x_2 \\[3pt]
+    x_3 & \beta & \bar{x}_1 \\[3pt]
+    \bar{x}_2 & x_1 & \gamma
+  \end{pmatrix},
+  \qquad
+  \alpha,\beta,\gamma \in \mathbb{R},
+  \quad
+  x_1,x_2,x_3 \in \mathbb{O},
+\end{equation}
+with the Jordan product
+\begin{equation}\label{eq:jordan-product}
+  A \circ B \;=\; \tfrac{1}{2}(AB + BA),
+\end{equation}
+where $AB$ denotes ordinary matrix multiplication with octonion entries.
+The product is well-defined even though $\mathbb{O}$ is non-associative,
+by the classical result of Albert~\cite{Albert1934}; the exceptional
+Jordan algebra was classified by Jordan, von~Neumann, and
+Wigner~\cite{JvNW1934}.
+
+\begin{remark}[Dimension]
+The three real diagonal entries contribute $3$; the three independent
+octonion off-diagonal entries contribute $3\times 8 = 24$.  Hence
+$\dim(\hthree) = 3 + 24 = 27$.
+\end{remark}
+
+\begin{remark}[Non-composability and Gap~A]\label{rem:gap-A}
+Among the formally real Jordan algebras classified by
+Jordan--von~Neumann--Wigner, $\hthree$ is the unique
+\emph{exceptional} algebra: it does not embed into any associative
+algebra and cannot be realized as a tensor factor of a larger
+system~\cite{Baez2002}.  We identify it as the ``universe algebra''
+on the physical grounds that the universe, by definition, is not a
+subsystem of a larger system and therefore need not be composable.
+This identification is a separate argument from the self-modeling
+axioms and is flagged as Gap~A.
+\end{remark}
+
+%----------------------------------------------------------------------
+\subsection{Peirce decomposition under \texorpdfstring{$E_{11}$}{E11}}\label{sec:peirce}
+%----------------------------------------------------------------------
+
+The observer selects a rank-1 idempotent
+\begin{equation}\label{eq:E11}
+  e = E_{11} =
+  \begin{pmatrix}
+    1 & 0 & 0 \\
+    0 & 0 & 0 \\
+    0 & 0 & 0
+  \end{pmatrix}.
+\end{equation}
+
+\begin{remark}[Gap~B, step~1]\label{rem:gap-B1}
+The choice of $E_{11}$ is an \emph{input}, not a consequence of
+self-modeling.  All rank-1 idempotents in $\hthree$ are conjugate under
+$\Ffour$ (the orbit is the octonionic projective plane
+$\mathbb{O}P^2$, $\dim = 16$).  Physically, the observer's existence
+breaks $\Ffour \to \Spin{9}$; \emph{which} idempotent is selected
+corresponds to the observer's ``viewpoint'' and is a genuine
+symmetry-breaking input.
+\end{remark}
+
+The Peirce decomposition under $e$ partitions $\hthree$ into the
+eigenspaces of the multiplication operator $L_e(X) = e \circ X$:
+\begin{equation}\label{eq:peirce-decomp}
+  \hthree \;=\; \Vone \;\oplus\; \Vhalf \;\oplus\; \Vzero,
+  \qquad
+  V_\lambda \;=\; \bigl\{X \in \hthree : e \circ X = \lambda X\bigr\}.
+\end{equation}
+
+\noindent\textbf{Explicit computation of $L_e(X)$.}  Writing
+$E_{11}\, X + X\, E_{11}$ entry by entry and dividing by~$2$:
+\begin{equation}\label{eq:L_eX}
+  e \circ X \;=\;
+  \frac{1}{2}
+  \begin{pmatrix}
+    2\alpha & \bar{x}_3 & x_2 \\[2pt]
+    x_3 & 0 & 0 \\[2pt]
+    \bar{x}_2 & 0 & 0
+  \end{pmatrix}.
+\end{equation}
+
+Reading off the eigenvalue conditions:
+
+\begin{proposition}[Peirce spaces]\label{prop:peirce-spaces}
+The Peirce decomposition of $\hthree$ under $E_{11}$ is:
+\begin{align}
+  \Vone
+    &= \bigl\{\alpha E_{11} : \alpha \in \mathbb{R}\bigr\}
+    \cong \mathbb{R},
+    & \dim(\Vone) &= 1,
+    \label{eq:V1} \\
+  \Vhalf
+    &= \left\{\!
+    \begin{pmatrix}
+      0 & \bar{x}_3 & x_2 \\[2pt]
+      x_3 & 0 & 0 \\[2pt]
+      \bar{x}_2 & 0 & 0
+    \end{pmatrix}
+    : x_2,x_3 \in \mathbb{O}\right\}
+    \cong \mathbb{O}^2,
+    & \dim(\Vhalf) &= 16,
+    \label{eq:V12} \\
+  \Vzero
+    &= \left\{\!
+    \begin{pmatrix}
+      0 & 0 & 0 \\[2pt]
+      0 & \beta & \bar{x}_1 \\[2pt]
+      0 & x_1 & \gamma
+    \end{pmatrix}
+    : \beta,\gamma\in\mathbb{R},\; x_1\in\mathbb{O}\right\}
+    \cong h_2(\mathbb{O}),
+    & \dim(\Vzero) &= 10.
+    \label{eq:V0}
+\end{align}
+\end{proposition}
+
+\noindent\textbf{Dimension check:}
+$1 + 16 + 10 = 27 = \dim(\hthree)$.\ \checkmark
+
+\medskip
+\noindent\textbf{Stabilizer and Spin(9) representations.}
+The stabilizer of $E_{11}$ in $\Ffour = \mathrm{Aut}(\hthree)$
+($\dim\,\Ffour = 52$)
+is~\cite{Baez2002,Yokota2009}
+\begin{equation}\label{eq:stab-spin9}
+  \mathrm{Stab}_{\Ffour}(E_{11}) \;=\; \Spin{9},
+  \qquad
+  \dim\,\Spin{9} = 36 = \tbinom{9}{2}.
+\end{equation}
+Coset check: $52 - 36 = 16 = \dim(\Vhalf)$,
+consistent with $\Ffour/\Spin{9} \cong \mathbb{O}P^2$.
+
+Under $\Spin{9}$ the Peirce spaces carry the representations:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}cccc@{}}
+  \toprule
+  Peirce space & Identification & $\dim_\mathbb{R}$ & $\Spin{9}$ rep \\
+  \midrule
+  $\Vone$ & $\mathbb{R}\cdot E_{11}$ & $1$ & trivial $\mathbf{1}$ \\
+  $\Vhalf$ & $\mathbb{O}^2$ & $16$ & spinor $S_9 = \mathbf{16}$ \\
+  $\Vzero$ & $h_2(\mathbb{O})$ & $10$ & $\mathbf{9}\oplus\mathbf{1}$ \\
+  \midrule
+  Total & $\hthree$ & $27$ & $\mathbf{1}\oplus\mathbf{16}\oplus\mathbf{9}\oplus\mathbf{1}$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+The identification $\Vhalf = \mathbb{O}^2 = S_9$
+(the unique real 16-dimensional irreducible spinor of $\Spin{9}$)
+follows from
+$\dim_\mathbb{R}(S_9) = 2^{[9/2]} = 2^4 = 16$
+and the fact that $\Spin{9}$ acts on the tangent space
+$T_{E_{11}}(\mathbb{O}P^2) \cong \mathbb{O}^2$ via its
+spinor representation~\cite{Baez2002,Yokota2009}.
+The space $\Vzero = h_2(\mathbb{O})$ decomposes into the
+traceless part (the 9-dimensional vector representation of
+$\SO{9} = \Spin{9}/\mathbb{Z}_2$) plus the trace (a trivial
+$\mathbf{1}$).
+
+%----------------------------------------------------------------------
+\subsection{Complexification from C*-observer nature}\label{sec:complexification-arg}
+%----------------------------------------------------------------------
+
+The crucial step of Part~A is that \emph{complexification is derived,
+not assumed}.  The logical chain has five steps.
+
+\medskip
+\noindent\textbf{Step~1: Self-modeling forces a C*-algebra observer.}
+Paper~5 established that a finite-dimensional system that faithfully
+self-models must be described by $M_n(\mathbb{C})^{\mathrm{sa}}$---the
+self-adjoint part of a complex matrix algebra---equipped with the
+L\"uders sequential product.  The key steps were: (i)~self-modeling
+forces a sequential product satisfying axioms S1--S7; (ii)~the
+van~de~Wetering classification yields an EJA state space;
+(iii)~compositionality forces local tomography; (iv)~local tomography
+excludes all non-complex EJA types ($M_n(\mathbb{R})^{\mathrm{sa}}$,
+$M_n(\mathbb{H})^{\mathrm{sa}}$, spin factors $V_n$ for $n\ge 4$,
+and $\hthree$ itself).  The surviving type is
+$M_n(\mathbb{C})^{\mathrm{sa}}$, promoted to a C*-algebra.
+
+\medskip
+\noindent\textbf{Step~2: C*-algebra implies $\mathbb{C}$ as scalar field.}
+By definition, a C*-algebra is an algebra over $\mathbb{C}$ with an
+involution and a complete submultiplicative norm satisfying the
+C*-identity.  The observer's scalar field is therefore $\mathbb{C}$,
+not $\mathbb{R}$.
+
+\medskip
+\noindent\textbf{Step~3: Observer probes $\Vhalf$ through its own framework.}
+The observer accesses $\Vhalf = \mathbb{O}^2$ (a real 16-dimensional
+space) through the Peirce decomposition.  Physically, $\Vhalf$ is the
+``interaction space'' between the observer's slot ($\Vone$) and the
+rest of the algebra ($\Vzero$).
+
+\medskip
+\noindent\textbf{Step~4: Observer's operations are $\mathbb{C}$-linear.}
+Since the observer's scalar field is $\mathbb{C}$ (Step~2), all its
+algebraic operations---measurement maps, expectation-value functionals,
+symmetry transformations---are $\mathbb{C}$-linear.  There is no
+mechanism by which the observer can ``turn off'' its complex structure
+when probing $\Vhalf$.
+
+\medskip
+\noindent\textbf{Step~5: Extension of scalars.}
+The observer's effective description of $\Vhalf$ is therefore
+\begin{equation}\label{eq:complexification}
+  \Vhalf^{\,\mathbb{C}}
+  \;:=\;
+  \Vhalf \otimes_\mathbb{R} \mathbb{C}\,,
+\end{equation}
+the standard extension of scalars from $\mathbb{R}$ to $\mathbb{C}$.
+Every real basis vector $v$ of $\Vhalf$ becomes a complex basis
+vector $v\otimes 1$, so
+\begin{equation}\label{eq:dim-complexified}
+  \dim_\mathbb{C}\!\bigl(\Vhalf^{\,\mathbb{C}}\bigr)
+  \;=\;
+  \dim_\mathbb{R}(\Vhalf)
+  \;=\; 16.
+\end{equation}
+
+\begin{remark}[Contrast with Boyle~\cite{Boyle2020}]\label{rem:boyle-contrast}
+Boyle starts from the complexified algebra $\hthreeC$ and
+studies its structure group $\Esix$.  Our approach differs in that
+we derive the complexification from the observer's C*-nature: the
+self-modeling requirement (Paper~5) forces the observer to be a
+C*-algebra system, which in turn forces extension of scalars on
+every space the observer probes.  The end result is the same
+identification of $\Vhalf^{\,\mathbb{C}}$ as the Weyl spinor
+$\Stenplus$, but the logical route is different: Boyle assumes
+complexification, we derive it.
+\end{remark}
+
+%----------------------------------------------------------------------
+\subsection{Spin(9) to Spin(10) and \texorpdfstring{$\Ffour$}{F4} to \texorpdfstring{$\Esix$}{E6}}\label{sec:spin-upgrade}
+%----------------------------------------------------------------------
+
+The complexification of $\Vhalf$ triggers a representation-theoretic
+upgrade from $\Spin{9}$ to $\Spin{10}$.
+
+\begin{proposition}[Spinor upgrade]\label{prop:spinor-upgrade}
+The complexified Peirce half-space
+$\Vhalf^{\,\mathbb{C}} = \mathbb{O}^2\otimes_\mathbb{R}\mathbb{C}$
+carries the Weyl spinor representation $\Stenplus$ of $\Spin{10}$:
+\begin{equation}\label{eq:branching}
+  \Stenplus\big|_{\Spin{9}}
+  \;\cong\;
+  S_9 \otimes_\mathbb{R} \mathbb{C}
+  \;=\;
+  S_9^{\,\mathbb{C}}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}[Argument]
+$\Spin{10}$ has two inequivalent complex Weyl representations
+$\Stenplus$ and $S_{10}^-$, each of
+$\dim_\mathbb{C} = 2^{[10/2]-1} = 2^4 = 16$.
+The standard branching rule for the embedding
+$\Spin{9}\hookrightarrow\Spin{10}$ (where $\Spin{9}$ stabilizes a
+unit vector in $\mathbb{R}^{10}$) gives
+$\Stenplus|_{\Spin{9}} \cong S_9^{\,\mathbb{C}}$:
+the Weyl spinor of $\Spin{10}$, restricted to $\Spin{9}$, is
+the complexification of the real spinor $S_9$.  Equivalently,
+$S_9$ is a real form of $\Stenplus$.
+
+Since $\Vhalf = S_9$ (Proposition~\ref{prop:peirce-spaces}) and
+$\Vhalf^{\,\mathbb{C}} = S_9^{\,\mathbb{C}}$, we conclude
+$\Vhalf^{\,\mathbb{C}} = \Stenplus$.
+\end{proof}
+
+\noindent\textbf{Dimension check:}
+$\dim_\mathbb{C}(\Stenplus) = 16 = \dim_\mathbb{R}(S_9)
+= \dim_\mathbb{R}(\Vhalf)$.\ \checkmark
+
+\begin{remark}[Choice of $\Stenplus$ vs.\ $S_{10}^-$]
+Under $\Spin{10}\supset\Spin{9}$, both Weyl representations restrict
+to the same real representation $S_9$ (since $S_9$ has no chirality).
+The assignment $\Stenplus$ (rather than $S_{10}^-$) follows
+the Boyle convention~\cite{Boyle2020}.  The chirality distinction
+will be resolved in Section~\ref{sec:chirality} via the $\Cl{6}$
+construction.
+\end{remark}
+
+\noindent\textbf{Symmetry upgrade.}
+Because $\Vhalf^{\,\mathbb{C}} = \Stenplus$ carries a representation
+of $\Spin{10}$ (not merely $\Spin{9}$), the symmetry of the observer's
+description of the Peirce space upgrades:
+\begin{equation}\label{eq:spin-upgrade}
+  \Spin{9} \;\longrightarrow\; \Spin{10}.
+\end{equation}
+
+At the algebra level, the upgrade extends to the full automorphism
+and structure groups.  The structure group of the complexified
+algebra $\hthreeC = \hthree \otimes_\mathbb{R}\mathbb{C}$
+is~\cite{Baez2002,Yokota2009,Boyle2020}
+\begin{equation}\label{eq:F4-E6}
+  \Ffour \;\longrightarrow\; \Esix,
+  \qquad
+  \dim\,\Ffour = 52 \;\to\; \dim\,\Esix = 78.
+\end{equation}
+Here $\Ffour = \mathrm{Aut}(\hthree)$ is the automorphism group, and
+$\Esix = \mathrm{Str}_0(\hthreeC)$ is the connected component of the
+structure group (transformations preserving the cubic norm form up to
+scale).  The stabilizer of $E_{11}$ in $\Esix$ is
+\begin{equation}\label{eq:stab-E6}
+  \mathrm{Stab}_{\Esix}(E_{11}) \;=\; \Spin{10}\times\mathrm{U}(1),
+  \qquad
+  \dim = 45 + 1 = 46.
+\end{equation}
+
+Under $\Spin{10}$, the 27-dimensional representation decomposes as
+\begin{equation}\label{eq:27-decomp}
+  \mathbf{27}
+  \;\to\;
+  \underbrace{\mathbf{1}}_{\Vone^{\,\mathbb{C}}}
+  \;\oplus\;
+  \underbrace{\mathbf{10}}_{\Vzero^{\,\mathbb{C}}}
+  \;\oplus\;
+  \underbrace{\mathbf{16}}_{\Vhalf^{\,\mathbb{C}} = \Stenplus}\,,
+\end{equation}
+where $\Vone^{\,\mathbb{C}} \cong \mathbb{C}$ (trivial),
+$\Vzero^{\,\mathbb{C}} \cong \mathbf{10}$ (vector of $\Spin{10}$,
+verified by the branching $\mathbf{10}|_{\Spin{9}} = \mathbf{9}\oplus\mathbf{1}$),
+and $\Vhalf^{\,\mathbb{C}} = \Stenplus$ (Weyl spinor).
+
+\noindent\textbf{Dimension check:}
+$1 + 10 + 16 = 27$.\ \checkmark
+
+\begin{remark}[Cross-check with Boyle]
+Boyle~\cite{Boyle2020} arrives at the same decomposition
+$\mathbf{27} = \mathbf{1}\oplus\mathbf{10}\oplus\mathbf{16}$ under
+$\Spin{10}\subset\Esix$ by analyzing the complexified algebra
+directly.  The results are consistent; our contribution is the
+derivation of the complexification step from C*-observer nature
+rather than taking it as a mathematical starting point.
+\end{remark}

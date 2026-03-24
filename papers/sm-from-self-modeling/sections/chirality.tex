@@ -1,0 +1,392 @@
+% chirality.tex — Section 3: Part B — Cl(6) Chirality and the Standard Model
+% ASSERT_CONVENTION: natural_units=dimensionless, jordan_product=(1/2)(ab+ba), clifford_convention=euclidean_positive, octonion_basis=fano_e1e2=e4, complex_structure=u_equals_e7, spin_representation=S10plus_boyle
+
+%----------------------------------------------------------------------
+\section{Part B: Cl(6) Chirality and the Standard Model}\label{sec:chirality}
+%----------------------------------------------------------------------
+
+The second half of the derivation shows that the same algebraic
+structure---the exceptional Jordan algebra probed by a C*-observer---
+yields the Standard Model gauge group with the correct chiral
+representation.  The key mechanism is a Clifford subalgebra $\Cl{6}$
+induced by a single additional choice: a unit imaginary octonion
+$u\in S^6$.
+
+%----------------------------------------------------------------------
+\subsection{The octonion splitting \texorpdfstring{$\mathbb{O} = \mathbb{C} \oplus \mathbb{C}^3$}{O = C + C3}}\label{sec:oct-split}
+%----------------------------------------------------------------------
+
+Choose a unit imaginary octonion $u\in S^6 \subset \mathrm{Im}(\mathbb{O})$.
+Following the Fano convention, we set $u = e_7$.
+
+\begin{remark}[Gap~B, step~2]\label{rem:gap-B2}
+The choice of $u$ is a second symmetry-breaking input, independent
+of the idempotent choice $E_{11}$ (Remark~\ref{rem:gap-B1}).
+All unit imaginary octonions are conjugate under
+$\Gfour = \mathrm{Aut}(\mathbb{O})$; the orbit is
+$S^6 = \Gfour/\SU{3}$, $\dim(S^6) = 14 - 8 = 6$.
+What selects a particular $u$ is not addressed in this work.
+\end{remark}
+
+The choice of $u$ embeds $\mathbb{C}$ into $\mathbb{O}$:
+\begin{equation}\label{eq:C-embed}
+  \mathbb{C}
+  \;=\; \mathrm{span}_\mathbb{R}\{1, e_7\}
+  \;\subset\; \mathbb{O}.
+\end{equation}
+The orthogonal complement of $u$ in $\mathrm{Im}(\mathbb{O})$
+is 6-dimensional:
+\begin{equation}\label{eq:W-def}
+  W \;=\; u^\perp \cap \mathrm{Im}(\mathbb{O})
+  \;=\; \mathrm{span}_\mathbb{R}\{e_1,e_2,e_3,e_4,e_5,e_6\},
+  \qquad \dim(W) = 6.
+\end{equation}
+
+The space $W$ inherits a complex structure from left multiplication
+by~$u$:
+\begin{equation}\label{eq:J-def}
+  J\colon W \to W,
+  \qquad
+  J(w) = e_7 \cdot w.
+\end{equation}
+To verify $J^2 = -\mathrm{Id}$: for any $w\in W$, the left
+alternative identity $x\cdot(x\cdot y) = (x\cdot x)\cdot y$ gives
+\begin{equation}\label{eq:J-squared}
+  J(J(w))
+  \;=\; e_7\cdot(e_7\cdot w)
+  \;=\; (e_7\cdot e_7)\cdot w
+  \;=\; -w,
+\end{equation}
+since $e_7^2 = -1$.  The complex structure pairs the six real
+directions into three complex coordinates:
+$(e_k,\, e_7\cdot e_k)$ for $k=1,2,3$.  Consequently
+\begin{equation}\label{eq:oct-split}
+  \mathbb{O}
+  \;=\; \mathbb{C} \oplus \mathbb{C}^3
+  \qquad
+  (\text{as real vector spaces: } 2 + 6 = 8),
+\end{equation}
+where $W\cong \mathbb{C}^3$ as a complex vector space (with $J$
+playing the role of multiplication by~$i$).
+
+\medskip
+\noindent\textbf{Stabilizer.}
+The stabilizer of $u$ in $\Gfour = \mathrm{Aut}(\mathbb{O})$
+is precisely the group that preserves the complex structure $J$
+on $W\cong\mathbb{C}^3$:
+\begin{equation}\label{eq:SU3C-stab}
+  \SU{3}_C
+  \;:=\; \mathrm{Stab}_{\Gfour}(u)
+  \;=\; \mathrm{Stab}_{\Gfour}(e_7),
+  \qquad \dim(\SU{3}_C) = 8.
+\end{equation}
+This $\SU{3}_C$ acts on $W\cong\mathbb{C}^3$ via the defining
+3-dimensional representation and will be identified with the
+color group.
+
+%----------------------------------------------------------------------
+\subsection{\texorpdfstring{$\Cl{6}$}{Cl(6)} inside \texorpdfstring{$\Cl{10}$}{Cl(10)}}\label{sec:cl6}
+%----------------------------------------------------------------------
+
+The 6 directions of $W$ become generators of a Clifford subalgebra
+inside $\Cl{10}$.  Recall from Section~\ref{sec:spin-upgrade} that
+$\Spin{10}$ acts on $\Stenplus$ via the Clifford algebra $\Cl{10}$
+with generators $\Gamma_1,\ldots,\Gamma_{10}$ satisfying
+$\{\Gamma_A,\Gamma_B\} = 2\delta_{AB}$.
+The 6 generators corresponding to the $W$ directions define
+\begin{equation}\label{eq:cl6-gens}
+  \gamma_k := \Gamma_k, \quad k=1,\ldots,6,
+  \qquad
+  \{\gamma_i,\gamma_j\} = 2\delta_{ij},
+\end{equation}
+generating the subalgebra
+\begin{equation}\label{eq:cl6-def}
+  \Cl{6}
+  \;=\; \mathrm{Alg}(\gamma_1,\ldots,\gamma_6)
+  \;\subset\; \Cl{10}.
+\end{equation}
+
+The remaining 4 generators $\Gamma_7,\Gamma_8,\Gamma_9,\Gamma_{10}$
+correspond to the complement: the $u = e_7$ direction plus three
+additional directions from the $\Vzero$ Peirce space
+(the $h_2(\mathbb{O})$ sector).
+
+\emph{The $\Cl{6}$ subalgebra is not introduced ad hoc}: it is
+induced by the choice of complex structure $u$, which selects the
+6 directions $e_1,\ldots,e_6\in W = u^\perp\cap\mathrm{Im}(\mathbb{O})$.
+
+\medskip
+\noindent\textbf{Volume form.}
+The volume element of $\Cl{6}$ is
+\begin{equation}\label{eq:omega6}
+  \omegasix \;=\; \gamma_1\gamma_2\gamma_3\gamma_4\gamma_5\gamma_6.
+\end{equation}
+
+\begin{proposition}[Properties of $\omegasix$]\label{prop:omega6}
+\begin{enumerate}
+  \item[\textup{(a)}] $\omegasix^2 = -1$.
+  \item[\textup{(b)}] The chirality operator $i\,\omegasix$ satisfies
+    $(i\,\omegasix)^2 = +1$.
+  \item[\textup{(c)}] $P = \tfrac{1}{2}(1 - i\,\omegasix)$ is an
+    idempotent projector with $\Tr(P) = 16$ on the 32-dimensional
+    Dirac spinor $\Delta_{10}$ of $\Cl{10}$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(a)~To compute $\omegasix^2 = (\gamma_1\cdots\gamma_6)^2$, we
+move the second copy of each generator past the first.
+The number of transpositions is $5+4+3+2+1+0 = 15 = 6\cdot 5/2$.
+Each transposition costs $(-1)$ (from $\{\gamma_i,\gamma_j\}=0$
+for $i\ne j$), and each $\gamma_k^2 = 1$, giving
+\begin{equation}\label{eq:omega6-sq}
+  \omegasix^2
+  \;=\; (-1)^{15}\cdot 1
+  \;=\; -1.
+\end{equation}
+Equivalently, the general formula $\omega_n^2 = (-1)^{n(n-1)/2}$
+gives $(-1)^{15} = -1$ for $n=6$.
+
+(b)~$(i\,\omegasix)^2 = i^2\cdot\omegasix^2 = (-1)(-1) = +1$.
+
+(c)~Since $(i\,\omegasix)^2 = 1$, the element
+$P = \tfrac{1}{2}(1-i\,\omegasix)$ is idempotent:
+$P^2 = \tfrac{1}{4}(1-2i\,\omegasix + 1) = P$.
+For the trace on the 32-dimensional Dirac spinor
+$\Delta_{10} = \Stenplus\oplus S_{10}^-$:
+the volume form $\omegasix$ anticommutes with each $\gamma_k$
+(since $\gamma_k\omegasix = (-1)^5\omegasix\gamma_k = -\omegasix\gamma_k$),
+so its eigenvalues come in $\pm$ pairs, giving $\Tr(\omegasix)=0$.
+Hence $\Tr(P) = \tfrac{1}{2}(32 - 0) = 16$.
+\end{proof}
+
+The projector $P$ selects a 16-dimensional subspace of
+$\Delta_{10}$ corresponding to one generation of Standard
+Model fermions~\cite{Todorov2022}.
+
+%----------------------------------------------------------------------
+\subsection{Pati-Salam breaking}\label{sec:pati-salam}
+%----------------------------------------------------------------------
+
+The volume form $\omegasix$ breaks $\Spin{10}$ to the subgroup
+that commutes with it.  The 10 Clifford generators split into:
+\begin{itemize}
+  \item \textbf{6 internal generators} $\gamma_1,\ldots,\gamma_6$
+    (the $W$ directions from $\Cl{6}$);
+  \item \textbf{4 external generators} $\Gamma_7,\Gamma_8,
+    \Gamma_9,\Gamma_{10}$ (the complement).
+\end{itemize}
+
+The $\binom{10}{2} = 45$ bivectors $\Gamma_A\Gamma_B$ ($A<B$)
+spanning $\mathfrak{spin}(10)$ split into three classes based on
+their commutation with~$\omegasix$:
+
+\medskip
+\noindent\textbf{(i)~Internal--internal:}
+$\gamma_i\gamma_j$ for $i,j\in\{1,\ldots,6\}$, $i<j$.
+Each factor anticommutes with $\omegasix$, so
+$(\gamma_i\gamma_j)\,\omegasix = \omegasix\,(\gamma_i\gamma_j)$:
+\emph{these commute with~$\omegasix$}.
+Count: $\binom{6}{2} = 15$.
+They generate $\mathfrak{spin}(6)\cong\mathfrak{su}(4)$.
+
+\medskip
+\noindent\textbf{(ii)~External--external:}
+$\Gamma_A\Gamma_B$ for $A,B\in\{7,\ldots,10\}$, $A<B$.
+Each external generator commutes with $\omegasix$ (passing
+through 6 internal generators incurs $(-1)^6 = +1$), so
+$(\Gamma_A\Gamma_B)\,\omegasix = \omegasix\,(\Gamma_A\Gamma_B)$:
+\emph{these commute with~$\omegasix$}.
+Count: $\binom{4}{2} = 6$.
+They generate $\mathfrak{spin}(4)\cong\mathfrak{su}(2)_L\oplus\mathfrak{su}(2)_R$.
+
+\medskip
+\noindent\textbf{(iii)~Mixed:}
+$\gamma_i\Gamma_A$ for $i\in\{1,\ldots,6\}$, $A\in\{7,\ldots,10\}$.
+The internal factor anticommutes with $\omegasix$ while the external
+factor commutes, so
+$(\gamma_i\Gamma_A)\,\omegasix = -\omegasix\,(\gamma_i\Gamma_A)$:
+\emph{these anticommute with~$\omegasix$} and are not in the stabilizer.
+Count: $6\times 4 = 24$.
+
+\medskip
+\noindent\textbf{Stabilizer dimension check:}
+$15 + 6 = 21$ (stabilizer) $+$ $24$ (complement) $= 45 = \dim\,\mathfrak{spin}(10)$.\ \checkmark
+
+\begin{proposition}[Pati-Salam stabilizer]\label{prop:pati-salam}
+The stabilizer of $\omegasix$ in $\Spin{10}$ is the Pati-Salam group:
+\begin{equation}\label{eq:PS-stab}
+  \mathrm{Stab}_{\Spin{10}}(\omegasix)
+  \;=\;
+  \frac{\Spin{6}\times\Spin{4}}{\mathbb{Z}_2}
+  \;\cong\;
+  \frac{\SU{4}\times\SU{2}_L\times\SU{2}_R}{\mathbb{Z}_2},
+  \qquad \dim = 21.
+\end{equation}
+\end{proposition}
+
+\noindent\textbf{Representation decomposition.}
+Under Pati-Salam, the 16-dimensional Weyl spinor $\Stenplus$
+(established in Section~\ref{sec:spin-upgrade} as the complexified
+Peirce half-space $\Vhalf^{\,\mathbb{C}}$) decomposes as
+\begin{equation}\label{eq:16-PS}
+  \mathbf{16}
+  \;\to\;
+  (\mathbf{4},\mathbf{2},\mathbf{1})
+  \;\oplus\;
+  (\bar{\mathbf{4}},\mathbf{1},\mathbf{2}).
+\end{equation}
+
+\noindent\textbf{Dimension check:}
+$4\times 2\times 1 + 4\times 1\times 2 = 8 + 8 = 16$.\ \checkmark
+
+\medskip
+The physical content of each factor:
+\begin{itemize}
+  \item $(\mathbf{4},\mathbf{2},\mathbf{1})$:
+    4 colors ($3$ quark + $1$ lepton) $\times$ $\SU{2}_L$ doublet $\times$
+    $\SU{2}_R$ singlet = \textbf{left-handed fermions}
+    ($(u_L,d_L)$ in 3 colors $+$ $(\nu_L,e_L)$).
+  \item $(\bar{\mathbf{4}},\mathbf{1},\mathbf{2})$:
+    $\bar{4}$ colors $\times$ $\SU{2}_L$ singlet $\times$ $\SU{2}_R$ doublet
+    = \textbf{right-handed fermions}
+    ($(u_R,d_R)$ in 3 colors $+$ $(\nu_R,e_R)$).
+\end{itemize}
+
+This is the \textbf{LEFT (chiral) embedding}: $\SU{2}_L$ acts
+\emph{only} on the $(\mathbf{4},\mathbf{2},\mathbf{1})$ component,
+i.e.\ on left-handed fermions.  Right-handed fermions are $\SU{2}_L$
+singlets.  This is precisely the chirality pattern of the Standard
+Model.
+
+\begin{remark}[Left vs.\ diagonal embedding~\cite{BaezSawin}]\label{rem:left-vs-diag}
+In the diagonal embedding, a single $\SU{2}$ would act on
+\emph{both} chiralities symmetrically, producing a non-chiral
+theory.  The theorem of Sawin (as cited in~\cite{BaezSawin})
+establishes that the $\Spin{10}$ GUT embedding of the SM is the
+LEFT embedding, not the diagonal.  Our construction reproduces
+this: the volume form $\omegasix$ separates left and right sectors
+\emph{before} the Pati-Salam breaking, ensuring $\SU{2}_L$
+acts only on the left-handed component.
+\end{remark}
+
+%----------------------------------------------------------------------
+\subsection{SM gauge group from Pati-Salam}\label{sec:SM-gauge}
+%----------------------------------------------------------------------
+
+The same complex structure $u=e_7$ that produced $\Cl{6}$ further
+breaks $\SU{4}$.  The fundamental representation $\mathbf{4}$ of
+$\SU{4} = \Spin{6}$ acts on $\mathbb{C}^4$.  The complex structure
+$u$ distinguishes the lepton direction (associated with $u$ itself)
+from the three quark/color directions:
+\begin{equation}\label{eq:SU4-break}
+  \mathbb{C}^4 = \mathbb{C}_{\text{lepton}} \oplus \mathbb{C}^3_{\text{color}}.
+\end{equation}
+The stabilizer of this decomposition in $\SU{4}$ is
+$\SU{3}\times\mathrm{U}(1)\subset\SU{4}$,
+giving the Standard Model gauge group:
+\begin{equation}\label{eq:SM-gauge}
+  \SMgauge
+\end{equation}
+with hypercharge $Y = (B-L) + 2J_3^R$, where $B-L$ comes from
+$\SU{4}\to\SU{3}\times\mathrm{U}(1)_{B-L}$
+and $J_3^R$ from $\SU{2}_R$.
+
+\noindent\textbf{Dimension check:}
+$\dim(\SU{3}_C) + \dim(\SU{2}_L) + \dim(\mathrm{U}(1)_Y)
+= 8 + 3 + 1 = 12$.\ \checkmark
+
+\noindent\textbf{Full breaking chain:}
+\begin{equation}\label{eq:breaking-chain}
+  \Spin{10}
+  \;\xrightarrow{\;\omegasix\;}
+  \frac{\SU{4}\times\SU{2}_L\times\SU{2}_R}{\mathbb{Z}_2}
+  \;\xrightarrow{\;u\;}
+  \SU{3}_C\times\SU{2}_L\times\mathrm{U}(1)_Y\,.
+\end{equation}
+Both breaking steps are driven by the same input: the choice of
+complex structure $u = e_7$ on $\mathrm{Im}(\mathbb{O})$.
+
+%----------------------------------------------------------------------
+\subsection{Quantum numbers of one generation}\label{sec:quantum-numbers}
+%----------------------------------------------------------------------
+
+Following Furey~\cite{Furey2018}, the Witt decomposition of $\Cl{6}$
+defines creation and annihilation operators
+\begin{equation}\label{eq:witt}
+  a_j = \tfrac{1}{2}(\gamma_{2j-1} + i\gamma_{2j}),
+  \qquad
+  a_j^\dagger = \tfrac{1}{2}(\gamma_{2j-1} - i\gamma_{2j}),
+  \qquad j=1,2,3,
+\end{equation}
+satisfying the canonical anticommutation relations
+$\{a_i,a_j^\dagger\} = \delta_{ij}$, $\{a_i,a_j\}=0$.
+The particle-number operator $N = \sum_j a_j^\dagger a_j$ has
+eigenvalues $0,1,2,3$ on the $2^3 = 8$ Fock states of the $\Cl{6}$
+spinor.  The volume form acts as
+\begin{equation}\label{eq:omega6-witt}
+  \omegasix = -i\cdot(-1)^N,
+\end{equation}
+so even-$N$ states have eigenvalue $-i$ and odd-$N$ states have
+eigenvalue $+i$.  The projector $P = \tfrac{1}{2}(1-i\,\omegasix)$
+selects one chirality sector.
+
+The Schwinger boson construction from $\Cl{4}$ Witt operators
+$b_1,b_2$ gives the Cartan generators of $\SU{2}_L\times\SU{2}_R$:
+$J_3^L = \tfrac{1}{2}(m_1+m_2-1)$, $J_3^R = \tfrac{1}{2}(m_1-m_2)$,
+where $m_k = b_k^\dagger b_k$.
+
+The complete set of quantum number operators is:
+\begin{align}
+  B-L &= 1 - \tfrac{2}{3}N,
+  &  Y &= (B-L) + 2J_3^R,
+  &  Q &= J_3^L + \tfrac{Y}{2},
+  \label{eq:qn-ops} \\
+  T_3^c &= \tfrac{1}{2}(n_1 - n_2),
+  &  T_8^c &= \tfrac{1}{2\sqrt{3}}(n_1 + n_2 - 2n_3).
+  &
+  \label{eq:color-ops}
+\end{align}
+
+All 16 SM states for one generation, with quantum numbers computed as
+explicit matrix eigenvalues~\cite{Furey2018,Todorov2022}, are:
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}clccrrrr@{}}
+  \toprule
+  & Particle & $N$ & $J_3^L$ & $J_3^R$ & $B\!-\!L$ & $Y$ & $Q$ \\
+  \midrule
+  \multirow{4}{*}{\rotatebox{90}{$(\mathbf{4},\mathbf{2},\mathbf{1})$}}
+  & $u_L$ ($r,g,b$) & 1 & $+\tfrac{1}{2}$ & $0$ &
+      $+\tfrac{1}{3}$ & $+\tfrac{1}{3}$ & $+\tfrac{2}{3}$ \\
+  & $d_L$ ($r,g,b$) & 1 & $-\tfrac{1}{2}$ & $0$ &
+      $+\tfrac{1}{3}$ & $+\tfrac{1}{3}$ & $-\tfrac{1}{3}$ \\
+  & $\nu_L$         & 3 & $+\tfrac{1}{2}$ & $0$ &
+      $-1$           & $-1$             & $0$ \\
+  & $e_L$           & 3 & $-\tfrac{1}{2}$ & $0$ &
+      $-1$           & $-1$             & $-1$ \\
+  \midrule
+  \multirow{4}{*}{\rotatebox{90}{$(\bar{\mathbf{4}},\mathbf{1},\mathbf{2})$}}
+  & $u_R$ ($r,g,b$) & 1 & $0$ & $+\tfrac{1}{2}$ &
+      $+\tfrac{1}{3}$ & $+\tfrac{4}{3}$ & $+\tfrac{2}{3}$ \\
+  & $d_R$ ($r,g,b$) & 1 & $0$ & $-\tfrac{1}{2}$ &
+      $+\tfrac{1}{3}$ & $-\tfrac{2}{3}$ & $-\tfrac{1}{3}$ \\
+  & $\nu_R$         & 3 & $0$ & $+\tfrac{1}{2}$ &
+      $-1$           & $0$             & $0$ \\
+  & $e_R$           & 3 & $0$ & $-\tfrac{1}{2}$ &
+      $-1$           & $-2$            & $-1$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Consistency checks:}
+8 $\SU{2}_L$ doublets ($J_3^L = \pm\tfrac{1}{2}$) $+$ 8 singlets ($J_3^L=0$);
+4 color singlets (leptons) $+$ 12 color triplets (quarks: 3 colors $\times$ 4);
+$Q$ distribution $\{+\tfrac{2}{3}\!:6,\; -\tfrac{1}{3}\!:6,\; 0\!:2,\; -1\!:2\}$
+matches the Pati-Salam SM assignment;
+$Y = (B-L) + 2J_3^R$ and $Q = J_3^L + Y/2$ verified for all 16 states.
+Particle content: $u_L\times 3$, $d_L\times 3$, $\nu_L$, $e_L$,
+$u_R\times 3$, $d_R\times 3$, $\nu_R$, $e_R$ --- complete
+one-generation SM fermion content.
