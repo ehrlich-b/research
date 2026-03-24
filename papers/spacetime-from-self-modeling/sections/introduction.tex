@@ -13,12 +13,9 @@ systems in the Wilsonian continuum limit.
 The idea that spacetime geometry is encoded in quantum entanglement has a
 rich history. Van Raamsdonk argued that entanglement is the glue that
 holds spacetime together~\cite{VanRaamsdonk2010}. Jacobson showed that the
-Einstein equation can be derived as an equation of state from
-thermodynamic considerations at local causal
-horizons~\cite{Jacobson1995}, and later sharpened this to an entanglement
-equilibrium argument requiring only area-law entanglement entropy, the
-entanglement first law, and the maximal vacuum entanglement hypothesis
-(MVEH)~\cite{Jacobson2016}. Lashkari, McDermott, and Van Raamsdonk
+Einstein equation can be derived as an equation of state from the Clausius
+relation $\delta Q = T\,\delta\ent$ applied to local Rindler
+horizons~\cite{Jacobson1995}. Lashkari, McDermott, and Van Raamsdonk
 demonstrated that the entanglement first law in holographic conformal
 field theories implies the linearized Einstein equation~\cite{LMVR2014},
 and Faulkner~\textit{et~al.}\ extended this to the full nonlinear
@@ -30,37 +27,22 @@ space~\cite{CCM2017}.
 These results leave open a central question: \emph{what ultraviolet
 completion produces the entanglement structure that Jacobson's argument
 requires?} The holographic results of~\cite{LMVR2014,Faulkner2014} assume
-AdS/CFT; the Jacobson argument~\cite{Jacobson2016} is UV-agnostic. We
+AdS/CFT; the Jacobson argument~\cite{Jacobson1995} is UV-agnostic. We
 provide a specific, non-holographic UV completion: a lattice of
 self-modeling quantum systems whose interaction Hamiltonian is forced by
 the algebraic structure of quantum theory itself.
 
-The main result can be stated as follows. Self-modeling is the sole
+The derivation proceeds in a single chain. Self-modeling is the sole
 physical premise. The lattice topology $G = (V, E)$ and the sign of
-the coupling ($J > 0$, antiferromagnetic) are inputs. The Wilsonian
-continuum limit is standard methodology. We present two routes to
-Einstein's equations: an exact derivation via Jacobson's entanglement
-equilibrium in the conformal regime, and a uniqueness argument via
-Lovelock's theorem that extends to all $d \geq 2$ under the assumption
-that entanglement perturbations yield a tensorial geometric equation.
-
-The maximal vacuum entanglement hypothesis---that the vacuum maximizes
-entanglement entropy at fixed stress-energy expectation
-value---traditionally appears as an additional assumption in Jacobson's
-framework. We argue that in the present context it is a \emph{structural
-identification}: in the absence of pre-existing geometry, the modular
-flow of the self-modeling lattice state defines the emergent geometric
-flow, following the thermal time hypothesis of Connes and
-Rovelli~\cite{ConnesRovelli1994}. The state whose modular flow defines a
-smooth emergent geometry necessarily satisfies MVEH---the ``vacuum'' is
-the geometry-defining state.  This is the only available identification
-in a pre-geometric framework, though we do not prove existence or
-uniqueness of such a state. We note that Sorce~\cite{Sorce2024} has shown
-that geometric modular flow requires conformal symmetry; this caveat is
-addressed in Sec.~\ref{sec:equilibrium}, where we observe that the
-$SU(n)$ covariance of the self-modeling lattice places its infrared
-description in the class of conformal field theories for which the
-identification is clean.
+the coupling ($J > 0$, antiferromagnetic) are inputs. The forced
+Hamiltonian produces area-law entanglement entropy
+$\ent = \eta\,\mathcal{A}$. The Wilsonian continuum limit yields an
+emergent smooth manifold with emergent Lorentz invariance. The
+Bisognano--Wichmann theorem identifies the modular flow with local
+Lorentz boosts, giving the Unruh temperature. The Clausius relation
+$\delta Q = T\,\delta\ent$ on local Rindler horizons, combined with
+the Raychaudhuri equation, then yields Einstein's
+equations~\cite{Jacobson1995}.
 
 This paper does not derive Newton's constant $\Gnewton$ (which depends on
 the lattice entropy density~$\eta$ via $\Gnewton = 1/(4\eta)$), the
@@ -75,9 +57,7 @@ is summarized in Table~\ref{tab:chain}.
 \begin{table*}
 \caption{Derivation chain from self-modeling to Einstein's equations.
 ``Status'' gives the logical standing of each link. ``Novel?'' indicates
-what is new in this work versus prior results. L7 is reframed as
-a structural identification via the Connes--Rovelli thermal time
-hypothesis~\cite{ConnesRovelli1994}, not an independent assumption.
+what is new in this work versus prior results.
 \label{tab:chain}}
 \begin{ruledtabular}
 \begin{tabular}{clllll}
@@ -88,21 +68,20 @@ L2 & Lattice Hamiltonian $H = \sum J\,\swapop$ forced by $U(n)$ covariance
    & Derived & \ref{sec:lattice} & This work & Lattice topology, $J>0$ (inputs) \\
 L3 & Lieb-Robinson velocity $\vlr$ gives emergent causal structure
    & Derived & \ref{sec:lattice} & This work & L2 \\
-L4 & Area-law entanglement entropy
+L4 & Area-law entanglement entropy $\ent = \eta\,\mathcal{A}$
    & Established & \ref{sec:arealaw} & This work & L2, L3 \\
 L5 & Entanglement first law: $\delta\ent = \delta\langle\modH\rangle$
    & Exact identity & \ref{sec:arealaw} & Standard QI & None \\
 L6 & Wilsonian continuum limit
-   & Standard methodology & \ref{sec:einstein} & Standard & L2 \\
-L7 & Modular flow defines geometry (thermal time hypothesis)
-   & Structural ident.\ & \ref{sec:equilibrium} & Reframed
-   & Connes--Rovelli~\cite{ConnesRovelli1994} \\
-L8a & $\Gab + \Lambda\,\gab = 8\pi\Gnewton\,\Tab$ (Jacobson route)
-   & Derived (conformal) & \ref{sec:route-a} & Jacobson~\cite{Jacobson2016} applied
-   & L1--L7, conformal $\modH$ \\
-L8b & $\Gab + \Lambda\,\gab = 8\pi\Gnewton\,\Tab$ (Lovelock route)
-   & Uniqueness ($d \geq 2$) & \ref{sec:route-b} & This work
-   & L1--L7, Lovelock~\cite{Lovelock1971} \\
+   & Standard methodology & \ref{sec:continuum} & Standard & L2 \\
+L7 & Emergent Lorentz invariance
+   & Expected (Gap~1) & \ref{sec:continuum} & Standard & L6 \\
+L8 & Unruh temperature from Bisognano--Wichmann
+   & Standard + Gap~2 & \ref{sec:rindler}
+   & Standard~\cite{BisognanoWichmann1976} & L7 \\
+L9 & $\Gab + \Lambda\,\gab = 8\pi\Gnewton\,\Tab$ via Jacobson (1995)
+   & Derived & \ref{sec:jacobson95} & Jacobson~\cite{Jacobson1995} applied
+   & L4, L7, L8 \\
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
@@ -111,13 +90,11 @@ The novel contribution of this work is the assembly of Links~L1--L5 as
 a UV completion, with L2--L4 being new results: the forced Hamiltonian
 (L2), emergent causal structure (L3), and area-law bounds (L4).  L1 is
 established in Paper~5~\cite{Paper5} and L5 is a standard identity of
-quantum information theory.  We present two routes from L1--L7 to
-Einstein's equations: Route~A applies Jacobson's entanglement
-equilibrium argument~\cite{Jacobson2016} (exact in the conformal
-regime), and Route~B uses Lovelock's uniqueness
-theorem~\cite{Lovelock1971} (valid in all $d \geq 2$ spatial
-dimensions without requiring conformal symmetry).  L7 is reframed from
-an assumption to a structural identification.
+quantum information theory.  Links~L6--L8 are standard bridge
+assumptions (continuum limit, Lorentz invariance,
+Bisognano--Wichmann).  Link~L9 applies Jacobson's 1995 thermodynamic
+argument~\cite{Jacobson1995} to convert the UV inputs into Einstein's
+equations.
 
 The paper is organized as follows. Section~\ref{sec:lattice} defines the
 self-modeling lattice: the local algebra $M_n(\mathbb{C})^{sa}$ at each
@@ -128,15 +105,14 @@ Section~\ref{sec:arealaw} establishes sub-volume entanglement scaling:
 the WVCH thermal mutual information bound~\cite{WVCH2008}, known
 ground-state entanglement properties of the Heisenberg
 model~\cite{CalabreseCardy2004, Hastings2007}, and the entanglement
-first law combined with modular Hamiltonian locality. Section~\ref{sec:equilibrium} presents the
-thermal time hypothesis and its application to the self-modeling lattice,
-recasting the MVEH assumption as a structural identification.
-Section~\ref{sec:einstein} derives Einstein's equations via two routes:
-Jacobson's entanglement equilibrium argument~\cite{Jacobson2016} in the
-conformal regime (Route~A), and Lovelock's uniqueness
-theorem~\cite{Lovelock1971} in $d \geq 2$ (Route~B).
+first law combined with modular Hamiltonian locality.
+Section~\ref{sec:einstein} presents the Wilsonian continuum limit,
+emergent Lorentz invariance, the Bisognano--Wichmann identification
+of modular flow with local boosts, and the Jacobson (1995) thermodynamic
+derivation of Einstein's equations.
 Section~\ref{sec:numerical} presents numerical verification on small
 lattices ($N = 8$--$20$): exact diagonalization benchmarks, area-law
-scaling, modular Hamiltonian locality, and a qualitative MVEH check.
+scaling, and modular Hamiltonian locality as evidence for the lattice
+Bisognano--Wichmann property.
 Section~\ref{sec:discussion} identifies remaining gaps, compares with
 related work, and outlines future directions.

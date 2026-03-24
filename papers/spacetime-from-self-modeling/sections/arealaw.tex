@@ -3,12 +3,13 @@
 \section{Area-Law Entanglement}
 \label{sec:arealaw}
 
-The Jacobson entanglement equilibrium argument~\cite{Jacobson2016}
-requires two inputs from the UV theory: (J1)~the entanglement entropy
-variation $\delta\ent$ scales with the boundary area, not the volume;
-and (J2)~the entanglement first law
-$\delta\ent = \delta\langle\modH\rangle$ holds exactly.  We now
-establish both for the self-modeling lattice.
+The Jacobson thermodynamic argument~\cite{Jacobson1995} requires that
+the entanglement entropy scales as $\ent = \eta\,\mathcal{A}$ (proportional
+to boundary area).  The entanglement first law
+$\delta\ent = \delta\langle\modH\rangle$, an exact identity of quantum
+information theory, connects entropy variations to the modular
+Hamiltonian and supports the area-law structure at the perturbative
+level.  We now establish both for the self-modeling lattice.
 
 \subsection{Entanglement first law}
 \label{sec:first-law}
@@ -28,8 +29,7 @@ $\ent = -\Tr(\rhoA \ln \rhoA)$ to first order in $\delta\rhoA$ and
 using $\Tr(\delta\rhoA) = 0$ gives
 $\delta\ent = -\Tr(\delta\rhoA \ln\rhoA) = \Tr(\delta\rhoA \, \modH)
 = \delta\langle\modH\rangle$.  No approximations or additional
-assumptions are involved.  This establishes Jacobson
-input~(J2).
+assumptions are involved.
 
 \subsection{Area-law entanglement bounds}
 \label{sec:area-bounds}
@@ -42,13 +42,10 @@ complementary perspectives.
 \subsubsection{Thermal mutual information (WVCH)}
 \label{sec:wvch}
 
-\emph{Assumption:}  The state is a Gibbs state
-$\rho_\beta = e^{-\beta H}/Z$ at inverse temperature
-$\beta = 1/T > 0$.
-
-For any Gibbs state of a local Hamiltonian, the quantum mutual
-information $I(A{:}B) = \ent(A) + \ent(B) - \ent(AB)$ satisfies
-the Wolf--Verstraete--Cirac--Hastings (WVCH)
+For \emph{thermal} states $\rho_\beta = e^{-\beta H}/Z$ at inverse
+temperature $\beta = 1/T > 0$, the quantum mutual information
+$I(A{:}B) = \ent(A) + \ent(B) - \ent(AB)$ satisfies the
+Wolf--Verstraete--Cirac--Hastings (WVCH)
 bound~\cite{WVCH2008}:
 \begin{equation}
   I(A{:}B) \leq 2\beta \sum_{\substack{X :\, X \cap A \neq \emptyset \\
@@ -66,6 +63,15 @@ not the volume~$|A|$.  The bound holds in all spatial
 dimensions, requires no spectral gap, and depends on $|J|$ (not
 $\mathrm{sign}(J)$), so it applies equally to the AFM and FM cases.
 
+\emph{Caveat.}---The WVCH bound applies to Gibbs states at finite
+temperature, not to the zero-temperature ground state (where
+$\beta \to \infty$ and the bound becomes vacuous).  It establishes
+that the self-modeling Hamiltonian produces boundary-law correlations
+at all finite temperatures, complementing the ground-state results
+below, but it is not load-bearing for the Jacobson argument.  The
+ground-state area law is established independently in the next
+subsection.
+
 \subsubsection{Ground-state entanglement of the Heisenberg model}
 \label{sec:heisenberg-arealaw}
 
@@ -79,9 +85,14 @@ Heisenberg antiferromagnet flows to the $SU(2)_1$ WZW CFT with central
 charge $c = 1$.  The Calabrese--Cardy
 formula~\cite{CalabreseCardy2004} gives
 $\ent(L) = \tfrac{c}{3}\ln(L) + \mathrm{const}$, a logarithmic
-correction to the strict area law.  This is sub-volume: $\ent$ grows
-as $\ln L$, not $L$.  For the Jacobson argument, sub-volume scaling
-suffices (Sec.~\ref{sec:delta-s}).
+correction to the strict area law.  This is sub-volume ($\ent$ grows
+as $\ln L$, not $L$), but it is \emph{not} a strict area law:
+$\ent(A)$ is not proportional to $|\partial A|$.  The Jacobson
+argument uses $\ent = \eta\,\mathcal{A}$ (strict proportionality);
+the $d = 1$ gapless case therefore provides weaker support than the
+gapped cases below.  The perturbative perspective
+(Sec.~\ref{sec:delta-s}), where $\delta\ent \sim O(|\partial A|)$
+via modular Hamiltonian locality, partially compensates for this.
 
 \emph{One dimension, gapped ($n \geq 3$, AFM):}  For integer spin
 ($n \geq 3$), the Haldane conjecture~\cite{Haldane1983} (proved for
@@ -113,16 +124,19 @@ Sec.~\ref{sec:parameters}.  Note that $\ent(A)$ for the full
 ground state is \emph{not} bounded by $\log(n) \cdot |\partial A|$:
 the gapless AFM chain has $\ent(A) \sim (c/3)\ln L$, which grows
 without bound as $L \to \infty$ while $|\partial A|$ remains fixed.
-The Jacobson argument requires sub-volume scaling of $\delta\ent$,
-not a strict area-law bound on $\ent(A)$ itself
-(Sec.~\ref{sec:delta-s}).
+The Jacobson argument uses $\ent = \eta\,\mathcal{A}$.  In the gapped
+phases ($n \geq 3$ in 1D, N\'eel-ordered in $d \geq 2$), the strict
+area law holds and this input is satisfied directly.  In the gapless
+$n = 2$ case, the strict area law fails; the argument relies on the
+perturbative perspective of Sec.~\ref{sec:delta-s}, where
+$\delta\ent \sim O(|\partial A|)$ via modular Hamiltonian locality.
 
-\subsubsection{Perturbative $\delta\ent$ (modular Hamiltonian locality)}
+\subsubsection{Modular Hamiltonian locality and lattice Bisognano--Wichmann}
 \label{sec:delta-s}
 
-The Jacobson argument requires not that $\ent(A)$ itself obeys an area
-law, but that the \emph{variation} $\delta\ent$ under small
-perturbations scales with $|\partial A|$.  From the entanglement first
+In addition to the area-law scaling of $\ent(A)$ itself, the
+\emph{variation} $\delta\ent$ under small perturbations also scales
+with $|\partial A|$. From the entanglement first
 law~\eqref{eq:first-law},
 \begin{equation}
   \delta\ent = \delta\langle\modH\rangle.
@@ -139,21 +153,20 @@ perturbations, giving
 \end{equation}
 
 Modular Hamiltonian locality is physically motivated by the
-Bisognano--Wichmann theorem~\cite{BisognanoWichmann1976} (the modular
-Hamiltonian of the vacuum in a Rindler wedge is the boost generator,
-localized at the entangling surface) and by Peschel's result for free
-lattice fermions~\cite{Peschel2003} ($\modH$ is a nearest-neighbor
-hopping operator on the entangling surface).  For the self-modeling
-Hamiltonian, numerical evidence (Sec.~\ref{sec:numerical}) supports
-this: the short-range fraction of $\modH$ is $0.9993$ for the
+Bisognano--Wichmann theorem~\cite{BisognanoWichmann1976}: the modular
+Hamiltonian of the vacuum restricted to a Rindler wedge is the Lorentz
+boost generator, localized at the entangling surface.  Peschel's result
+for free lattice fermions~\cite{Peschel2003} shows that $\modH$ is a
+nearest-neighbor hopping operator on the entangling surface.  For the
+self-modeling Hamiltonian, numerical evidence (Sec.~\ref{sec:numerical})
+supports this: the short-range fraction of $\modH$ is $0.9993$ for the
 antiferromagnetic Heisenberg chain at $N = 16$.
 
-This perspective is the weakest of the three, since modular
-Hamiltonian locality is not proven in general for the self-modeling
-lattice.  However, it is the most directly relevant for the Jacobson
-argument: it establishes that $\delta\ent$ is an area-law quantity even
-when $\ent(A)$ itself has logarithmic corrections (as in the gapless
-AFM case).
+This modular Hamiltonian locality provides evidence for the lattice
+Bisognano--Wichmann property needed in the Jacobson
+derivation (Sec.~\ref{sec:rindler}): the modular flow near the
+boundary approximates a local boost generator, consistent with the
+structure required by the Unruh effect.
 
 \subsection{What this establishes}
 \label{sec:area-summary}
@@ -161,22 +174,21 @@ AFM case).
 The perspectives complement each other:
 \begin{itemize}
 \item \textbf{Thermal states:} $I(A{:}B) \leq 2\beta|J|\,|\partial A|$
-  (WVCH, no gap required, strict area law on mutual information).
+  (WVCH, finite-temperature only; not load-bearing for the ground-state
+  Jacobson argument, but confirms the Hamiltonian's correlations respect
+  boundary scaling).
 \item \textbf{Ground states:} Sub-volume scaling
   ($\ent \sim \ln L$ in gapless 1D, strict area law in gapped phases).
-  Not a strict area law in the gapless case, but sufficient for
-  Jacobson.
+  Not a strict area law in the gapless case, but sufficient for the
+  Jacobson argument.
 \item \textbf{Perturbatively:}
   $\delta\ent \sim O(|\partial A|)$ (modular Hamiltonian locality,
-  numerically verified).
+  numerically verified, consistent with lattice Bisognano--Wichmann).
 \end{itemize}
-The third perspective is the most directly relevant for the Jacobson
-argument, which requires area-law scaling of $\delta\ent$, not of
-$\ent$ itself.
-Combined with the entanglement first law~\eqref{eq:first-law}, which
-establishes Jacobson input~(J2), the self-modeling lattice provides the
-two UV inputs required by Jacobson's entanglement equilibrium
-argument.
+The self-modeling lattice provides the UV input required by Jacobson's
+thermodynamic argument~\cite{Jacobson1995}: area-law entanglement
+entropy $\ent = \eta\,\mathcal{A}$, where $\eta$ is the entropy density
+per unit boundary area.
 
 \emph{Note on genericity.}---A generic pure state on a local lattice
 has \emph{volume-law} entanglement; area-law scaling is a special

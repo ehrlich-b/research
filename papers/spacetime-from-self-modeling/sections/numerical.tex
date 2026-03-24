@@ -5,11 +5,10 @@
 
 We present numerical results from exact diagonalization of the
 self-modeling lattice on small systems ($N = 8$--$20$ qubits).  These
-results are \emph{consistent with} the analytical framework developed
-in Secs.~\ref{sec:arealaw}--\ref{sec:einstein} and provide
-\emph{supporting evidence}, but do not constitute proof.  All
-entropies are computed in nats ($\ln$, not $\log_2$) and the modular
-Hamiltonian is $\modH = -\ln\rhoA$.
+results provide \emph{supporting evidence} for the analytical framework
+developed in Secs.~\ref{sec:arealaw}--\ref{sec:einstein}, but do not
+constitute proof.  All entropies are computed in nats ($\ln$, not
+$\log_2$) and the modular Hamiltonian is $\modH = -\ln\rhoA$.
 
 \subsection{Exact diagonalization setup}
 \label{sec:ed-setup}
@@ -134,12 +133,13 @@ and 6~non-rectangular subregions.}
 \label{fig:2d-scatter}
 \end{figure*}
 
-\subsection{Modular Hamiltonian locality}
+\subsection{Lattice Bisognano--Wichmann evidence}
 \label{sec:ed-ka}
 
-The entanglement first law $\delta\ent = \delta\langle\modH\rangle$
-(Sec.~\ref{sec:first-law}) reduces the Jacobson area-law input to the
-locality of $\modH = -\ln\rhoA$.  We test this by expanding $\modH$
+The Jacobson derivation (Sec.~\ref{sec:rindler}) requires that the
+lattice modular Hamiltonian approximates a local boost generator near
+boundaries---the lattice Bisognano--Wichmann property.  We test this by
+expanding $\modH = -\ln\rhoA$
 in the Pauli operator basis
 $\{\sigma^\alpha_i \otimes \sigma^\beta_j \otimes \cdots\}$ and
 measuring how Pauli coefficients decay with interaction range---the
@@ -151,9 +151,10 @@ modular Hamiltonian is overwhelmingly short-ranged: the
 range-1 operators, divided by the total) is $0.9993$.  The decay is
 rapid: the maximum Pauli coefficient at range~1 is $1.10$, at range~2
 it drops to $0.042$ ($3.8\%$), and at range~3 to $0.010$ ($0.9\%$).
-This strongly supports the modular Hamiltonian locality assumption
-used in Sec.~\ref{sec:delta-s}, connecting directly to the Jacobson
-input~(J1) via $\delta\ent \sim O(|\partial A|)$.
+This strongly supports the lattice Bisognano--Wichmann property
+(Gap~2 in Sec.~\ref{sec:gaps}): the modular flow is dominated by
+nearest-neighbor terms at the boundary, consistent with the boost-generator
+structure required by the Jacobson derivation.
 
 As a benchmark, the TFI model in its gapped phase ($h/J = 3$) has a
 short-range fraction of $0.664$, consistent with the
@@ -181,59 +182,6 @@ line).}
 \label{fig:ka-locality}
 \end{figure*}
 
-\subsection{Maximal vacuum entanglement hypothesis}
-\label{sec:ed-mveh}
-
-The MVEH---reframed as a structural identification in Sec.~\ref{sec:mveh}---predicts
-that the self-modeling equilibrium state maximizes $\ent(A)$ among
-nearby states.  We test this qualitatively by perturbing the
-Hamiltonian: adding a random local field
-$\delta H = \epsilon\, \hat{n}\cdot\vec{\sigma}_x$ at each site $x$,
-recomputing the ground state, and measuring $\delta\ent(A)$.
-
-For the Heisenberg AFM at $N = 12$ PBC with $A = \{0, 1\}$, using 20
-random perturbation directions per site and three perturbation
-strengths ($\epsilon = 0.05, 0.1, 0.2$):
-\begin{itemize}
-\item $100\%$ of all perturbations decrease $\ent(A)$
-  ($\delta\ent < 0$), consistent with the unperturbed ground state
-  being a local maximum of entanglement entropy.
-\item The scaling is quadratic:
-  $|\delta\ent(\epsilon = 0.2)|/|\delta\ent(\epsilon = 0.1)| = 3.76$
-  (expected: $4.0$ for linear response), confirming that the
-  perturbation is in the quadratic regime.
-\end{itemize}
-See Fig.~\ref{fig:mveh-check}.
-
-These results are \emph{consistent with} MVEH but do not prove it:
-the test is limited to $N = 12$, Hamiltonian perturbations (rather
-than arbitrary state perturbations), and the $n = 2$ case.  The
-structural identification of Sec.~\ref{sec:mveh}---that the vacuum is
-identified as the state whose modular flow generates smooth
-geometry---does not require numerical proof, but the numerical
-evidence is reassuring.
-
-\emph{Perturbation method note.}---The Heisenberg ground state is an
-$SU(2)$ singlet; single-site unitary perturbations leave $\rhoA$
-eigenvalues exactly invariant (the reduced state is $SU(2)$-symmetric
-under local rotations), giving $\delta\ent = 0$ identically.
-Hamiltonian perturbation, which breaks $SU(2)$ by adding a local
-field, properly tests entropy maximality among nearby ground states.
-
-\begin{figure*}
-\centering
-\includegraphics[width=\textwidth]{figures/fig_mveh_check.pdf}
-\caption{MVEH numerical check (Heisenberg AFM, $N = 12$ PBC,
-$A = \{0,1\}$).  (a)~Mean $\delta\ent$ for each site
-$x \notin A$ at $\epsilon = 0.1$; all values are negative,
-consistent with the unperturbed ground state being a local maximum of
-$\ent(A)$.  (b)~$\langle|\delta\ent|\rangle$ versus $\epsilon$ on a
-log-log scale; the dashed line shows quadratic scaling
-$\propto\epsilon^2$.  Ratios of $3.76$ and $3.93$ are close to the
-expected $4.0$.}
-\label{fig:mveh-check}
-\end{figure*}
-
 \subsection{Summary of numerical evidence}
 \label{sec:ed-summary}
 
@@ -257,10 +205,7 @@ FM $\ent(A)$ & $0$ & $0$ (product state) \\
 2D $R^2$(boundary) & $0.885$ & ${>}\,0.9$ (narrow miss) \\
 2D $R^2$(volume) & $0.491$ & ${<}\,0.5$ (pass) \\
 2D Spearman $\rho$(boundary) & $0.913$ & ${>}\,0.9$ (pass) \\
-$K_A$ SRF (Heisenberg) & $0.9993$ & ${>}\,0.5$ (strong pass) \\
-MVEH $\delta\ent < 0$ fraction & $100\%$ & ${>}\,80\%$ (pass) \\
-Quadratic ratio $|\delta\ent(2\epsilon)/\delta\ent(\epsilon)|$
-  & $3.76$ & $4.0$ (linear response) \\
+$K_A$ SRF (Heisenberg) & $0.9993$ & ${>}\,0.5$ (lattice BW, strong pass) \\
 \end{tabular}
 \end{ruledtabular}
 \end{table}

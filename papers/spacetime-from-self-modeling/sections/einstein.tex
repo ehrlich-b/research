@@ -3,174 +3,212 @@
 \section{Einstein's Equations}
 \label{sec:einstein}
 
-We present two independent routes from the self-modeling lattice to
-Einstein's field equations, with complementary strengths.  Route~A
-(Sec.~\ref{sec:route-a}) applies Jacobson's (2016) entanglement
-equilibrium argument~\cite{Jacobson2016} using the conformal modular
-Hamiltonian; it is exact in the conformal regime ($d = 1$ WZW, or the
-window $a \ll \ell \ll 1/m$ in higher $d$).  Route~B
-(Sec.~\ref{sec:route-b}) uses Lovelock's uniqueness
-theorem~\cite{Lovelock1971, Lovelock1972} to show that \emph{any}
-tensorial equation relating entanglement perturbations to geometry
-perturbations must be Einstein's equation in $d \geq 2$ spatial
-dimensions.  Route~B does not require a conformal modular Hamiltonian.
+The self-modeling lattice provides a specific UV completion for the
+entanglement-geometry connection: Links~L1--L5 derive area-law
+entanglement and the entanglement first law from self-modeling alone.
+We now show that the original Jacobson (1995)
+argument~\cite{Jacobson1995} converts these UV inputs into Einstein's
+field equations, requiring only three standard bridge assumptions:
+a Wilsonian continuum limit, emergent Lorentz invariance, and the
+Bisognano--Wichmann identification of modular flow with local boosts.
 
-\subsection{Route A: Jacobson entanglement equilibrium (conformal regime)}
-\label{sec:route-a}
+\subsection{Wilsonian continuum limit and emergent Lorentz invariance}
+\label{sec:continuum}
 
-\subsubsection{Entropy decomposition}
-\label{sec:setup}
+At length scales $L \gg a$ (lattice spacing), we assume that the
+lattice details become irrelevant by a Wilsonian universality
+argument: the long-wavelength physics is governed by the
+symmetry-allowed effective field theory, and the smooth Riemannian
+manifold $(M, \gab)$ emerges at long wavelengths.
 
-Consider a point $p$ in the emergent spacetime manifold $(M, \gab)$
-obtained from the Wilsonian continuum limit
-(Sec.~\ref{sec:continuum}).  Choose Riemann normal coordinates at $p$
-so that $\gab(p) = \eta_{ab}$ and the Christoffel symbols vanish.  Let
-$B$ be a geodesic ball of proper radius $\ell$ centered at $p$ in the
-spacelike hypersurface $\Sigma = \{x^0 = 0\}$, with $a \ll \ell \ll
-L_{\mathrm{curv}}$ (the curvature radius).  The causal diamond
-$\mathcal{D}(B)$ is the domain of dependence of~$B$.
+The Wilsonian continuum limit is standard \emph{methodology}, employed
+in lattice QCD, causal dynamical triangulations, and Regge calculus.
+However, its \emph{applicability} to a given lattice model is not
+automatic.  Lattice QCD benefits from asymptotic freedom, which
+guarantees a UV fixed point and controlled continuum limit.  The
+self-modeling Hamiltonian has no such guarantee in $d \geq 2$: whether
+the Heisenberg model on a $d$-dimensional lattice admits a continuum
+limit with the correct universality class is an open question,
+particularly for $d \geq 3$ where the model may be trivial or
+confining.  A rigorous constructive proof is a hard open problem shared
+by all lattice quantum gravity programs.  We frame the continuum limit
+as a physical argument, not a rigorous construction.
 
-The entanglement entropy of ball $B$ decomposes as~\cite{Jacobson2016}
+The Wilsonian picture suggests a natural perspective from the
+self-modeler:  the compressed model $M$ is finite-dimensional.  Below
+the model's resolution (the lattice scale~$a$), there is nothing to
+see.  Smoothness is not a property of the lattice; it is a property of
+the observer's coarse-grained description at scales $L \gg a$.  The
+continuum limit is the self-modeler's view.
+
+In the continuum limit, the lattice parameters acquire physical
+identifications:
+\begin{itemize}
+\item The lattice spacing $a$ maps to the Planck scale:
+  $a \lesssim 2\ell_P \sqrt{\log n}$ (via the per-bond entropy
+  bound~\eqref{eq:channel-bound} and
+  $\Gnewton = 1/(4\eta)$).
+\item The Lieb--Robinson velocity $\vlr$ maps to the speed of
+  light~$c$.
+\item The lattice entropy density
+  $\eta_{\mathrm{lattice}} \leq \log n$ per boundary bond maps to
+  the continuum entropy density
+  $\eta = \eta_{\mathrm{lattice}}/a^{d-1}$.
+\end{itemize}
+
+\emph{Emergent Lorentz invariance.}---The lattice has a preferred frame;
+the continuum theory must not.  In $d = 1$, the infrared theory is the
+$SU(2)_1$ WZW CFT~\cite{Affleck1986, AffleckHaldane1987}, which is
+exactly Lorentz-invariant.  In $d \geq 2$, the $SU(n)$ Heisenberg
+antiferromagnet is expected to exhibit N\'eel order, with low-energy
+excitations described by spin waves (magnons) propagating at the
+spin-wave velocity~$v_s$.  At wavelengths $\lambda \gg a$ and energies
+$E \ll J$, these excitations see an emergent Lorentz symmetry with
+$v_s$ playing the role of $c$.  Emergent Lorentz invariance in
+antiferromagnetic lattice models has been studied extensively in the
+condensed matter literature~\cite{EisertCramerPlenio2010}; it is
+standard lore but not rigorously proved in $d \geq 2$.  We state this
+as Gap~1 (Sec.~\ref{sec:gaps}).
+
+\subsection{Local Rindler horizons and the Unruh temperature}
+\label{sec:rindler}
+
+At every point $p$ in the emergent spacetime manifold $(M, \gab)$,
+choose Riemann normal coordinates so that $\gab(p) = \eta_{ab}$.  For
+any null direction $k^a$ at $p$, a local Rindler horizon is the
+boundary of the causal past of a uniformly accelerated observer whose
+acceleration $\kappa$ defines the horizon.  In the small-patch limit
+($\ell \ll L_{\mathrm{curv}}$), the spacetime is approximately
+Minkowski, and the null surface through $p$ orthogonal to $k^a$
+serves as an approximate Rindler horizon.
+
+The Bisognano--Wichmann theorem~\cite{BisognanoWichmann1976}
+establishes that the modular automorphism group of the Minkowski vacuum
+restricted to a Rindler wedge is precisely the one-parameter family of
+Lorentz boosts preserving the wedge.  In particular, the vacuum state
+restricted to the Rindler wedge is a KMS (thermal) state at the Unruh
+temperature
 \begin{equation}
-  \ent = \ent_{\mathrm{UV}} + \ent_{\mathrm{mat}},
-  \label{eq:s-decomp}
+  T = \frac{\hbar\, \kappa}{2\pi},
+  \label{eq:unruh}
 \end{equation}
-where $\ent_{\mathrm{UV}} = \eta\, \mathcal{A}$ is the
-area-proportional UV contribution (with $\eta = 1/(4\Gnewton)$ the
-entropy density per unit area and $\mathcal{A}$ the area of
-$\partial B$), and $\ent_{\mathrm{mat}}$ is the finite,
-state-dependent matter contribution.  The UV entropy density $\eta$
-is a constant of the lattice structure; it does not depend on the
-state.
+where $\kappa$ is the surface gravity (acceleration) of the horizon.
 
-Under a first-order perturbation away from the maximally symmetric
-spacetime (MSS) vacuum:
+On the lattice, the Bisognano--Wichmann theorem does not hold exactly:
+it is a continuum QFT result.  However, the modular Hamiltonian
+locality data from Sec.~\ref{sec:ed-ka} provides numerical evidence
+that the lattice modular Hamiltonian $\modH$ approximates a local
+boost generator near boundaries: the short-range fraction
+$\mathrm{SRF} = 0.9993$ for the Heisenberg AFM at $N = 16$ indicates
+that $\modH$ is dominated by nearest-neighbor terms localized at the
+entangling surface, consistent with the Bisognano--Wichmann structure.
+We state the lattice Bisognano--Wichmann property as Gap~2
+(Sec.~\ref{sec:gaps}).
+
+\subsection{Stress-energy identification}
+\label{sec:stress-energy}
+
+The Jacobson argument is formulated in the emergent continuum theory and
+uses the stress-energy tensor $\Tab$.  On the lattice, the natural
+observables are spin operators; $\Tab$ is not a lattice quantity.  In the
+Wilsonian continuum limit, the lattice Hamiltonian density maps to the
+energy density of the effective field theory, and the full
+stress-energy tensor $\Tab$ is the Noether current associated with
+the emergent diffeomorphism invariance of the long-wavelength
+description.  This identification is part of the continuum limit
+(Gap~4): wherever the lattice admits a continuum description, $\Tab$
+is the standard stress-energy of that description.  We do not derive
+$\Tab$ from lattice observables; we inherit it from the effective field
+theory, following the same logic as lattice QCD (where the lattice
+action maps to the continuum QCD Lagrangian, and $\Tab$ is defined in
+the continuum theory, not on the lattice).
+
+\subsection{Thermodynamic derivation of Einstein's equation}
+\label{sec:jacobson95}
+
+We now present the Jacobson (1995) derivation~\cite{Jacobson1995},
+adapted to our UV completion.  The argument has five steps.
+
+\paragraph{Step 1: Local Rindler horizon.}
+At a point $p$ in the emergent spacetime, consider a local Rindler
+horizon generated by a future-pointing null vector $k^a$ with affine
+parameter $\lambda$.  The approximate boost Killing vector near $p$ is
+$\xi^a = \kappa\, \lambda\, k^a$, where $\kappa$ is the surface
+gravity.
+
+\paragraph{Step 2: Heat flux.}
+Define the heat flux through the horizon as the boost energy:
 \begin{equation}
-  \delta\ent = \delta\ent_{\mathrm{UV}} + \delta\ent_{\mathrm{mat}}
-  = \eta\, \delta\mathcal{A} + \delta\ent_{\mathrm{mat}}.
-  \label{eq:ds-decomp}
+  \delta Q = \int_{\mathcal{H}} \Tab\, \xi^a\, d\Sigma^b,
+  \label{eq:heat-flux}
 \end{equation}
-
-\subsubsection{Geometric variation (Raychaudhuri)}
-\label{sec:raychaudhuri}
-
-The change in area $\delta\mathcal{A}$ of the entangling surface
-$\partial B$ due to the curvature perturbation is computed from the
-Raychaudhuri equation for the null generators of the causal
-diamond~\cite{Wald1984, Jacobson2016}.  For a twist-free null geodesic
-congruence with tangent $k^a$ ($k^a k_a = 0$), the expansion
-$\theta = \nabla_a k^a$ satisfies
+where $\mathcal{H}$ is a pencil of generators of the local Rindler
+horizon and $d\Sigma^b$ is the surface element.  Substituting
+$\xi^a = \kappa\,\lambda\, k^a$:
 \begin{equation}
-  \frac{d\theta}{d\lambda}
-  = -\frac{1}{d-1}\,\theta^2 - \sigma_{ab}\sigma^{ab} - \Rab\, k^a k^b,
+  \delta Q = \kappa \int_{\mathcal{H}} \lambda\, \Tab\, k^a\, k^b\, d\lambda\, dA,
+  \label{eq:heat-flux-expanded}
+\end{equation}
+where $dA$ is the cross-sectional area element.  This is the energy
+that a Rindler observer attributes to matter crossing the horizon.
+
+\paragraph{Step 3: Entropy change from Raychaudhuri.}
+The area-law entanglement established in Sec.~\ref{sec:arealaw}
+provides $\ent = \eta\, \mathcal{A}$, where $\eta$ is the UV entropy
+density per unit area.  The change in entropy as matter crosses the
+horizon is
+\begin{equation}
+  \delta \ent = \eta\, \delta\mathcal{A}.
+  \label{eq:ds-area}
+\end{equation}
+The area change $\delta\mathcal{A}$ is governed by the Raychaudhuri
+equation~\cite{Wald1984}.  For a null geodesic congruence with tangent
+$k^a$, expansion $\theta = \nabla_a k^a$, and vanishing initial
+expansion and shear at the horizon (see Sec.~\ref{sec:local-eq}):
+\begin{equation}
+  \frac{d\theta}{d\lambda} = -\Rab\, k^a k^b + O(\theta^2, \sigma^2).
   \label{eq:raychaudhuri}
 \end{equation}
-where $d$ is the number of spatial dimensions and $\lambda$ is the
-affine parameter.
-
-At the bifurcation surface $\partial B$, the unperturbed expansion and
-shear vanish ($\theta = \sigma_{ab} = 0$).  To first order in the
-curvature perturbation, $\theta^2$ and $\sigma^2$ are second order, so
+Integrating gives
 \begin{equation}
-  \frac{d\theta^{(1)}}{d\lambda} = -\Rab^{(1)}\, k^a k^b.
-  \label{eq:ray-linear}
-\end{equation}
-Integrating over the null congruence emanating from the future tip of
-$\mathcal{D}(B)$ and performing the angular average over null
-directions~\cite{Jacobson2016}, the area variation in the small-ball
-limit ($\ell \ll L_{\mathrm{curv}}$) is
-\begin{equation}
-  \delta\mathcal{A}
-  = -\frac{\Omega_{d-1}\, \ell^{d+1}}{2d}
-  \left[(d+1)\, \Rab\, n^a n^b + \mathcal{R}\right]
-  + O(\ell^{d+3}),
+  \delta\mathcal{A} = -\int_{\mathcal{H}} \Rab\, k^a k^b\, \lambda\, d\lambda\, dA.
   \label{eq:delta-area}
 \end{equation}
-where $\Omega_{d-1} = 2\pi^{d/2}/\Gamma(d/2)$ is the area of the unit
-$(d{-}1)$-sphere, $n^a$ is the unit timelike normal to $\Sigma$, and
-$\mathcal{R} = g^{ab}\Rab$ is the Ricci scalar.
 
-The UV entropy variation is therefore
+\paragraph{Step 4: Clausius relation.}
+The Clausius relation $\delta Q = T\, \delta \ent$, combined with the
+Unruh temperature~\eqref{eq:unruh}, gives
 \begin{equation}
-  \delta\ent_{\mathrm{UV}} = \eta\,\delta\mathcal{A}
-  = -\frac{\eta\,\Omega_{d-1}\, \ell^{d+1}}{2d}
-  \left[(d+1)\,\Rab\, n^a n^b + \mathcal{R}\right].
-  \label{eq:ds-uv}
+  \int \Tab\, k^a k^b\, \kappa\lambda\, d\lambda\, dA
+  = \frac{\hbar\kappa}{2\pi}\, \eta
+  \int (-\Rab\, k^a k^b)\, \lambda\, d\lambda\, dA.
+  \label{eq:clausius}
 \end{equation}
-When $\Rab\, n^a n^b > 0$ (i.e., the null energy condition holds),
-$\delta\ent_{\mathrm{UV}} < 0$: positive energy causes focusing, which
-decreases the area and hence the UV entropy.
-
-For conformal matter, the Weyl tensor contribution to
-$\delta\ent_{\mathrm{UV}}$ is exactly cancelled by a corresponding
-contribution to $\delta\ent_{\mathrm{mat}}$~\cite{Jacobson2016}, so
-only the Ricci part survives.
-
-\subsubsection{Matter variation (conformal modular Hamiltonian)}
-\label{sec:conformal-approx}
-
-From the entanglement first law~\eqref{eq:first-law},
-$\delta\ent_{\mathrm{mat}} = \delta\langle{\modH}_B\rangle$.  For the
-vacuum state of a conformal field theory restricted to a geodesic ball
-$B$ of radius $\ell$, the Casini--Huerta--Myers (CHM) modular Hamiltonian
-takes the exact form~\cite{CasiniHuertaMyers2011}
+The factors of $\kappa$ and the integration measure cancel, leaving
 \begin{equation}
-  {\modH}_B = 2\pi \int_B d^d\!x\; \frac{\ell^2 - |\mathbf{x}|^2}{2\ell}\; T_{00}(\mathbf{x}).
-  \label{eq:chm}
+  \Rab\, k^a k^b = \frac{2\pi}{\hbar\, \eta}\, \Tab\, k^a k^b.
+  \label{eq:null-equation}
 \end{equation}
-Under a perturbation that produces a stress-energy tensor~$\Tab$, in
-the small-ball limit where $T_{00}$ is approximately constant over $B$:
+
+\paragraph{Step 5: All null directions yield Einstein's equation.}
+Equation~\eqref{eq:null-equation} must hold for \emph{all} null
+$k^a$ at every point $p$ (since we can construct a local Rindler
+horizon in any null direction).  A symmetric 2-tensor equation
+$A_{ab}\, k^a k^b = B_{ab}\, k^a k^b$ for all null $k^a$ implies
 \begin{equation}
-  \delta\ent_{\mathrm{mat}}
-  = \frac{2\pi\, \Omega_{d-1}}{d(d+2)}\, \ell^{d+1}\, \Tab\, n^a n^b.
-  \label{eq:ds-mat}
+  A_{ab} = B_{ab} + f\, \gab
 \end{equation}
-For positive energy density ($\Tab\, n^a n^b > 0$),
-$\delta\ent_{\mathrm{mat}} > 0$: matter excitations increase the
-matter sector entropy.
-
-\emph{Conformal approximation.}---The CHM formula~\eqref{eq:chm} is
-exact for conformal field theories in causal
-diamonds~\cite{CasiniHuertaMyers2011}.  For nonconformal fields,
-corrections of order $O\!\left((m\ell)^{2\Delta}\right)$ appear, where
-$m$ is the mass scale breaking conformal invariance and $\Delta$ is
-its scaling dimension~\cite{Speranza2016}.  In the window
-$a \ll \ell \ll 1/m$ (if it exists), these corrections are suppressed.
-For the one-dimensional AFM Heisenberg chain ($n = 2$, $J > 0$),
-which flows to the $SU(2)_1$ WZW CFT with $c = 1$, the theory is
-exactly conformal and this approximation introduces no error.
-Jacobson~\cite{Jacobson2016} conjectures that the leading-order
-Einstein equation survives nonconformal corrections; this is
-physically motivated but not proven.
-
-\subsubsection{Entanglement equilibrium implies Einstein's equation}
-\label{sec:ee-implies-einstein}
-
-The MVEH---identified as the only available vacuum selection criterion
-in a pre-geometric framework
-(Sec.~\ref{sec:mveh})---requires entanglement equilibrium:
+for some scalar $f$ (the trace freedom arises because
+$\gab\, k^a k^b = 0$ for null vectors).  Thus
 \begin{equation}
-  \delta\ent = \delta\ent_{\mathrm{UV}} + \delta\ent_{\mathrm{mat}} = 0.
-  \label{eq:ee}
+  \Rab + f\, \gab = \frac{2\pi}{\hbar\, \eta}\, \Tab.
+  \label{eq:ricci-equation}
 \end{equation}
-Substituting Eqs.~\eqref{eq:ds-uv} and~\eqref{eq:ds-mat} and
-cancelling the common factor $\Omega_{d-1}\, \ell^{d+1}/d > 0$:
-\begin{equation}
-  \frac{\eta(d+1)}{2}\, \Rab\, n^a n^b + \frac{\eta\, \mathcal{R}}{2}
-  = \frac{2\pi}{d+2}\, \Tab\, n^a n^b.
-  \label{eq:scalar-ee}
-\end{equation}
-This must hold for \emph{all} unit timelike vectors $n^a$ at every
-point.  A symmetric tensor equation
-$A_{ab}\, n^a n^b = B_{ab}\, n^a n^b$ for all unit timelike $n^a$
-implies $A_{ab} = B_{ab} + f\, \gab$ for some scalar~$f$ (the trace
-freedom arises because $\gab\, n^a n^b = -1$ for all such $n^a$).
-
-Extracting the tensor equation up to this trace freedom, converting to
-the Einstein tensor $\Gab = \Rab - \frac{1}{2} \mathcal{R}\, \gab$, and
-absorbing all $\gab$ terms (including the background MSS curvature)
-into an undetermined cosmological constant~$\Lambda$
-yields~\cite{Jacobson2016}
+Imposing local energy-momentum conservation
+($\nabla^a \Tab = 0$) and the contracted Bianchi identity
+($\nabla^a \Gab = 0$), the trace freedom is fixed to
+$f = -\frac{1}{2}\mathcal{R} + \Lambda$ for an undetermined
+constant $\Lambda$, yielding
 \begin{equation}
   \boxed{\Gab + \Lambda\, \gab = 8\pi\Gnewton\, \Tab}
   \label{eq:einstein}
@@ -180,30 +218,30 @@ with
   \boxed{\Gnewton = \frac{1}{4\eta}.}
   \label{eq:newton}
 \end{equation}
-This is the standard Einstein field equation.  The cosmological
-constant $\Lambda$ is \emph{undetermined}: it is an integration
-constant of the derivation, not a predicted
-quantity~\cite{Jacobson2016, JacobsonSperanza2019}.
+This is Einstein's field equation.  The cosmological
+constant $\Lambda$ is undetermined: it is an integration constant
+of the derivation, not a predicted
+quantity~\cite{Jacobson1995, JacobsonSperanza2019}.  The derivation
+works in all $d + 1 \geq 3$ spacetime dimensions ($d \geq 2$ spatial
+dimensions).  No conformal modular Hamiltonian is needed; no
+tensoriality assumption is required.
 
 \emph{Sign chain.}---If the null energy condition (NEC) holds
 ($\Tab\, k^a k^b \geq 0$ for all null $k^a$), the derivation produces
-attractive gravity via the following sign chain:
+attractive gravity:
 \begin{enumerate}
-\item Positive energy density (NEC): $\Tab\, n^a n^b > 0$.
-\item Matter entropy increases: $\delta\ent_{\mathrm{mat}} > 0$
-  (Eq.~\ref{eq:ds-mat}).
-\item Entanglement equilibrium: $\delta\ent = 0$ requires
-  $\delta\ent_{\mathrm{UV}} < 0$.
-\item UV entropy decreases: $\delta\ent_{\mathrm{UV}} < 0$ implies
-  $\delta\mathcal{A} < 0$ (area decreases, since $\eta > 0$).
-\item Raychaudhuri focusing: $\delta\mathcal{A} < 0$ implies
-  $\Rab\, k^a k^b > 0$ (null geodesics converge).
-\item Einstein equation: $\Gnewton > 0$ (since $\eta > 0$), and
-  positive $\Tab$ produces positive $\Gab$, giving attractive gravity.
+\item Positive energy density (NEC): $\Tab\, k^a k^b > 0$.
+\item Heat flux through horizon: $\delta Q > 0$.
+\item Clausius: $\delta Q = T\,\delta\ent > 0$ with $T > 0$ (Unruh),
+  so $\delta\ent > 0$.
+\item Area law: $\delta\ent = \eta\,\delta\mathcal{A} > 0$, so
+  $\delta\mathcal{A} > 0$ (horizon area increases).
+\item Raychaudhuri: positive $\Rab\, k^a k^b$ causes null geodesic
+  focusing, giving attractive gravity.
 \end{enumerate}
 The NEC is not derived from self-modeling; it is an input to the sign
-chain.  The tensor equation~\eqref{eq:einstein} itself holds
-independently of the NEC.
+chain.  The tensor equation~\eqref{eq:einstein} holds independently
+of the NEC.
 
 \subsubsection{Parameter identification}
 \label{sec:parameters}
@@ -228,114 +266,18 @@ speed of light~$c$ in the continuum limit.  The cosmological
 constant~$\Lambda$ is undetermined; this paper does not predict its
 value.
 
-\subsection{Route B: Lovelock uniqueness ($d \geq 2$)}
-\label{sec:route-b}
+\subsection{Local equilibrium}
+\label{sec:local-eq}
 
-Route~A derives Einstein's equation by explicit computation of
-$\delta\ent_{\mathrm{UV}}$ and $\delta\ent_{\mathrm{mat}}$ using the
-Raychaudhuri equation and the conformal modular Hamiltonian.  The
-conformal approximation (Sec.~\ref{sec:conformal-approx}) limits this
-route to the conformal regime, which is controlled in $d = 1$ but
-problematic in $d \geq 2$ where the infrared theory likely has N\'eel
-order rather than conformal symmetry.
+The Raychaudhuri step (Step~3) assumes that the expansion $\theta$ and
+shear $\sigma_{ab}$ vanish at the bifurcation surface of the local
+Rindler horizon.  This is the local equilibrium condition: the
+unperturbed vacuum has no expansion or shear at the horizon.
 
-Route~B circumvents this limitation entirely.  It uses only three
-ingredients, none of which require a conformal modular Hamiltonian:
-
-\begin{enumerate}
-\item \emph{Emergent geometry from entanglement.}  The self-modeling
-  lattice defines an emergent geometry via the thermal time
-  identification (Sec.~\ref{sec:equilibrium}): the modular flow of the
-  lattice state defines the geometric flow, and the entanglement
-  structure encodes the metric.  This holds in all spatial dimensions.
-\item \emph{Entanglement first law.}  Perturbations of the entanglement
-  entropy satisfy $\delta\ent = \delta\langle\modH\rangle$
-  (Eq.~\ref{eq:first-law}), an exact identity.  Combined with the
-  area-law structure (Sec.~\ref{sec:arealaw}), this implies that
-  perturbations of entanglement are equivalent to perturbations of the
-  emergent geometry.  We assume the resulting equation relating metric
-  perturbations to matter perturbations is a symmetric 2-tensor equation
-  built from the metric and at most second derivatives (\emph{tensoriality
-  assumption}).  Symmetry follows from the symmetry of the metric;
-  the second-derivative restriction follows from the entanglement first
-  law being first-order in the perturbation, which couples to the
-  modular Hamiltonian (a local operator at leading order in the
-  derivative expansion).  Divergence-freeness is then a consequence
-  of Lovelock's theorem rather than an input: Lovelock identifies the
-  unique tensor, and that tensor happens to be divergence-free
-  (the contracted Bianchi identity).
-\item \emph{Lovelock's theorem.}  Lovelock~\cite{Lovelock1971,
-  Lovelock1972} proved that in $d + 1$ spacetime dimensions with
-  $d \geq 2$, the \emph{unique} symmetric, divergence-free 2-tensor
-  constructed from the metric $\gab$ and its first and second
-  derivatives is a linear combination of $\Gab$ and $\gab$:
-  \begin{equation}
-    \mathcal{E}_{ab} = \alpha\, \Gab + \beta\, \gab
-  \end{equation}
-  for constants $\alpha$, $\beta$.  (In $d + 1 > 4$, Lovelock gravity
-  allows higher-curvature terms built from the generalized
-  Euler densities; in $d + 1 = 3$ and $d + 1 = 4$, the Einstein
-  tensor and cosmological term are the unique possibilities.)
-\end{enumerate}
-
-Combining these: since the entanglement-geometry relation is a
-symmetric 2-tensor equation with at most second derivatives in the
-emergent $(d{+}1)$-dimensional spacetime, Lovelock's theorem constrains
-the geometric side to be
-\begin{equation}
-  \alpha\, \Gab + \beta\, \gab = \text{(matter source)},
-  \label{eq:einstein-lovelock}
-\end{equation}
-in $d + 1 \leq 4$ dimensions.  (In $d + 1 > 4$, higher Lovelock terms
-such as the Gauss--Bonnet combination are permitted; restricting to
-$d + 1 \leq 4$, or equivalently to at most second-order field equations,
-excludes them.)  Identifying $\alpha = 1$, $\beta = \Lambda$, and
-$\Gnewton = 1/(4\eta)$ by matching the UV entanglement density
-(Sec.~\ref{sec:parameters}) recovers Eq.~\eqref{eq:einstein}.
-
-Route~B constrains the \emph{geometric sector}: it shows the left side
-must be Einsteinian.  It does not independently derive the matter
-coupling $8\pi\Gnewton\,\Tab$ on the right side; that identification
-comes from Route~A's explicit modular Hamiltonian computation, or more
-generally from identifying the modular Hamiltonian perturbation with
-the local stress tensor (the entanglement first law).  The two routes
-are therefore genuinely complementary: Route~A supplies the matter
-coupling, Route~B supplies the geometric uniqueness.
-
-\emph{Complementarity of the two routes.}---The Jacobson route
-(Route~A) derives the \emph{specific form} of the Einstein equation by
-explicit computation, but requires the conformal modular Hamiltonian
-and is therefore controlled only in the conformal regime.  The Lovelock
-route (Route~B) derives the \emph{uniqueness} of the Einstein equation
-from general principles, but requires the assumption that the
-entanglement-geometry relation produces a tensorial equation with at
-most second-order derivatives.
-
-\begin{table}
-\caption{Comparison of the two routes to Einstein's equations.
-\label{tab:routes}}
-\begin{ruledtabular}
-\begin{tabular}{lll}
-  & Route A (Jacobson) & Route B (Lovelock) \\ \hline
-Strength & Explicit derivation & Uniqueness argument \\
-Best in & $d = 1$ (WZW CFT) & $d \geq 2$ (all) \\
-Requires & Conformal $\modH$ & Tensorial equation \\
-Weakness & Conformal approx.\ & No explicit $\Tab$ \\
-\end{tabular}
-\end{ruledtabular}
-\end{table}
-
-In $d = 1$ ($1{+}1$ spacetime), $\Gab = 0$ identically for all metrics,
-so both routes produce a trivially satisfied equation. Route~A gives
-$\Lambda\,\gab = 8\pi\Gnewton\,\Tab$ (a cosmological-constant equation)
-via the exact WZW modular Hamiltonian; Lovelock's theorem provides no
-constraint.  The $d = 1$ case serves as a controlled consistency check
-rather than a demonstration of nontrivial gravitational dynamics.
-
-In $d \geq 2$, Route~B forces the geometric sector to be Einsteinian
-by uniqueness, without requiring conformal symmetry of the infrared
-theory.  Route~A provides the explicit matter coupling in the conformal
-window $a \ll \ell \ll 1/m$.  Neither route is assumption-free: Route~A
-needs the conformal approximation, Route~B needs the tensoriality
-assumption.  Their complementarity strengthens the overall case, with
-each route addressing the other's principal weakness.
+This assumption is natural for the self-modeling fixed point.  The
+ground state of the self-modeling lattice is the equilibrium state of
+the self-modeling dynamics; its entanglement structure is stationary by
+construction.  In the continuum limit, stationarity of the vacuum
+entanglement across a local Rindler horizon translates to
+$\theta = \sigma_{ab} = 0$ at the bifurcation surface.  We state this
+as Gap~3 (Sec.~\ref{sec:gaps}).
