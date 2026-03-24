@@ -5,12 +5,15 @@
 \section{Part A: Complexification from C*-Observer}\label{sec:complexification}
 %----------------------------------------------------------------------
 
-The first half of the derivation shows that the observer's algebraic
+The first half of the derivation argues that the observer's algebraic
 nature---specifically, the fact that self-modeling forces a C*-algebra
-structure---automatically complexifies the Peirce half-space of the
-exceptional Jordan algebra, upgrading the symmetry from
+structure---motivates complexification of the Peirce half-space of the
+exceptional Jordan algebra, canonically upgrading the symmetry from
 $\Spin{9}$ to $\Spin{10}$ and identifying the 16-dimensional
 spinor representation that will carry one generation of fermions.
+The complexification step is a physical argument, not a formal
+theorem; its formalization is an open problem (Gap~C,
+Sec.~\ref{sec:gap-register}).
 
 %----------------------------------------------------------------------
 \subsection{The exceptional Jordan algebra \texorpdfstring{$\hthree$}{h3(O)}}\label{sec:h3O}
@@ -86,6 +89,24 @@ $\mathbb{O}P^2$, $\dim = 16$).  Physically, the observer's existence
 breaks $\Ffour \to \Spin{9}$; \emph{which} idempotent is selected
 corresponds to the observer's ``viewpoint'' and is a genuine
 symmetry-breaking input.
+\end{remark}
+
+\begin{remark}[Observer-universe relation]\label{rem:observer-universe}
+Paper~5 shows that a self-modeling system's state space is
+$M_n(\mathbb{C})^{sa}$, which excludes $\hthree$ as an observer
+algebra.  This is \emph{not} a contradiction: the observer is not
+the universe.  The observer is \emph{internal} to $\hthree$ via the
+Peirce decomposition: $\Vone \cong \mathbb{R}$ is the observer's
+slot, $\Vhalf$ is the interaction space, and $\Vzero$ is the
+complement.  The Peirce decomposition is the Jordan-algebraic analog
+of a subsystem decomposition---not a tensor-product factorization
+(which $\hthree$ does not admit, by non-composability) but a
+spectral decomposition under the observer's idempotent.  The
+observer's \emph{internal} algebra (its state space as a
+self-modeling system) is C* by Paper~5; the \emph{universe's}
+algebra is the non-composable $\hthree$.  The observer accesses the
+universe through the Peirce interface $\Vhalf$, not through tensor
+factors.
 \end{remark}
 
 The Peirce decomposition under $e$ partitions $\hthree$ into the
@@ -191,8 +212,10 @@ $\mathbf{1}$).
 \subsection{Complexification from C*-observer nature}\label{sec:complexification-arg}
 %----------------------------------------------------------------------
 
-The crucial step of Part~A is that \emph{complexification is derived,
-not assumed}.  The logical chain has five steps.
+The central claim of Part~A is that \emph{complexification is motivated
+by the observer's algebraic nature, rather than assumed}.  We present
+the physical argument in five steps; the formalization of this argument
+as a precise theorem remains open (Gap~C).
 
 \medskip
 \noindent\textbf{Step~1: Self-modeling forces a C*-algebra observer.}
@@ -251,13 +274,13 @@ vector $v\otimes 1$, so
 \begin{remark}[Contrast with Boyle~\cite{Boyle2020}]\label{rem:boyle-contrast}
 Boyle starts from the complexified algebra $\hthreeC$ and
 studies its structure group $\Esix$.  Our approach differs in that
-we derive the complexification from the observer's C*-nature: the
-self-modeling requirement (Paper~5) forces the observer to be a
-C*-algebra system, which in turn forces extension of scalars on
-every space the observer probes.  The end result is the same
+we \emph{motivate} the complexification from the observer's C*-nature:
+the self-modeling requirement (Paper~5) forces the observer to be a
+C*-algebra system, which we argue motivates extension of scalars on
+the spaces the observer probes.  The end result is the same
 identification of $\Vhalf^{\,\mathbb{C}}$ as the Weyl spinor
 $\Stenplus$, but the logical route is different: Boyle assumes
-complexification, we derive it.
+complexification; we give a physical argument for it (Gap~C).
 \end{remark}
 
 %----------------------------------------------------------------------
@@ -301,6 +324,25 @@ $\Vhalf^{\,\mathbb{C}} = \Stenplus$.
 $\dim_\mathbb{C}(\Stenplus) = 16 = \dim_\mathbb{R}(S_9)
 = \dim_\mathbb{R}(\Vhalf)$.\ \checkmark
 
+\begin{remark}[Why $\Spin{10}$, not just complex $\Spin{9}$]
+\label{rem:why-spin10}
+A natural objection is that complexifying $S_9$ gives a complex
+$\Spin{9}$-module, not automatically a $\Spin{10}$-module.  The key
+fact is that the branching $\Stenplus|_{\Spin{9}} \cong S_9^{\,\mathbb{C}}$
+is \emph{multiplicity-free}: $S_9^{\,\mathbb{C}}$ is irreducible under
+$\Spin{9}$.  By Schur's lemma, any $\Spin{10}$-module structure on
+$S_9^{\,\mathbb{C}}$ that restricts to the given $\Spin{9}$ action is
+unique (up to the $\Stenplus$ vs.\ $S_{10}^-$ choice resolved below).
+The existence of this extension is guaranteed: $S_9$ is, by
+construction, the restriction of a $\Spin{10}$ Weyl spinor
+to $\Spin{9} = \mathrm{Stab}_{\Spin{10}}(e_{10})$.
+Complexification therefore does not merely produce a representation
+\emph{compatible} with $\Spin{10}$; it produces the unique
+$\Spin{10}$-module extending the $\Spin{9}$ action, because the
+representation space $S_9^{\,\mathbb{C}}$ already sits inside the
+$\Spin{10}$ representation ring as an irreducible restriction.
+\end{remark}
+
 \begin{remark}[Choice of $\Stenplus$ vs.\ $S_{10}^-$]
 Under $\Spin{10}\supset\Spin{9}$, both Weyl representations restrict
 to the same real representation $S_9$ (since $S_9$ has no chirality).
@@ -311,8 +353,9 @@ construction.
 \end{remark}
 
 \noindent\textbf{Symmetry upgrade.}
-Because $\Vhalf^{\,\mathbb{C}} = \Stenplus$ carries a representation
-of $\Spin{10}$ (not merely $\Spin{9}$), the symmetry of the observer's
+Because $\Vhalf^{\,\mathbb{C}} = \Stenplus$ carries the unique
+$\Spin{10}$-module structure extending the $\Spin{9}$ action
+(Remark~\ref{rem:why-spin10}), the symmetry of the observer's
 description of the Peirce space upgrades:
 \begin{equation}\label{eq:spin-upgrade}
   \Spin{9} \;\longrightarrow\; \Spin{10}.
@@ -359,7 +402,35 @@ $1 + 10 + 16 = 27$.\ \checkmark
 Boyle~\cite{Boyle2020} arrives at the same decomposition
 $\mathbf{27} = \mathbf{1}\oplus\mathbf{10}\oplus\mathbf{16}$ under
 $\Spin{10}\subset\Esix$ by analyzing the complexified algebra
-directly.  The results are consistent; our contribution is the
-derivation of the complexification step from C*-observer nature
+directly.  The results are consistent; our contribution is to
+\emph{motivate} the complexification step from C*-observer nature
 rather than taking it as a mathematical starting point.
+\end{remark}
+
+\begin{remark}[What the complexification argument does not yet
+establish]\label{rem:complexification-limits}
+The five-step argument above is \emph{physical reasoning}, not a
+formal proof.  Two gaps remain:
+\begin{enumerate}
+  \item \textbf{$\mathbb{C}$-linearity does not force extension of
+    scalars.}  A complex-algebraic observer can describe real
+    configuration spaces, real observables, and real manifolds
+    without complexifying them.  The step from ``the observer's
+    internal scalar field is $\mathbb{C}$'' to ``every space the
+    observer probes acquires a $\mathbb{C}$-module structure'' is
+    plausible but requires a precise theorem about how
+    C*-measurement maps interact with real target spaces.
+  \item \textbf{Module extension is not symmetry extension.}  Even
+    granting the vector-space complexification
+    $\Vhalf\otimes_\mathbb{R}\mathbb{C}$, one must show that the
+    $\Spin{9}$ action on the complexified space canonically extends
+    to $\Spin{10}$.  This extension is unique by the
+    multiplicity-free branching (Remark~\ref{rem:why-spin10}), but
+    the physical justification for \emph{why} the larger symmetry
+    is realized---rather than merely compatible---needs further
+    development.
+\end{enumerate}
+A theorem of the form ``C*-measurement maps on a real Jordan module
+necessarily factor through $\otimes_\mathbb{R}\mathbb{C}$'' would
+close this gap.  We flag this as Gap~C.
 \end{remark}
