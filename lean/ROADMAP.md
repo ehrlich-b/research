@@ -1,22 +1,22 @@
 # Lean Formalization Roadmap
 
-_Last updated: 2026-03-24_
+_Last updated: 2026-03-27_
 
 ## Current State
 
-22 files, 5373 lines, **builds clean**.
+22 files, 5444 lines, **builds clean**.
 
 | Component | Files | Lines | Sorry | Axioms | Status |
 |-----------|-------|-------|-------|--------|--------|
 | Papers 1-4 | 1 | 623 | 15 | 9 | Scaffold |
 | Paper 5 | 10 | 2371 | **0** | 3 | **DONE** |
 | Paper 6 | 3 | 1003 | 20 | 13 | Scaffold |
-| Paper 7 | 8 | 1376 | 54 | 25 | Scaffold (code, not docs) |
-| **Total** | **22** | **5373** | **89** | **50** | |
+| Paper 7 | 8 | 1447 | 23 | 25 | **Octonions DONE**, rest scaffold |
+| **Total** | **22** | **5444** | **58** | **50** | |
 
 Paper 5 is the crown jewel: 0 sorry, 3 honest axioms, complete chain
-machine-verified. Everything else is scaffold (sorry/axiom with correct
-type signatures).
+machine-verified. **Phase A complete:** Octonions.lean now has 0 sorry,
+3 axioms (Hurwitz, G_2, S^6). Everything else is scaffold.
 
 ---
 
@@ -199,14 +199,12 @@ classification theorems. Probably 20+ of the 25 Paper 7 axioms stay.
 
 ## Phased Roadmap
 
-### Phase A: Octonions (highest priority)
-**Goal:** Concrete octonion algebra with all properties proved.
-**Files:** Octonions.lean
-**Sorry reduction:** 14 -> 0
-**Axiom reduction:** keep Hurwitz, G_2, S^6 (3 stay)
-**Effort:** 500-800 lines, ~2-4 sessions
-**Why first:** Foundation for all Paper 7. Concrete algebra, no physics
-assumptions, pure computation. Most Lean-friendly work in the program.
+### Phase A: Octonions -- **COMPLETE** (2026-03-27)
+**Result:** 14 sorry -> 0. 3 axioms kept (Hurwitz, G_2, S^6).
+**Approach:** Fano plane multiplication table with `k.val` comparisons,
+all identities proved by `ext; fin_cases; simp; ring`.
+**Bug found:** `moufang_right` statement was wrong (was just associativity,
+which is false). Fixed to correct right Moufang `((ca)b)a = c(a(ba))`.
 
 ### Phase B: Albert algebra (depends on A)
 **Goal:** h_3(O) with Jordan product, idempotents, Peirce decomposition.

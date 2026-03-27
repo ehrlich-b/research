@@ -2,11 +2,10 @@
 
 ## Current State
 
-10 proved files, ~2400 lines, builds clean on Mathlib v4.28.0.
-**0 sorry's. 3 axioms (all honest). ~150 definitions/theorems/lemmas.**
+11 proved files, ~2600 lines, builds clean on Mathlib v4.28.0.
+**0 sorry's in Paper 5 + Octonions. 3+3 axioms (all honest).**
 
-8 scaffold files upgraded from documentation-only to Lean 4 code with
-structure/def/theorem statements (all `sorry` for proofs). Builds clean.
+7 scaffold files with sorry-ed proofs. Builds clean.
 
 ### Paper 5 Files (PROVED)
 
@@ -50,7 +49,7 @@ Paper 6 axioms (all standard external physics/math results):
 
 | File | Sorry | Axioms | Description |
 |------|-------|--------|-------------|
-| Octonions.lean | 14 | 3 | Octonion structure, mul, conj, norm, ComplexStructure, Hurwitz |
+| Octonions.lean | **0** | 3 | **DONE** Fano-plane mul, all identities proved, Hurwitz/G2/S6 axioms |
 | Albert.lean | 10 | 1 | h3O structure, Jordan product, Peirce decomposition, IsSpecialJordanAlgebra |
 | NonComposability.lean | 3 | 4 | SimpleEJA, EJAComposite, BGW rank argument, exceptional_no_composite |
 | UniverseAlgebra.lean | 2 | 0 | IsUniverseAlgebra, universe_contains_h3O (Gap A capstone) |
@@ -131,14 +130,14 @@ GaugeGroup (imports F4, ObserverInterface, Octonions)
 Chirality (imports Octonions, Albert, F4, ObserverInterface, GaugeGroup)
 ```
 
-### Next steps (Phase 1)
+### Next steps (Phase B: Albert algebra)
 
-1. Fill in Octonion multiplication table (Cayley-Dickson or Fano plane)
-2. Prove conj_conj, mul_one, one_mul from concrete definitions
-3. Prove Jordan identity on h_3(O) from concrete Jordan product
-4. Prove sum_rank1_eq_one and idempotent properties concretely
-5. Fill in bgw_exchange_lemma (the rank argument)
-6. Fill in non_composable_not_special (contrapositive argument)
+1. Define jordanMul concretely from Octonion.mul on 3x3 Hermitian matrices
+2. Define det (Freudenthal determinant) explicitly
+3. Prove sum_rank1_eq_one, rank1_idempotent, rank1_orthogonal from defs
+4. Prove jordan_identity (the hard one - needs computation on h_3(O))
+5. Prove formally_real from positive-definite trace form
+6. Then: NonComposability sorry's (bgw_exchange_lemma, exceptional_no_composite)
 
 ## Build
 
