@@ -1,0 +1,120 @@
+% why-self-modelers.tex — Section 3: Why Self-Modelers?
+
+\section{Why Self-Modelers?}
+\label{sec:why-self-modelers}
+
+\subsection{Experiential measure}
+\label{subsec:experiential-measure}
+
+Structure space $\mathcal{S}$ contains every consistent mathematical
+structure.  Most have no observers.  The question ``why do observers
+experience this specific physics?'' requires a way to identify which
+structures contain observers and how much experiential weight they
+carry.
+
+\begin{postulate}[Self-Modeling]
+\label{post:self-modeling}
+Experiential weight attaches to self-modeling structures: composite
+Markov processes $(B, M)$ in which a body component $B$ is tracked by
+a model component $M$ through a factorizable transition kernel.
+\end{postulate}
+
+Paper~1~\citep{ehrlich2026measure} defines the experiential density
+\begin{equation}
+\label{eq:rho}
+\rho(p) = I_p(B;\,M)\,\bigl(1 - I_p(B;\,M) / H_p(B)\bigr),
+\end{equation}
+where $I_p(B;\,M)$ is the mutual information between body and model at
+state $p$, and $H_p(B)$ is the body's entropy.  This density has three
+qualitative features:
+\begin{enumerate}[nosep]
+\item $\rho = 0$ when $I = 0$: no model, no experience.
+\item $\rho = 0$ when $I = H$: perfect self-knowledge, nothing left
+  to experience (the model is trivially the system).
+\item $\rho > 0$ at intermediate fidelity: imperfect but active
+  self-modeling.
+\end{enumerate}
+Rocks, thermostats, and unstructured noise score $\rho = 0$.  Cells
+score near zero.  Brains with rich self-models score high.  Boltzmann
+brains --- brief thermal fluctuations --- score near zero when
+integrated over duration, because their self-modeling is fleeting
+(Paper~2 proves this rigorously via metastability
+theory~\citep{ehrlich2026bb}).
+
+\subsection{The $\rho$ bootstrap}
+\label{subsec:rho-bootstrap}
+
+$\rho$ appears to be a separate postulate layered on top of the
+algebraic framework.  It is not.  It is the \emph{content} of
+self-modeling.
+
+The argument has the form of a fixed-point characterization, not a
+circular justification:
+\begin{enumerate}[nosep]
+\item Experience lives where $\rho > 0$ (by definition of $\rho$).
+\item A self-modeler \emph{compresses} its experiential pattern into a
+  representation --- the model, which sits at low $\rho$ (it is a
+  description of experience, not experience itself).
+\item The representation feeds back and \emph{becomes} experience
+  (remembering, predicting, attending --- the model is experienced).
+\item Return to step 1.
+\end{enumerate}
+The fixed point of this loop is where map equals territory.  $\rho$
+defines the territory.  Self-modeling builds the map.  The fixed point
+is where they coincide.  Once you have self-modeling and the algebra it forces
+(Sec.~\ref{sec:why-qm}), $\rho$ should resolve to a function of the
+algebra's invariants (Remark~\ref{rem:rho-h3o}).  You do not need to
+postulate it separately.
+
+Evolution provides the external anchor.  Hoffman's fitness-beats-truth
+theorem~\citep{hoffman2015} shows that natural selection favors fitness
+proxies over veridical world-models.  But for \emph{self}-models, the
+object being modeled is the organism's own experiential state.  An
+organism that captures more of its own $\rho$ is a better
+self-modeler: it predicts its own states more accurately, corrects
+errors faster, and maintains coherence longer.  These are survival
+advantages.  Evolution does not select for truth about the
+\emph{world} (Hoffman is right).  It selects for truth about the
+\emph{self} ($\rho$-capture).  The organisms that survive are the ones
+whose internal model best captures their own experiential measure.
+
+The entire program in one sentence: evolution selects self-models;
+self-models force the algebra; the algebra determines $\rho$; $\rho$
+is what self-models model.
+
+\subsection{The hard problem: located, not dissolved}
+\label{subsec:hard-problem}
+
+The hard problem of consciousness asks why there is ``something it is
+like'' to be a self-modeling system.  The standard philosophical
+framing treats this as a request for a bridge --- some additional
+ingredient that converts physical processing into phenomenal
+experience.
+
+\begin{claim}
+\label{claim:hard-problem}
+The hard problem is \emph{self-referential}: the question is only
+askable from inside the fixed point, and the asking is the
+phenomenon the question asks about.
+\end{claim}
+
+``Something it is like'' is not a property that needs to be added to
+the fixed point of self-modeling.  It \emph{is} what you are
+describing when you describe ``hearing yourself hearing.''  The
+self-reference is the experience.  Content comes from inputs (sensory
+data, memories, associations).  \emph{Experiencing} comes from the
+attractor closure --- the fixed point of the self-modeling
+map~\citep{hofstadter1979}.  This is not dissolution (which would
+declare the question confused) but \emph{location}: the question is
+self-referential, and the self-reference is the phenomenon it asks
+about.
+
+\begin{remark}[Compression ratio]
+The model (low $\rho$, compressed) does not feel like the experience
+(high $\rho$, lived).  The explanatory gap between physical
+description and phenomenal experience \emph{is} the compression
+ratio.  Close the gap ($I \to H$, perfect self-knowledge) and
+$\rho \to 0$: experience vanishes.  The hard problem exists precisely
+because the model and the experience are at different $\rho$ levels.
+The gap is the feature, not the bug.
+\end{remark}

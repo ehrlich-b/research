@@ -4,19 +4,47 @@ _Last updated: 2026-03-27_
 
 ## Current State
 
-22 files, 5444 lines, **builds clean**.
+23 files, ~5600 lines, **builds clean**.
 
 | Component | Files | Lines | Sorry | Axioms | Status |
 |-----------|-------|-------|-------|--------|--------|
 | Papers 1-4 | 1 | 623 | 15 | 9 | Scaffold |
 | Paper 5 | 10 | 2371 | **0** | 3 | **DONE** |
 | Paper 6 | 3 | 1003 | 20 | 13 | Scaffold |
-| Paper 7 | 8 | 1447 | 23 | 25 | **Octonions DONE**, rest scaffold |
-| **Total** | **22** | **5444** | **58** | **50** | |
+| Paper 7 + rho_J | 9 | ~1600 | 16 | 26 | **Octonions + RhoJ DONE, Albert 7/10**, rest scaffold |
+| **Total** | **23** | **~5600** | **~51** | **51** | |
 
 Paper 5 is the crown jewel: 0 sorry, 3 honest axioms, complete chain
-machine-verified. **Phase A complete:** Octonions.lean now has 0 sorry,
-3 axioms (Hurwitz, G_2, S^6). Everything else is scaffold.
+machine-verified. **Phase A complete:** Octonions.lean 0 sorry (3 axioms).
+**Phase B (Albert) 7/10:** jordanMul, det, idempotents, formally_real,
+Peirce decomposition proved. 3 hard sorry remain (jordan_identity, simple,
+not_special). **Phase B2 complete:** RhoJ.lean 0 sorry (1 axiom). The
+rho_J uniqueness theorem is machine-verified.
+
+---
+
+## Why This Formalization Matters
+
+The Radical Relativity program claims to derive physics from one
+operational premise (self-modeling). The derivation chain:
+
+  Self-modeling -> Jordan algebras -> complex QM (Paper 5, PROVED)
+  Non-composability -> h_3(O) -> SM gauge group (Paper 7, CONDITIONAL)
+  rho resolves to unique rho_J within h_3(O) (Paper 1, THEOREM)
+
+Machine verification serves three purposes:
+1. **Credibility.** Bryan is an independent researcher without institutional
+   backing. Lean proofs replace "trust me" with "check the types."
+2. **The chain is long.** Self-modeling -> sequential product -> S1-S7 ->
+   EJA -> local tomography -> type exclusion -> C*-algebra. A human error
+   anywhere invalidates everything downstream. Machine checking catches it.
+3. **The rho_J uniqueness theorem** (Phase B2) is the program's Eddington
+   prediction: consciousness depends on a cubic invariant (det), not
+   quadratic (IIT's phi). Machine-verifying this theorem puts the prediction
+   on the hardest possible footing.
+
+Current priority: Phase B (Albert algebra) unlocks Phase B2 (rho_J) and
+Phase D (Paper 7 chain). Phase B is the bottleneck.
 
 ---
 
@@ -42,45 +70,28 @@ machine-verified. **Phase A complete:** Octonions.lean now has 0 sorry,
 
 These are finite-dimensional algebra/arithmetic that Mathlib should handle.
 
-**Paper 7 - Octonions.lean (14 sorry's)**
+**Paper 7 - Octonions.lean -- COMPLETE (14 -> 0 sorry)**
 
-The single biggest block. Concrete R^8 algebra with a multiplication table.
+Fano-plane multiplication table. All identities proved by
+`ext; fin_cases; simp; ring`. 3 axioms kept (Hurwitz, G_2, S^6).
 
-| Sorry | What | Difficulty | Approach |
-|-------|------|-----------|----------|
-| `mul` definition | Cayley-Dickson or Fano plane multiplication | Medium | Define explicitly on basis elements, extend bilinearly |
-| `mul_one'`, `one_mul'` | Unit element | Easy | Unfold mul, compute |
-| `conj_conj` | Involution | Easy | Unfold conj, compute |
-| `norm_sq_mul` | Composition property | Medium | Explicit computation (8x8) |
-| `conj_anti_hom` | Conjugation reverses order | Medium | Explicit computation |
-| `mul_conj_eq_norm` | a * conj(a) = |a|^2 | Medium | Explicit computation |
-| `division_algebra` | No zero divisors | Medium | From norm_sq_mul + norm positivity |
-| `not_associative` | Exists counterexample | Easy | Exhibit concrete a,b,c |
-| `alternativity_left/right` | a(ab) = (aa)b | Medium | Explicit computation |
-| `moufang_*` (3) | Three Moufang identities | Hard | Each is a concrete identity on R^8 |
+**Paper 7 - Albert.lean (10 -> 3 sorry)**
 
-**Estimated effort:** 500-800 lines. This is the foundation for all of Paper 7.
-Once mul is defined concretely, most properties follow by `decide` or `norm_num`
-on the basis elements + bilinearity.
-
-**Paper 7 - Albert.lean (10 sorry's)**
-
-Depends on Octonions.lean being done.
+7 proved: jordanMul, det, sum_rank1_eq_one, rankOneIdem_idempotent,
+rankOneIdem_orthogonal, formally_real, peirce_complete. 1 axiom (Zel'manov).
 
 | Sorry | What | Difficulty | Approach |
 |-------|------|-----------|----------|
-| `jordanMul` definition | (ab + ba)/2 for 3x3 Hermitian octonionic | Medium | Define from Octonion.mul, matrix ops |
-| `det` definition | 27-dim determinant | Medium | Explicit formula (Freudenthal) |
-| `sum_rank1_eq_one` | E_0 + E_1 + E_2 = 1 | Easy | Unfold, compute |
-| `rank1_idempotent` | E_i^2 = E_i | Easy | Unfold, compute |
-| `rank1_orthogonal` | E_i * E_j = 0 | Easy | Unfold, compute |
-| `jordan_identity` | a(b(aa)) = (ab)(aa) | Hard | Nontrivial identity, needs computation |
-| `formally_real` | a^2 = 0 -> a = 0 | Medium | From positive-definite trace form |
-| `simple` | No nontrivial ideals | Hard | Classical argument |
-| `not_special` | Not embeddable in A^+ | Hard | Glennie's identity or dim argument |
-| `peirce_decomp` | Every element decomposes | Medium | From idempotents + Jordan product |
+| `jordan_identity` | a(b(aa)) = (ab)(aa) | Hard | Degree-4 identity in 54 real variables; follows from O alternativity |
+| `simple` | No nontrivial ideals | Hard | Requires spectral theory of Jordan algebras |
+| `not_special` | Not embeddable in A^+ | Hard | Albert's theorem (1934), Glennie identity or dim argument |
 
-**Estimated effort:** 400-600 lines. Depends on Octonions.
+These 3 sorry's block Phase D (Paper 7 chain: NonComposability -> SM).
+They do NOT block rho_J (Phase B2, already complete).
+
+**Paper 7 - RhoJ.lean -- COMPLETE (0 sorry)**
+
+rho_J uniqueness theorem. 1 axiom (f4_invariant_ring).
 
 **Paper 6 - SelfModelingLattice.lean (5 sorry's)**
 
@@ -206,12 +217,37 @@ all identities proved by `ext; fin_cases; simp; ring`.
 **Bug found:** `moufang_right` statement was wrong (was just associativity,
 which is false). Fixed to correct right Moufang `((ca)b)a = c(a(ba))`.
 
-### Phase B: Albert algebra (depends on A)
-**Goal:** h_3(O) with Jordan product, idempotents, Peirce decomposition.
+### Phase B: Albert algebra -- **7/10 DONE** (2026-03-27)
+**Result:** 10 sorry -> 3. 1 axiom kept (Zel'manov).
+**Proved:** jordanMul (explicit 3×3 Hermitian octonionic formula), det
+(Freudenthal), sum_rank1_eq_one, rankOneIdem_idempotent/orthogonal,
+formally_real (sums-of-squares), peirce_complete (explicit decomposition).
+**Remaining:** jordan_identity (54-var polynomial), simple, not_special.
 **Files:** Albert.lean
-**Sorry reduction:** 10 -> 0 (optimistic) or 10 -> 2-3 (hard ones may stay)
-**Effort:** 400-600 lines, ~2-3 sessions
-**Why second:** Unlocks the entire Paper 7 chain downstream.
+**Why this is the bottleneck:** Albert.lean defines det(X) and Tr(X^2) on
+h_3(O), which are needed by BOTH downstream paths:
+- **Phase B2 (rho_J):** The uniqueness theorem uses det and Tr(X^2) directly.
+  This is the program's most distinguishing testable prediction.
+- **Phase D (Paper 7 chain):** NonComposability -> F4 -> SM gauge group.
+  All depend on h_3(O) being concretely defined.
+Once Albert builds clean, both paths open simultaneously.
+
+### Phase B2: rho_J Uniqueness Theorem -- **COMPLETE** (2026-03-27)
+**Result:** 0 sorry, 1 axiom (`f4_invariant_ring`). 147 lines.
+**File:** RhoJ.lean (imports Albert.lean)
+**What's proved:**
+- `rhoJ_unique_minimal`: any degree-5 polynomial in (sigma_2, sigma_3)
+  vanishing at det=0 and max-mixed is proportional to rho_J. Proof by
+  `nlinarith` + `ring` (pure polynomial algebra).
+- Boundary conditions: rho_J = 0 when det = 0 or Tr(X^2) = 1/3.
+- Concrete evaluations: pure states have det = 0 and sigma_2 = 1.
+**What's axiomatized:** `f4_invariant_ring` (F_4-invariant polynomials
+on h_3(O) states are generated by sigma_2 and sigma_3). Classical
+Chevalley-Schafer result.
+**What's NOT proved:** Non-negativity on full state space (needs QM-AM
+on eigenvalues; numerically verified in rho_uniqueness.py).
+**Research note:** blog/research/rho-fixed-point-equation.md
+**Verification:** blog/research/rho-j-experiment/rho_uniqueness.py
 
 ### Phase C: Paper 6 algebraic core
 **Goal:** Prove forced_hamiltonian_form (the Schur-Weyl argument).

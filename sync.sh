@@ -17,7 +17,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 cd "$HERE"
 
 echo "Syncing papers..."
-for dir in qm-from-self-modeling spacetime-from-self-modeling sm-from-self-modeling; do
+for dir in qm-from-self-modeling spacetime-from-self-modeling sm-from-self-modeling radical-relativity; do
     rsync -a --delete "$BLOG/landing/papers/$dir/" "papers/$dir/" \
         --exclude='*.aux' --exclude='*.log' --exclude='*.out' --exclude='*.xdv' --exclude='*.bbl' --exclude='*.blg' \
         --exclude='*.sty' --exclude='*.md' --exclude='.claude'

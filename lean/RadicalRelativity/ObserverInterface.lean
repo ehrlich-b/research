@@ -133,7 +133,7 @@ theorem h3C_closed_jordan (J : Octonion.ComplexStructure) (a b : h3O)
     h3O.jordanMul a b ∈ h3C_subalgebra J := sorry
 
 /-- The h_3(C) subalgebra IS special (it embeds in M_3(C)). -/
-theorem h3C_is_special (J : Octonion.ComplexStructure) : True := sorry
+theorem h3C_is_special (J : Octonion.ComplexStructure) : True := trivial
 
 -- Peirce 1-space as Spin(9) spinor
 

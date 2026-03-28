@@ -19,32 +19,23 @@ Self-modeling --> sequential product --> S1-S7 --> Jordan algebra
   |                                              Complex QM (Paper 5)
   |
   v
-Universe = non-composable self-modeling structure            [definition]
+Universe = maximal non-composable self-modeling structure     [L4 + BGW]
   |
   v
-Every special Jordan algebra admits composites               [BGW theorem]
+h_3(O) is the unique non-composable simple Jordan algebra    [JvNW + Zelmanov]
   |
-  v
-Universe's algebra is not special                            [contrapositive]
+  +---> Aut(h_3(O)) = F_4 --> SM gauge group                 [Todorov-Drenska]
   |
-  v
-h_3(O) is the unique non-special simple Jordan algebra       [JvNW + Zelmanov]
-  |
-  v
-Aut(h_3(O)) = F_4                                           [Chevalley-Schafer]
-  |
-  v
-Observer = C*-subsystem --> idempotent --> Spin(9)           [definition]
-Observer's self-model of O = complex structure               [definition]
-  --> [SU(3) x SU(3)]/Z_3
-  |
-  v
-Intersection = (U(1) x SU(2) x SU(3)) / Z_6                [Todorov-Drenska]
-  = Standard Model gauge group
+  +---> rho_J = det(X)*(Tr(X^2) - 1/3) is UNIQUE            [Paper 1, theorem]
+         within h_3(O) at minimal degree
+         --> cubic-vs-quadratic consciousness prediction
 ```
 
-Every step is either the premise, a definition (what something IS under L4),
-or a published theorem.
+Every step is either the premise, a definition, a published theorem, or
+a proved result from the program. The rho_J uniqueness theorem is the
+program's most distinguishing falsifiable prediction: consciousness
+depends on a cubic invariant (det, three-way product of Peirce sectors),
+not a quadratic one (IIT's phi, pairwise integration).
 
 ## Current Status
 
@@ -93,31 +84,34 @@ argument to yield Einstein's field equations.
 Four gaps (all standard, none bespoke): (1) emergent Lorentz invariance d≥2,
 (2) lattice Bisognano-Wichmann, (3) local equilibrium, (4) continuum limit.
 
-### Paper 7: h_3(O) --> SM Gauge Group (SCAFFOLDING)
+### Paper 7: h_3(O) --> SM Gauge Group (PARTIAL)
 
-The conceptual chain is complete (both gaps closed, 2026-03-23). Lean formalization
-requires building up from octonions. Current status: scaffolding files with the
-target theorems stated.
+The conceptual chain is complete (both gaps closed, 2026-03-23). Octonions and
+Albert algebra core are proved. Scaffold files cover the remaining chain.
 
-| File | Status | Description |
-|------|--------|-------------|
-| `Octonions.lean` | SCAFFOLD | Octonion algebra, multiplication, non-associativity |
-| `Albert.lean` | SCAFFOLD | h_3(O) = 3x3 Hermitian octonionic matrices, Jordan identity |
-| `NonComposability.lean` | SCAFFOLD | BGW rank argument: composites are special, h_3(O) is not |
-| `UniverseAlgebra.lean` | SCAFFOLD | Non-composable --> not special --> contains h_3(O) |
-| `F4.lean` | SCAFFOLD | Aut(h_3(O)) = F_4, maximal subgroups |
-| `ObserverInterface.lean` | SCAFFOLD | Peirce decomposition + complex structure --> SM |
-| `GaugeGroup.lean` | SCAFFOLD | Todorov-Drenska intersection = SM gauge group |
-| `Chirality.lean` | SCAFFOLD | Cl(6) volume form --> chiral embedding (pending GPD) |
+| File | Status | Sorry | Axioms | Description |
+|------|--------|-------|--------|-------------|
+| `Octonions.lean` | **DONE** | **0** | 3 | Fano-plane mul, all identities proved, Hurwitz/G2/S6 axioms |
+| `Albert.lean` | **7/10** | 3 | 1 | jordanMul, det, idempotents, formally_real, Peirce proved. 3 hard sorry remain |
+| `RhoJ.lean` | **DONE** | **0** | 1 | rho_J uniqueness theorem, boundary conditions, concrete evaluations |
+| `NonComposability.lean` | Scaffold | 3 | 4 | BGW rank argument, exceptional_no_composite |
+| `UniverseAlgebra.lean` | Scaffold | 2 | 0 | universe_contains_h3O (Gap A capstone) |
+| `F4.lean` | Scaffold | 4 | 6 | Aut_h3O, Stab_idem (Spin(9)), Stab_complex, Borel-dS |
+| `ObserverInterface.lean` | Scaffold | 2 | 2 | ObserverConfig, residualGaugeGroup, h3C_subalgebra |
+| `GaugeGroup.lean` | Scaffold | 2 | 2 | SMGaugeGroupData, Todorov-Drenska, hypercharge |
+| `Chirality.lean` | Scaffold | 0 | 7 | EmbeddingType, Furey/Sawin, chirality_from_self_modeling |
 
 ### Roadmap
 
-- **Phase 1** (next): Octonions and h_3(O) as Lean types. Verify Jordan identity.
-- **Phase 2**: BGW rank argument. Composites of simple nontrivial EJAs are special.
-- **Phase 3**: Non-composability theorem. Universe contains h_3(O).
-- **Phase 4**: F_4, Todorov-Drenska, SM gauge group.
-- **Phase 5**: Chirality via Cl(6) (after GPD verification).
-- **Phase 6**: GR (Paper 6, scaffold files created).
+- **Phase A**: Octonions -- **COMPLETE**. 14 sorry -> 0.
+- **Phase B**: Albert algebra -- **7/10**. 3 hard sorry remain (jordan_identity, simple, not_special).
+- **Phase B2**: rho_J uniqueness -- **COMPLETE**. 0 sorry, 1 axiom.
+- **Phase C**: Paper 6 algebraic core (forced_hamiltonian_form).
+- **Phase D**: Paper 7 chain (NonComposability through Chirality). Blocked on Phase B.
+- **Phase E**: Paper 6 physics bridge (Jacobson algebraic steps).
+- **Phase F**: Papers 1-4 polish.
+
+See `ROADMAP.md` for full details.
 
 ## The Key Insight
 

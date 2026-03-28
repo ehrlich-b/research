@@ -1,0 +1,165 @@
+% introduction.tex — Section 1: Introduction
+
+\section{Introduction}
+\label{sec:introduction}
+
+\subsection{The Copernican program is not finished}
+\label{subsec:copernican}
+
+Physics has a recurring pattern.  Someone draws a line and declares
+one side privileged.  The line holds for a while, then falls, and the
+theory that remains is simpler and more predictive than the one it
+replaced.
+
+Copernicus removed the privileged position: Earth is not the center of
+the universe~\citep{copernicus1543}.  Galileo removed the privileged
+velocity: there is no absolute rest.  Einstein removed the privileged
+inertial frame: the laws of physics take the same form for all
+inertial observers~\citep{einstein1905}.  General relativity went
+further: no coordinate system is privileged.  At each step, the
+person who insisted ``but THIS distinction is real'' lost.
+
+One distinction remains.  Contemporary physics draws a line between
+mathematical structures that are ``physically realized'' and those
+that are ``merely mathematical.''  The Standard Model, its coupling
+constants, the dimensionality of spacetime --- these are declared
+physical.  Other consistent mathematical structures --- an $\SU{5}$
+gauge theory, a 7+1-dimensional spacetime, a universe governed by
+quaternionic quantum mechanics --- are declared unphysical.  The line
+is drawn, and one side is called reality.
+
+This paper argues that removing the last distinction completes the
+Copernican program.  \emph{No instantiation of a consistent
+mathematical structure is ontologically privileged over any other.}
+We call this principle \emph{radical relativity}.  It is not an axiom
+being added to physics.  It is the refusal to add the axiom that some
+structures are special.
+
+The claim is not merely philosophical.  If radical relativity holds,
+the question ``why is there something rather than nothing?'' is
+malformed.  There is everything.  The productive question is: \emph{why
+do observers experience this specific physics?}  We summarize a
+derivation chain --- developed across seven companion
+papers~\citep{ehrlich2026measure,ehrlich2026bb,ehrlich2026lipschitz,ehrlich2026born,ehrlich2026qm,ehrlich2026gr,ehrlich2026sm}
+--- that answers this question.  The physics observers experience is
+forced by the algebraic consequences of self-modeling.
+
+\subsection{Summary of results}
+\label{subsec:summary}
+
+The derivation chain is the central artifact of this paper.
+Table~\ref{tab:chain} presents it in full.  The chain begins with the
+philosophical premise (radical relativity) and terminates at the
+Standard Model gauge group with chiral fermion representation,
+passing through complex quantum mechanics and general relativity.
+
+\begin{table*}[t]
+\centering
+\caption{The derivation chain from radical relativity to the Standard
+  Model.  ``Premise'' = philosophical starting point.  ``Framework'' =
+  operational definition.  ``Theorem$^*$'' = mathematically proved,
+  conditional on four structural assumptions (A1--A4, see text).
+  ``Conditional'' = depends on identified gaps.}
+\label{tab:chain}
+\small
+\begin{tabular}{@{}cp{4.5cm}p{3cm}p{3.5cm}@{}}
+\toprule
+Step & Claim & Status & Source \\
+\midrule
+0 & No privileged instantiation & Premise & This paper \\
+1 & All consistent structures exist & Tautology under Step~0
+  & \citet{tegmark2008} \\
+2 & $\rho$ selects self-modelers & Framework
+  & \citet{ehrlich2026measure} \\
+3 & Self-modeling $\to$ Jordan algebras & \textbf{Theorem$^*$}
+  & \citet{ehrlich2026qm} \\
+4 & Faithful tracking $\to$ local tomography & \textbf{Theorem$^*$}
+  & \citet{ehrlich2026qm} \\
+5 & LT $\to$ complex $C^*$-algebras
+  & \textbf{Theorem$^*$} & \citet{ehrlich2026qm} \\
+6 & $C^*$-algebras $\to$ QM (Born, unitarity)
+  & \textbf{Theorem}
+  & \citet{gleason1957}, \citet{barandes2025} \\
+7 & Locality $\to$ area law $\to$ GR
+  & Conditional (4 gaps)
+  & \citet{ehrlich2026gr} \\
+8 & Non-composability $\to$ $\hthree$ $\to$ SM
+  & Conditional (Gap~C)
+  & \citet{ehrlich2026sm} \\
+9 & $\rho$ resolves to unique $\rhoJ$ in $\hthree$
+  & \textbf{Theorem}
+  & \citet{ehrlich2026measure} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The chain's load-bearing joint is Steps~3--5.  These are proved from
+one operational premise (faithful self-modeling) plus four structural
+assumptions:
+\begin{itemize}[nosep]
+\item[(A1)] \emph{Finite-dimensionality.}  The state space has finite
+  dimension.  Structural consequence: a self-modeler embedded in a
+  finite region has finite information capacity (concretely, the
+  Bekenstein bound gives an upper bound on the number of distinguishable
+  states).
+\item[(A2)] \emph{Faithfulness.}  The tracking map $\varphi$ is an
+  order isomorphism.  This is the operational premise itself: the
+  self-model preserves all operationally accessible structure.
+\item[(A3)] \emph{Minimal composite.}  The body-model composite
+  $V_{BM}$ is the smallest state space carrying product states,
+  product effects, non-signaling constraints, and a product-form
+  sequential product.  In plain language: the composite carries exactly
+  the correlations that faithful tracking creates, and no more.  Extra
+  composite structure beyond what product measurements require would be
+  dead weight --- degrees of freedom that contribute nothing to
+  tracking fidelity.  This is the assumption doing the most
+  independent work: it is what forces $\dim(V_{BM}) = \dim(V_B) \cdot
+  \dim(V_M)$ (local tomography), which in turn selects the complex
+  field.  For complex quantum mechanics, the minimal and maximal
+  composites coincide~\citep{bgw2020}, so the assumption is not
+  restrictive for the theory we derive --- but it is load-bearing in
+  the derivation.
+\item[(A4)] \emph{Simple EJA.}  The algebra has no nontrivial
+  ideal --- it cannot be decomposed into independent blocks.  A
+  self-modeler that decomposes into independent subsystems is not
+  modeling \emph{all} of itself: each block models only itself, not
+  the whole.  Simplicity is the algebraic expression of ``whole models
+  whole.''
+\end{itemize}
+No assumption about the complex field, Hilbert space structure, or
+$C^*$-algebraic operations enters the premises; all emerge as
+consequences.  This is the content of companion
+Paper~5~\citep{ehrlich2026qm}.
+
+Steps 7 and 8 are conditional.  The gravity derivation (Step~7)
+inherits four standard gaps shared by all lattice quantum gravity
+programs: emergent Lorentz invariance, lattice Bisognano-Wichmann,
+local equilibrium, and the continuum limit.  The Standard Model
+derivation (Step~8) is conditional on Gap~C, a conjectural
+complexification principle whose resolution may require evolutionary
+rather than algebraic arguments (Sec.~\ref{subsec:obj-gaps}).
+
+\subsection{What this paper is and is not}
+\label{subsec:scope}
+
+This paper \textbf{is}:
+\begin{itemize}[nosep]
+  \item A philosophical manifesto for radical relativity.
+  \item A roadmap to the companion papers (Papers 1--7) that contain
+    the proofs and derivations.
+  \item An honest register of what is proved, what is conditional,
+    and what is open.
+\end{itemize}
+
+\noindent This paper \textbf{is not}:
+\begin{itemize}[nosep]
+  \item A source of new theorems.  All technical results appear in
+    the companions.
+  \item A theory of consciousness.  The framework makes a
+    \emph{locative} claim: consciousness lives in self-referential
+    fixed points.  Whether fixed points \emph{are} consciousness or
+    merely \emph{host} it is not addressed.
+  \item Theology.  The framework has implications for how religious
+    traditions encode structural truths, but those implications are
+    developed elsewhere.
+\end{itemize}

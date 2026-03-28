@@ -1,0 +1,210 @@
+% why-this-physics.tex — Section 5: Why This Physics?
+
+\section{Why This Physics?}
+\label{sec:why-this-physics}
+
+\subsection{General relativity from locality}
+\label{subsec:gr}
+
+Paper~6~\citep{ehrlich2026gr} argues that self-modeling locality on a
+lattice provides a UV completion for entanglement-based gravity.  The
+argument has two layers: a UV layer (derived from self-modeling) and a
+bridge to Einstein's equations (inherited from Jacobson's
+thermodynamic route~\citep{jacobson1995}).
+
+\textbf{UV layer.}  A self-modeler embedded in a lattice interacts
+with neighbors via a SWAP-type Hamiltonian (the minimal Hamiltonian
+that preserves the body-model factorization).  The resulting dynamics
+satisfy a Lieb-Robinson bound~\citep{liebrobinson1972}, giving an
+emergent causal structure.  Entanglement across any bipartition of the
+lattice obeys an area law~\citep{bombelli1986, bekenstein1973}: the
+entanglement entropy of a region scales with its boundary area, not
+its volume.  This is forced by the locality of the Hamiltonian and the
+spectral gap, not assumed.
+
+\textbf{Jacobson bridge.}  Jacobson~\citep{jacobson1995} showed that
+any theory satisfying (i) a local entropy-area relation $\delta S =
+\eta\,\delta A$ for causal horizons, (ii) local Lorentz invariance,
+and (iii) the Clausius relation $\delta Q = T\,\delta S$ for local
+Rindler observers produces Einstein's field equations as an equation
+of state.  The UV layer provides ingredient (i).  Ingredients (ii) and
+(iii) are inherited as standard assumptions.
+
+\textbf{Four standard gaps.}  The derivation is conditional on four
+gaps, none of which are bespoke to this program:
+\begin{enumerate}[nosep]
+\item \emph{Emergent Lorentz invariance}: the lattice must produce
+  continuous Lorentz symmetry in the continuum limit.
+\item \emph{Lattice Bisognano-Wichmann}: the Unruh effect must hold
+  for lattice Rindler observers, not just in the continuum.
+\item \emph{Local equilibrium}: the Clausius relation must hold
+  locally, requiring fast thermalization near causal horizons.
+\item \emph{Continuum limit}: the lattice theory must have a
+  well-defined continuum limit producing smooth spacetime.
+\end{enumerate}
+All four are shared by every lattice quantum gravity program.  They
+are identified honestly; none are claimed to be closed.
+
+\subsection{The Standard Model from $\hthree$}
+\label{subsec:sm}
+
+Paper~7~\citep{ehrlich2026sm} argues that the Standard Model gauge
+group emerges from the exceptional Jordan algebra $\hthree$, the
+unique non-composable self-modeling structure.  The argument is
+structural, not spectral-theoretic.
+
+\textbf{Why $\hthree$.}  Self-modeling forces Jordan algebras (Step~3
+of the chain).  The question is which Jordan algebra governs the
+universe as a whole.  The answer follows from a purely algebraic
+argument whose key premise is radical relativity itself.
+
+\begin{claim}[Non-composability]
+\label{claim:non-comp}
+The universe's self-modeling algebra is $\hthree$.
+\end{claim}
+
+\textbf{Argument.}
+\begin{enumerate}[nosep]
+\item Self-modeling forces a Jordan algebra
+  (Paper~5~\citep{ehrlich2026qm}, theorem).
+\item Special (composable) Jordan algebras admit composites with
+  nontrivial systems: for any special $J$, a well-behaved composite
+  $J \otimes K$ exists~\citep{bgw2020, hancheolsen1985}.
+\item Under radical relativity (Postulate~\ref{post:l4}), all
+  consistent mathematical structures exist.  If composites of $J$
+  exist mathematically, they exist.  Therefore $J$ is a subsystem of
+  those composites.
+\item Define the \emph{universe} as the maximal self-modeling structure
+  containing the observer.  (Maximality is well-defined because
+  assumption A1 restricts to finite dimension, bounding the
+  Jordan-algebraic dimension from above.)
+\item If the universe's algebra $U$ were composable (special), then
+  $U$ embeds in an associative $C^*$-algebra
+  $A$~\citep{hancheolsen1985}.  Composites $A \otimes B$ exist for
+  nontrivial $B$ (by steps 2--3), and the composite
+  $A \otimes B \cong M_{nk}(\mathbb{C})$ is again a $C^*$-algebra.
+  By Paper~5's main result~\citep{ehrlich2026qm}, any
+  $\Mnsa{m}$ admits a faithful self-model (take $V_M = V_B$,
+  $\varphi = \mathrm{id}$).  Therefore the composite carries its own
+  faithful self-modeling structure, strictly larger than $U$, in which
+  the observer is embedded.  This contradicts maximality of $U$.
+\item Therefore the universe's algebra is non-composable
+  (contrapositive of step~5).
+\item The unique non-composable simple Jordan algebra is $\hthree$
+  (JvNW classification~\citep{jvnw1934} plus
+  Zel'manov~\citep{zelmanov1979}).
+\end{enumerate}
+
+\begin{remark}
+Under radical relativity, algebraic composability \emph{is} the
+physical question of subsystem-hood.  There is no separate ``physical''
+layer in which composability might differ from the algebraic property.
+This is why the argument uses no quantum entanglement or physical
+reasoning --- only the Jordan-algebraic notion of composability, which
+is prior to quantum mechanics in the derivation chain.  Step~7
+requires simplicity (the universe's algebra is not a direct sum); this
+is one of Paper~5's four standing assumptions (simple EJA via
+trace-form non-degeneracy), an honest cost recorded in
+Sec.~\ref{subsec:obj-gaps}.
+\end{remark}
+
+\textbf{The gauge group.}  $\mathrm{Aut}(\hthree) = \Ffour$.  An
+observer, modeled as a $C^*$-subsystem
+(Paper~5~\citep{ehrlich2026qm}), picks a rank-1 idempotent $E_{11}
+\in \hthree$, inducing a Peirce decomposition into three sectors:
+$V_1$ (observer, 1-dim), $V_{1/2}$ (interface, 16-dim), and $V_0$
+(complement, 10-dim).  The stabilizer of $E_{11}$ in $\Ffour$ is
+$\Spin{9}$.  A second choice --- a complex structure $u \in S^6
+\subset \mathrm{Im}(\mathbb{O})$ --- breaks $\Ffour$ differently,
+stabilizing $[\SU{3} \times \SU{3}] / \mathbb{Z}_3$.  The
+intersection of these two stabilizers is the Standard Model gauge
+group $\SMgauge$.  This is the Todorov-Drenska
+theorem~\citep{todorovdrenska2018}.
+
+\textbf{Chirality.}  The same complex structure $u$ that determines
+the gauge group simultaneously determines the chiral representation.
+The Clifford algebra $\mathrm{Cl}(6)$, generated by the six imaginary
+octonions orthogonal to $u$, admits a Witt decomposition whose volume
+form produces an automatic left-handed embedding of Standard Model
+fermions.  One choice does three things: gauge group,
+complexification, and left chirality.  This unifies the
+Todorov-Drenska route (gauge group) with the Furey
+route~\citep{furey2018} (chirality) via a single algebraic input.
+
+\textbf{Gap C.}  The argument that the observer's $C^*$-algebra
+nature induces complexification of the Peirce half-space ($\Spin{9}
+\to \Spin{10}$) is physical reasoning, not a theorem.  This is Gap~C,
+the one remaining real gap in the SM derivation.  Two independent
+motivations exist (algebraic and thermodynamic), but neither
+constitutes a proof.  The honest assessment: Gap~C may admit only an
+evolutionary resolution --- ``no chirality $\to$ no electroweak
+symmetry breaking $\to$ no mass hierarchy $\to$ no chemistry $\to$ no
+self-modelers'' --- the same status as ``why eyes.''
+Overwhelmingly plausible; not a theorem; perhaps not closeable as one
+(Sec.~\ref{subsec:obj-gaps}).
+
+\begin{claim}[Uniqueness of $\rhoJ$]
+\label{claim:rhoJ}
+Within $\hthree$, the heuristic density~\eqref{eq:rho} resolves
+uniquely.  Paper~1~\citep{ehrlich2026measure} proves:
+$\rhoJ(X) = \det(X) \cdot (\mathrm{Tr}(X^2) - \tfrac{1}{3})$ is the
+unique lowest-degree $\Ffour$-invariant polynomial on the state space
+of $\hthree$ that vanishes at rank-deficient states ($\det = 0$) and
+at thermal equilibrium ($\mathrm{Tr}(X^2) = \tfrac{1}{3}$), and is
+non-negative throughout.
+\end{claim}
+
+The cubic norm $\det(X) = \lambda_1 \lambda_2 \lambda_3$ is the
+exceptional invariant of $\hthree$ --- it does not exist for ordinary
+quantum mechanics ($h_n(\mathbb{C})$).  $\rhoJ > 0$ \emph{requires}
+the exceptional structure.  The purity factor
+$\mathrm{Tr}(X^2) - \tfrac{1}{3}$ measures distance from thermal
+equilibrium.  Their product is the unique algebraic experiential
+measure: (three-way correlation) $\times$ (thermodynamic
+disequilibrium).
+
+\begin{remark}[The cubic prediction]
+\label{rem:cubic-prediction}
+$\rhoJ$ depends on $\det(X)$, a cubic invariant that vanishes when
+\emph{any} Peirce sector is empty.  Integrated information
+$\Phi$~\citep{tononi2008} is quadratic (pairwise integration),
+remaining nonzero when one sector is disrupted.  The prediction:
+disrupting one of three sectors produces a sharp loss of self-modeling
+quality ($\det \to 0$), not a gradual reduction.  This is the
+program's most distinguishing falsifiable prediction.
+\end{remark}
+
+\subsection{Three generations from the Peirce tower [Speculative]}
+\label{subsec:peirce-tower}
+
+The Standard Model has three generations of fermions with a steep mass
+hierarchy ($m_t / m_u \sim 10^5$).  Boyle~\citep{boyle2020} noted
+that $\hthree$ contains three off-diagonal octonionic entries
+$(x_1, x_2, x_3)$ permuted by $\mathrm{SO}(8)$ triality, providing a
+structural reason for exactly three generations.  Triality treats all
+three symmetrically and does not explain the mass hierarchy.
+
+The iterated Peirce decomposition breaks this symmetry.  Decomposing
+$\hthree$ under $E_{11}$ gives $V_1 + V_{1/2} + V_0$, where
+$V_{1/2} = \mathbb{O}^2$ contains $x_2$ and $x_3$ but not $x_1$.
+The complement $V_0 = h_2(\mathbb{O})$ is itself a Jordan algebra;
+decomposing it under a rank-1 idempotent $E_{22}$ reveals $x_1$ as
+the interface at the second level.  The tower bottoms out at the
+third level ($h_1(\mathbb{O}) = \mathbb{R}$).  Interface dimensions
+descend: 16, 8, 1.
+
+The observer's existence breaks triality to a $2+1$ split: $x_2$ and
+$x_3$ are direct interfaces (level~1), while $x_1$ is one level
+removed inside the complement (level~2).  Coupling strength to the
+observer --- and therefore mass --- decreases with Peirce depth.  The
+third generation (heaviest) couples at level~1; the first generation
+(lightest) couples at level~2.
+
+\begin{remark}
+This is explicitly speculative.  Whether the Peirce tower reproduces
+the quantitative mass hierarchy (the actual ratio $m_t / m_u$)
+depends on the spectral action on $\hthree$, which has not been
+computed.  The structural prediction is qualitative: the hierarchy
+exists and has a $2+1$ pattern.  See Sec.~\ref{subsec:open-problems}
+for the status of the spectral action computation.
+\end{remark}

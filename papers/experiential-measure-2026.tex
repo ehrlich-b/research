@@ -57,7 +57,7 @@ We define a structure space $\mathcal{S}$ of composite Markov processes $(B, M)$
 \]
 peaks at intermediate self-modeling fidelity and vanishes at both extremes: where there is no self-model and where the self-model is trivially perfect. We demonstrate discriminative power on a toy model, show that unrestricted maximization over partitions fails, and present a conditional proof sketch for Boltzmann brain negligibility via metastability theory.
 
-A companion paper \cite{ehrlich2026qm} proves that faithful self-modeling on a finite-dimensional spectral order-unit space forces complex quantum mechanics: the state space must carry the structure of a C$^*$-algebra, with the Born rule following via Gleason's theorem. This result sharpens $\rho$'s role. The density selects self-modelers; the algebraic consequences of self-modeling produce quantum mechanics by theorem. The framework does not construct a universal prior $\nu$ over structures. The results here - BB suppression, copy identification, density discrimination - are within-structure claims that do not require $\nu$.
+A companion paper \cite{ehrlich2026qm} proves that faithful self-modeling on a finite-dimensional spectral order-unit space forces complex quantum mechanics: the state space must carry the structure of a C$^*$-algebra, with the Born rule following via Gleason's theorem. This result sharpens $\rho$'s role. The density selects self-modelers; the algebraic consequences of self-modeling produce quantum mechanics by theorem. When the algebraic structure is pinned to the exceptional Jordan algebra $h_3(\mathbb{O})$ (companion Paper~7), the density resolves uniquely: $\rho_J = \det(X)\,(\mathrm{Tr}(X^2) - \tfrac{1}{3})$ is the unique lowest-degree $F_4$-invariant with the self-modeling boundary conditions, producing a falsifiable cubic-vs-quadratic prediction that distinguishes this framework from integrated information theory. The framework does not construct a universal prior $\nu$ over structures. The results here - BB suppression, copy identification, density discrimination, and the $\rho_J$ uniqueness theorem - are within-structure claims that do not require $\nu$.
 \end{abstract}
 
 % ====================================================================
@@ -660,7 +660,114 @@ Baez \& Dolan~\cite{baez-dolan2001} provide the groupoid cardinality framework. 
 
 
 % ====================================================================
-% 10. DISCUSSION
+% 10. RESOLUTION WITHIN h_3(O)
+% ====================================================================
+
+\section{Resolution within $h_3(\mathbb{O})$}\label{sec:h3o}
+
+A companion paper~\cite{ehrlich2026sm} argues that the universe's
+self-modeling algebra is the exceptional Jordan algebra
+$h_3(\mathbb{O})$, the unique $27$-dimensional formally real Jordan
+algebra that is non-composable (it cannot participate in any composite
+with a nontrivial system).  Within $h_3(\mathbb{O})$, the heuristic
+density~$\rho$ from Section~\ref{sec:density} can be pinned down.
+
+\subsection{$F_4$-invariant measures}
+
+A normalized state $X \in h_3(\mathbb{O})$ (positive,
+$\mathrm{Tr}(X) = 1$) has three eigenvalues
+$\lambda_1, \lambda_2, \lambda_3 \geq 0$ summing to~$1$.  The
+automorphism group $\mathrm{Aut}(h_3(\mathbb{O})) = F_4$ permutes
+eigenvectors while preserving eigenvalues.  Any $F_4$-invariant
+function of a normalized state therefore depends only on the two free
+invariants:
+\[
+  \sigma_2 = \mathrm{Tr}(X^2)
+    = \lambda_1^2 + \lambda_2^2 + \lambda_3^2,
+  \qquad
+  \sigma_3 = \det(X) = \lambda_1\,\lambda_2\,\lambda_3.
+\]
+
+\subsection{The uniqueness theorem}
+
+\begin{theorem}[Uniqueness of $\rho_J$]\label{thm:rhoJ}
+Among non-negative $F_4$-invariant polynomials on the state space of
+$h_3(\mathbb{O})$ that vanish at rank-deficient states
+($\sigma_3 = 0$) and at thermal equilibrium
+($\sigma_2 = \tfrac{1}{3}$), the function
+\begin{equation}\label{eq:rhoJ}
+  \rho_J(X) \;=\; \det(X)\,\bigl(\mathrm{Tr}(X^2)
+    - \tfrac{1}{3}\bigr)
+\end{equation}
+is the unique candidate of minimal polynomial degree (degree~$5$ in
+the eigenvalues).
+\end{theorem}
+
+\begin{proof}
+(i)~$F_4$-invariance forces $\rho = f(\sigma_2, \sigma_3)$.
+
+\smallskip\noindent
+(ii)~The zero at $\sigma_3 = 0$ forces divisibility:
+$\rho = \sigma_3 \cdot Q(\sigma_2, \sigma_3)$ for some polynomial~$Q$.
+
+\smallskip\noindent
+(iii)~The zero at thermal equilibrium
+($\sigma_2 = \tfrac{1}{3}$, $\sigma_3 = \tfrac{1}{27}$) forces
+$Q(\tfrac{1}{3}, \tfrac{1}{27}) = 0$.
+
+\smallskip\noindent
+(iv)~At degree~$1$ in $(\sigma_2, \sigma_3)$, the general solution to
+(iii)~is $Q = a\,(\sigma_2 - \tfrac{1}{3}) + b\,(\sigma_3 -
+\tfrac{1}{27})$.  Since $\sigma_2$ has degree~$2$ and $\sigma_3$ has
+degree~$3$ in the eigenvalues, the $a$-term contributes degree
+$3 + 2 = 5$ and the $b$-term contributes degree $3 + 3 = 6$.  At
+degree~$5$, the $b$-term vanishes: $b = 0$.
+
+\smallskip\noindent
+(v)~Non-negativity.  For $\mathrm{Tr}(X) = 1$ and
+$\lambda_i \geq 0$: $\sigma_3 \geq 0$ (product of non-negatives), and
+$\sigma_2 \geq \tfrac{1}{3}$ (by the QM-AM inequality applied to
+$\sum \lambda_i^2 \geq (\sum \lambda_i)^2 / 3 = \tfrac{1}{3}$).
+Therefore $\rho_J = \sigma_3\,(\sigma_2 - \tfrac{1}{3}) \geq 0$.
+
+\smallskip\noindent
+(vi)~The only alternative at degree~$1$ with $a = 0$ is
+$\sigma_3 \cdot (\sigma_3 - \tfrac{1}{27})$.  Since
+$\sigma_3 \in [0, \tfrac{1}{27}]$, this is non-positive everywhere.
+No valid measure.
+
+\smallskip\noindent
+Therefore $\rho_J$ is the unique degree-$5$ candidate, up to positive
+scaling.
+\end{proof}
+
+\begin{remark}[Connection to the information-theoretic formula]
+The heuristic $\rho = I(B;\,M)\,(1 - I/H)$ from
+Section~\ref{sec:density} has the structure (correlation) $\times$
+(distance from equilibrium).  Within $h_3(\mathbb{O})$, the cubic norm
+$\det(X)$ measures three-way correlation between all Peirce sectors
+(the exceptional invariant), and $\mathrm{Tr}(X^2) - \tfrac{1}{3}$
+measures purity above the maximally mixed baseline.  These are the
+algebraic counterparts: $I(B;\,M) \leftrightarrow \det(X)$ and
+$1 - I/H \leftrightarrow \mathrm{Tr}(X^2) - \tfrac{1}{3}$.  Same
+shape, same zeroes, different mathematical languages.
+\end{remark}
+
+\begin{remark}[The cubic prediction]\label{rem:cubic}
+$\rho_J$ depends on $\det(X)$, a \emph{cubic} invariant (the product
+of all three eigenvalues).  This vanishes when \emph{any} Peirce sector
+is empty.  By contrast, integrated information
+$\Phi$~\cite{tononi2008} is a quadratic measure (pairwise integration)
+that remains nonzero when one sector is disrupted as long as the other
+two remain connected.  The prediction: disrupting one of three sectors
+(e.g., thalamocortical interface) should produce a \emph{sharp} loss of
+self-modeling quality ($\det \to 0$), not a gradual reduction
+($\Phi$~decreasing smoothly).  This is the program's most
+distinguishing falsifiable prediction.
+\end{remark}
+
+% ====================================================================
+% 11. DISCUSSION
 % ====================================================================
 
 \section{Discussion}\label{sec:discussion}
@@ -689,7 +796,7 @@ A companion paper \cite{ehrlich2026qm} proves that faithful self-modeling on a f
 
 \textbf{This doesn't extend to infinite-dimensional state spaces.} The companion QM derivation \cite{ehrlich2026qm} and the results here are stated for finite-dimensional systems. Extension to Type~III von Neumann algebras (quantum field theory) is open.
 
-\textbf{This doesn't prove the density function is unique.} Other densities with the same qualitative shape could serve the same role, provided they satisfy the boundary-vanishing condition.
+\textbf{The density is unique within $h_3(\mathbb{O})$ but not in general.} Section~\ref{sec:h3o} proves uniqueness at minimal polynomial degree within the exceptional Jordan algebra.  On general self-modeling systems (not necessarily $h_3(\mathbb{O})$), other densities with the same qualitative shape could serve the same role.
 
 \textbf{This doesn't derive the Born rule from $\rho$.} A separate investigation \cite{ehrlich2026born} tested whether $\rho$ itself derives Born-rule measurement probabilities. It does not: $\rho_Q \leq 0$ throughout Lindblad evolution. This is now understood as confirmation, not failure. The Born rule follows from Gleason's theorem \cite{gleason1957} applied to the C$^*$-algebra that self-modeling forces \cite{ehrlich2026qm}. The density $\rho$ selects self-modelers; Gleason handles measurement probabilities.
 

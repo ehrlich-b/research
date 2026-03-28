@@ -84,7 +84,23 @@ def Aut_h3O.comp (f g : Aut_h3O) : Aut_h3O where
   surjective := Function.Surjective.comp f.surjective g.surjective
 
 /-- Inverse of an automorphism (exists by bijectivity). -/
-def Aut_h3O.inv (f : Aut_h3O) : Aut_h3O := sorry
+def Aut_h3O.inv (f : Aut_h3O) : Aut_h3O where
+  toFun := Function.surjInv f.surjective
+  map_add := by
+    intro a b; apply f.injective
+    simp only [f.map_add, Function.surjInv_eq f.surjective]
+  map_smul := by
+    intro r a; apply f.injective
+    simp only [f.map_smul, Function.surjInv_eq f.surjective]
+  map_jordan := by
+    intro a b; apply f.injective
+    simp only [f.map_jordan, Function.surjInv_eq f.surjective]
+  injective := by
+    intro a b hab
+    have := congr_arg f.toFun hab
+    simp only [Function.surjInv_eq f.surjective] at this; exact this
+  surjective := fun x =>
+    ⟨f.toFun x, f.injective (Function.surjInv_eq f.surjective _)⟩
 
 /-- **Chevalley-Schafer theorem** (axiomatized):
     Aut(h_3(O)) is isomorphic to the compact exceptional Lie group F_4.
@@ -125,7 +141,8 @@ axiom spin9_acts_on_peirce1 : True  -- Spin(9) -> GL(V_1) via spin rep
 /-- The stabilizer of a complex structure on O in Aut(h_3(O)).
     Isomorphic to [SU(3) x SU(3)] / Z_3. -/
 def Stab_complex (J : Octonion.ComplexStructure) : Set Aut_h3O :=
-  sorry  -- The set of automorphisms preserving the splitting induced by J
+  { f | ∀ a : h3O, (∀ i, a.off i ∈ Octonion.complexSubspace J) →
+    ∀ i, (f.toFun a).off i ∈ Octonion.complexSubspace J }
 
 /-- **SU(3)xSU(3)/Z_3 theorem** (axiomatized): the stabilizer of a complex
     structure on O in Aut(h_3(O)) is isomorphic to [SU(3) x SU(3)] / Z_3.

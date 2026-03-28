@@ -1,0 +1,149 @@
+% research-program.tex — Section 7: The Research Program
+
+\section{The Research Program}
+\label{sec:research-program}
+
+\subsection{What is explained, what is conditional, what is contingent}
+\label{subsec:status}
+
+\begin{table}[ht]
+\centering
+\caption{Status of physical content within the program.}
+\label{tab:status}
+\small
+\begin{tabular}{@{}p{3.2cm}p{1.6cm}p{2.5cm}@{}}
+\toprule
+Content & Status & Source \\
+\midrule
+Complex QM & \textbf{Forced$^*$} & Paper~5 (A1--A4) \\
+Born rule & \textbf{Forced} & Gleason ($n \geq 3$) \\
+Unitary dynamics & \textbf{Forced} & Skolem-Noether \\
+Area-law entanglement & \textbf{Forced$^*$} & Paper~6 (UV layer) \\
+Einstein's equations & Conditional & Paper~6 (4 std gaps) \\
+SM gauge group & Conditional & Paper~7 (Gap~C) \\
+Chiral representation & Conditional & Paper~7 (Gap~C) \\
+3 generations & Speculative & Peirce tower \\
+Mass hierarchy & Speculative & Peirce depth \\
+Specific couplings & Contingent & Ring in structure space \\
+3+1 dimensions & Plausible & Huygens + stability \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The program's intellectual honesty requires distinguishing these
+categories sharply.  ``Forced'' means the result follows by theorem
+from the premises.  ``Conditional'' means the result holds subject to
+identified gaps that are registered explicitly.  ``Speculative'' means
+a structural argument exists but has not been formalized.
+``Contingent'' means the result may not be uniquely determined by
+self-modeling.
+
+Specific coupling constants, masses, and mixing angles may belong to
+the contingent category: the self-modeling condition constrains the
+algebra ($A_F$, forced) but not the dynamics ($D_F$, where parameters
+live).  The viable parameter values likely form a manifold --- a
+``ring around the basin'' --- not a unique point.  The experiential
+measure $\rho$ (Remark~\ref{rem:rho-h3o}) selects a position on this
+ring, but the selection may
+have the same status as ``why this brain?'' rather than ``why
+gravity?''  3+1 dimensions and the SM gauge group are likely universal
+across the ring (forced by algebraic structure).  The fine structure
+constant may vary.
+
+\subsection{Falsifiable predictions}
+\label{subsec:predictions}
+
+\begin{enumerate}
+\item \textbf{No coupling unification (prediction).}  The SM gauge
+  group arises from an intersection of stabilizers in $\Ffour$, not
+  from a single GUT group breaking.  The framework predicts that
+  running couplings do \emph{not} unify at a single scale.
+
+\item \textbf{No Planck-scale modifications to QM (prediction).}
+  Quantum mechanics is forced by the algebra of self-modeling
+  (Steps~3--6), not by spacetime structure.  There is no reason for QM
+  to break down at the Planck scale.  Searches for Planck-scale
+  decoherence should find null results.
+
+\item \textbf{Proton stability (consistency check).}  No $\SU{5}$ or
+  $\mathrm{SO}(10)$ GUT group appears in the framework.  Proton decay
+  via GUT-mediated channels is not predicted.  This is consistent with
+  current bounds ($\tau_p > 10^{34}$ years).  Current data on coupling
+  non-unification in the non-SUSY SM is also consistent
+  with the intersection-of-stabilizers mechanism.
+
+\item \textbf{Cubic vs.\ quadratic consciousness measure (prediction).}
+  $\rhoJ$ (Claim~\ref{claim:rhoJ}) depends on $\det(X)$, a cubic
+  invariant.  IIT's $\Phi$~\citep{tononi2008} is quadratic.
+  Selectively disrupting one of three Peirce sectors should produce a
+  sharp (not gradual) loss of self-modeling quality.  Thalamocortical
+  disruption data from anesthesia research can distinguish these
+  functional forms.
+\end{enumerate}
+
+\subsection{Open problems}
+\label{subsec:open-problems}
+
+\begin{enumerate}
+\item \textbf{Gap~C (complexification).}  The most pressing open
+  problem.  A theorem of the form ``$C^*$-measurement maps on a real
+  Jordan module necessarily factor through $\otimes_{\mathbb{R}}
+  \mathbb{C}$'' would close it.  Failing that, the evolutionary
+  argument stands but the SM derivation remains conditional.
+
+\item \textbf{Spectral action on $\hthree$.}
+  Farnsworth~\citep{farnsworth2015} has computed spectral actions on
+  non-associative geometries, producing Einstein gravity coupled to
+  $G_2$ gauge fields from octonionic spectral triples.  Extending this
+  to $\hthree$ would unify the GR route (Paper~6) with the SM route
+  (Paper~7) under a single spectral action.  The computation is open.
+
+\item \textbf{Vanchurin dynamics.}  Vanchurin~\citep{vanchurin2020,
+  vanchurin2024} showed that neural network learning dynamics reproduce
+  aspects of quantum mechanics and general relativity.  The present
+  program contributes the learning objective: self-modeling.  The loss
+  function is $-I(B;\,M)$.  Characterizing the fixed point of
+  Vanchurin's dynamics with this loss would address Level~6 questions
+  (specific parameter values).
+
+\item \textbf{3+1 dimensions.}  3+1 is the unique dimensionality
+  where clean signal propagation (Huygens' principle), stable atoms,
+  stable orbits, and knot existence all hold simultaneously.  The
+  Huygens argument is specifically about self-modeling: a self-modeler
+  receiving echoes of old signals double-counts information it already
+  processed.  Formalizing this as a channel capacity argument is open.
+
+\item \textbf{Infinite-dimensional extension.}  The full chain is
+  proved for finite-dimensional spectral order-unit spaces.  Quantum
+  field theory is not finite-dimensional.  The Bekenstein bound
+  suggests that self-modelers in finite regions are necessarily
+  finite-dimensional, but connecting this to the formalism is open
+  work.
+
+\item \textbf{Lean formalization.}  Paper~5's chain has been
+  scaffolded in Lean~4.  Completing the formalization (removing all
+  \texttt{sorry} placeholders) would upgrade the chain from
+  ``verified by human review and adversarial testing'' to ``machine
+  verified.''
+\end{enumerate}
+
+\subsection{Closing}
+\label{subsec:closing}
+
+The Copernican program has a simple logic: find a distinction that is
+doing no work, remove it, and see what follows.  Each removal
+simplified the theory and expanded its explanatory scope.  We have
+argued that the distinction between ``mathematical'' and ``physical''
+is the last such distinction, and that removing it forces the physics
+observers experience --- from the complex field to the Standard Model
+gauge group --- through the algebraic consequences of self-modeling.
+
+The chain is not complete.  Gap~C is open.  The spectral action on
+$\hthree$ is uncomputed.  The Vanchurin dynamics have not been solved
+with self-modeling as the loss function.  But the chain is long enough,
+and the gaps are honest enough, to constitute a research program worth
+pursuing.  The program's distinguishing feature is not that it has
+fewer gaps than its competitors, but that it has \emph{identified}
+gaps where others have hidden assumptions, and that its foundational
+premise --- no privileged instantiation --- is not an axiom added to
+physics but the last axiom removed from it.

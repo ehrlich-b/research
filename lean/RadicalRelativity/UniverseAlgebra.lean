@@ -91,7 +91,8 @@ class IsUniverseAlgebra (A : SimpleEJA) extends
     Contradiction. -/
 theorem non_composable_not_special (A : SimpleEJA)
     [inst : IsNonComposable A] (hA : IsNontrivial A) :
-    ¬ IsSpecialEJA A := sorry
+    ¬ IsSpecialEJA A := by
+  sorry -- Universe polymorphism in IsNonComposable prevents direct proof; needs universe annotation fix
 
 /-- **Step 5**: A non-special simple EJA has rank 3 (isomorphic to h_3(O)). -/
 theorem not_special_rank_3 (A : SimpleEJA) (h : ¬ IsSpecialEJA A) :
@@ -124,6 +125,7 @@ theorem universe_exceptional (A : SimpleEJA) [IsUniverseAlgebra A] :
 /-- The universe's algebra admits no composites with any nontrivial system. -/
 theorem universe_no_composites (A : SimpleEJA) [IsUniverseAlgebra A]
     (B : SimpleEJA) (hB : IsNontrivial B) :
-    IsEmpty (EJAComposite A B) := sorry
+    IsEmpty (EJAComposite A B) := by
+  sorry -- Same universe polymorphism issue as non_composable_not_special
 
 end UniverseAlgebra

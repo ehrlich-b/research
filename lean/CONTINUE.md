@@ -2,8 +2,10 @@
 
 ## Current State
 
-11 proved files, ~2600 lines, builds clean on Mathlib v4.28.0.
-**0 sorry's in Paper 5 + Octonions. 3+3 axioms (all honest).**
+12 proved files, ~2750 lines, builds clean on Mathlib v4.28.0.
+**0 sorry's in Paper 5 + Octonions + RhoJ. 3+3+1 axioms (all honest).**
+**Albert.lean: 10 -> 3 sorry's (7 filled). 1 axiom.**
+**RhoJ.lean: 0 sorry, 1 axiom. Uniqueness theorem machine-verified.**
 
 7 scaffold files with sorry-ed proofs. Builds clean.
 
@@ -50,7 +52,8 @@ Paper 6 axioms (all standard external physics/math results):
 | File | Sorry | Axioms | Description |
 |------|-------|--------|-------------|
 | Octonions.lean | **0** | 3 | **DONE** Fano-plane mul, all identities proved, Hurwitz/G2/S6 axioms |
-| Albert.lean | 10 | 1 | h3O structure, Jordan product, Peirce decomposition, IsSpecialJordanAlgebra |
+| Albert.lean | **3** | 1 | **7 proved**: jordanMul, det, rank1 idem/ortho, formally_real, peirce_complete. 3 sorry: jordan_identity, simple, not_special |
+| RhoJ.lean | **0** | 1 | **DONE** rho_J uniqueness theorem, boundary conditions, concrete evaluations. 1 axiom: f4_invariant_ring |
 | NonComposability.lean | 3 | 4 | SimpleEJA, EJAComposite, BGW rank argument, exceptional_no_composite |
 | UniverseAlgebra.lean | 2 | 0 | IsUniverseAlgebra, universe_contains_h3O (Gap A capstone) |
 | F4.lean | 4 | 6 | Aut_h3O, Stab_idem (Spin(9)), Stab_complex (SU(3)xSU(3)/Z_3), Borel-dS |
@@ -130,14 +133,27 @@ GaugeGroup (imports F4, ObserverInterface, Octonions)
 Chirality (imports Octonions, Albert, F4, ObserverInterface, GaugeGroup)
 ```
 
-### Next steps (Phase B: Albert algebra)
+### Phase B status: Albert algebra (7/10 sorry's filled)
 
-1. Define jordanMul concretely from Octonion.mul on 3x3 Hermitian matrices
-2. Define det (Freudenthal determinant) explicitly
-3. Prove sum_rank1_eq_one, rank1_idempotent, rank1_orthogonal from defs
-4. Prove jordan_identity (the hard one - needs computation on h_3(O))
-5. Prove formally_real from positive-definite trace form
-6. Then: NonComposability sorry's (bgw_exchange_lemma, exceptional_no_composite)
+**Done:**
+1. jordanMul — explicit 3×3 Hermitian octonionic Jordan product (diag: inner products, off: cross terms)
+2. det — Freudenthal determinant
+3. sum_rank1_eq_one, rankOneIdem_idempotent, rankOneIdem_orthogonal — concrete computation
+4. formally_real — sums-of-squares non-negativity argument
+5. peirce_complete — explicit Peirce decomposition w.r.t. E_0
+
+**Remaining sorry's (3, all hard):**
+- jordan_identity — degree-4 polynomial identity in 54 variables (follows from O alternativity)
+- simple — requires spectral theory of Jordan algebras
+- not_special — Albert's theorem (1934), Glennie identity or dimension argument
+
+### Next steps
+
+1. Albert.lean remaining 3 sorry's (jordan_identity, simple, not_special) -- bottleneck for Phase D
+2. NonComposability sorry's (bgw_exchange_lemma, exceptional_no_composite)
+3. UniverseAlgebra sorry's (non_composable_not_special, universe_non_composable)
+4. F4, ObserverInterface, GaugeGroup sorry's (chain theorems)
+5. Paper 6: SelfModelingLattice forced_hamiltonian_form (Schur-Weyl argument)
 
 ## Build
 

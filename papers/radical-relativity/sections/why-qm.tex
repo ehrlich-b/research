@@ -1,0 +1,163 @@
+% why-qm.tex — Section 4: Why Quantum Mechanics?
+
+\section{Why Quantum Mechanics?}
+\label{sec:why-qm}
+
+The experiential density $\rho$
+(Sec.~\ref{subsec:experiential-measure}) identifies which structures
+in $\mathcal{S}$ carry experiential weight: those with intermediate
+self-modeling fidelity ($0 < I(B;\,M) < H(B)$).
+Paper~5~\citep{ehrlich2026qm} answers the next question: what is the
+algebraic structure of those systems?
+
+The connection is direct.  A faithful self-model in Paper~5's sense
+--- a tracking map $\varphi$ that is an order isomorphism --- implies
+high mutual information $I(B;\,M)$ (the model captures all
+operationally accessible structure of the body).  As long as the model
+is not trivially perfect ($I < H$, i.e., the system has finite
+capacity and lives in a larger environment), such a system sits in the
+region where $\rho > 0$.  Therefore $\rho$ selects precisely the
+structures to which Paper~5's theorem applies.  The ``area under
+$\rho$'' across structure space is the totality of structures governed
+by complex quantum mechanics --- the region where observers live.
+
+\subsection{The chain in English}
+\label{subsec:chain-english}
+
+Paper~5 proves that a finite-dimensional system
+admitting a faithful self-model is necessarily governed by complex
+quantum mechanics.  The derivation proceeds through a chain of
+implications, each either a theorem from the literature or a novel
+result proved in the paper.  We summarize it here without proofs.
+
+\textbf{Step 1: Self-modeling defines a sequential product.}  A
+self-model does three things: \emph{test} an effect (probe the
+system), \emph{update} the model (revise predictions), and \emph{test
+again} (check the revision).  The composite operation ``test $a$, then
+test $b$'' defines a \emph{sequential product} $a \cdot b$ on the
+system's effect algebra.  This is not an abstract axiom imposed on
+self-modeling; it is the core operation of self-modeling, constructed
+via compressions and Peirce decompositions on the state space.
+
+\textbf{Step 2: Sequential products satisfy van de Wetering's axioms.}
+The sequential product inherits seven properties (S1--S7) from the
+operational structure of self-modeling.  S1 (additivity) and S2
+(continuity) are free.  S3 (unit law) requires the self-modeling map
+$\phi$ --- without it, the unit law fails on general effects.  S4
+(symmetry of orthogonality) follows from facial orthogonality in the
+state space.  S5--S7 (compatibility conditions) are structural
+consequences of the Peirce decomposition.  All seven are proved for
+general dimension $n$ in Paper~5.
+
+\textbf{Step 3: S1--S7 force Euclidean Jordan algebras.}  Van de
+Wetering's Theorem~1~\citep{vandewetering2018}: any sequential product
+space satisfying S1--S7 is a Euclidean Jordan algebra (EJA).  The
+Jordan--von Neumann--Wigner classification~\citep{jvnw1934} then
+restricts the state space to one of five families: $h_n(\mathbb{R})$,
+$h_n(\mathbb{C})$, $h_n(\mathbb{H})$, spin factors, or the
+exceptional algebra $\hthree$.
+
+There is an independent conceptual justification for this step.  A
+self-model is simultaneously a \emph{state} (it has a configuration)
+and an \emph{effect evaluator} (it assigns probabilities to
+configurations).  It lives in both the state cone and the effect cone.
+This dual role \emph{is} self-duality.  Self-duality plus homogeneity
+gives Jordan algebras via the Koecher-Vinberg
+theorem~\citep{farautkoranyi1994}.  No other reconstruction program
+has this natural justification for self-duality: the self-model is the
+unique kind of system that IS both state and effect.
+
+\textbf{Step 4: Faithful self-modeling forces local tomography.}  The
+body-model composite $(B, M)$ admits a product-form sequential product
+that inherits S1--S7 from the factors.  The correlation form
+$\mathcal{B}(a, b) = \tau(a \cdot \phi^{-1}(b))$ is non-degenerate
+(from the faithfulness of $\phi$ and the non-degeneracy of the trace
+form).  Non-degeneracy forces the product effects to be linearly
+independent, and minimality of the composite forces the composite
+dimension to equal the product of the factor dimensions:
+$\dim(V_{BM}) = \dim(V_B) \cdot \dim(V_M)$.  This is local
+tomography: measurements on $B$ alone and $M$ alone determine the
+joint state.
+
+\textbf{Step 5: Local tomography selects complex.}  Local tomography
+is the scalpel that cuts through the JvNW classification.  Real
+quantum mechanics ($h_n(\mathbb{R})$) fails: $\dim = n(n+1)/2$ gives
+$9 \neq 10$ for $n = 3$.  Quaternionic quantum mechanics
+($h_n(\mathbb{H})$) fails: $\dim = n(2n-1)$ gives $36 \neq 28$ for
+$n = 4$.  Spin factors and $\hthree$ fail to produce well-behaved
+composites at all~\citep{bgw2020}.  Complex quantum mechanics
+($h_n(\mathbb{C})$, $\dim = n^2$) is the unique survivor: $n^2 = n^2$
+for all $n$.  The complex field is the Goldilocks choice --- real has
+blind spots (no interference without complex phase), quaternionic is
+redundant (tensor products misbehave).
+
+\textbf{Step 6: Jordan + local tomography $\to$ $C^*$-algebra.}  Van
+de Wetering's Theorem~3, reinforced by Barnum-Wilce and
+Hanche-Olsen~\citep{hancheolsen1985}: an EJA that is locally
+tomographic in composite promotes to $\Mnsa{n}$ --- the self-adjoint
+part of a complex matrix algebra.  The involution (Hermitian conjugate)
+emerges as the unique structure making the Jordan product
+$a \circ b = \tfrac{1}{2}(ab + ba)$ compatible with the associative
+matrix product.  It was never assumed.
+
+\textbf{Step 7: $C^*$-algebra $\to$ QM.}  The remaining quantum
+structure follows from established theorems:
+\begin{itemize}[nosep]
+\item \emph{Unitary dynamics}: automorphisms of $M_n(\mathbb{C})$ are
+  inner (Skolem-Noether), hence unitary.
+  Barandes~\citep{barandes2025}: unitary evolution is equivalent to
+  stochastic indivisibility.
+\item \emph{Born rule}: Gleason's theorem~\citep{gleason1957}
+  ($n \geq 3$): the only probability measure on closed subspaces of a
+  Hilbert space of dimension $\geq 3$ is the Born rule.  (For $n = 2$,
+  Busch's generalization or the POVM extension applies; the chain
+  does not require $n \geq 3$ as an additional assumption because the
+  simple EJA condition excludes $n = 1$.)
+\item \emph{Measurement}: division events in the Markov self-model
+  correspond to quantum measurements via Barandes' episodic condition.
+\end{itemize}
+
+\subsection{What this means}
+\label{subsec:what-this-means}
+
+One operational premise (faithful self-modeling) plus four structural
+assumptions (finite-dimensionality, faithfulness, minimal composite,
+simple EJA) produces complex quantum mechanics.  The complex field is
+never input, only output.  The involution is derived, not assumed.  The
+Born rule is forced, not postulated.
+
+This distinguishes the program from other reconstruction efforts.
+Hardy~\citep{hardy2001} uses five axioms.  Chiribella, D'Ariano, and
+Perinotti~\citep{cdp2011} use six, including purification.  Daki\'c
+and Brukner~\citep{dakicbrukner2011} use four, including local
+tomography as an assumption.
+Masanes and M\"uller~\citep{masanesmuelleretal2013} distill to three
+postulates.  Barnum, M\"uller, and
+Ududec~\citep{barnummuellerududec2014} use four.  In each case,
+multiple independent axioms are needed, and the complex field or a
+property that selects it is typically assumed.
+
+The present program answers a different question.  Other
+reconstructions ask: ``what characterizes quantum mechanics among
+generalized probabilistic theories?''  This program asks: ``\emph{why}
+quantum mechanics?''  The answer: because self-modeling forces it.
+Quantum mechanics is not merely characterized by operational axioms; it
+is the unique theory compatible with a system that models itself.
+
+\subsection{Paper~4 and the Born rule}
+\label{subsec:born}
+
+Paper~4~\citep{ehrlich2026born} tested whether $\rho$ could
+independently derive the Born rule via an information-theoretic
+mechanism.  The result was cleanly negative: the experiential density
+$\rho_Q$ is non-positive throughout all tested Lindblad trajectories.
+The exchange Hamiltonian is ``too good'' at tracking --- the system
+never enters the under-correlated regime where $\rho_Q > 0$.
+
+This is not a failure of the program.  It is the program
+self-correcting.  The Born rule does not need an information-theoretic
+derivation because Gleason's theorem already provides it, via the
+$C^*$-algebra that self-modeling forces (Steps 3--6).  Paper~4
+confirms that the explanatory burden belongs on the algebraic chain,
+not on $\rho$.  $\rho$'s job is simpler: select self-modelers.  The
+algebra handles the rest.
