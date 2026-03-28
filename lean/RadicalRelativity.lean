@@ -1,37 +1,28 @@
--- Radical Relativity: Lean 4 Formalization
--- From self-modeling to the Standard Model gauge group.
+-- Lean 4 formalization for "Faithful Self-Modeling Is Complex Quantum Mechanics"
+-- Bryan Ehrlich, 2026
+-- 0 sorry declarations, 4 axioms (3 published theorems + 1 bridge)
 
--- Papers 1-4: Experiential Measure (SCAFFOLD)
-import RadicalRelativity.ExperientialMeasure
-
--- Paper 5: Self-Modeling → QM (FORMALIZED, 0 sorry's, 6 axioms)
--- Bridge: self-modeling premise → sequential product axioms
-import RadicalRelativity.SelfModelingBridge
+-- Foundations: order unit spaces, compressions, Peirce decomposition
 import RadicalRelativity.OrderUnitSpace
-import RadicalRelativity.SequentialProduct
 import RadicalRelativity.Compression
 import RadicalRelativity.PeirceDecomp
-import RadicalRelativity.JordanStructure
-import RadicalRelativity.LocalTomography
-import RadicalRelativity.CStarBridge
 import RadicalRelativity.SpectralTheorem
 
--- Paper 5: Concrete models (S1-S7 verified from scratch)
+-- Sequential product axioms (S1-S7)
+import RadicalRelativity.SequentialProduct
+
+-- Bridge: self-modeling construction → sequential product (Sections 3-4)
+import RadicalRelativity.SelfModelingBridge
+
+-- Jordan algebra structure (van de Wetering Theorem 1)
+import RadicalRelativity.JordanStructure
+
+-- Local tomography and type exclusion (Section 5)
+import RadicalRelativity.LocalTomography
+
+-- C*-algebra promotion (van de Wetering Theorem 3)
+import RadicalRelativity.CStarBridge
+
+-- Concrete models: S1-S7 verified from scratch (no axioms)
 import RadicalRelativity.M2CInstance
 import RadicalRelativity.SpinFactor
-
--- Paper 6: Self-Modeling Lattice → GR (SCAFFOLD)
-import RadicalRelativity.SelfModelingLattice
-import RadicalRelativity.AreaLaw
-import RadicalRelativity.JacobsonGR
-
--- Paper 7: h_3(O) → SM Gauge Group (SCAFFOLD)
-import RadicalRelativity.Octonions
-import RadicalRelativity.Albert
-import RadicalRelativity.NonComposability
-import RadicalRelativity.UniverseAlgebra
-import RadicalRelativity.F4
-import RadicalRelativity.ObserverInterface
-import RadicalRelativity.GaugeGroup
-import RadicalRelativity.Chirality
-import RadicalRelativity.RhoJ
