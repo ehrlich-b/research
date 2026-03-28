@@ -66,6 +66,9 @@ theorem ext {a b : Octonion} (h : ∀ i, a.coords i = b.coords i) : a = b := by
   cases a; cases b; congr; funext i; exact h i
 
 @[simp] lemma zero_coords (i : Fin 8) : (0 : Octonion).coords i = 0 := rfl
+@[simp] lemma add_coords (a b : Octonion) (i : Fin 8) : (a + b).coords i = a.coords i + b.coords i := rfl
+@[simp] lemma smul_coords (r : ℝ) (a : Octonion) (i : Fin 8) : (r • a).coords i = r * a.coords i := rfl
+@[simp] lemma neg_coords (a : Octonion) (i : Fin 8) : (-a).coords i = -(a.coords i) := rfl
 
 /-- The real unit octonion e_0 = (1, 0, 0, 0, 0, 0, 0, 0). -/
 def one : Octonion := ⟨fun i => if i = 0 then 1 else 0⟩
@@ -239,5 +242,63 @@ axiom unit_imag_sphere_eq_G2_mod_SU3 : True  -- G_2 acts transitively on S^6
     a free rank-3 module over C_u (6-dim real = 3-dim complex). -/
 def complexSubspace (J : ComplexStructure) : Set Octonion :=
   { a | ∃ (r s : ℝ), a = r • one + s • J.u }
+
+-- Bilinearity of octonionic multiplication (needed for complexSubspace_mul)
+
+set_option maxHeartbeats 800000 in
+theorem mul_add' (a b c : Octonion) : mul a (b + c) = mul a b + mul a c := by
+  ext i; fin_cases i <;> simp [mul, add_coords, Fin.isValue] <;> ring
+
+set_option maxHeartbeats 800000 in
+theorem add_mul' (a b c : Octonion) : mul (a + b) c = mul a c + mul b c := by
+  ext i; fin_cases i <;> simp [mul, add_coords, Fin.isValue] <;> ring
+
+set_option maxHeartbeats 800000 in
+theorem smul_mul (r : ℝ) (a b : Octonion) : mul (r • a) b = r • mul a b := by
+  ext i; fin_cases i <;> simp [mul, smul_coords, Fin.isValue] <;> ring
+
+set_option maxHeartbeats 800000 in
+theorem mul_smul' (r : ℝ) (a b : Octonion) : mul a (r • b) = r • mul a b := by
+  ext i; fin_cases i <;> simp [mul, smul_coords, Fin.isValue] <;> ring
+
+theorem mul_unit_imag_sq (J : ComplexStructure) :
+    mul J.u J.u = -one := by
+  have hu0 : re J.u = 0 := J.is_unit_imag.1
+  have hunorm : norm_sq J.u = 1 := J.is_unit_imag.2
+  simp only [re] at hu0; simp only [norm_sq, Fin.sum_univ_eight, Fin.isValue] at hunorm
+  ext i; fin_cases i <;> simp [mul, one, neg_coords, hu0, Fin.isValue] <;> nlinarith
+
+-- Closure properties of complexSubspace (needed for h3C_closed_jordan)
+
+theorem complexSubspace_add (J : ComplexStructure) (a b : Octonion)
+    (ha : a ∈ complexSubspace J) (hb : b ∈ complexSubspace J) :
+    a + b ∈ complexSubspace J := by
+  obtain ⟨r₁, s₁, rfl⟩ := ha
+  obtain ⟨r₂, s₂, rfl⟩ := hb
+  exact ⟨r₁ + r₂, s₁ + s₂, by ext i; simp only [add_coords, smul_coords, one]; ring⟩
+
+theorem complexSubspace_smul (J : ComplexStructure) (r : ℝ) (a : Octonion)
+    (ha : a ∈ complexSubspace J) :
+    r • a ∈ complexSubspace J := by
+  obtain ⟨r₁, s₁, rfl⟩ := ha
+  exact ⟨r * r₁, r * s₁, by ext i; simp only [add_coords, smul_coords, one]; ring⟩
+
+theorem complexSubspace_conj (J : ComplexStructure) (a : Octonion)
+    (ha : a ∈ complexSubspace J) :
+    conj a ∈ complexSubspace J := by
+  obtain ⟨r, s, rfl⟩ := ha
+  have hu0 : J.u.coords 0 = 0 := J.is_unit_imag.1
+  exact ⟨r, -s, by
+    ext i; simp only [conj, add_coords, smul_coords, one, hu0]
+    split_ifs with h <;> first | (subst h; simp [hu0]) | ring⟩
+
+theorem complexSubspace_mul (J : ComplexStructure) (a b : Octonion)
+    (ha : a ∈ complexSubspace J) (hb : b ∈ complexSubspace J) :
+    mul a b ∈ complexSubspace J := by
+  obtain ⟨r₁, s₁, rfl⟩ := ha
+  obtain ⟨r₂, s₂, rfl⟩ := hb
+  simp only [mul_add', add_mul', smul_mul, mul_smul', mul_one', one_mul', mul_unit_imag_sq J]
+  exact ⟨r₁ * r₂ - s₁ * s₂, r₁ * s₂ + s₁ * r₂, by
+    ext i; simp only [add_coords, smul_coords, neg_coords, one]; ring⟩
 
 end Octonion

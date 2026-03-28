@@ -130,7 +130,21 @@ def h3C_subalgebra (J : Octonion.ComplexStructure) : Set h3O :=
 /-- The h_3(C) subalgebra is closed under the Jordan product. -/
 theorem h3C_closed_jordan (J : Octonion.ComplexStructure) (a b : h3O)
     (ha : a ∈ h3C_subalgebra J) (hb : b ∈ h3C_subalgebra J) :
-    h3O.jordanMul a b ∈ h3C_subalgebra J := sorry
+    h3O.jordanMul a b ∈ h3C_subalgebra J := by
+  intro k; fin_cases k <;> (
+    simp only [h3O.jordanMul, Fin.isValue]
+    apply Octonion.complexSubspace_add
+    · apply Octonion.complexSubspace_add
+      · exact Octonion.complexSubspace_smul J _ _ (hb _)
+      · exact Octonion.complexSubspace_smul J _ _ (ha _)
+    · apply Octonion.complexSubspace_smul
+      apply Octonion.complexSubspace_add
+      · exact Octonion.complexSubspace_mul J _ _
+          (Octonion.complexSubspace_conj J _ (ha _))
+          (Octonion.complexSubspace_conj J _ (hb _))
+      · exact Octonion.complexSubspace_mul J _ _
+          (Octonion.complexSubspace_conj J _ (hb _))
+          (Octonion.complexSubspace_conj J _ (ha _)))
 
 /-- The h_3(C) subalgebra IS special (it embeds in M_3(C)). -/
 theorem h3C_is_special (J : Octonion.ComplexStructure) : True := trivial
