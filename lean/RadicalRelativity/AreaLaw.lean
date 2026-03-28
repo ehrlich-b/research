@@ -79,10 +79,12 @@ structure Bipartition (G : LatticeGraph) where
   partition : ∀ v, (inA v ∧ ¬inB v) ∨ (inB v ∧ ¬inA v)
 
 /-- The boundary size |∂A|: number of edges crossing the bipartition. -/
-def Bipartition.boundarySize (_G : LatticeGraph) (_bp : Bipartition _G) : ℕ := sorry
+def Bipartition.boundarySize (G : LatticeGraph) (bp : Bipartition G) : ℕ :=
+  Set.ncard { p : G.Vertex × G.Vertex | G.Adj p.1 p.2 ∧ bp.inA p.1 ∧ bp.inB p.2 }
 
 /-- The volume |A|: number of sites in region A. -/
-def Bipartition.volumeA (_G : LatticeGraph) (_bp : Bipartition _G) : ℕ := sorry
+def Bipartition.volumeA (G : LatticeGraph) (bp : Bipartition G) : ℕ :=
+  Set.ncard { v | bp.inA v }
 
 /-! ### Von Neumann entropy -/
 

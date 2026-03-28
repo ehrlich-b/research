@@ -405,15 +405,22 @@ def spectralGap (P : CompositeMarkovProcess) : ℝ := sorry
     ||P - P'||_inf = max_s sum_{s'} |P(s',s) - P'(s',s)|.
     Requires compatible state spaces (same nB, nM). -/
 def kernelDiffNorm (P Q : CompositeMarkovProcess)
-    (h_nB : P.nB = Q.nB) (h_nM : P.nM = Q.nM) : ℝ := sorry
+    (h_nB : P.nB = Q.nB) (h_nM : P.nM = Q.nM) : ℝ :=
+  let c (s : Fin P.nB × Fin P.nM) : Fin Q.nB × Fin Q.nM :=
+    (Fin.cast h_nB s.1, Fin.cast h_nM s.2)
+  Finset.sup' Finset.univ
+    ⟨(⟨0, by have := P.hB; omega⟩, ⟨0, by have := P.hM; omega⟩), Finset.mem_univ _⟩
+    fun s => ∑ s', |P.kernel s' s - Q.kernel (c s') (c s)|
 
 /-- The L1 distance between stationary distributions of two processes.
     ||pi - pi'||_1 = sum_s |pi(s) - pi'(s)|. -/
 def stationaryL1Dist (P Q : CompositeMarkovProcess)
-    (h_nB : P.nB = Q.nB) (h_nM : P.nM = Q.nM) : ℝ := sorry
+    (h_nB : P.nB = Q.nB) (h_nM : P.nM = Q.nM) : ℝ :=
+  ∑ s : Fin P.nB × Fin P.nM,
+    |P.stationaryDist s - Q.stationaryDist (Fin.cast h_nB s.1, Fin.cast h_nM s.2)|
 
 /-- The binary entropy function h_bin(x) = -x*ln(x) - (1-x)*ln(1-x). -/
-def binEntropy (x : ℝ) : ℝ := sorry
+def binEntropy (x : ℝ) : ℝ := -x * Real.log x - (1 - x) * Real.log (1 - x)
 
 /-- **Cho-Meyer Perturbation Bound** (Cho-Meyer 2001):
     ||pi - pi'||_1 <= ||P - P'||_inf / gap(P).

@@ -5,6 +5,8 @@ Authors: Bryan Ehrlich
 -/
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Data.Set.Card.Arithmetic
+import Mathlib.Data.Nat.Lattice
 import RadicalRelativity.CStarBridge
 
 set_option linter.style.longLine false
@@ -84,12 +86,24 @@ structure LatticeGraph where
 
 attribute [instance] LatticeGraph.vertex_dec_eq
 
+/-- A walk in the graph from vertex x to vertex y. -/
+inductive LatticeGraph.Walk (G : LatticeGraph) : G.Vertex → G.Vertex → Type where
+  | nil (x : G.Vertex) : G.Walk x x
+  | cons {x y z : G.Vertex} (hadj : G.Adj x y) (w : G.Walk y z) : G.Walk x z
+
+/-- The number of edges in a walk. -/
+def LatticeGraph.Walk.length {G : LatticeGraph} : {x y : G.Vertex} → G.Walk x y → ℕ
+  | _, _, Walk.nil _ => 0
+  | _, _, Walk.cons _ w => w.length + 1
+
 /-- The graph distance between two vertices (shortest path length). -/
-def LatticeGraph.graphDist (_G : LatticeGraph) (_x _y : _G.Vertex) : ℕ := sorry
+def LatticeGraph.graphDist (G : LatticeGraph) (x y : G.Vertex) : ℕ :=
+  sInf { n | ∃ (w : G.Walk x y), w.length = n }
 
 /-- The coordination number (degree) of a vertex. For regular lattices,
     this is constant: z = 2d for a d-dimensional hypercubic lattice. -/
-def LatticeGraph.coordNumber (_G : LatticeGraph) (_x : _G.Vertex) : ℕ := sorry
+def LatticeGraph.coordNumber (G : LatticeGraph) (x : G.Vertex) : ℕ :=
+  Set.ncard { y | G.Adj x y }
 
 /-- A regular lattice has constant coordination number z at all sites. -/
 structure RegularLattice extends LatticeGraph where

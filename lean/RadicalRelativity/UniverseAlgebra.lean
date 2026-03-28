@@ -60,9 +60,13 @@ open NonComposability
 
 namespace UniverseAlgebra
 
+-- Pin all SimpleEJA/EJAComposite to the same universe to avoid
+-- phantom universe parameters in IsNonComposable and IsUniverseAlgebra.
+universe u
+
 /-- A **self-modeling structure** is (at minimum) a Jordan algebra.
     Paper 5 proves: self-modeling -> sequential product -> Jordan algebra. -/
-class IsSelfModeling (A : SimpleEJA) : Prop where
+class IsSelfModeling (A : SimpleEJA.{u}) : Prop where
   /-- The system admits a faithful self-model. -/
   has_faithful_self_model : True
 
@@ -72,13 +76,13 @@ class IsSelfModeling (A : SimpleEJA) : Prop where
 
     This is a DEFINITION, not a theorem. "Universe" MEANS the non-composable
     self-modeling structure. -/
-class IsNonComposable (A : SimpleEJA) : Prop where
+class IsNonComposable (A : SimpleEJA.{u}) : Prop where
   /-- A admits no composite with any nontrivial EJA. -/
-  no_composite : ∀ (B : SimpleEJA), IsNontrivial B → IsEmpty (EJAComposite A B)
+  no_composite : ∀ (B : SimpleEJA.{u}), IsNontrivial B → IsEmpty (EJAComposite.{u, u, u} A B)
 
 /-- A **universe algebra** is a self-modeling, non-composable, nontrivial,
     simple EJA. -/
-class IsUniverseAlgebra (A : SimpleEJA) extends
+class IsUniverseAlgebra (A : SimpleEJA.{u}) extends
     IsSelfModeling A,
     IsNonComposable A where
   /-- The universe is nontrivial (rank >= 2). -/
@@ -89,10 +93,13 @@ class IsUniverseAlgebra (A : SimpleEJA) extends
     Proof (contrapositive): If A were special, then by Hanche-Olsen it
     would admit composites with every nontrivial B. But A is non-composable.
     Contradiction. -/
-theorem non_composable_not_special (A : SimpleEJA)
+theorem non_composable_not_special (A : SimpleEJA.{u})
     [inst : IsNonComposable A] (hA : IsNontrivial A) :
     ¬ IsSpecialEJA A := by
-  sorry -- Universe polymorphism in IsNonComposable prevents direct proof; needs universe annotation fix
+  intro hspec
+  have hne := hanche_olsen_composite A A hspec hspec
+  have hempty := inst.no_composite A hA
+  exact hempty.false hne.some
 
 /-- **Step 5**: A non-special simple EJA has rank 3 (isomorphic to h_3(O)). -/
 theorem not_special_rank_3 (A : SimpleEJA) (h : ¬ IsSpecialEJA A) :
@@ -111,21 +118,21 @@ theorem not_special_rank_3 (A : SimpleEJA) (h : ¬ IsSpecialEJA A) :
     This is a definition-level argument. The only premise beyond Paper 5
     is the L4 identification "non-composable system = algebra without composites."
     No new physics assumptions. -/
-theorem universe_contains_h3O (A : SimpleEJA) [IsUniverseAlgebra A] :
+theorem universe_contains_h3O (A : SimpleEJA.{u}) [IsUniverseAlgebra A] :
     A.rank = 3 := by
   have hA := IsUniverseAlgebra.nontrivial (A := A)
   have hns := non_composable_not_special A hA
   exact not_special_rank_3 A hns
 
 /-- The universe's algebra is exceptional (not special). -/
-theorem universe_exceptional (A : SimpleEJA) [IsUniverseAlgebra A] :
+theorem universe_exceptional (A : SimpleEJA.{u}) [IsUniverseAlgebra A] :
     ¬ IsSpecialEJA A :=
   non_composable_not_special A IsUniverseAlgebra.nontrivial
 
 /-- The universe's algebra admits no composites with any nontrivial system. -/
-theorem universe_no_composites (A : SimpleEJA) [IsUniverseAlgebra A]
-    (B : SimpleEJA) (hB : IsNontrivial B) :
-    IsEmpty (EJAComposite A B) := by
-  sorry -- Same universe polymorphism issue as non_composable_not_special
+theorem universe_no_composites (A : SimpleEJA.{u}) [inst : IsUniverseAlgebra A]
+    (B : SimpleEJA.{u}) (hB : IsNontrivial B) :
+    IsEmpty (EJAComposite.{u, u, u} A B) := by
+  exact inst.toIsNonComposable.no_composite B hB
 
 end UniverseAlgebra

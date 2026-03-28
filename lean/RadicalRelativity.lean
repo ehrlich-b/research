@@ -4,7 +4,9 @@
 -- Papers 1-4: Experiential Measure (SCAFFOLD)
 import RadicalRelativity.ExperientialMeasure
 
--- Paper 5: Self-Modeling → QM (FORMALIZED, 0 sorry's, 3 axioms)
+-- Paper 5: Self-Modeling → QM (FORMALIZED, 0 sorry's, 6 axioms)
+-- Bridge: self-modeling premise → sequential product axioms
+import RadicalRelativity.SelfModelingBridge
 import RadicalRelativity.OrderUnitSpace
 import RadicalRelativity.SequentialProduct
 import RadicalRelativity.Compression
@@ -32,3 +34,4 @@ import RadicalRelativity.F4
 import RadicalRelativity.ObserverInterface
 import RadicalRelativity.GaugeGroup
 import RadicalRelativity.Chirality
+import RadicalRelativity.RhoJ
