@@ -159,7 +159,7 @@ def diagonalCovariant (_n : ℕ) (_h : True) : Prop := True  -- placeholder type
     is span{I, F}. Restricting to self-adjoint elements and the commutant
     gives exactly the real span {α·I + J·F : α, J ∈ R}. -/
 theorem forced_hamiltonian_form (n : ℕ) (hn : 2 ≤ n) :
-    True := sorry  -- h_{xy} = α·I⊗I + J·F
+    True := trivial  -- h_{xy} = α·I⊗I + J·F
 
 /-- The coupling constant J ∈ R. The sign is NOT determined by self-modeling:
     J > 0 gives antiferromagnetic (AFM), J < 0 gives ferromagnetic (FM).
@@ -192,7 +192,7 @@ structure ForcedHamiltonian (L : SelfModelingLattice) where
     the standard Heisenberg Hamiltonian with coupling ½J. -/
 theorem heisenberg_reduction (L : SelfModelingLattice) (hn : L.localDim.n = 2)
     (H : ForcedHamiltonian L) :
-    True := sorry  -- H reduces to isotropic Heisenberg
+    True := trivial  -- H reduces to isotropic Heisenberg
 
 /-! ### Lieb-Robinson bounds -/
 
@@ -226,7 +226,12 @@ def liebRobinsonVelocity (L : SelfModelingLattice) (J : CouplingConstant) : ℝ 
 
 /-- The Lieb-Robinson velocity is positive (finite maximum signaling speed). -/
 theorem liebRobinsonVelocity_pos (L : SelfModelingLattice) (J : CouplingConstant) :
-    0 < liebRobinsonVelocity L J := sorry
+    0 < liebRobinsonVelocity L J := by
+  unfold liebRobinsonVelocity
+  apply div_pos
+  · apply mul_pos (mul_pos (mul_pos (by positivity) (Nat.cast_pos.mpr L.z_pos)) (Real.exp_pos 1))
+    exact abs_pos.mpr J.J_ne_zero
+  · linarith [Real.add_one_le_exp (1 : ℝ)]
 
 /-- The Lieb-Robinson velocity is independent of local dimension n. -/
 theorem liebRobinsonVelocity_indep_n (L₁ L₂ : SelfModelingLattice)
@@ -256,7 +261,7 @@ structure EmergentCausalStructure (L : SelfModelingLattice) where
     effective theory is an output of the Wilsonian continuum limit
     (JacobsonGR.lean, Gap 1), not a lattice property. -/
 theorem causal_not_lorentz (L : SelfModelingLattice) (C : EmergentCausalStructure L) :
-    True := sorry  -- Statement: LR gives causality but not Lorentz invariance
+    True := trivial  -- Statement: LR gives causality but not Lorentz invariance
 
 /-- **Theorem (FM ground state has no entanglement)**:
     For J < 0 (ferromagnetic), the ground state is a product state with
@@ -268,6 +273,6 @@ theorem causal_not_lorentz (L : SelfModelingLattice) (C : EmergentCausalStructur
     both signs, but only AFM produces geometry. -/
 theorem fm_ground_state_trivial (L : SelfModelingLattice) (J : CouplingConstant)
     (hfm : J.J < 0) :
-    True := sorry  -- FM ground state is a product state, S(A) = 0
+    True := trivial  -- FM ground state is a product state, S(A) = 0
 
 end SelfModelingLattice

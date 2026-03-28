@@ -178,7 +178,17 @@ theorem experientialDensity_nonneg (P : CompositeMarkovProcess)
     (hI_nonneg : 0 ≤ mutualInfo P)
     (hI_le_H : mutualInfo P ≤ bodyEntropy P) :
     0 ≤ experientialDensity P := by
-  sorry
+  by_cases hh : bodyEntropy P = 0
+  · have : experientialDensity P = 0 := by simp [experientialDensity, hh]
+    linarith
+  · have : experientialDensity P = mutualInfo P * (1 - mutualInfo P / bodyEntropy P) := by
+      simp [experientialDensity, hh]
+    rw [this]
+    have hH_pos : 0 < bodyEntropy P :=
+      lt_of_le_of_ne (le_trans hI_nonneg hI_le_H) (Ne.symm hh)
+    apply mul_nonneg hI_nonneg
+    rw [sub_nonneg, div_le_one hH_pos]
+    exact hI_le_H
 
 /-- The experiential density is bounded above by H(B)/4.
     This is a consequence of AM-GM: x(1-x) <= 1/4 for x in [0,1],
@@ -188,14 +198,27 @@ theorem experientialDensity_le_quarter_entropy (P : CompositeMarkovProcess)
     (hI_le_H : mutualInfo P ≤ bodyEntropy P)
     (hH_pos : 0 < bodyEntropy P) :
     experientialDensity P ≤ bodyEntropy P / 4 := by
-  sorry
+  have hne : bodyEntropy P ≠ 0 := ne_of_gt hH_pos
+  have key : experientialDensity P = mutualInfo P * (1 - mutualInfo P / bodyEntropy P) := by
+    simp [experientialDensity, hne]
+  rw [key, ← sub_nonneg]
+  have h1 : bodyEntropy P / 4 - mutualInfo P * (1 - mutualInfo P / bodyEntropy P) =
+    (bodyEntropy P - 2 * mutualInfo P) ^ 2 / (4 * bodyEntropy P) := by
+    field_simp; ring
+  rw [h1]
+  exact div_nonneg (sq_nonneg _) (by positivity)
 
 /-- The peak occurs at I = H/2, giving rho_max = H/4. -/
 theorem experientialDensity_max_at_half (P : CompositeMarkovProcess)
     (hI : mutualInfo P = bodyEntropy P / 2)
     (hH_pos : 0 < bodyEntropy P) :
     experientialDensity P = bodyEntropy P / 4 := by
-  sorry
+  have hne : bodyEntropy P ≠ 0 := ne_of_gt hH_pos
+  have : experientialDensity P = mutualInfo P * (1 - mutualInfo P / bodyEntropy P) := by
+    simp [experientialDensity, hne]
+  rw [this, hI]
+  field_simp
+  ring
 
 /-- Two composite Markov processes are **isomorphic** if there exists a
     product-preserving bijection phi = phi_B x phi_M that preserves the kernel.
@@ -361,7 +384,9 @@ theorem suppression_rate_pos (S : MetastabilitySetup) :
 theorem error_composition_exponential (S : MetastabilitySetup) (eps : ℝ) (heps : 0 < eps) :
     ∃ gamma : ℝ, 0 < gamma ∧
     gamma = min (S.alpha / 2) (S.Delta_s - S.alpha) := by
-  sorry
+  have ⟨_, hDb⟩ := basin_partition S
+  refine ⟨min (S.alpha / 2) (S.Delta_s - S.alpha), ?_, rfl⟩
+  exact lt_min (by linarith [S.hAlpha.1]) (by linarith [S.hAlpha.2, hDb])
 
 end Paper2
 
@@ -521,7 +546,14 @@ theorem pure_state_negative (rho : QuantumExperientialDensity)
     (hschmidt : rho.svn_B = rho.svn_M)
     (hent : 0 < rho.svn_B) :
     rho.value < 0 := by
-  sorry
+  have hne_M : rho.svn_M ≠ 0 := by rw [← hschmidt]; exact hent.ne'
+  unfold QuantumExperientialDensity.value
+  rw [if_neg hent.ne']
+  simp only [QuantumExperientialDensity.qmi, hpure, hschmidt, sub_zero]
+  rw [show rho.svn_M + rho.svn_M = 2 * rho.svn_M from by ring]
+  rw [mul_div_cancel_right₀ 2 hne_M]
+  have hM_pos : 0 < rho.svn_M := by rw [← hschmidt]; exact hent
+  nlinarith
 
 /-- The ratio I_vN / S_vN(B) for a pure state equals 2 (over-correlated). -/
 theorem pure_state_ratio_eq_two (rho : QuantumExperientialDensity)
@@ -529,7 +561,9 @@ theorem pure_state_ratio_eq_two (rho : QuantumExperientialDensity)
     (hschmidt : rho.svn_B = rho.svn_M)
     (hent : 0 < rho.svn_B) :
     rho.qmi / rho.svn_B = 2 := by
-  sorry
+  simp only [QuantumExperientialDensity.qmi, hpure, hschmidt, sub_zero]
+  rw [show rho.svn_M + rho.svn_M = 2 * rho.svn_M from by ring]
+  exact mul_div_cancel_right₀ 2 (by rw [← hschmidt]; exact hent.ne')
 
 /-- The Born-Fisher-Experiential conjecture (Conjecture 1 in Paper 4):
     Among all probability assignments {p_k} over measurement outcomes,
