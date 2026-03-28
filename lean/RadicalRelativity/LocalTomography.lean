@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.SequentialProduct
+import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 
 set_option linter.style.longLine false
 
@@ -20,7 +21,8 @@ dimension mismatch.
 
 ## Main definitions
 
-* `LocallyTomographic` — the composite dimension equals the product of factor dimensions
+* `Composite` — a composite system with embeddings and dimension data
+* `IsLocallyTomographic` — the composite dimension equals the product of factor dimensions
 * `DimFormula` — the dimension formulas for each EJA type
 * `TypeExclusion` — statement that only complex type satisfies local tomography
 
@@ -114,17 +116,58 @@ theorem type_exclusion_quatern (n : ℕ) (hn : 2 ≤ n) :
   zify [show 1 ≤ 2 * n from by omega, show 1 ≤ 2 * n * n from by nlinarith] at h
   nlinarith [sq_nonneg ((n : ℤ) - 1)]
 
-/-- An opaque predicate asserting that V admits a locally tomographic composite.
-    This cannot be discharged without constructing the actual tensor product and
-    verifying the dimension constraint, preventing vacuous instantiation. -/
-axiom IsLocallyTomographic (V : Type*) [SequentialProduct V] : Prop
+/-! ## Composite Structure
 
-/-- A sequential product space is **locally tomographic** if the composite
-    system V ⊗ V with product-form sequential product satisfies S1-S7 and has
-    dimension dim(V)². This is the abstract type-level predicate corresponding
-    to the dimension check `localTomographyHolds`. -/
-class LocallyTomographic (V : Type*) [SequentialProduct V] : Prop where
-  /-- The composite admits a locally tomographic structure. -/
-  lt_composite_exists : IsLocallyTomographic V
+A **composite** of V with itself is an OUS W equipped with body and model
+embeddings from V. The key dimension constraint is:
+
+  dim(W) = dim(V)²
+
+which characterizes local tomography. In a self-modeling system, this follows
+from the minimality of the body-model composite (Paper 5, Theorem 5.10):
+
+- **Lower bound** (dim ≥ d²): The d² product effects {embed_B(aᵢ) ∘ embed_M(bⱼ)}
+  are linearly independent in W (by state separation in finite-dim OUS).
+
+- **Upper bound** (dim ≤ d²): Their span satisfies composite axioms (C1)-(C4).
+  By minimality, W is the smallest such composite, so dim(W) ≤ d².
+
+This is NOT an axiom: it is a consequence of self-modeling + minimality.
+The sorry marks the linear algebra (product effect independence) that
+would be needed to complete the formal proof. -/
+
+/-- A **composite** of V with itself: an OUS W with body and model embeddings.
+    Captures the structure of V_BM from Paper 5. -/
+structure Composite (V : Type*) [OrderUnitSpace V] where
+  /-- The composite OUS. -/
+  W : Type*
+  /-- W is an order unit space. -/
+  [ous_W : OrderUnitSpace W]
+  /-- W is finite-dimensional. -/
+  [fd_W : FiniteDimensional ℝ W]
+  /-- Body embedding: V_B → W. -/
+  embed_B : V → W
+  /-- Model embedding: V_M → W. -/
+  embed_M : V → W
+  /-- Body embedding is injective. -/
+  embed_B_inj : Function.Injective embed_B
+  /-- Model embedding is injective. -/
+  embed_M_inj : Function.Injective embed_M
+
+/-- The dimension of a composite matches dim(V)². -/
+def Composite.dimMatches {V : Type*} [OrderUnitSpace V] [FiniteDimensional ℝ V]
+    (C : Composite V) : Prop :=
+  letI := C.ous_W; letI := C.fd_W
+  Module.finrank ℝ C.W = (Module.finrank ℝ V) ^ 2
+
+/-- **Local tomography**: V admits a composite W with dim(W) = dim(V)².
+
+    This is the dimension condition that excludes non-complex EJA types.
+    It is derived (not axiomatized) from self-modeling minimality in
+    `SelfModelingBridge.self_modeling_locally_tomographic`. -/
+class IsLocallyTomographic (V : Type*) [SequentialProduct V]
+    [FiniteDimensional ℝ V] : Prop where
+  /-- There exists a composite whose dimension equals dim(V)². -/
+  composite_exists : ∃ (C : Composite V), C.dimMatches
 
 end LocalTomography

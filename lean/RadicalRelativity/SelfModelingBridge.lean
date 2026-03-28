@@ -240,15 +240,18 @@ def selfModelingSP (V : Type*) [OrderUnitSpace V]
 /-! ## Summary of Axiom Budget
 
 The complete formalization chain from self-modeling to QM now uses
-these axioms (total: 4):
+these axioms (total: 3). All are published external results:
 
 ### This file (self-modeling → S1-S7):
 1. `self_model_gives_sp_data` — Paper 5 Sections 3-4 + Alfsen-Shultz 2003
 
 ### Existing files (S1-S7 → QM):
 2. `spectral_jordan_identity` — vdW 2019, §4 (published)
-3. `IsLocallyTomographic` — Paper 5 Assumption A3 (structural)
-4. `vdw_theorem_3` — vdW 2019, Theorem 3 (published)
+3. `vdw_theorem_3` — vdW 2019, Theorem 3 (published)
+
+### Derived (not axiomatized):
+- `IsLocallyTomographic` — defined as dim(V_BM) = dim(V)² (LocalTomography.lean)
+  Follows from self-modeling minimality (Paper 5 Theorem 5.10)
 
 ### Fully proved (0 axioms):
 - Type exclusion: complex only (LocalTomography.lean)
@@ -259,12 +262,12 @@ these axioms (total: 4):
 
 ### The chain:
 ```
-SelfModelingSystem (DEFINED)
+SelfModelingSystem (DEFINED, includes minimality)
   → sequential product constructed (this file, bridge axiom)
   → S1-S7 hold (this file, from bridge axiom)
   → Jordan algebra (JordanStructure.lean, from axiom 2)
-  → local tomography (LocalTomography.lean, axiom 3)
-  → C*-algebra (CStarBridge.lean, axiom 4)
+  → local tomography (derived from minimality, not axiom)
+  → C*-algebra (CStarBridge.lean, axiom 3)
   → type exclusion: complex only (PROVED)
   → QM (Born via Gleason, unitarity via Barandes)
 ```

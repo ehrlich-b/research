@@ -10,8 +10,9 @@ Lean 4 v4.28.0, Mathlib v4.28.0. Build must always pass - verify after every cha
 
 ## Structure
 
-- **Paper 5** (11 files): DONE - 0 sorry, 4 axioms. Locked for journal submission.
+- **Paper 5** (11 files): 0 sorry, 3 axioms (all external published results). Locked for journal.
 - **Paper 5 bridge**: SelfModelingBridge.lean. Self-modeling -> S1-S7 via bridge axiom. 1 axiom (`self_model_gives_sp_data`), 0 sorry. Produces `SequentialProduct V` instance from `SelfModelingSystem V`.
+- **Paper 5 LT**: LocalTomography.lean. `IsLocallyTomographic` is a class (not axiom) requiring dim(composite) = dim(V)^2. Type exclusion proved for real/quaternion. Gap: no explicit theorem deriving LT from self-modeling minimality (Paper 5 Thm 5.10).
 - **Paper 6** (3 files): SelfModelingLattice (0 sorry), AreaLaw (0 sorry), JacobsonGR (0 sorry). DONE.
 - **Paper 7** (8 files): Octonions (0) -> Albert (3 expository) -> NonComposability (3 blocked) -> UniverseAlgebra (0) -> F4 (1 conjugacy) -> ObserverInterface (0) -> GaugeGroup (0) -> Chirality (0).
 - **Papers 1-4** (1 file): ExperientialMeasure. Low priority scaffold (~15 sorry).
@@ -29,14 +30,17 @@ Lean 4 v4.28.0, Mathlib v4.28.0. Build must always pass - verify after every cha
 | ExperientialMeasure | stationaryDist, mu_stable, mu_BB, expectedExitTime, qsdMixingTime, spectralGap, kernelDiffNorm, stationaryL1Dist, BornFisherConjecture | def (9) | Low priority scaffold, need measure/spectral theory |
 | ExperientialMeasure | experientialFunctional, isomorphism_invariant, theorem_A, lipschitz_*, born_fisher_falsified | theorem (6) | Blocked by sorry defs above |
 
-## Paper 5 axiom budget (4 total)
+## Paper 5 axiom budget (3 total, all external)
 
 | Axiom | File | Source |
 |-------|------|--------|
 | `self_model_gives_sp_data` | SelfModelingBridge | Paper 5 Sections 3-4 + Alfsen-Shultz 2003 |
 | `spectral_jordan_identity` | JordanStructure | vdW 2019, section 4 |
-| `IsLocallyTomographic` | LocalTomography | Paper 5 Assumption A3 (structural) |
 | `vdw_theorem_3` | CStarBridge | vdW 2019, Theorem 3 |
+
+`IsLocallyTomographic` is NOT an axiom — it's a class requiring dim(composite) = dim(V)^2.
+Type exclusion (real/quaternion excluded) is PROVED. The gap: no theorem yet deriving
+IsLocallyTomographic from self-modeling minimality (Paper 5 Theorem 5.10).
 
 ## Rules
 

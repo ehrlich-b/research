@@ -4,87 +4,89 @@
 
 ```bash
 export PATH="$HOME/.elan/bin:$PATH"
-cd ~/repos/research/lean && lake build
+cd ~/repos/research/lean && nice -n 15 lake build
 ```
 
 Lean 4 v4.28.0, Mathlib v4.28.0. 2818 jobs, builds clean.
 
-## Overall: 22 sorry, 54 axioms
+## Paper 5: 0 sorry, 3 axioms (all external). LOCKED FOR JOURNAL.
 
-**Paper 5: 0 sorry, 4 axioms. LOCKED for journal submission.**
-**Paper 6: 0 sorry, 12 axioms. DONE.**
-**Paper 7: 7 sorry, 28 axioms. Core chain complete, 3 expository + 3 blocked + 1 infrastructure.**
-**Papers 1-4: 15 sorry, 10 axioms. Low priority scaffold.**
+### Axioms (3, all published external results)
 
-## Paper 5 (11 files, LOCKED)
+| Axiom | File | Source |
+|-------|------|--------|
+| `self_model_gives_sp_data` | SelfModelingBridge | Alfsen-Shultz 2003 + vdW 2019 |
+| `spectral_jordan_identity` | JordanStructure | vdW 2019 section 4 |
+| `vdw_theorem_3` | CStarBridge | vdW 2019 Theorem 3 |
 
-| File | Sorry | Axioms | Status |
-|------|-------|--------|--------|
-| OrderUnitSpace | 0 | 0 | Base types |
-| SequentialProduct | 0 | 0 | S1-S7 axiom system |
-| SelfModelingBridge | 0 | 1 | Bridge: SelfModelingSystem -> SequentialProduct |
-| Compression | 0 | 0 | Compression maps |
-| PeirceDecomp | 0 | 0 | Peirce subspaces |
-| SpectralTheorem | 0 | 0 | Spectral structure |
-| JordanStructure | 0 | 1 | Jordan product from SP |
-| LocalTomography | 0 | 1 | EJA type exclusion |
-| CStarBridge | 0 | 1 | C*-algebra promotion |
-| M2CInstance | 0 | 0 | Concrete commutative model |
-| SpinFactor | 0 | 0 | Concrete non-commutative model |
+### Chain
 
-Chain: SelfModelingSystem -> SPData (axiom) -> SequentialProduct -> Jordan -> LT -> C* -> QM
+```
+SelfModelingSystem (DEFINED, 7 fields, all non-vacuous)
+  → SPData (AXIOM: self_model_gives_sp_data)
+  → SequentialProduct (PROVED: SPData.toSequentialProduct)
+  → Jordan algebra (AXIOM: spectral_jordan_identity)
+  → IsLocallyTomographic (CLASS, not axiom — requires dim(W) = dim(V)²)
+  → Type exclusion: complex only (PROVED: type_exclusion_real/quatern)
+  → C*-algebra (AXIOM: vdw_theorem_3, gated on IsLocallyTomographic)
+  → QM
+```
 
-## Paper 6 (3 files, DONE)
+### Known gap
 
-| File | Sorry | Axioms | Status |
-|------|-------|--------|--------|
-| SelfModelingLattice | 0 | 2 | Lattice graph, forced Hamiltonian |
-| AreaLaw | 0 | 6 | Area-law entanglement |
-| JacobsonGR | 0 | 4 | Einstein equations via Jacobson 1995 |
+No explicit theorem deriving `IsLocallyTomographic` from self-modeling minimality.
+The paper's Theorem 5.10 proves this via:
+- Lower bound: d² product effects linearly independent → dim(W) ≥ d²
+- Upper bound: span satisfies (C1)-(C4) + minimality → dim(W) ≤ d²
 
-## Paper 7 (9 files, 7 sorry)
+This is the one unfilled link. `vdw_theorem_3` takes `IsLocallyTomographic V` as
+an explicit hypothesis, so the gate is enforced but the derivation from
+self-modeling is not formalized.
 
-| File | Sorry | Axioms | Status |
-|------|-------|--------|--------|
-| Octonions | 0 | 3 | DONE. Fano-plane multiplication |
-| Albert | 3 | 1 | jordan_identity, simple, not_special (expository, no downstream use) |
-| NonComposability | 3 | 4 | BLOCKED: EJAComposite structure too thin for BGW theorem |
-| UniverseAlgebra | 0 | 0 | DONE. universe_contains_h3O proved |
-| F4 | 1 | 7 | stab_complex_conjugate needs G_2 transitivity |
-| ObserverInterface | 0 | 2 | DONE |
-| GaugeGroup | 0 | 3 | DONE |
-| Chirality | 0 | 8 | DONE |
-| RhoJ | 0 | 1 | DONE. rho_J uniqueness |
+### What was tried and reverted
 
-Core chain (UniverseAlgebra -> GaugeGroup -> Chirality): 0 sorry, fully proved from axioms.
+- Making `IsLocallyTomographic := True` — REVERTED. Made the gate vacuous.
+- Adding `composite_minimal : True` to SelfModelingSystem — REVERTED. Vacuous field.
+- Both were caught by adversarial review.
 
-## Papers 1-4 (1 file, 15 sorry)
+### Concrete models (verify axiom consistency)
 
-| File | Sorry | Axioms | Status |
-|------|-------|--------|--------|
-| ExperientialMeasure | 15 | 10 | Low priority scaffold. 9 sorry defs + 6 sorry theorems |
+- M2CInstance (DiagOUS): commutative, all S1-S7 proved from scratch
+- SpinFactor (V₃): non-commutative Lüders product, all S1-S7 proved, explicit non-commutativity witness
 
-## Blockers
+## Paper 6: 0 sorry, 12 axioms. DONE.
 
-### NonComposability (3 sorry, STRUCTURAL)
-`EJAComposite` has only `composite : SimpleEJA`, `proj_A`, `proj_B`. Missing:
-- Embedding fields `A.carrier -> composite.carrier`
-- No-signaling constraint
-- Product state separation
-Without these, the BGW exchange lemma and downstream results can't be proved.
-**Fix requires changing the `EJAComposite` type signature.**
+| File | Sorry | Axioms |
+|------|-------|--------|
+| SelfModelingLattice | 0 | 2 |
+| AreaLaw | 0 | 5 |
+| JacobsonGR | 0 | 6 |
 
-### F4 stab_complex_conjugate (1 sorry, INFRASTRUCTURE)
-Needs G_2 transitivity on S^6 (unit imaginary octonions) to conjugate complex structures.
-G_2 action axiomatized in Octonions but no infrastructure for constructing conjugating automorphisms.
+## Paper 7: 6 sorry, 28 axioms
 
-### Albert (3 sorry, HARD ALGEBRA)
-- `jordan_identity`: degree-4 identity in 27-dimensional algebra. 500+ lines brute force.
-- `simple`: no nontrivial Jordan ideals. Needs spectral decomposition of h_3(O).
-- `not_special`: Albert 1934 / Glennie identity. Needs either dimension argument or polynomial identity.
-All expository — not referenced downstream. The downstream code uses axioms (`only_albert_exceptional`, `zelmanov_uniqueness`).
+Core chain (UniverseAlgebra → GaugeGroup → Chirality): 0 sorry.
 
-### ExperientialMeasure (15 sorry, MEASURE THEORY)
-9 sorry defs need measure theory / spectral theory (stationaryDist, spectralGap, etc.).
-6 sorry theorems blocked by the sorry defs.
-All low priority — Papers 1-4 scaffold.
+| File | Sorry | Status |
+|------|-------|--------|
+| Octonions | 0 | DONE |
+| Albert | 3 | Expository (jordan_identity, simple, not_special). No downstream use. |
+| NonComposability | 2 | `special_of_embed_in_special` (universe technicality), `composite_iff_special` (needs witness) |
+| UniverseAlgebra | 0 | DONE |
+| F4 | 1 | stab_complex_conjugate (needs G_2 transitivity) |
+| ObserverInterface | 0 | DONE |
+| GaugeGroup | 0 | DONE |
+| Chirality | 0 | DONE |
+| RhoJ | 0 | DONE |
+
+### Session changes to NonComposability
+
+- `EJAComposite` enriched: embeddings, Jordan homomorphism conditions, rank bound
+- `IsSpecialEJA` now includes Jordan homomorphism condition (was injection-only)
+- `bgw_exchange_lemma` PROVED (from rank_bound field)
+- `exceptional_no_composite` PROVED (embedding + composition)
+- `special_of_embed_in_special` sorry (universe polymorphism technicality)
+- `composite_iff_special` sorry (needs nontrivial special SimpleEJA witness)
+
+## Papers 1-4: 13 sorry, 9 axioms. Low priority scaffold.
+
+Session filled: `kernelDiffNorm`, `stationaryL1Dist`.

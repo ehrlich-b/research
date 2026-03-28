@@ -52,13 +52,10 @@ noncomputable section
 
 namespace NonComposability
 
--- Pin universes to avoid polymorphism issues in IsSpecialEJA composition proofs.
-universe u
-
 /-- A simple formally real Jordan algebra, characterized by its rank. -/
 structure SimpleEJA where
   /-- The underlying type. -/
-  carrier : Type u
+  carrier : Type*
   /-- The Jordan product. -/
   jordanMul : carrier → carrier → carrier
   /-- The rank (maximal number of orthogonal primitive idempotents). -/
@@ -107,7 +104,7 @@ structure EJAComposite (A B : SimpleEJA) where
     The map f must be injective AND preserve the Jordan product:
     f(a ∘ b) = f(a)·f(b) + f(b)·f(a). -/
 def IsSpecialEJA (A : SimpleEJA) : Prop :=
-  ∃ (R : Type u) (_ : Ring R) (f : A.carrier → R),
+  ∃ (R : Type*) (_ : Ring R) (f : A.carrier → R),
     Function.Injective f ∧
     ∀ a b : A.carrier, f (A.jordanMul a b) = f a * f b + f b * f a
 

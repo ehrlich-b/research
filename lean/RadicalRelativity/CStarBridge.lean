@@ -82,7 +82,7 @@ class HasCStarPromotion (V : Type*) [SequentialProduct V] where
     → Complex type → C*-algebra. -/
 axiom vdw_theorem_3 (V : Type*) [inst : SequentialProduct V]
     [FiniteDimensional ℝ V]
-    (hlt : LocalTomography.LocallyTomographic V) :
+    (hlt : LocalTomography.IsLocallyTomographic V) :
     HasCStarPromotion V
 
 /-- The four properties of the involution on the promoted C*-algebra,
@@ -126,7 +126,7 @@ structure InvolutionProperties (A : Type*) [Mul A] where
 
     **Conclusion**: Self-modeling implies complex quantum mechanics. -/
 def self_modeling_implies_qm (V : Type*) [SequentialProduct V]
-    [FiniteDimensional ℝ V] (hlt : LocalTomography.LocallyTomographic V) :
+    [FiniteDimensional ℝ V] (hlt : LocalTomography.IsLocallyTomographic V) :
     HasCStarPromotion V :=
   vdw_theorem_3 V hlt
 
