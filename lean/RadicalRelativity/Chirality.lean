@@ -86,7 +86,10 @@ namespace Chirality
 /-- The **complexification** of V_1(E_i) = O^2.
     The observer's C*-nature forces complexification: V_1^C = C tensor V_1.
     As a complex vector space, V_1^C is 16-dimensional.
-    This upgrades the Spin(9) spinor to a Spin(10) Weyl spinor. -/
+    This upgrades the Spin(9) spinor to a Spin(10) Weyl spinor.
+    Reference: Standard representation theory. The 16-dim real spinor of
+    Spin(9) complexifies to the Weyl spinor 16_L of Spin(10). See Baez,
+    "The Octonions," Bull. AMS 39 (2002), Section 4.3. -/
 axiom complexification_upgrades_spin :
     True  -- Spin(9) spinor 16_R -> Spin(10) Weyl spinor 16_L
 
@@ -114,19 +117,28 @@ def particleProjector (J : Octonion.ComplexStructure) : CliffElement := ⟨6⟩
 
 -- Key properties
 
-/-- gamma_11 squares to 1 (chirality operator is involutive). -/
+/-- gamma_11 squares to 1 (chirality operator is involutive).
+    Reference: Standard Clifford algebra. gamma_{2n+1}^2 = 1 in Cl(2n).
+    See Lawson, Michelsohn, "Spin Geometry," Princeton (1989), Chapter I. -/
 axiom gamma11_sq_one : True  -- gamma11 * gamma11 = 1
 
-/-- omega_6 squares to -1 in Cl(6). -/
+/-- omega_6 squares to -1 in Cl(6).
+    Reference: Standard Clifford algebra. The volume form in Cl(2n) with
+    Euclidean signature squares to (-1)^n. For n=3: (-1)^3 = -1.
+    See Lawson, Michelsohn, "Spin Geometry," Princeton (1989), Chapter I. -/
 axiom omega6_sq_neg_one (J : Octonion.ComplexStructure) : True
 
-/-- The particle projector is idempotent: P^2 = P. -/
+/-- The particle projector is idempotent: P^2 = P.
+    Follows algebraically from (i*omega_6)^2 = 1:
+    P = (1 - i*omega_6)/2, so P^2 = (1 - 2*i*omega_6 + 1)/4 = P. -/
 axiom particleProjector_idem (J : Octonion.ComplexStructure) : True
 
 -- The Pati-Salam intermediate step
 
 /-- The **Pati-Salam group** SU(4) x SU(2)_L x SU(2)_R is the stabilizer
-    of omega_6 in Spin(10). -/
+    of omega_6 in Spin(10).
+    Reference: Furey, arXiv:1806.00612 (2018); Todorov,
+    arXiv:2206.06912 (2022), Section 3. -/
 axiom omega6_stabilizer_is_pati_salam
     (J : Octonion.ComplexStructure) : True
 
@@ -143,7 +155,10 @@ inductive EmbeddingType where
 
 /-- **Sawin's theorem** (axiomatized): exactly two conjugacy classes of
     SU(2) x SU(3) in Spin(10). The left does not fit in Spin(9);
-    the diagonal does. -/
+    the diagonal does.
+    Reference: Baez, n-Category Cafe, "Theories of Everything Part 13,"
+    Dec 2025, citing Sawin's classification of SU(2) x SU(3) embeddings
+    in Spin(10). -/
 axiom sawin_two_classes : True
 
 /-- **The Furey mechanism**: Cl(6) volume form from the octonion splitting
@@ -182,7 +197,9 @@ theorem chirality_from_self_modeling (obs : ObserverConfig) :
 
 /-- **Boyle's triality observation** (axiomatized): The three generations
     of SM fermions correspond to the three rank-1 idempotents E_1, E_2, E_3
-    of h_3(O), related by the triality automorphism of Spin(8) in Spin(9). -/
+    of h_3(O), related by the triality automorphism of Spin(8) in Spin(9).
+    STATUS: SPECULATIVE. This is a theoretical proposal, not a proved theorem.
+    Reference: Boyle, arXiv:2006.16265 (2020). -/
 axiom boyle_three_generations : True
 
 end Chirality

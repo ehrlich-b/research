@@ -195,9 +195,10 @@ axiom calabrese_cardy_log_scaling (L : SelfModelingLattice) (H : ForcedHamiltoni
     quantum entanglement is carried by short-wavelength spin-wave
     fluctuations contributing O(|∂A|) to S(A).
 
-    Status: Supported by extensive numerical evidence and physical
-    arguments (Eisert et al. 2010), but a rigorous proof for all
-    gapless local Hamiltonians in d ≥ 2 remains open.
+    STATUS: OPEN PROBLEM. Supported by extensive numerical evidence and
+    physical arguments (Eisert et al. 2010), but a rigorous proof for all
+    gapless local Hamiltonians in d ≥ 2 remains open. We axiomatize the
+    expected result.
 
     Reference: Eisert, Cramer, Plenio, RMP 82, 277 (2010). -/
 axiom neel_ordered_area_law (L : SelfModelingLattice) (H : ForcedHamiltonian L)
@@ -235,8 +236,10 @@ theorem maxBondEntropy_pos (n : ℕ) (hn : 2 ≤ n) :
     Consequence: δ⟨K⟩ ~ O(|∂A|) for local perturbations, so by the
     entanglement first law, δS ~ O(|∂A|).
 
-    This provides evidence for the lattice Bisognano-Wichmann property
-    needed in the Jacobson derivation (JacobsonGR.lean, Gap 2).
+    STATUS: CONJECTURE (numerical evidence only). The continuum
+    Bisognano-Wichmann theorem (1976) is proved. The LATTICE version
+    is supported only by numerical evidence (SRF = 0.9993 at N = 16,
+    our computation). Not a published theorem.
 
     References: Bisognano-Wichmann (1976), Peschel (2003). -/
 axiom modular_hamiltonian_locality (L : SelfModelingLattice) (H : ForcedHamiltonian L)

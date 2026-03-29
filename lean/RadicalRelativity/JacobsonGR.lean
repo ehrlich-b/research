@@ -129,12 +129,10 @@ structure EmergentSpacetime where
     Lattice QCD benefits from asymptotic freedom; the self-modeling
     Hamiltonian has no such guarantee in d ≥ 2.
 
-    A rigorous constructive proof is a hard open problem shared by all
-    lattice quantum gravity programs.
-
-    The continuum limit IS the self-modeler's view: the compressed model M
-    is finite-dimensional, and smoothness is a property of the observer's
-    coarse-grained description at L >> a. -/
+    STATUS: OPEN PROBLEM. A rigorous constructive proof is a hard open
+    problem shared by all lattice quantum gravity programs. Whether the
+    Heisenberg model admits a continuum limit with correct universality
+    class in d ≥ 3 is unproved. No specific published theorem cited. -/
 axiom wilsonian_continuum_limit (L : SelfModelingLattice) (H : ForcedHamiltonian L) :
     True  -- Smooth (M, g_ab) emerges at L >> a
 
@@ -145,16 +143,16 @@ axiom wilsonian_continuum_limit (L : SelfModelingLattice) (H : ForcedHamiltonian
     lattice having a preferred frame.
 
     In d = 1: The IR theory is the SU(2)_1 WZW CFT, which is exactly
-    Lorentz-invariant (Affleck 1986).
+    Lorentz-invariant. Reference: Affleck, PRL 55, 1355 (1986).
 
     In d ≥ 2: The Néel-ordered AFM Heisenberg model has gapless magnon
-    excitations with linear dispersion ω = v_s|k| at long wavelengths.
-    This linear dispersion is the hallmark of emergent Lorentz symmetry,
-    with spin-wave velocity v_s playing the role of c.
+    excitations with linear dispersion omega = v_s|k| at long wavelengths.
 
-    Standard condensed matter lore but not rigorously proved in d ≥ 2.
+    STATUS: OPEN PROBLEM in d >= 2. Proved only in d = 1 (Affleck 1986).
+    In d >= 2, this is standard condensed matter expectation (linear
+    spin-wave dispersion) but not rigorously proved. We axiomatize it.
 
-    References: Affleck (1986), Eisert et al. (2010). -/
+    References: Affleck, PRL 55, 1355 (1986); Eisert et al., RMP 82, 277 (2010). -/
 axiom emergent_lorentz_invariance (L : SelfModelingLattice) (H : ForcedHamiltonian L)
     (hafm : 0 < H.coupling.J) :
     True  -- The low-energy effective theory is Lorentz-invariant
@@ -187,20 +185,21 @@ axiom bisognano_wichmann_continuum :
     True  -- Modular flow = boost, vacuum is KMS at Unruh temperature
 
 /-- **Lattice Bisognano-Wichmann** (axiomatized, Gap 2):
-    The lattice modular Hamiltonian K = -ln(ρ_A) approximates a local
+    The lattice modular Hamiltonian K = -ln(rho_A) approximates a local
     boost generator near the entangling surface.
 
     Evidence: Short-range fraction SRF = 0.9993 for AFM Heisenberg
-    at N = 16, indicating K is dominated by nearest-neighbor terms
-    localized at the boundary.
+    at N = 16 (our computation), indicating K is dominated by
+    nearest-neighbor terms localized at the boundary.
 
-    Status: Necessary for the Jacobson argument. Supported by numerical
-    evidence but not sufficient for a proof. The continuum BW theorem
-    is exact; the lattice version is a physical expectation.
+    STATUS: CONJECTURE (numerical evidence only). The continuum BW
+    theorem is a proved theorem of axiomatic QFT (Bisognano-Wichmann
+    1975/76). The LATTICE version is unproved and supported only by
+    numerical evidence at one system size. Not a published theorem.
 
     Note: BW identifies modular flow as boost, which GIVES the Unruh
-    temperature. The identification T = ℏκ/(2π) is not an independent
-    assumption but a CONSEQUENCE of BW. -/
+    temperature. The identification T = hbar*kappa/(2*pi) is not an
+    independent assumption but a CONSEQUENCE of BW. -/
 axiom lattice_bisognano_wichmann (L : SelfModelingLattice) (H : ForcedHamiltonian L)
     (hafm : 0 < H.coupling.J) :
     True  -- Lattice modular flow approximates local boosts near boundary
@@ -262,17 +261,19 @@ def areaChange : Prop := True  -- placeholder for the integral expression
 /-! ### Local equilibrium (Gap 3) -/
 
 /-- **Local equilibrium assumption** (Gap 3):
-    The expansion θ and shear σ_ab vanish at the bifurcation surface of
-    the local Rindler horizon: θ = 0, σ_ab = 0.
+    The expansion theta and shear sigma_ab vanish at the bifurcation
+    surface of the local Rindler horizon: theta = 0, sigma_ab = 0.
 
-    This is natural for the self-modeling fixed point: the ground state
-    of the self-modeling lattice is the equilibrium state of the dynamics;
-    its entanglement structure is stationary by construction. In the
-    continuum limit, stationarity of vacuum entanglement across a local
-    Rindler horizon translates to θ = σ = 0 at the bifurcation surface.
+    STATUS: ASSUMPTION (no published proof). Justified informally:
+    the ground state of the self-modeling lattice is the equilibrium
+    state of the dynamics, so its entanglement structure is stationary
+    by construction. In the continuum limit, stationarity of vacuum
+    entanglement across a local Rindler horizon translates to
+    theta = sigma = 0 at the bifurcation surface. This is our argument,
+    not a citation to external work.
 
     Required for: Step 3 of the Jacobson argument (Raychaudhuri step).
-    Without it, O(θ², σ²) terms contribute and the equation is modified. -/
+    Without it, O(theta^2, sigma^2) terms contribute. -/
 axiom local_equilibrium :
     True  -- θ = σ_ab = 0 at the bifurcation surface
 

@@ -78,7 +78,7 @@ class IsSelfModeling (A : SimpleEJA.{u}) : Prop where
     self-modeling structure. -/
 class IsNonComposable (A : SimpleEJA.{u}) : Prop where
   /-- A admits no composite with any nontrivial EJA. -/
-  no_composite : ∀ (B : SimpleEJA.{u}), IsNontrivial B → IsEmpty (EJAComposite.{u, u, u} A B)
+  no_composite : ∀ (B : SimpleEJA.{u}), IsNontrivial B → IsEmpty (EJAComposite.{u} A B)
 
 /-- A **universe algebra** is a self-modeling, non-composable, nontrivial,
     simple EJA. -/
@@ -132,7 +132,7 @@ theorem universe_exceptional (A : SimpleEJA.{u}) [IsUniverseAlgebra A] :
 /-- The universe's algebra admits no composites with any nontrivial system. -/
 theorem universe_no_composites (A : SimpleEJA.{u}) [inst : IsUniverseAlgebra A]
     (B : SimpleEJA.{u}) (hB : IsNontrivial B) :
-    IsEmpty (EJAComposite.{u, u, u} A B) := by
+    IsEmpty (EJAComposite.{u} A B) := by
   exact inst.toIsNonComposable.no_composite B hB
 
 end UniverseAlgebra

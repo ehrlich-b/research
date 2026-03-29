@@ -153,19 +153,29 @@ theorem h3C_is_special (J : Octonion.ComplexStructure) : True := trivial
 
 /-- The Peirce 1-space V_1(E_i) is a 16-dim real representation of Spin(9).
     Under complexification (forced by the observer's C*-nature), it becomes
-    the 16-dim Weyl spinor of Spin(10). -/
+    the 16-dim Weyl spinor of Spin(10).
+
+    Reference: Standard representation theory of Spin(9) and Spin(10).
+    The 16-dim real spinor of Spin(9) complexifies to the chiral (Weyl)
+    spinor 16_L of Spin(10). See e.g. Baez, "The Octonions," Bull. AMS 39
+    (2002), Section 4.3. -/
 axiom peirce1_complexified_is_weyl16
     (i : Fin 3) (J : Octonion.ComplexStructure) : True
 
-/-- **The L4 principle for the observer interface**:
+/-- **The L4 principle for the observer interface** (DEFINITIONAL, not a theorem):
     "The observer is a C*-system" is EQUIVALENT to "the observer selects
     an idempotent AND evolves a complex structure."
 
     Paper 5 proves: self-modeling -> C*-algebra.
     C*-nature requires complex-linear processing.
     Complex-linear processing of octonionic data requires embedding C in O.
-    Therefore: observer = C*-system = (idempotent, complex structure). -/
-axiom l4_observer_principle :
-  ∀ (obs : ObserverConfig), True  -- the observer IS its configuration
+    Therefore: observer = C*-system = (idempotent, complex structure).
+
+    This is captured by the DEFINITION of `ObserverConfig` above, not by
+    an axiom. The equivalence is definitional: we define an observer to be
+    a pair (idempotent, complex structure) because that is what the C*-algebra
+    structure forces. -/
+theorem l4_observer_principle :
+  ∀ (_obs : ObserverConfig), True := fun _ => trivial
 
 end ObserverInterface

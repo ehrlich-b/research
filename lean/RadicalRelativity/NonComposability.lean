@@ -66,14 +66,15 @@ structure SimpleEJA where
 /-- A nontrivial EJA has rank >= 2 (at least two orthogonal idempotents). -/
 def IsNontrivial (A : SimpleEJA) : Prop := 2 ≤ A.rank
 
+universe u in
 /-- A **dynamical composite** of two EJAs A and B (BGW Definition 2.1):
     - AB is an EJA with rank ≥ rank(A) * rank(B)
     - Embeddings: A and B embed in AB as Jordan subalgebras
     - Projections: AB projects back to A and B
     - The embeddings are sections of the projections -/
-structure EJAComposite (A B : SimpleEJA) where
+structure EJAComposite (A B : SimpleEJA.{u}) where
   /-- The composite system. -/
-  composite : SimpleEJA
+  composite : SimpleEJA.{u}
   /-- Projection onto A. -/
   proj_A : composite.carrier → A.carrier
   /-- Projection onto B. -/
@@ -142,27 +143,28 @@ axiom only_albert_exceptional (A : SimpleEJA) :
 
 -- The BGW rank argument
 
+universe u in
 /-- A Jordan subalgebra of a special algebra is special.
     Proof: compose the Jordan embedding A → C with the specialness
     witness C → R to get A → R. The composition preserves injectivity
-    and the Jordan product condition.
-
-    The sorry is a universe polymorphism technicality: IsSpecialEJA
-    auto-binds separate universe parameters for A.carrier and R,
-    so the R from hC can't be directly reused for A. The mathematical
-    argument (composition of Jordan embeddings) is trivial. -/
-theorem special_of_embed_in_special (A C : SimpleEJA)
+    and the Jordan product condition. -/
+theorem special_of_embed_in_special (A C : SimpleEJA.{u})
     (hC : IsSpecialEJA C) (_embed : A.carrier → C.carrier)
     (_h_inj : Function.Injective _embed)
     (_h_jordan : ∀ a₁ a₂, _embed (A.jordanMul a₁ a₂) =
       C.jordanMul (_embed a₁) (_embed a₂)) :
-    IsSpecialEJA A := by
-  sorry -- Universe polymorphism: R from IsSpecialEJA C can't unify with R for IsSpecialEJA A
+    IsSpecialEJA A :=
+  let ⟨R, hR, f, hf_inj, hf_jordan⟩ := hC
+  ⟨R, hR, f ∘ _embed, hf_inj.comp _h_inj, fun a₁ a₂ => by
+    show f (_embed (A.jordanMul a₁ a₂)) = f (_embed a₁) * f (_embed a₂) + f (_embed a₂) * f (_embed a₁)
+    rw [_h_jordan a₁ a₂]; exact hf_jordan _ _⟩
 
-theorem bgw_exchange_lemma (A B : SimpleEJA) (_hA : IsNontrivial A)
-    (_hB : IsNontrivial B) (C : EJAComposite A B) :
+universe u in
+theorem bgw_exchange_lemma (A B : SimpleEJA.{u}) (_hA : IsNontrivial A)
+    (_hB : IsNontrivial B) (C : EJAComposite.{u} A B) :
     A.rank * B.rank ≤ C.composite.rank := C.rank_bound
 
+universe u in
 /-- **BGW Main Theorem** (Theorem 3.6): Any composite of simple nontrivial
     EJAs is special.
 
@@ -170,8 +172,8 @@ theorem bgw_exchange_lemma (A B : SimpleEJA) (_hA : IsNontrivial A)
     1. By exchange lemma, rank(AB) >= rank(A) * rank(B) >= 2 * 2 = 4.
     2. By JvNW, rank >= 4 implies special.
     3. Therefore AB is special. -/
-theorem bgw_composites_special (A B : SimpleEJA) (hA : IsNontrivial A)
-    (hB : IsNontrivial B) (C : EJAComposite A B) :
+theorem bgw_composites_special (A B : SimpleEJA.{u}) (hA : IsNontrivial A)
+    (hB : IsNontrivial B) (C : EJAComposite.{u} A B) :
     IsSpecialEJA C.composite := by
   have hrank := bgw_exchange_lemma A B hA hB C
   have h4 : 4 ≤ C.composite.rank := by
@@ -180,11 +182,12 @@ theorem bgw_composites_special (A B : SimpleEJA) (hA : IsNontrivial A)
     _ ≤ C.composite.rank := hrank
   exact rank_ge_4_special C.composite h4
 
+universe u in
 /-- **Corollary**: If A is exceptional (not special), then A admits no
     composite with any nontrivial B. -/
-theorem exceptional_no_composite (A B : SimpleEJA) (hA : ¬ IsSpecialEJA A)
+theorem exceptional_no_composite (A B : SimpleEJA.{u}) (hA : ¬ IsSpecialEJA A)
     (hB : IsNontrivial B) :
-    IsEmpty (EJAComposite A B) := by
+    IsEmpty (EJAComposite.{u} A B) := by
   constructor; intro C
   -- A has rank 3 (only exceptional algebra), hence nontrivial
   have hA_rank := only_albert_exceptional A hA
@@ -197,35 +200,37 @@ theorem exceptional_no_composite (A B : SimpleEJA) (hA : ¬ IsSpecialEJA A)
 
 -- Hanche-Olsen converse
 
+universe u in
 /-- **Hanche-Olsen theorem** (axiomatized): every special EJA DOES admit
     composites. The universal tensor product of JC-algebras provides a
     canonical composite. -/
-axiom hanche_olsen_composite (A B : SimpleEJA)
+axiom hanche_olsen_composite (A B : SimpleEJA.{u})
     (hA : IsSpecialEJA A) (hB : IsSpecialEJA B) :
-    Nonempty (EJAComposite A B)
+    Nonempty (EJAComposite.{u} A B)
 
+universe u in
 /-- **Equivalence**: A simple nontrivial EJA admits composites with nontrivial
     special EJAs iff it is special.
 
     The quantifier is over special B because no composite exists with exceptional B
     regardless of A's specialness (the composite would be special, forcing the
     exceptional factor to embed in a special algebra — contradiction). -/
-theorem composite_iff_special (A : SimpleEJA) (hA : IsNontrivial A) :
-    (∀ B : SimpleEJA, IsNontrivial B → IsSpecialEJA B → Nonempty (EJAComposite A B)) ↔
+theorem composite_iff_special (A : SimpleEJA.{u}) (hA : IsNontrivial A) :
+    (∀ B : SimpleEJA.{u}, IsNontrivial B → IsSpecialEJA B → Nonempty (EJAComposite.{u} A B)) ↔
     IsSpecialEJA A := by
   constructor
   · -- (→) Contrapositive: if A is exceptional, it has no composites with anyone
     intro h
     by_contra hns
-    have hA_rank := only_albert_exceptional A hns
-    -- A is nontrivial (rank 3 ≥ 2), and exceptional → no composite with ANY nontrivial B
-    -- We need a nontrivial special B to apply h and get contradiction.
-    -- By rank_ge_4_special, any rank ≥ 4 EJA is special.
-    -- We use A itself: but A is not special, so we can't.
-    -- Instead, use exceptional_no_composite: for ANY nontrivial B, no composite.
-    -- In particular, for nontrivial special B (if one exists), h gives Nonempty
-    -- but exceptional_no_composite gives IsEmpty. But we need B to exist...
-    sorry -- Requires exhibiting a nontrivial special SimpleEJA (e.g. h_2(R))
+    -- Witness: ULift ℝ with doubled product (2ab) is a nontrivial special EJA.
+    -- ULift lifts ℝ from Type 0 to the correct universe for SimpleEJA.
+    let B : SimpleEJA.{u} := ⟨ULift.{u} ℝ, fun a b => ⟨2 * a.down * b.down⟩, 2, by norm_num⟩
+    have hB_nt : IsNontrivial B := le_refl 2
+    have hB_spec : IsSpecialEJA B :=
+      ⟨ULift.{u} ℝ, inferInstance, fun x => x, fun _ _ h => h,
+       fun a b => by ext1; dsimp; ring⟩
+    have ⟨C⟩ := h B hB_nt hB_spec
+    exact (exceptional_no_composite A B hns hB_nt).false C
   · -- (←) hanche_olsen_composite
     intro hA_spec B hB hB_spec
     exact hanche_olsen_composite A B hA_spec hB_spec

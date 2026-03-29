@@ -227,7 +227,9 @@ axiom diagonal_peirce_vanish (V : Type*) [OrderUnitSpace V]
 
 /-- Compression annihilates Peirce 1-components: C_{pᵢ}(P₁ₖₗ(x)) = 0
     for any i, k, l from the same spectral decomposition.
-    (Alfsen-Shultz 2003, Peirce decomposition theory.) -/
+    (Alfsen-Shultz 2003, Chapter 7, Peirce space orthogonality:
+    V₂(pᵢ), V₁(pₖ,pₗ), V₀ are mutually annihilated by compressions
+    from orthogonal projections in the same decomposition.) -/
 axiom compress_annihilates_peirce1 (V : Type*) [OrderUnitSpace V]
     (cs : CompressionSystem V) (sd : PreSpectralDecomp V cs)
     (i k l : Fin sd.n) (hkl : k ≠ l) (x : V) :
@@ -236,7 +238,9 @@ axiom compress_annihilates_peirce1 (V : Type*) [OrderUnitSpace V]
 /-- Peirce 1-projection annihilates compressed elements: P₁ᵢⱼ(C_{pₖ}(x)) = 0
     for any i ≠ j and any k from the same spectral decomposition.
     Dual of compress_annihilates_peirce1.
-    (Alfsen-Shultz 2003, Peirce decomposition theory.) -/
+    (Alfsen-Shultz 2003, Chapter 7, Peirce space orthogonality:
+    C_{pₖ}(x) ∈ V₂(pₖ), and P₁ᵢⱼ projects onto V₁(pᵢ,pⱼ),
+    which is orthogonal to V₂(pₖ) for any k.) -/
 axiom peirce1_annihilates_compress (V : Type*) [OrderUnitSpace V]
     (cs : CompressionSystem V) (sd : PreSpectralDecomp V cs)
     (i j k : Fin sd.n) (hij : i ≠ j) (x : V) :
@@ -255,8 +259,9 @@ axiom peirce1_orthogonal_idem (V : Type*) [OrderUnitSpace V]
     else 0
 
 /-- Compression of orthogonal projection products: C_{pᵢ}(C_{pₖ}(x)) = δᵢₖ C_{pᵢ}(x).
-    Follows from compression idempotence and orthogonal annihilation.
-    (Alfsen-Shultz 2003, compression theory.) -/
+    Follows from compression idempotence (i = k) and orthogonal annihilation (i ≠ k).
+    (Alfsen-Shultz 2003, Chapter 6: compression idempotence C_p ∘ C_p = C_p;
+    Chapter 7: orthogonal projections give C_{pᵢ} ∘ C_{pₖ} = 0 for i ≠ k.) -/
 axiom compress_orthogonal_product (V : Type*) [OrderUnitSpace V]
     (cs : CompressionSystem V) (sd : PreSpectralDecomp V cs)
     (i k : Fin sd.n) (x : V) :

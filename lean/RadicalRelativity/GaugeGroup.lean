@@ -128,7 +128,10 @@ theorem hypercharge_correct (obs : ObserverConfig) :
 theorem z6_quotient_structure : True := trivial
 
 /-- **Krasnov's theorem** (axiomatized): G_SM = subgroup of Spin(9)
-    commuting with right multiplication by a unit imaginary octonion on O^2. -/
+    commuting with right multiplication by a unit imaginary octonion on O^2.
+    Reference: Krasnov, arXiv:1912.11282 (2019). Note: arXiv preprint,
+    not peer-reviewed as of 2026. Provides an alternative characterization
+    of the SM gauge group via octonion algebra automorphisms. -/
 axiom krasnov_characterization
     (i : Fin 3) (J : Octonion.ComplexStructure) : True
 

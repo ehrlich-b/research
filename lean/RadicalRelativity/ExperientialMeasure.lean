@@ -316,7 +316,11 @@ axiom basin_partition (S : MetastabilitySetup) :
 /-- **Lemma 2: Residence Time Lower Bound** (BEGK 2004, Theorems 1.2, 1.4)
     The expected exit time from the stable basin scales as exp(Delta_s / eps).
     For any starting state in B_stable:
-      E_x[tau_{B_stable^c}] >= C_res * exp((Delta_s - alpha/2) / eps). -/
+      E_x[tau_{B_stable^c}] >= C_res * exp((Delta_s - alpha/2) / eps).
+    NOTE: `expectedExitTime` is defined as sorry above. This axiom bounds
+    an abstract quantity; filling it requires defining the exit time first.
+    Reference: Bovier, Eckhoff, Gayrard, Klein, "Metastability in reversible
+    diffusion processes I," JEMS 6 (2004), 399-424. -/
 axiom residence_time_lower_bound (S : MetastabilitySetup) (eps : ℝ) (heps : 0 < eps) :
     ∃ C_res : ℝ, 0 < C_res ∧
     C_res * Real.exp ((S.Delta_s - S.alpha / 2) / eps) ≤ expectedExitTime S eps
@@ -324,15 +328,21 @@ axiom residence_time_lower_bound (S : MetastabilitySetup) (eps : ℝ) (heps : 0 
 /-- **Lemma 3: QSD Convergence** (Champagnat-Villemonais 2016, Theorem 2.1)
     The killed chain on B_stable converges exponentially fast to the unique
     quasi-stationary distribution nu_QSD. The mixing time t_mix satisfies
-    t_mix << tau (exponentially smaller than the exit time). -/
+    t_mix << tau (exponentially smaller than the exit time).
+    NOTE: Both `qsdMixingTime` and `expectedExitTime` are sorry defs.
+    This axiom bounds abstract quantities. -/
 axiom qsd_convergence (S : MetastabilitySetup) (eps : ℝ) (heps : 0 < eps) :
     ∃ rate : ℝ, 0 < rate ∧
     qsdMixingTime S eps ≤ expectedExitTime S eps / 2
 
-/-- **Lemma 4: Stable Measure Lower Bound** (Combines Lemmas 2 + 3)
+/-- **Lemma 4: Stable Measure Lower Bound** (our assembly of Lemmas 2 + 3)
     The experiential measure accumulated during residence in B_stable satisfies
     mu_stable >= c * c' * exp((Delta_s - alpha) / eps),
-    where c is the rho lower bound at QSD and c' absorbs the mixing correction. -/
+    where c is the rho lower bound at QSD and c' absorbs the mixing correction.
+    NOTE: This is NOT an independent external theorem. It is our combination
+    of the BEGK residence time bound with QSD convergence. `mu_stable` is a
+    sorry def; this axiom bounds an abstract quantity. Should ideally be a
+    theorem once Lemmas 2+3 and mu_stable are filled. -/
 axiom stable_measure_lower_bound (S : MetastabilitySetup) (eps : ℝ) (heps : 0 < eps) :
     ∃ C_stable : ℝ, 0 < C_stable ∧
     C_stable * Real.exp ((S.Delta_s - S.alpha) / eps) ≤ mu_stable S eps
@@ -340,7 +350,11 @@ axiom stable_measure_lower_bound (S : MetastabilitySetup) (eps : ℝ) (heps : 0 
 /-- **Lemma 5: BB Occupation Upper Bound** (Renewal theory + BEGK)
     Before exiting B_stable, the expected total time in BB states scales as
     exp(Delta_b / eps). Combined with the rho upper bound:
-    mu_BB <= rho_max * C_bb * exp(Delta_b / eps). -/
+    mu_BB <= rho_max * C_bb * exp(Delta_b / eps).
+    NOTE: `mu_BB` is a sorry def; this axiom bounds an abstract quantity.
+    Reference: Renewal theory occupation bounds (Feller, "An Introduction to
+    Probability Theory," Vol. II, Chapter XI) combined with BEGK exit time
+    estimates (Bovier et al., JEMS 6, 2004). -/
 axiom bb_occupation_upper_bound (S : MetastabilitySetup) (eps : ℝ) (heps : 0 < eps) :
     ∃ C_bb : ℝ, 0 < C_bb ∧
     mu_BB S eps ≤ C_bb * Real.exp (S.Delta_b / eps)
@@ -348,7 +362,10 @@ axiom bb_occupation_upper_bound (S : MetastabilitySetup) (eps : ℝ) (heps : 0 <
 /-- **Lemma 6: Concentration** (BEGK Theorem 1.4 / Donsker-Varadhan)
     The weighted empirical measure concentrates around its expected value.
     Stable lower bound and BB upper bound hold simultaneously with high
-    probability (>= 1 - 2*exp(-eta/2) - o(1) as eps -> 0). -/
+    probability (>= 1 - 2*exp(-eta/2) - o(1) as eps -> 0).
+    NOTE: The Lean axiom only states `0 < mu_stable S eps` (positivity),
+    which is weaker than the full concentration bound described above.
+    `mu_stable` is a sorry def. -/
 axiom donsker_varadhan_concentration (S : MetastabilitySetup) (eps : ℝ) (heps : 0 < eps) :
     ∃ eta : ℝ, 0 < eta ∧
     0 < mu_stable S eps  -- concentration implies mu_stable is positive
@@ -438,9 +455,14 @@ axiom cho_meyer_bound (P Q : CompositeMarkovProcess)
 def distribL1Dist {k : ℕ} (p q : Fin k → ℝ) : ℝ :=
   ∑ i : Fin k, |p i - q i|
 
-/-- **Fannes-Audenaert Inequality** (entropy continuity, Audenaert 2007):
+/-- **Fannes-Audenaert Inequality** (entropy continuity):
     |H(p) - H(q)| <= (delta/2) * ln(k-1) + h_bin(delta/2)
     for distributions on k >= 2 symbols with ||p - q||_1 = delta.
+
+    References: Fannes, "A continuity property of the entropy density for
+    spin lattice systems," CMP 31 (1973), 291-294. Tight form by Audenaert,
+    "A sharp continuity estimate for the von Neumann entropy," JPhysA 40
+    (2007), 8127-8136.
 
     Cited as Lemma 2 in Paper 3. -/
 axiom fannes_audenaert {k : ℕ} (hk : 2 ≤ k)
@@ -618,7 +640,7 @@ theorem born_fisher_falsified : ¬ BornFisherConjecture := by
     Full formalization requires Hilbert space lattice theory; we axiomatize
     the statement. -/
 axiom gleason_theorem (d : ℕ) (hd : 3 ≤ d) :
-    True  -- placeholder type; full statement needs lattice of closed subspaces
+    True  -- placeholder: type is True because full statement needs lattice of closed subspaces
 
 /-- **What Paper 4 establishes** (not falsified):
     The experiential density functional rho_Q itself is well-defined and

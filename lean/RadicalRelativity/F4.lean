@@ -125,15 +125,22 @@ theorem stab_idem_closed_comp (i : Fin 3) (f g : Aut_h3O)
 theorem stab_idem_id (i : Fin 3) : Aut_h3O.id ∈ Stab_idem i := rfl
 
 /-- **Spin(9) theorem** (axiomatized): Stab(E_i) is isomorphic to Spin(9).
-    dim(Spin(9)) = 36. -/
+    dim(Spin(9)) = 36.
+    Reference: Freudenthal, "Oktaven, Ausnahmegruppen und Oktavengeometrie,"
+    Geom. Dedicata 19 (1985); Baez, "The Octonions," Bull. AMS 39 (2002),
+    Section 3.4. -/
 axiom stab_is_Spin9 (i : Fin 3) : True  -- Stab_idem i ≅ Spin(9)
 
 /-- **F_4 / Spin(9) = OP^2**: the quotient is the octonionic projective plane
-    (Cayley plane), which is 16-dimensional. 52 - 36 = 16. -/
+    (Cayley plane), which is 16-dimensional. 52 - 36 = 16.
+    Reference: Baez, "The Octonions," Bull. AMS 39 (2002), Section 3.4. -/
 axiom quotient_is_OP2 : True  -- F_4 / Stab_idem i ≅ OP^2
 
 /-- Spin(9) acts on the Peirce 1-space V_1(E_i) = O^2 as the spin
-    representation (16-dim real). -/
+    representation (16-dim real).
+    Reference: Baez, "The Octonions," Bull. AMS 39 (2002), Section 3.4;
+    Adams, "Lectures on Exceptional Lie Groups," Chicago Lectures in
+    Mathematics (1996). -/
 axiom spin9_acts_on_peirce1 : True  -- Spin(9) -> GL(V_1) via spin rep
 
 -- Subgroup 2: [SU(3) x SU(3)] / Z_3 = stabilizer of complex structure
@@ -148,7 +155,12 @@ def Stab_complex (J : Octonion.ComplexStructure) : Set Aut_h3O :=
     structure on O in Aut(h_3(O)) is isomorphic to [SU(3) x SU(3)] / Z_3.
     - One SU(3) acts on C^3 (the complement of C in O): color.
     - The other SU(3) acts on the 3 off-diagonal positions: flavor.
-    - dim = 8 + 8 = 16. -/
+    - dim = 8 + 8 = 16.
+    Reference: Borel, de Siebenthal, "Les sous-groupes fermes de rang maximum
+    des groupes de Lie clos," Comment. Math. Helv. 23 (1949), 200-221.
+    Applied to F_4: the maximal rank subgroups are Spin(9) and
+    [SU(3) x SU(3)] / Z_3. See also Yokota, "Exceptional Lie Groups,"
+    arXiv:0902.0431, Chapter 5. -/
 axiom stab_complex_is_SU3xSU3modZ3 (J : Octonion.ComplexStructure) : True
 
 -- Borel-de Siebenthal classification
@@ -157,7 +169,9 @@ axiom stab_complex_is_SU3xSU3modZ3 (J : Octonion.ComplexStructure) : True
     connected subgroups of F_4 of maximal rank are exactly:
     1. Spin(9) (stabilizer of an idempotent)
     2. [SU(3) x SU(3)] / Z_3 (stabilizer of a complex structure)
-    These are the only two types. -/
+    These are the only two types.
+    Reference: Borel, de Siebenthal, "Les sous-groupes fermes de rang maximum
+    des groupes de Lie clos," Comment. Math. Helv. 23 (1949), 200-221. -/
 axiom borel_de_siebenthal_F4 : True
 
 -- Cyclic permutation of Fin 3 and its inverse

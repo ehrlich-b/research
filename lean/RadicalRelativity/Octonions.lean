@@ -231,10 +231,16 @@ axiom hurwitz_classification :
   n = 1 ∨ n = 2 ∨ n = 4 ∨ n = 8
 
 /-- **Aut(O) = G_2** (axiomatized): the automorphism group of the octonions
-    is the compact exceptional Lie group G_2 (14-dimensional, rank 2). -/
+    is the compact exceptional Lie group G_2 (14-dimensional, rank 2).
+    Reference: Chevalley, Schafer, "The exceptional simple Lie algebras F_4
+    and E_6," Proc. Nat. Acad. Sci. 36 (1950), 137-141.
+    See also Baez, "The Octonions," Bull. AMS 39 (2002), Section 4.1. -/
 axiom aut_octonions_eq_G2 : True  -- placeholder for the Lie group statement
 
-/-- The space of unit imaginary octonions is S^6 = G_2 / SU(3). -/
+/-- The space of unit imaginary octonions is S^6 = G_2 / SU(3).
+    G_2 acts transitively on S^6 with isotropy group SU(3).
+    Reference: Baez, "The Octonions," Bull. AMS 39 (2002), Section 4.1;
+    Harvey, "Spinors and Calibrations," Academic Press (1990), Chapter 6. -/
 axiom unit_imag_sphere_eq_G2_mod_SU3 : True  -- G_2 acts transitively on S^6
 
 /-- A complex structure on O splits O = C_u + (C_u)^3.
