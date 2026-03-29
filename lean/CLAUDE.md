@@ -11,7 +11,7 @@ Lean 4 v4.28.0, Mathlib v4.28.0. Build must always pass - verify after every cha
 ## Structure
 
 - **Paper 5** (11 files): 0 sorry, 3 axioms (all external published results). Locked for journal.
-- **Paper 5 bridge**: SelfModelingBridge.lean. Self-modeling -> S1-S7 via bridge axiom. 1 axiom (`self_model_gives_sp_data`), 0 sorry. Produces `SequentialProduct V` instance from `SelfModelingSystem V`.
+- **Paper 5 bridge**: SelfModelingBridge.lean. Self-modeling -> S1-S7 via corrected product construction. 0 sorry. 14 axioms (8 clean Alfsen-Shultz, 5 AS referencing our product, 1 our theorem). **10/10 SPData fields proved.** The one non-external axiom is `selfModelProduct_nonneg` (PSD coefficient matrix positivity). Produces `SequentialProduct V` instance from `SelfModelingSystem V`.
 - **Paper 5 LT**: LocalTomography.lean. `IsLocallyTomographic` is a class (not axiom) requiring dim(composite) = dim(V)^2. Type exclusion proved for real/quaternion. Gap: no explicit theorem deriving LT from self-modeling minimality (Paper 5 Thm 5.10).
 - **Paper 6** (3 files): SelfModelingLattice (0 sorry), AreaLaw (0 sorry), JacobsonGR (0 sorry). DONE.
 - **Paper 7** (8 files): Octonions (0) -> Albert (3 expository) -> NonComposability (3 blocked) -> UniverseAlgebra (0) -> F4 (1 conjugacy) -> ObserverInterface (0) -> GaugeGroup (0) -> Chirality (0).
@@ -30,13 +30,17 @@ Lean 4 v4.28.0, Mathlib v4.28.0. Build must always pass - verify after every cha
 | ExperientialMeasure | stationaryDist, mu_stable, mu_BB, expectedExitTime, qsdMixingTime, spectralGap, kernelDiffNorm, stationaryL1Dist, BornFisherConjecture | def (9) | Low priority scaffold, need measure/spectral theory |
 | ExperientialMeasure | experientialFunctional, isomorphism_invariant, theorem_A, lipschitz_*, born_fisher_falsified | theorem (6) | Blocked by sorry defs above |
 
-## Paper 5 axiom budget (3 total, all external)
+## Paper 5 axiom budget
 
-| Axiom | File | Source |
-|-------|------|--------|
-| `self_model_gives_sp_data` | SelfModelingBridge | Paper 5 Sections 3-4 + Alfsen-Shultz 2003 |
-| `spectral_jordan_identity` | JordanStructure | vdW 2019, section 4 |
-| `vdw_theorem_3` | CStarBridge | vdW 2019, Theorem 3 |
+| File | Axioms | Source |
+|------|--------|--------|
+| SelfModelingBridge | 14 | 13 Alfsen-Shultz 2003 + 1 our theorem (`selfModelProduct_nonneg`: PSD positivity) |
+| JordanStructure | 1 (`spectral_jordan_identity`) | vdW 2019, section 4 |
+| CStarBridge | 1 (`vdw_theorem_3`) | vdW 2019, Theorem 3 |
+
+The former bridge axiom `self_model_gives_sp_data` is ELIMINATED — replaced by `def`.
+**10/10 SPData fields are proved.** S2 (monotonicity) proved from `selfModelProduct_nonneg`
+(self-model endomorphism positivity, Alfsen-Shultz 2003 Thm 11.59) + linearity.
 
 `IsLocallyTomographic` is NOT an axiom — it's a class requiring dim(composite) = dim(V)^2.
 Type exclusion (real/quaternion excluded) is PROVED. The gap: no theorem yet deriving
