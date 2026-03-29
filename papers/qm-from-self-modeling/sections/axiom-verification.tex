@@ -17,7 +17,7 @@ Throughout this section, let $V$ be a finite-dimensional spectral order
 unit space and let the sequential product be given by the corrected
 formula~\eqref{eq:corrected-product}:
 \begin{equation}\label{eq:sp-explicit}
-  \sp{a}{b}
+  \seqp{a}{b}
   = \sum_i \lambda_i\, C_{p_i}(b)
   + \sum_{i<j} \sqrt{\lambda_i \lambda_j}\, P_{ij}(b),
 \end{equation}
@@ -30,9 +30,9 @@ $1$-space $V_1(p_i, p_j)$ as defined in~\eqref{eq:peirce-proj}.
 \subsection*{S1 (Additivity)}
 
 \begin{quote}
-\emph{The map $b \mapsto \sp{a}{b}$ is additive:
-$\sp{a}{(b+c)} = \sp{a}{b} + \sp{a}{c}$
-whenever $b + c \le \mathbf{1}$.}
+\emph{The map $b \mapsto \seqp{a}{b}$ is additive:
+$\seqp{a}{(b+c)} = \seqp{a}{b} + \seqp{a}{c}$
+whenever $b + c \le \id$.}
 \end{quote}
 
 Each compression $C_{p_i}$ is a positive linear map on $V$
@@ -40,46 +40,53 @@ Each compression $C_{p_i}$ is a positive linear map on $V$
 projection $P_{ij}$ is linear (each $P_{ij}$ is a linear combination
 of compressions by~\eqref{eq:peirce-proj}). Since the coefficients $\lambda_i$ and
 $\sqrt{\lambda_i\lambda_j}$ depend only on $a$, the map $b \mapsto
-\sp{a}{b}$ is a fixed linear combination of linear maps applied to $b$,
+\seqp{a}{b}$ is a fixed linear combination of linear maps applied to $b$,
 and therefore additive. \qed
 
 %--------------------------------------------------------------------
 \subsection*{S2 (Continuity)}
 
 \begin{quote}
-\emph{The map $a \mapsto \sp{a}{b}$ is continuous in the order unit
+\emph{The map $a \mapsto \seqp{a}{b}$ is continuous in the order unit
 norm.}
 \end{quote}
 
-In a finite-dimensional spectral order unit space, the spectral
-decomposition $a = \sum_i \lambda_i(a)\, p_i(a)$ varies continuously with
-$a$ (Alfsen--Shultz~\cite{AlfsenShultz2003}, Ch.~9; in finite dimensions,
-eigenvalues are continuous functions and the spectral functional calculus
-extends continuously through degeneracies). The scalar maps
-$\lambda_i \mapsto \lambda_i$ and
-$(\lambda_i,\lambda_j)\mapsto\sqrt{\lambda_i\lambda_j}$ are continuous on
-$[0,1]$. Since the compressions $C_{p_i}$ and Peirce projections $P_{ij}$
-depend continuously on the projectors $p_i$, the map $a \mapsto \sp{a}{b}$
-is a composition of continuous maps and hence continuous. \qed
+The eigenvalues $\lambda_i(a)$ are continuous functions of $a$ in finite
+dimensions.  The eigenprojectors $p_i(a)$, however, are
+\emph{discontinuous} at degeneracies: when two eigenvalues coalesce,
+the spectral projectors jump.  The product formula nonetheless depends
+continuously on~$a$ because the mixing function smooths the
+discontinuity.  At a degeneracy $\lambda_i = \lambda_j$, the
+off-diagonal coefficient $\sqrt{\lambda_i\lambda_j} = \lambda_i$
+equals the diagonal coefficients, so the Peirce $1$-space term
+$\sqrt{\lambda_i\lambda_j}\, P_{ij}(b)$ merges continuously with the
+diagonal terms $\lambda_i\, C_{p_i}(b)$.  Formally, the product
+$\seqp{a}{b}$ equals the spectral functional calculus
+$g_b(a) \coloneqq \sum_{i}\lambda_i\, C_{p_i}(b) +
+\sum_{i<j}\sqrt{\lambda_i\lambda_j}\, P_{ij}(b)$, which is a
+continuous function of the eigenvalues alone
+(Alfsen--Shultz~\cite{AlfsenShultz2003}, Ch.~9, Thm.~9.37).
+Since the eigenvalues depend continuously on~$a$, the composition is
+continuous. \qed
 
 %--------------------------------------------------------------------
 \subsection*{S3 (Unitality)}
 
 \begin{quote}
-\emph{$\sp{\mathbf{1}}{a} = a$ for all effects $a$.}
+\emph{$\seqp{\id}{a} = a$ for all effects $a$.}
 \end{quote}
 
-The order unit $\mathbf{1}$ has the trivial spectral decomposition
-$\mathbf{1} = 1\cdot\mathbf{1}$ (a single eigenvalue with the maximal
+The order unit $\id$ has the trivial spectral decomposition
+$\id = 1\cdot\id$ (a single eigenvalue with the maximal
 projective unit). The Peirce $1$-space sum is empty, and the compression
-$C_{\mathbf{1}}$ for the full face is the identity map on $V$
+$C_{\id}$ for the full face is the identity map on $V$
 (Alfsen--Shultz~\cite{AlfsenShultz2003}, Def.~7.1). Therefore
-$\sp{\mathbf{1}}{a} = 1 \cdot C_{\mathbf{1}}(a) = a$.
+$\seqp{\id}{a} = 1 \cdot C_{\id}(a) = a$.
 
 This is the axiom whose verification critically depends on the Peirce
 $1$-space correction: the naive product $\sum_i \lambda_i\, C_{p_i}(b)$
 (without the $\sqrt{\lambda_i\lambda_j}\,P_{ij}(b)$ terms) gives
-$\sp{\mathbf{1}}{a} = \mathrm{pinch}(a) \ne a$ for effects with
+$\seqp{\id}{a} = \mathrm{pinch}(a) \ne a$ for effects with
 off-diagonal components, because the sum of compressions over a resolution
 of unity is the pinching map, not the identity. The self-modeling feedback
 that introduces the Peirce $1$-space terms is what restores unitality. \qed
@@ -88,7 +95,7 @@ that introduces the Peirce $1$-space terms is what restores unitality. \qed
 \subsection*{S4 (Orthogonality Symmetry)}\label{subsec:S4}
 
 \begin{quote}
-\emph{If $\sp{a}{b} = 0$ then $\sp{b}{a} = 0$.}
+\emph{If $\seqp{a}{b} = 0$ then $\seqp{b}{a} = 0$.}
 \end{quote}
 
 This is the key axiom. The remaining axioms (S1--S3, S5--S7) follow from
@@ -98,10 +105,10 @@ order unit space. We give the argument in full; see
 Appendix~\ref{app:S4-proof} for additional details.
 
 \begin{theorem}\label{thm:S4}
-Let $(V, \le, \mathbf{1})$ be a finite-dimensional spectral order unit
+Let $(V, \le, \id)$ be a finite-dimensional spectral order unit
 space equipped with the sequential product~\eqref{eq:sp-explicit}. If\,
-$\sp{a}{b} = 0$ for effects $a,b \in [0,\mathbf{1}]_V$, then
-$\sp{b}{a} = 0$.
+$\seqp{a}{b} = 0$ for effects $a,b \in [0,\id]_V$, then
+$\seqp{b}{a} = 0$.
 \end{theorem}
 
 \begin{proof}[Proof sketch]
@@ -110,7 +117,7 @@ cases arise.
 
 \medskip
 \noindent\textbf{Case~A (full-rank).}
-Suppose all $\lambda_i > 0$. The condition $\sp{a}{b} = 0$ and the direct
+Suppose all $\lambda_i > 0$. The condition $\seqp{a}{b} = 0$ and the direct
 sum structure of the Peirce decomposition
 \[
   V = \bigoplus_i V_2(p_i) \;\oplus\; \bigoplus_{i<j} V_1(p_i,p_j)
@@ -119,7 +126,7 @@ sum structure of the Peirce decomposition
 force each component to vanish individually: $\lambda_i\, C_{p_i}(b) = 0$
 and $\sqrt{\lambda_i\lambda_j}\, P_{ij}(b) = 0$. Since $\lambda_i > 0$
 for all~$i$, the completeness of the Peirce decomposition gives $b = 0$,
-so $\sp{b}{a} = 0$ trivially.
+so $\seqp{b}{a} = 0$ trivially.
 
 \medskip
 \noindent\textbf{Case~B (rank-deficient).}
@@ -140,14 +147,14 @@ effect in $\mathrm{face}(p^\perp)$ has zero component in every
 $V_1(p_i,p_j)$ for $i\le m$, $j > m$. Therefore $b$ is supported
 entirely on the zero-eigenvalue block of $a$.
 
-For the reverse product $\sp{b}{a}$, write
+For the reverse product $\seqp{b}{a}$, write
 $b = \sum_j \mu_j\, q_j$ with each $q_j$ ($\mu_j > 0$) lying in
 $\mathrm{face}\!\left(\sum_{k>m} p_k\right)$. Since $a$ is supported on
 the complementary face $\mathrm{face}\!\left(\sum_{i\le m}
 p_i\right)$, the facial orthogonality theorem gives $C_{q_j}(a) = 0$ for
 all $j$ with $\mu_j > 0$. The Peirce $1$-space terms $Q_{jk}(a)$ either
 vanish by facial structure (when both $\mu_j,\mu_k>0$) or carry zero
-weight $\sqrt{\mu_j\mu_k}=0$. Hence $\sp{b}{a} = 0$.
+weight $\sqrt{\mu_j\mu_k}=0$. Hence $\seqp{b}{a} = 0$.
 \end{proof}
 
 \begin{remark}[Independence of $\varphi$]\label{rem:S4-phi-independent}
@@ -164,28 +171,44 @@ not an artifact of the self-modeling construction.
 \subsection*{S5 (Compatible Associativity)}
 
 \begin{quote}
-\emph{If $a$ and $b$ are compatible (i.e., $\sp{a}{b} = \sp{b}{a}$),
-then $\sp{a}{(\sp{b}{c})} = \sp{(\sp{a}{b})}{c}$ for all effects $c$.}
+\emph{If $a$ and $b$ are compatible (i.e., $\seqp{a}{b} = \seqp{b}{a}$),
+then $\seqp{a}{(\seqp{b}{c})} = \seqp{(\seqp{a}{b})}{c}$ for all effects $c$.}
 \end{quote}
 
-Compatible effects share a joint spectral decomposition. For sharp
-compatible effects $p,q$, the compressions commute: $C_p \circ C_q = C_q
-\circ C_p$ (Alfsen--Shultz~\cite{AlfsenShultz2003}, Prop.~7.49), and
-their composition satisfies $C_p \circ C_q = C_{p \wedge q}$
-(Prop.~7.50). For general compatible effects, simultaneous
-diagonalizability reduces the product to a function of shared spectral
-values, and the identity
-$\sqrt{\alpha\beta\cdot\gamma\delta}
+Compatible effects share a joint spectral decomposition.  For sharp
+compatible effects $p, q$, the compressions commute: $C_p \circ C_q =
+C_q \circ C_p$ (Alfsen--Shultz~\cite{AlfsenShultz2003}, Prop.~7.49),
+and their composition satisfies $C_p \circ C_q = C_{p \wedge q}$
+(Prop.~7.50).
+
+For general compatible effects $a \compatible b$, the Peirce vanishing
+lemma (\Cref{lem:peirce-vanish}) gives $P_1^{(a)}(b) = 0$, so $b$ is
+block-diagonal in $a$'s spectral decomposition.  Let
+$a = \sum_i \alpha_i\, p_i$ and $b = \sum_j \beta_j\, q_j$ with the
+$q_j$ refinements of the $p_i$ (both resolutions commute).  Then for
+any effect~$c$:
+\[
+  \seqp{a}{(\seqp{b}{c})}
+  = \sum_{j,k} \alpha_{i(j)}\,\beta_j\,
+    \sqrt{\beta_j\beta_k}\, C_{q_j}(P_{jk}(c)),
+\]
+where $i(j)$ is the index with $q_j \le p_{i(j)}$.  Because $q_j$
+refines $p_i$, the coefficient factors as
+$\alpha_{i(j)}\sqrt{\beta_j\beta_k}$.  The same expansion for
+$\seqp{(\seqp{a}{b})}{c}$ yields the product
+$\seqp{a}{b} = \sum_j \alpha_{i(j)}\beta_j\, q_j$ (block-diagonal,
+since cross-terms vanish), and the identity
+$\sqrt{\alpha\beta \cdot \gamma\delta}
 = \sqrt{\alpha\gamma}\cdot\sqrt{\beta\delta}$
-for non-negative reals ensures compatibility of the mixing function. \qed
+for non-negative reals gives term-by-term equality. \qed
 
 %--------------------------------------------------------------------
 \subsection*{S6 (Additivity of Compatibility)}
 
 \begin{quote}
-\emph{If $a \compatible b$ then $a \compatible (\mathbf{1} - b)$; if
+\emph{If $a \compatible b$ then $a \compatible (\id - b)$; if
 also $a \compatible c$ then $a \compatible (b + c)$ whenever
-$b + c \le \mathbf{1}$.}
+$b + c \le \id$.}
 \end{quote}
 
 Both parts of S6 rest on two preliminary observations that reduce
@@ -214,7 +237,7 @@ $C_{p_i} \circ C_{q_j} = C_{p_i \wedge q_j}$.  Summing over $j$:
   = p_i,
 \]
 where the last equality uses the refinement property: since $\{q_j\}$
-resolves~$\mathbf{1}$ and each $q_j$ is compatible with~$p_i$, the
+resolves~$\id$ and each $q_j$ is compatible with~$p_i$, the
 meets $\{p_i \wedge q_j\}_j$ resolve~$p_i$.  Therefore
 $\sum_j C_{q_j}(a) = \sum_i \lambda_i \sum_j (p_i \wedge q_j) = a$,
 giving $P_1^{(b)}(a) = a - \sum_j C_{q_j}(a) = 0$.  Interchanging $a$
@@ -240,29 +263,29 @@ $C_{s_{i\ell}} \circ C_{p_{i'}} = 0$, both symmetric under composition
 reversal).  The corrected product formula then gives, using
 $C_{s_{i\ell}}(a) = \lambda_i\, s_{i\ell}$:
 \[
-  \sp{e}{a}
+  \seqp{e}{a}
   = \sum_{i,\ell} \delta_{i\ell}\, C_{s_{i\ell}}(a)
   = \sum_{i,\ell} \delta_{i\ell}\, \lambda_i\, s_{i\ell}
   = \sum_i \lambda_i\, C_{p_i}(e)
-  = \sp{a}{e},
+  = \seqp{a}{e},
 \]
 where the Peirce $1$-space terms vanish on both sides.
 \end{proof}
 
 \noindent\textbf{Part (i): $a \compatible b \implies a \compatible
-(\mathbf{1} - b)$.}
+(\id - b)$.}
 By Lemma~\ref{lem:peirce-vanish}, $P_1^{(a)}(b) = 0$.  Since
-$P_1^{(a)}(\mathbf{1}) = 0$ (the unit lies in the Peirce $2$-space) and
+$P_1^{(a)}(\id) = 0$ (the unit lies in the Peirce $2$-space) and
 $P_1^{(a)}$ is linear:
 \[
-  P_1^{(a)}(\mathbf{1} - b) = P_1^{(a)}(\mathbf{1}) - P_1^{(a)}(b) = 0.
+  P_1^{(a)}(\id - b) = P_1^{(a)}(\id) - P_1^{(a)}(b) = 0.
 \]
-By Proposition~\ref{prop:block-compat}, $a \compatible (\mathbf{1} - b)$.
+By Proposition~\ref{prop:block-compat}, $a \compatible (\id - b)$.
 \qed
 
 \medskip
 \noindent\textbf{Part (ii): $a \compatible b$ and $a \compatible c
-\implies a \compatible (b+c)$ when $b + c \le \mathbf{1}$.}
+\implies a \compatible (b+c)$ when $b + c \le \id$.}
 By Lemma~\ref{lem:peirce-vanish}, $P_1^{(a)}(b) = 0$ and
 $P_1^{(a)}(c) = 0$.  By linearity:
 \[
@@ -275,10 +298,10 @@ By Proposition~\ref{prop:block-compat}, $a \compatible (b+c)$. \qed
 
 \begin{quote}
 \emph{If $a \compatible b$ and $a \compatible c$ then
-$a \compatible \sp{b}{c}$.}
+$a \compatible \seqp{b}{c}$.}
 \end{quote}
 
-We show that $\sp{b}{c}$ has zero Peirce $1$-space component in $a$'s
+We show that $\seqp{b}{c}$ has zero Peirce $1$-space component in $a$'s
 decomposition, then invoke
 Proposition~\ref{prop:block-compat}.
 
@@ -301,10 +324,10 @@ $C_{p_i} \circ C_{q_j + q_{j'}} = C_{p_i \wedge (q_j + q_{j'})}
 Therefore $C_{p_i}$ commutes with
 $Q_{jj'} = C_{q_j + q_{j'}} - C_{q_j} - C_{q_{j'}}$.
 
-\emph{Step 2: Compute $\sum_i C_{p_i}(\sp{b}{c})$.}
-Expanding $\sp{b}{c}$ via~\eqref{eq:sp-explicit} and using linearity:
+\emph{Step 2: Compute $\sum_i C_{p_i}(\seqp{b}{c})$.}
+Expanding $\seqp{b}{c}$ via~\eqref{eq:sp-explicit} and using linearity:
 \[
-  \sum_i C_{p_i}\!\bigl(\sp{b}{c}\bigr)
+  \sum_i C_{p_i}\!\bigl(\seqp{b}{c}\bigr)
   = \sum_j \mu_j\, C_{q_j}\!\Bigl(\sum_i C_{p_i}(c)\Bigr)
   + \sum_{j<j'} \sqrt{\mu_j\mu_{j'}}\; Q_{jj'}\!\Bigl(\sum_i C_{p_i}(c)\Bigr),
 \]
@@ -312,17 +335,17 @@ where we used Step~1 to pull $\sum_i C_{p_i}$ through the maps $C_{q_j}$
 and $Q_{jj'}$.  By Lemma~\ref{lem:peirce-vanish}, $a \compatible c$
 gives $\sum_i C_{p_i}(c) = c$.  Therefore
 \[
-  \sum_i C_{p_i}\!\bigl(\sp{b}{c}\bigr)
+  \sum_i C_{p_i}\!\bigl(\seqp{b}{c}\bigr)
   = \sum_j \mu_j\, C_{q_j}(c) + \sum_{j<j'} \sqrt{\mu_j\mu_{j'}}\;
     Q_{jj'}(c)
-  = \sp{b}{c}.
+  = \seqp{b}{c}.
 \]
 
 \emph{Conclusion.}
-$P_1^{(a)}\!\bigl(\sp{b}{c}\bigr)
-= \sp{b}{c} - \sum_i C_{p_i}\!\bigl(\sp{b}{c}\bigr) = 0$.
+$P_1^{(a)}\!\bigl(\seqp{b}{c}\bigr)
+= \seqp{b}{c} - \sum_i C_{p_i}\!\bigl(\seqp{b}{c}\bigr) = 0$.
 By Proposition~\ref{prop:block-compat},
-$a \compatible \sp{b}{c}$. \qed
+$a \compatible \seqp{b}{c}$. \qed
 
 %--------------------------------------------------------------------
 \bigskip
@@ -331,7 +354,7 @@ With S1--S7 verified, we invoke the central classification result:
 
 \begin{theorem}[{EJA classification; \cite[Theorem~1]{vandeWetering2019b}}]
 \label{thm:EJA}
-Let $(V, \le, \mathbf{1})$ be a finite-dimensional order unit space
+Let $(V, \le, \id)$ be a finite-dimensional order unit space
 admitting a sequential product satisfying S1--S7. Then $V$ is
 order-isomorphic to a Euclidean Jordan algebra.
 \end{theorem}
@@ -343,9 +366,9 @@ spin factors $V_n$, and the exceptional Albert algebra
 $M_3(\mathbb{O})^{\mathrm{sa}}$.
 
 \begin{remark}[Non-associativity]
-The sequential product $\sp{a}{b}$ is non-associative for general
+The sequential product $\seqp{a}{b}$ is non-associative for general
 (non-compatible) effects: there exist triples $(a,b,c)$ with
-$\sp{(\sp{a}{b})}{c} \ne \sp{a}{(\sp{b}{c})}$. This is consistent with
+$\seqp{(\seqp{a}{b})}{c} \ne \seqp{a}{(\seqp{b}{c})}$. This is consistent with
 S5, which requires associativity only for compatible pairs. By the theorem
 of Westerbaan, Westerbaan, and van de
 Wetering~\cite{WesterbaanWesterbaanVdW2020}, associativity would force

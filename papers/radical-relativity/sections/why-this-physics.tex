@@ -108,6 +108,21 @@ trace-form non-degeneracy), an honest cost recorded in
 Sec.~\ref{subsec:obj-gaps}.
 \end{remark}
 
+\begin{remark}[Converse direction]
+\label{rem:converse}
+Step~5 of the non-composability argument uses the converse of Paper~5's
+main theorem: every $\Mnsa{n}$ admits a faithful self-model.  The
+construction is explicit: take $V_M = V_B = \Mnsa{n}$, $\varphi =
+\mathrm{id}$, and equip the composite with the standard quantum tensor
+product $\Mnsa{n} \otimes \Mnsa{n} = \Mnsa{n^2}$.  For complex matrix
+algebras, the minimal and maximal composites
+coincide~\citep{bgw2020}, so the minimal-composite assumption~(A3) is
+automatically satisfied.  Together with Paper~5's forward direction
+(self-modeling forces $\Mnsa{n}$), this gives: \emph{a
+finite-dimensional spectral order-unit space admits a faithful
+self-model if and only if it is $\Mnsa{n}$ for some $n \ge 2$.}
+\end{remark}
+
 \textbf{The gauge group.}  $\mathrm{Aut}(\hthree) = \Ffour$.  An
 observer, modeled as a $C^*$-subsystem
 (Paper~5~\citep{ehrlich2026qm}), picks a rank-1 idempotent $E_{11}
@@ -144,7 +159,7 @@ Overwhelmingly plausible; not a theorem; perhaps not closeable as one
 (Sec.~\ref{subsec:obj-gaps}).
 
 \begin{claim}[Uniqueness of $\rhoJ$]
-\label{claim:rhoJ}
+\label{claim:rhoJ}\label{rem:rho-h3o}
 Within $\hthree$, the heuristic density~\eqref{eq:rho} resolves
 uniquely.  Paper~1~\citep{ehrlich2026measure} proves:
 $\rhoJ(X) = \det(X) \cdot (\mathrm{Tr}(X^2) - \tfrac{1}{3})$ is the

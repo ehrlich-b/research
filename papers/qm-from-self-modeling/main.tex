@@ -5,10 +5,10 @@
 \documentclass[11pt]{article}
 \usepackage{preamble}
 
-\title{Quantum Mechanics from Self-Modeling:\\
-Deriving Complex $C^*$-Algebraic Structure\\from a Single Operational Premise}
+\title{Faithful Self-Modeling Is Complex Quantum Mechanics}
 
-\author{Bryan Ehrlich}
+\author{Bryan Ehrlich\footnote{Independent researcher.
+  Electronic mail: bryan@ehrlich.dev}}
 \date{}
 
 \begin{document}
@@ -16,26 +16,26 @@ Deriving Complex $C^*$-Algebraic Structure\\from a Single Operational Premise}
 \maketitle
 
 \begin{abstract}
-We show that a finite-dimensional system admitting a faithful
-self-model---an isomorphic copy through which the system can probe and
-update its own state---is necessarily governed by complex quantum
-mechanics.  Starting from a single operational premise (faithful
-self-modeling) and four standing structural assumptions, we construct
-a sequential product on
-the system's effect algebra using compressions and Peirce
-decompositions.  This product satisfies the seven axioms of van de
-Wetering, forcing the state space to be a Euclidean Jordan algebra.
-The faithful self-modeling constraint further implies local tomography
-for the body--model composite, which excludes all non-complex Jordan
-types and promotes the algebra to $\Mnsa{n}$ equipped with the
-L\"uders sequential product and conjugate-transpose involution.  The
-result distinguishes this work from other reconstruction programs,
-which typically require 3--6 independent axioms and often assume local
-tomography or the complex field.  Our derivation requires a single
-operational premise and four standing structural assumptions
-(finite-dimensionality, faithfulness, minimal composite, simple EJA).
-We argue that these assumptions are not independent design choices but
-structural consequences of self-modeling in a finite-capacity system.
+Faithful self-modeling \emph{is} complex quantum mechanics.  We
+formalize self-modeling as four conditions on a finite-capacity
+system (Definition~\ref{def:self-modeling-system})---none of which
+mention complex numbers, Hilbert spaces, or Born probabilities---and
+prove that every self-modeling system is isomorphic to $\Mnsa{n}$
+with the L\"uders product.  The complex field, $C^{*}$-involution,
+and full algebraic structure of quantum theory are consequences of
+the definition, not inputs.  The proof builds a sequential product
+from the system's own internal structure, verifies van de
+Wetering's axioms to obtain Jordan algebra structure, then shows
+that only complex systems admit the body--model composite the
+definition requires---excluding every non-complex alternative.
+Where other reconstruction programs require 3--6 independent axioms
+and typically assume the complex field or local tomography as input,
+here the complex field is derived and local tomography follows from
+the internal-accessibility requirement built into the definition.  The downstream derivation chain (EJA classification through
+$C^{*}$-promotion) is machine-verified in Lean~4 with Mathlib
+(0~\texttt{sorry}); three of its four axioms correspond to published
+theorems of van de Wetering and Alfsen--Shultz, and one bridges the
+novel construction of Sections~3--4 to the formalized framework.
 \end{abstract}
 
 
@@ -45,17 +45,18 @@ structural consequences of self-modeling in a finite-capacity system.
 \section{Introduction}
 \label{sec:intro}
 
-A finite-dimensional physical system that faithfully models itself is
-necessarily governed by complex quantum mechanics.  More precisely, if
-the state space of a system admits a faithful self-model---an
-isomorphic copy through which the system can operationally probe and
-update its own state---then the state space is $\Mnsa{n}$ for some
-$n$, the algebra of self-adjoint $n \times n$ complex matrices,
-equipped with the L\"uders sequential product
+Faithful self-modeling and complex quantum mechanics are the same
+thing.  We formalize self-modeling as four conditions on a
+finite-dimensional system---spectral state space, faithful internal
+tracking, minimal body--model composite, and irreducibility---none
+of which mention complex numbers, Hilbert spaces, or $C^{*}$-algebras.
+We then prove that every system satisfying these conditions is
+isomorphic to $\Mnsa{n}$, the self-adjoint $n \times n$ complex
+matrices equipped with the L\"uders sequential product
 $\seqp{a}{b} = \sqrt{a}\, b\, \sqrt{a}$ and the conjugate-transpose
-involution $X^{*} = X^{\dagger}$.  No assumption about the complex
-field, Hilbert space structure, or $C^{*}$-algebraic operations enters
-the premises; all of these emerge as consequences.
+involution $X^{*} = X^{\dagger}$.  The complex field, Born-rule
+structure, and $C^{*}$-involution all emerge as consequences of the
+self-modeling definition.
 
 This result contributes to the quantum reconstruction program, which
 seeks to derive the mathematical framework of quantum theory from
@@ -79,12 +80,21 @@ such as local tomography---is assumed rather than derived.
 Our main result can be stated informally as follows.
 
 \begin{theorem}[Main result, informal]\label{thm:main-informal}
-  If a finite-dimensional system's state space admits a faithful
-  self-model---an order-isomorphic copy through which the system can
-  test effects, update its model, and test again---then the state
-  space is $\Mnsa{n}$ for some $n \geq 2$, equipped with the
-  L\"uders sequential product and conjugate-transpose involution.
+  Every self-modeling system
+  (Definition~\ref{def:self-modeling-system}) is isomorphic to
+  $\Mnsa{n}$ for some $n \geq 2$, equipped with the L\"uders
+  sequential product and conjugate-transpose involution.
 \end{theorem}
+
+\noindent
+The converse is immediate: $\Mnsa{n}$ admits a faithful self-model
+(take $\varphi = \mathrm{id}$, with the standard tensor product as
+composite).  The result is therefore a \emph{characterization}: among
+finite-dimensional spectral order unit spaces, self-modeling systems
+are exactly the complex matrix algebras.  The content of the theorem
+is the forward direction---that four conditions about self-modeling,
+none of which mention complex numbers or Hilbert spaces, turn out to
+characterize exactly the systems that have them.
 
 The derivation proceeds through a chain of implications:
 self-modeling $\to$ sequential product construction $\to$ axiom
@@ -99,24 +109,25 @@ mechanism of this work against the major reconstruction programs.
 
 \begin{table}[ht]
 \centering
-\caption{Comparison of quantum reconstruction programs.  ``Premises''
-counts independent operational postulates.  Our premise
-requires four standing structural assumptions (see
-Assumptions~\ref{ass:finite}--\ref{ass:simple}); maximal coherence
-of the Peirce feedback is derived from \ref{ax:S5}, not assumed.}
+\caption{Comparison of quantum reconstruction programs.  $\mathbb{C}$:
+complex field; Born: Born-rule structure; $C^{*}$: full
+$C^{*}$-algebraic structure including involution.  A = assumed,
+D = derived.  Framework: GPT = generalized probabilistic theory,
+OPT = operational-probabilistic theory, OUS = order unit space with
+Alfsen--Shultz compressions.  Our
+Definition~\ref{def:self-modeling-system} packages four conditions
+(see text); the richer OUS framework is part of the input.}
 \label{tab:comparison}
-\smallskip
-\begin{tabular}{@{}llcl@{}}
+\smallskip\small
+\begin{tabular}{@{}llcccc@{}}
 \toprule
-Program & Year & Premises & Complex selection \\
+Program & Input & $\mathbb{C}$ & Born & $C^{*}$ & Framework \\
 \midrule
-Hardy~\cite{Hardy2001} & 2001 & 5 & Simplicity axiom \\
-Chiribella--D'Ariano--Perinotti~\cite{CDP2011} & 2011 & 6 & Purification \\
-Daki\'c--Brukner~\cite{DakicBrukner2011} & 2011 & 4 & Local tomography (assumed) \\
-Masanes--M\"uller~\cite{MasanesMueller2013} & 2013 & 3 & Tomographic locality (assumed) \\
-Barnum--M\"uller--Ududec~\cite{BarnumMuellerUdudec2014} & 2014 & 4 & Energy observability \\
-Selby--Scandolo--Coecke~\cite{SelbyScandaloCoecke2021} & 2021 & ${\sim}6$ & Symmetric purification \\
-\textbf{This work} & \textbf{2026} & \textbf{1} & \textbf{Derived (LT from faithful tracking)} \\
+Hardy~\cite{Hardy2001} & 5 axioms & A & D & A & GPT \\
+CDP~\cite{CDP2011} & 6 axioms & D & D & A & OPT \\
+Masanes--M\"uller~\cite{MasanesMueller2013} & 3 postulates & A & D & A & GPT \\
+BMU~\cite{BarnumMuellerUdudec2014} & 4 postulates & D & D & A & GPT \\
+\textbf{This work} & \textbf{Def.~\ref{def:self-modeling-system} (4 conds.)} & \textbf{D} & \textbf{D} & \textbf{D} & \textbf{OUS} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -129,8 +140,8 @@ The paper is organized as follows.
 decompositions, sequential products, and the self-modeling definition.
 \Cref{sec:sp} presents the main novel construction: the self-modeling
 sequential product, the naive extension and its failure, the corrected
-product via Peirce feedback, and the faithful self-modeling selection
-principle.
+product via Peirce feedback, and the determination of the mixing
+function.
 \Cref{sec:axioms} verifies that the corrected product satisfies
 axioms S1--S7 of van de Wetering~\cite{vandeWetering2019b}.
 \Cref{sec:composite} constructs the body--model composite, proves
@@ -141,17 +152,19 @@ of van de Wetering, Barnum--Wilce, and Hanche-Olsen.
 \Cref{sec:discussion} discusses the scope and limitations of the
 result.
 
-We close this introduction with an honest statement of scope.  Our
-result holds for finite-dimensional systems
-(\Cref{ass:finite}), assumes a faithful self-model exists
-(\Cref{ass:faithful}), uses the minimal composite construction
-(\Cref{ass:minimal}), and restricts to simple Euclidean Jordan
-algebras (\Cref{ass:simple}).  The claim is therefore: \emph{one
-operational premise plus four standing structural assumptions derive
-complex quantum mechanics.}  We argue in \Cref{sec:discussion} that
-these structural assumptions are not independent design choices but
-consequences of what it means to be a faithful self-modeler in a
-finite-capacity system.
+We close this introduction with an honest statement of scope.
+Definition~\ref{def:self-modeling-system} formalizes ``self-modeling
+system'' as four conditions, each unpacking one word of the phrase:
+\emph{system} (finite-dimensional, spectral),
+\emph{modeling} (faithful tracking),
+\emph{self-}\ (internal, minimal composite), and
+\emph{the whole} (simple, irreducible).
+Remove any condition and the concept of self-modeling breaks; add
+any condition and you assume more than self-modeling requires.
+\Cref{subsec:unified} develops this argument in detail.  The
+definition characterizes \emph{composable} self-modelers (subsystems
+that can participate in composites); the non-composable case (the
+``self-modeling basin'') is treated in a companion paper~\cite{ehrlich2026sm}.
 
 
 %% =====================================================================
@@ -191,10 +204,9 @@ $[0,1]$.  This decomposition exists as a property of the OUS lattice
 structure~\cite{AlfsenShultz2003}, prior to and independent of any
 sequential product.
 
-\begin{assumption}[Finite-dimensional spectral OUS]\label{ass:finite}
-  The system's state space is described by a finite-dimensional
-  spectral order unit space $(V, V^{+}, \id)$.
-\end{assumption}
+% Clause (i) of Definition~\ref{def:self-modeling-system}.
+% Label retained for backward compatibility with cross-references.
+\phantomsection\label{ass:finite}%
 
 
 \subsection{Compressions and Peirce Decomposition}
@@ -302,13 +314,13 @@ finite-dimensional Euclidean Jordan algebras yields five types:
 $\Mnsa{n}$ over $\mathbb{R}$, $\mathbb{C}$, or $\mathbb{H}$; the
 spin factors $\spinfactor{n}$; and the exceptional Albert algebra
 $M_{3}(\mathbb{O})\sa$.  Our task is to show that self-modeling
-selects the complex type uniquely.
+is complex quantum mechanics.
 
 
-\subsection{Self-Modeling}
+\subsection{Self-Modeling Systems}
 \label{sec:self-modeling}
 
-We now introduce the central operational premise.
+We now introduce the central definition.
 
 Consider a physical system $B$ (the ``body'') described by a
 finite-dimensional spectral OUS $(V_{B}, V_{B}^{+}, \id_{B})$.  A
@@ -326,19 +338,67 @@ map}) that encodes the operational cycle:
 The composite outcome of this cycle---``first $p$, then $b$''---defines
 a binary operation on the effect space of $B$.
 
-\begin{assumption}[Faithful self-model]\label{ass:faithful}
-  The tracking map $\varphi: V_{B} \to V_{M}$ is an order
-  isomorphism.  That is, $M$ is a faithful copy of $B$: it has the
-  same dimension, the same order structure, and the same effect space,
-  up to relabeling.
-\end{assumption}
+\begin{definition}[Self-modeling system]\label{def:self-modeling-system}
+  A \emph{self-modeling system} is a tuple $(V, \varphi, V_{BM})$
+  satisfying:
+  \begin{enumerate}[label=(\roman*)]
+    \item\label{sms:finite} $V$ is a nontrivial finite-dimensional
+      spectral order unit space (i.e., $V$ has at least two
+      orthogonal nontrivial projective units);
+    \item\label{sms:faithful} $\varphi: V_{B} \to V_{M}$ is an
+      order isomorphism (faithful tracking);
+    \item\label{sms:minimal} $V_{BM}$ is the minimal composite OUS
+      carrying product states, product effects, non-signaling
+      constraints, and product-form sequential product;
+    \item\label{sms:simple} $V$ has no nontrivial direct-sum
+      decomposition: there is no splitting $V = V_1 \oplus V_2$ into
+      nonzero order-unit subspaces.
+  \end{enumerate}
+\end{definition}
 
-This is the sole operational premise.  Faithful self-modeling means
-the system possesses a complete internal representation of itself, one
-that preserves all operationally accessible structure.  Approximate or
-partial self-models (where $\varphi$ is merely positive or injective
-but not surjective) might yield weaker algebraic structures; we do not
-pursue this here.
+Each clause unpacks one word of the concept:
+\begin{itemize}[nosep]
+  \item \emph{System} \ref{sms:finite}: has states, measurements,
+    distinguishable outcomes.  Finite because a self-modeler in a
+    finite region has finite information
+    capacity~\cite{Bekenstein1981}.  Nontriviality excludes the
+    degenerate case $V \cong \mathbb{R}$ (no nontrivial projective
+    units, vacuous Peirce structure): a system with nothing to
+    distinguish has nothing to model.  All non-complex types with
+    nontrivial projective units are excluded by the local
+    tomography argument (Theorem~\ref{thm:local-tomo}), not by the
+    definition.
+  \item \emph{Modeling} \ref{sms:faithful}: the internal model is
+    accurate---an order isomorphism preserves all operationally
+    accessible structure.
+  \item \emph{Self-}\ \ref{sms:minimal}: the model is internal.
+    The only measurements available to the self-modeler are product
+    measurements on the body and model.  If the body--model composite
+    carried states that product measurements could not distinguish,
+    those states would be opaque to the self-modeler---aspects of its
+    own composite that it cannot probe or model.  Minimality says:
+    the composite has no such hidden structure.  The product-form
+    sequential product (Definition~\ref{def:product-sp}) encodes
+    non-signaling: testing the body and updating the model are
+    independent operations on separate subsystems.
+  \item \emph{The whole} \ref{sms:simple}: a direct-sum algebra
+    decomposes into sectors invisible to each other; a system in one
+    sector cannot model another.  Simplicity is the algebraic
+    expression of ``whole models whole.''
+\end{itemize}
+Remove any clause and the concept of self-modeling breaks.  Add any
+clause and you have assumed more than self-modeling requires.
+
+\begin{remark}
+  Approximate or partial self-models (where $\varphi$ is merely
+  positive or injective but not surjective) might yield weaker
+  algebraic structures; we do not pursue this here.
+  Definition~\ref{def:self-modeling-system} characterizes
+  \emph{composable} self-modelers---subsystems that can participate
+  in composites.  The non-composable case
+  ($h_{3}(\mathbb{O})$, which admits no composite at all) is treated
+  in a companion paper~\cite{ehrlich2026sm}.
+\end{remark}
 
 
 %% =====================================================================
@@ -447,17 +507,24 @@ $f: [0,1] \times [0,1] \to \mathbb{R}$ to be determined.
 \emph{Why this form is forced.}
 By \ref{ax:S1}, $\seqp{a}{\cdot}$ is a linear endomorphism of~$V$.
 The Peirce decomposition with respect to the spectral projectors of~$a$
-decomposes $V$ into subspaces $V_2(p_i)$ and $V_1(p_i, p_j)$.  Since
-compressions are projections onto these subspaces
-(Alfsen--Shultz~\cite{AlfsenShultz2003}), linearity forces
-$\seqp{a}{\cdot}$ to act by a scalar on each Peirce subspace.  The
-sharp constraint $\seqp{p}{b} = \comp{p}(b)$ pins the Peirce $2$-space
-scalars to eigenvalues by coalescence (letting $\lambda_i \to \lambda_j$
-and applying \ref{ax:S2}).  Thus~\eqref{eq:general-product} is the
-unique form compatible with \ref{ax:S1}, \ref{ax:S2}, and the
-sharp constraint; only the Peirce $1$-space
-scalars~$f(\lambda_i, \lambda_j)$ remain free.  The detailed
-computation appears in \Cref{app:proofs}.
+decomposes $V$ into subspaces $V_2(p_i)$ and $V_1(p_i, p_j)$.
+Compressions project onto these subspaces
+(Alfsen--Shultz~\cite{AlfsenShultz2003}), so linearity gives a block
+decomposition: $\seqp{a}{\cdot}$ maps each Peirce subspace to itself.
+On $V_2(p_i)$, the sharp constraint $\seqp{p_i}{b} = \comp{p_i}(b)$
+and coalescence ($\lambda_i \to \lambda_j$ via \ref{ax:S2}) fix the
+action to $\lambda_i \comp{p_i}(\cdot)$.  On $V_1(p_i, p_j)$, the
+action is a linear endomorphism $E_{ij}(\lambda_i, \lambda_j)$ of
+$V_1(p_i, p_j)$, depending continuously on the eigenvalues by
+\ref{ax:S2}.  In Proposition~\ref{prop:coherence}, we prove that
+compatible associativity (\ref{ax:S5}), eigenvalue symmetry, and
+coalescence force $E_{ij}$ to be a scalar multiple of the identity
+on each $V_1(p_i, p_j)$: that is,
+$E_{ij}(\lambda_i, \lambda_j) = f(\lambda_i, \lambda_j) \cdot
+\peirce{ij}$ for a single mixing function~$f$, simultaneously
+determining $f = \sqrt{\lambda_i\, \lambda_j}$.
+Thus~\eqref{eq:general-product} is the unique form compatible with
+\ref{ax:S1}--\ref{ax:S5} and the sharp constraint.
 
 The mixing function is constrained by the requirement that the product
 map effects to effects: $0 \leq \seqp{a}{b} \leq \id$ for all effects
@@ -480,68 +547,119 @@ $a, b$.  This yields a \emph{positivity bound}.
   the Schur complement criterion gives
   $|f(\lambda_{i}, \lambda_{j})| \leq \sqrt{\lambda_{i}\,
   \lambda_{j}}$.  Face effects embed into global effects, so the
-  bound lifts to the full space.  The detailed computation appears
-  in \Cref{app:proofs}.
+  bound lifts to the full space.
 \end{proof}
 
-Any mixing function satisfying~\eqref{eq:pos-bound} with
-$f(1, \lambda) = \lambda$ and $f(0, \lambda) = 0$ yields a product
-that maps effects to effects and satisfies \ref{ax:S3}.  The question
-is: \emph{which} $f$ does self-modeling select?
+For the saturating choice $f = \sqrt{\lambda_i\, \lambda_j}$
+(Proposition~\ref{prop:coherence}), the product maps effects to
+effects globally: the coefficient matrix
+$[M_{ij}]$ with $M_{ij} = \sqrt{\lambda_i\, \lambda_j}$ factors as
+$vv^{T}$ with $v_i = \sqrt{\lambda_i}$, hence is positive
+semidefinite.  Together with positivity of compressions, this gives
+$\seqp{a}{b} \geq 0$ when $a, b \geq 0$; the upper bound
+$\seqp{a}{b} \leq \id$ follows from \ref{ax:S1} (additivity in~$b$)
+and \ref{ax:S3} (unitality), both verified in \Cref{sec:axioms}.
 
 
-\subsection{Faithful Self-Modeling Selects the Maximum}
+\subsection{Determining the Mixing Function}
 \label{sec:sp-faithful}
 
-The faithful self-modeling constraint of \Cref{ass:faithful} selects
-the mixing function that saturates the positivity bound.
+As shown in Section~\ref{sec:sp-corrected}, the self-modeling
+construction provides a product whose action on each Peirce
+$1$-space $V_1(p_i, p_j)$ is an undetermined linear endomorphism
+$E_{ij}(\lambda_i, \lambda_j)$.  We now show that internal
+consistency forces $E_{ij}$ to be scalar and uniquely
+determines the scalar.
 
-\begin{proposition}[Maximal coherence]\label{prop:coherence}
-  The mixing function saturates the positivity bound:
+\begin{proposition}[Scalar action and maximal coherence]\label{prop:coherence}
+  The action of $\seqp{a}{\cdot}$ on each Peirce $1$-space
+  $V_1(p_i, p_j)$ is scalar multiplication by
+  $\sqrt{\lambda_i\, \lambda_j}$:
   \begin{equation}\label{eq:faithful-f}
-    f(\lambda_{i}, \lambda_{j}) =
-    \sqrt{\lambda_{i}\, \lambda_{j}}.
+    E_{ij}(\lambda_i, \lambda_j)
+    = \sqrt{\lambda_{i}\, \lambda_{j}} \cdot \mathrm{Id}_{V_1(p_i, p_j)}.
   \end{equation}
+  In particular, the mixing function is
+  $f(\lambda_i, \lambda_j) = \sqrt{\lambda_i\, \lambda_j}$
+  and the product has the form~\eqref{eq:general-product}.
 \end{proposition}
 
 \begin{proof}
-  Let $f$ be any continuous mixing function satisfying the
-  positivity bound~\eqref{eq:pos-bound}.  For compatible
-  $a = \alpha_{1} p_{1} + \alpha_{2} p_{2}$ and
-  $b = \beta_{1} p_{1} + \beta_{2} p_{2}$ sharing an eigenbasis, \ref{ax:S5}
-  requires $\seqp{a}{(\seqp{b}{d})} = \seqp{(\seqp{a}{b})}{d}$ for
-  all effects $d$.  Comparing the Peirce $1$-space coefficients of both
-  sides gives the multiplicative functional equation
-  \begin{equation}\label{eq:func-eq}
-    f(\alpha_{1}, \alpha_{2})\, f(\beta_{1}, \beta_{2})
-    = f(\alpha_{1}\beta_{1},\; \alpha_{2}\beta_{2}).
+  The argument treats \ref{ax:S5} as a \emph{consistency constraint}:
+  we seek the endomorphisms $E_{ij}$ for which the resulting product
+  satisfies \ref{ax:S5}.
+  (Once $E_{ij}$ is determined, \Cref{sec:axioms} verifies S1--S7 in
+  full; the logic is not circular.)
+
+  \emph{Step 1: Multiplicative composition.}
+  For compatible $a = \alpha_1 p_1 + \alpha_2 p_2$ and
+  $b = \beta_1 p_1 + \beta_2 p_2$ sharing an eigenbasis, imposing
+  \ref{ax:S5}---i.e., requiring
+  $\seqp{a}{(\seqp{b}{d})} = \seqp{(\seqp{a}{b})}{d}$ for all
+  effects~$d$---and comparing the action on $V_1(p_1, p_2)$ gives
+  \begin{equation}\label{eq:endo-compose}
+    E(\alpha_1, \alpha_2) \circ E(\beta_1, \beta_2)
+    = E(\alpha_1 \beta_1,\; \alpha_2 \beta_2),
   \end{equation}
-  With the boundary conditions $f(1, \lambda) = \lambda$
-  and $f(0, \lambda) = 0$ (from \ref{ax:S3} and positivity),
-  factorization gives $f(x, y) = g(x)\, h(y)$ where $g$ and $h$ are
-  continuous multiplicative functions on $[0,1]$.  By the
-  multiplicative Cauchy theorem on $\mathbb{R}_{> 0}$, each is a
-  power: $g(x) = x^{s}$, $h(y) = y^{t}$.  The boundary condition
-  $f(1, \lambda) = \lambda$ forces $t = 1 - s$; symmetry of the
-  positivity bound under $(i, j) \leftrightarrow (j, i)$ gives
-  $s = t$, hence $s = t = 1/2$.  Therefore
-  $f(\lambda_{i}, \lambda_{j}) = \sqrt{\lambda_{i}\, \lambda_{j}}$.
+  where $E = E_{12}$ and $\circ$ denotes composition of
+  endomorphisms of $V_1(p_1, p_2)$.
+
+  \emph{Step 2: Factorization.}
+  Define $h(x) = E(x, 1)$ and $k(y) = E(1, y)$.
+  Equation~\eqref{eq:endo-compose} gives $h(x_1)h(x_2) = h(x_1 x_2)$
+  and $k(y_1)k(y_2) = k(y_1 y_2)$, so $h$ and $k$ are continuous
+  multiplicative maps $(0,1] \to \mathrm{End}(V_1)$.  Setting
+  $\alpha_2 = \beta_1 = 1$ gives
+  $E(x, y) = h(x)\, k(y)$, and $h$, $k$ commute (both orderings
+  give $E(x, y)$).  Every continuous multiplicative homomorphism
+  $(0,1] \to \mathrm{GL}(W)$ on a finite-dimensional space~$W$ has the
+  form $t \mapsto t^{A} = \exp(A \ln t)$ for some
+  $A \in \mathrm{End}(W)$ (Acz\'el~\cite{Aczel1966}, Ch.~4).
+  Applied to $h$ and~$k$:
+  $h(x) = x^{A}$ and $k(y) = y^{B}$ for matrices $A$, $B$ with
+  $[A, B] = 0$.
+
+  \emph{Step 3: Symmetry.}
+  The Peirce $1$-space $V_1(p_1, p_2) = V_1(p_2, p_1)$ is the same
+  subspace regardless of index order.
+  The product sums over unordered pairs, so
+  $E(x, y) = E(y, x)$ as endomorphisms.  This gives
+  $x^A\, y^B = y^A\, x^B$ for all $x, y > 0$, which forces $A = B$.
+  Hence $E(x, y) = (xy)^A$.
+
+  \emph{Step 4: Coalescence.}
+  By \ref{ax:S2}, as $\lambda_1 \to \lambda_2 = \lambda$, the product
+  reduces to $\seqp{(\lambda\id)}{b} = \lambda b$, giving
+  \begin{equation}\label{eq:coalescence}
+    E(\lambda, \lambda) = \lambda \cdot \mathrm{Id}
+    \qquad \text{for all } \lambda \in (0,1].
+  \end{equation}
+  Substituting $E(\lambda, \lambda) = (\lambda^2)^A = \lambda^{2A}$
+  and comparing with $\lambda\, \mathrm{Id} = \lambda^{\mathrm{Id}}$
+  gives $2A = \mathrm{Id}$, so $A = \tfrac{1}{2}\, \mathrm{Id}$.
+  Therefore
+  $E(x, y) = (xy)^{\mathrm{Id}/2}
+  = \sqrt{xy}\, \mathrm{Id}$.
+
+  The endomorphism is scalar, with
+  $f(\lambda_i, \lambda_j) = \sqrt{\lambda_i\, \lambda_j}$.
 \end{proof}
 
 \noindent
-The key step is the multiplicative functional
-equation~\eqref{eq:func-eq}: the mixing function must be
-\emph{multiplicatively homomorphic} in the eigenvalue pairs.
-Combined with continuity (\ref{ax:S2}) and the boundary conditions,
-this forces the unique solution
-$f = \sqrt{\lambda_{i}\, \lambda_{j}}$.  Note that maximal coherence
-is not an additional assumption: it is forced by the sequential
-product axioms.  The role of self-modeling in this result is
-\emph{constructive}: the tracking isomorphism~$\varphi$ provides
-the sequential product on which the axioms act
-(\Cref{sec:sp-def}).  Without~$\varphi$, there is no product to
-constrain; once the product exists, the axioms determine~$f$
-uniquely.
+To clarify the logical structure: Section~\ref{sec:sp-corrected}
+shows that linearity, continuity, and the sharp constraint force
+the product into a block-diagonal form with an undetermined
+endomorphism on each Peirce $1$-space.  The present proposition
+shows that \emph{requiring} \ref{ax:S5} (a necessary condition for
+any sequential product space) forces the endomorphism to be scalar
+and uniquely determines the scalar.
+Section~\ref{sec:axioms} then verifies all of S1--S7 for the
+resulting product with
+$f = \sqrt{\lambda_{i}\, \lambda_{j}}$, closing the loop.
+The role of self-modeling is constructive: the tracking
+isomorphism~$\varphi$ provides the product on which the axioms
+act.  Without~$\varphi$, there is no product to constrain; once
+the product exists, the axioms determine~$f$ uniquely.
 
 The corrected product with
 $f = \sqrt{\lambda_{i}\, \lambda_{j}}$ is:
@@ -563,29 +681,33 @@ $f = \sqrt{\lambda_{i}\, \lambda_{j}}$ is:
   bound and faithful self-modeling.
 \end{remark}
 
-\begin{remark}
-  The role of the tracking map $\varphi$ is now clear.  In the sharp
-  product~\eqref{eq:sharp-product}, $\varphi$ entered only as
-  physical interpretation.  In the corrected product, $\varphi$ is
-  algebraically essential: setting $f = 0$ (trivial model, no
-  feedback) recovers the failed naive extension, while setting
-  $f = \sqrt{\lambda_{i}\, \lambda_{j}}$ (faithful model, maximal
-  feedback) gives the corrected product.  Self-modeling quality
-  controls coherence.
+\begin{remark}[Division of labor]\label{rem:division}
+  The tracking map~$\varphi$ and the sequential-product axioms play
+  complementary roles.  Self-modeling provides the operational
+  justification for a binary product on effects (the
+  test--update--test cycle) and constrains its form to the
+  ansatz~\eqref{eq:general-product}.  The axioms---specifically
+  \ref{ax:S5}---then pin the mixing function uniquely.  Neither
+  ingredient suffices alone: without~$\varphi$, there is no product
+  to constrain; without~\ref{ax:S5}, the mixing function is
+  underdetermined.  Heuristically, $f = 0$ corresponds to a trivial
+  (non-faithful) model and $f = \sqrt{\lambda_{i}\, \lambda_{j}}$
+  to a faithful one, but we do not prove a quantitative theorem
+  linking the fidelity of~$\varphi$ to the value of~$f$; the
+  connection is that faithfulness of~$\varphi$ justifies seeking the
+  product that saturates the positivity
+  bound~\eqref{eq:pos-bound}, and \ref{ax:S5} identifies that
+  product uniquely.
 \end{remark}
 
-The remaining structural assumptions are:
-
-\begin{assumption}[Minimal composite]\label{ass:minimal}
-  The body--model composite $V_{BM}$ is the minimal order unit space
-  carrying product states, product effects, non-signaling constraints,
-  and a product-form sequential product.
-\end{assumption}
-
-\begin{assumption}[Simple EJA]\label{ass:simple}
-  The Euclidean Jordan algebra produced by \Cref{thm:vdw1} is simple
-  (it has no nontrivial Jordan ideal).
-\end{assumption}
+The remaining clauses of
+Definition~\ref{def:self-modeling-system}---minimality
+\ref{sms:minimal} and simplicity \ref{sms:simple}---enter
+in \Cref{sec:composite}.
+% Labels retained for backward compatibility with cross-references.
+\phantomsection\label{ass:faithful}%
+\phantomsection\label{ass:minimal}%
+\phantomsection\label{ass:simple}%
 
 
 \subsection{Circularity Check}
@@ -641,7 +763,18 @@ emerge as consequences of the classification theorems.
 
 \section*{Acknowledgments}
 
-[To be added.]
+The author thanks John van de Wetering for making his sequential
+product theorems publicly available and clearly stated, and the
+anonymous referees in advance for their scrutiny.
+
+\paragraph{AI disclosure.}
+This work used AI tools throughout: Claude (Anthropic) for
+exploratory mathematical conversations, literature search, manuscript
+drafting, and assistance with the Lean~4 formalization; GPT-5.4
+(OpenAI) for adversarial review of mathematical claims.  All
+definitions, theorems, proofs, and scientific conclusions are the
+author's.  The author takes full responsibility for the correctness
+and originality of the mathematical content.
 
 
 %% =====================================================================

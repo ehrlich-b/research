@@ -25,7 +25,7 @@ equipped with a sequential product satisfying S1--S7. The
   $V_B \otimes V_M$ (the algebraic tensor product of real vector
   spaces) as a subspace.
 \item[\emph{(C2)}] \textbf{Order unit.}
-  $\mathbf{1}_{BM} = \mathbf{1}_B \otimes \mathbf{1}_M$.
+  $\id_{BM} = \id_B \otimes \id_M$.
 \item[\emph{(C3)}] \textbf{Product states.}
   For every state $\omega_B$ on $V_B$ and $\omega_M$ on $V_M$, the
   product state $\omega_B \otimes \omega_M$ belongs to $\mathcal{S}(V_{BM})$,
@@ -33,17 +33,18 @@ equipped with a sequential product satisfying S1--S7. The
   = \omega_B(a)\,\omega_M(b)$.
 \item[\emph{(C4)}] \textbf{Non-signaling.}
   For every joint state $\omega \in \mathcal{S}(V_{BM})$, the marginals
-  $\omega_B(a) \coloneqq \omega(a\otimes\mathbf{1}_M)$ and
-  $\omega_M(b) \coloneqq \omega(\mathbf{1}_B\otimes b)$ are well-defined
+  $\omega_B(a) \coloneqq \omega(a\otimes\id_M)$ and
+  $\omega_M(b) \coloneqq \omega(\id_B\otimes b)$ are well-defined
   states, independent of what is measured on the other subsystem.
 \end{enumerate}
 \end{definition}
 
-\begin{assumption}[Minimal composite]\label{ass:minimal-composite}
+\noindent
+By Definition~\ref{def:self-modeling-system}\ref{sms:minimal},
 $V_{BM}$ is the \emph{minimal} order unit space satisfying
 (C1)--(C4) and the product-form sequential product
-(Definition~\ref{def:product-sp} below).
-\end{assumption}
+(Definition~\ref{def:product-sp} below).%
+\phantomsection\label{ass:minimal-composite}
 
 This construction uses only real vector spaces, compact convex state
 spaces, affine functionals, and the non-signaling constraint --- no
@@ -55,10 +56,10 @@ Hilbert space tensor products, complex numbers, or density matrices.
 \begin{definition}[Product-form SP]\label{def:product-sp}
 The sequential product on $V_{BM}$ is defined on product effects by
 \begin{equation}\label{eq:product-sp}
-  \sp{(a \otimes b)}{(c \otimes d)}
-  = (\sp{a}{c}) \otimes (\sp{b}{d}),
+  \seqp{(a \otimes b)}{(c \otimes d)}
+  = (\seqp{a}{c}) \otimes (\seqp{b}{d}),
 \end{equation}
-where $\sp{\cdot}{\cdot}$ on the right-hand side denotes the
+where $\seqp{\cdot}{\cdot}$ on the right-hand side denotes the
 factor-level sequential product~\eqref{eq:sp-explicit}.
 \end{definition}
 
@@ -75,17 +76,17 @@ of the tensor product. Axioms S5--S7 (compatible associativity,
 additivity, multiplicativity) reduce to the factor-level axioms because
 compatibility of product effects
 $a\otimes b$ and $c\otimes d$ follows from factor-wise compatibility
-$\sp{a}{c}=\sp{c}{a}$ and $\sp{b}{d}=\sp{d}{b}$.
+$\seqp{a}{c}=\seqp{c}{a}$ and $\seqp{b}{d}=\seqp{d}{b}$.
 
 The inheritance of S4 (orthogonality symmetry) is more subtle. If
-$\sp{(a\otimes b)}{(c\otimes d)} = 0$, then
-$(\sp{a}{c})\otimes(\sp{b}{d}) = 0$. In an order unit space, states
+$\seqp{(a\otimes b)}{(c\otimes d)} = 0$, then
+$(\seqp{a}{c})\otimes(\seqp{b}{d}) = 0$. In an order unit space, states
 separate points (Alfsen--Shultz~\cite{AlfsenShultz2003}, Theorem~1.23):
 for product states $\omega_B\otimes\omega_M$, the evaluation
-$\omega_B(\sp{a}{c})\,\omega_M(\sp{b}{d}) = 0$ for all
-$\omega_B,\omega_M$ forces either $\sp{a}{c} = 0$ or $\sp{b}{d} = 0$.
+$\omega_B(\seqp{a}{c})\,\omega_M(\seqp{b}{d}) = 0$ for all
+$\omega_B,\omega_M$ forces either $\seqp{a}{c} = 0$ or $\seqp{b}{d} = 0$.
 By the factor-level S4, the corresponding reverse products vanish, giving
-$\sp{(c\otimes d)}{(a\otimes b)} = 0$.
+$\seqp{(c\otimes d)}{(a\otimes b)} = 0$.
 \end{proof}
 
 \begin{remark}[Bootstrapping order]\label{rem:bootstrap}
@@ -101,7 +102,7 @@ this product carries EJA structure.  State separation
 (Theorem~\ref{thm:local-tomo}) then shows that the product effects
 $\{a_i \otimes b_j\}$ are linearly independent, giving
 $\dim(V_{BM}) \ge \dim(V_B) \cdot \dim(V_M)$.  Minimality
-(Assumption~\ref{ass:minimal-composite}) supplies the upper bound,
+(Definition~\ref{def:self-modeling-system}\ref{sms:minimal}) supplies the upper bound,
 yielding $V_{BM} = V_B \otimes V_M$.
 \end{remark}
 
@@ -114,11 +115,13 @@ Conceptually, faithful self-modeling ensures that body--model
 correlations carry full information (Proposition~\ref{prop:nondeg}
 below); the formal proof then uses state separation and minimality.
 
-\begin{assumption}[Simple EJA]\label{ass:simple-eja}
-The EJA $V$ is \emph{simple} (not a nontrivial direct sum of EJAs).
-\end{assumption}
-
-This assumption is needed for the non-degeneracy of the trace form below.
+\noindent
+By Definition~\ref{def:self-modeling-system}\ref{sms:simple},
+$V$ has no nontrivial direct-sum decomposition into order-unit
+subspaces.  Equivalently, once the EJA structure is established, $V$
+is simple.  This clause is needed for the non-degeneracy of the
+trace form below.%
+\phantomsection\label{ass:simple-eja}
 
 \begin{definition}[Correlation bilinear form]\label{def:corr-form}
 Let $\tau$ denote the normalized trace functional on the EJA~$V$
@@ -145,18 +148,20 @@ $B(a,b) = 0$ for all $a$, then $\varphi^{-1}(b) = 0$, hence $b=0$.
 \end{proof}
 
 \begin{remark}[Role of the correlation form]\label{rem:corr-role}
-Non-degeneracy of~$B$ ensures that every model effect~$b$ is
+Non-degeneracy of~$B$ provides intuition: every model effect~$b$ is
 correlated with some body effect~$a$ through the self-modeling
-isomorphism~$\varphi$.  This is the conceptual reason product
-measurements are tomographically complete: no body--model correlation
-is invisible to product-form observations.  The formal proof below
-establishes the same conclusion via state separation, which requires
-only the composite axioms (C1)--(C4) and avoids working with the
-bilinear form on the composite directly.
+isomorphism~$\varphi$, so no body--model correlation is invisible to
+product-form observations.  The formal proof of local tomography
+below does not use~$B$ directly; it proceeds via state separation
+(lower bound) and minimality (upper bound).  The correlation form
+serves as a consistency check that the self-modeling isomorphism
+supplies enough correlations for product measurements to be
+tomographically complete, but it is not a step in the proof.
 \end{remark}
 
 \begin{theorem}[Local tomography]\label{thm:local-tomo}
-Under Assumptions~\ref{ass:minimal-composite} and~\ref{ass:simple-eja},
+Under conditions~\ref{sms:minimal} and~\ref{sms:simple} of
+Definition~\ref{def:self-modeling-system},
 \[
   \dim(V_{BM}) \;=\; \dim(V_B)\cdot\dim(V_M).
 \]
@@ -196,12 +201,24 @@ all~$i, j$.  Hence the product effects are linearly independent and
 $\dim(V_{BM}) \ge d^2$.
 
 \emph{Upper bound.}
-By minimality (Assumption~\ref{ass:minimal-composite}), $V_{BM}$
-contains no structure beyond what is forced by (C1)--(C4) and the
-product-form SP\@.  The product effects span a $d^2$-dimensional
-subspace, and the SP preserves this subspace (product effects map to
-product effects under~\eqref{eq:product-sp}), so minimality gives
-$\dim(V_{BM}) \le d^2$.
+Let $W \subseteq V_{BM}$ be the $d^2$-dimensional span of the product
+effects $\{a_i \otimes b_j\}$.  The subspace $W$ inherits OUS
+structure from $V_{BM}$: it contains the order unit
+$\id_B \otimes \id_M$ (since $\id_B \in \spn\{a_i\}$ and
+$\id_M \in \spn\{b_j\}$), and the induced cone
+$W^+ = W \cap V_{BM}^+$ is proper (the product cone is contained
+in $W^+$ and generates~$W$).  We check that $W$, equipped with this
+induced order and the product-form sequential product, satisfies
+(C1)--(C4): product effects lie in $W$ by construction (C2);
+product states are positive functionals on $W$ (C3, by restriction);
+non-signaling holds because marginals factor through $V_B$ and $V_M$
+(C4); and the product-form SP maps $W$ into $W$ since
+$\seqp{(a \otimes b)}{(c \otimes d)} = (\seqp{a}{c}) \otimes
+(\seqp{b}{d})$ is again a product effect (C1).
+By minimality (Definition~\ref{def:self-modeling-system}\ref{sms:minimal}),
+$V_{BM}$ is the smallest OUS satisfying these axioms.  Since $W$
+satisfies them and has dimension $d^2$,
+we have $\dim(V_{BM}) \le d^2$.
 \end{proof}
 
 %--------------------------------------------------------------------
@@ -209,7 +226,7 @@ $\dim(V_{BM}) \le d^2$.
 
 The \emph{entangled sector} consists of states in $V_{BM}$ not reachable
 as convex combinations of product states. Minimality
-(Assumption~\ref{ass:minimal-composite}) eliminates this sector by
+(Definition~\ref{def:self-modeling-system}\ref{sms:minimal}) eliminates this sector by
 construction: $V_{BM}$ is defined as the smallest OUS satisfying the
 composite axioms, so it contains no ``hidden'' entangled structure beyond
 what the sequential product and non-signaling constraints require.

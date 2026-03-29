@@ -43,7 +43,7 @@ the contingent category: the self-modeling condition constrains the
 algebra ($A_F$, forced) but not the dynamics ($D_F$, where parameters
 live).  The viable parameter values likely form a manifold --- a
 ``ring around the basin'' --- not a unique point.  The experiential
-measure $\rho$ (Remark~\ref{rem:rho-h3o}) selects a position on this
+measure $\rho$ (Claim~\ref{claim:rhoJ}) selects a position on this
 ring, but the selection may
 have the same status as ``why this brain?'' rather than ``why
 gravity?''  3+1 dimensions and the SM gauge group are likely universal
@@ -120,11 +120,14 @@ constant may vary.
   finite-dimensional, but connecting this to the formalism is open
   work.
 
-\item \textbf{Lean formalization.}  Paper~5's chain has been
-  scaffolded in Lean~4.  Completing the formalization (removing all
-  \texttt{sorry} placeholders) would upgrade the chain from
-  ``verified by human review and adversarial testing'' to ``machine
-  verified.''
+\item \textbf{Lean formalization.}  Paper~5's downstream derivation
+  chain (EJA classification $\to$ local tomography $\to$ type
+  exclusion $\to$ $C^*$-promotion) compiles in Lean~4 with Mathlib,
+  with zero \texttt{sorry} placeholders and four axioms (three
+  published results, one bridge axiom connecting the novel construction
+  to the downstream machinery).  Eliminating the bridge axiom ---
+  proving S1--S7 for the corrected product directly in Lean --- is in
+  progress and would upgrade the entire chain to machine-verified.
 \end{enumerate}
 
 \subsection{Closing}

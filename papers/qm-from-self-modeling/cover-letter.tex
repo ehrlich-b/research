@@ -1,0 +1,56 @@
+\documentclass[11pt]{letter}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+
+\signature{Bryan Ehrlich}
+\address{Independent researcher\\bryan@ehrlich.dev}
+
+\begin{document}
+
+\begin{letter}{Editorial Board\\Journal of Mathematical Physics\\AIP Publishing}
+
+\opening{Dear Editors,}
+
+I am submitting the manuscript \emph{Faithful Self-Modeling Is Complex
+Quantum Mechanics} for consideration as an Article in the Journal of
+Mathematical Physics.
+
+The paper proves a characterization theorem: among simple
+finite-dimensional spectral order unit spaces, the self-modeling
+systems (Definition~2.6) are exactly the complex matrix algebras
+$M_n(\mathbb{C})^{\mathrm{sa}}$ equipped with the L\"uders sequential
+product and conjugate-transpose involution.  The four conditions of
+the definition---spectral state space, faithful tracking, minimal
+composite, and irreducibility---unpack the concept of ``self-modeling
+system'' without mentioning complex numbers, Hilbert spaces, or Born
+probabilities; the complex field, $C^*$-involution, and full algebraic
+structure of quantum theory emerge as consequences.
+
+The main novel contribution is the construction of a sequential
+product from the self-modeling cycle (Sections~3--4), where the key
+step is a proof via the matrix Cauchy theorem that compatible
+associativity forces scalar Peirce 1-space action and uniquely
+determines the mixing function.  The downstream chain---EJA
+classification, local tomography, type exclusion, $C^*$-algebra
+promotion---relies on published theorems of van de Wetering, Barnum,
+Wilce, Graydon, and Hanche-Olsen, and is machine-verified in Lean~4
+with Mathlib (0 \texttt{sorry} declarations; code available at
+\url{https://github.com/ehrlich-b/research/tree/jmp-submission-2026-03-28/lean}).
+
+The paper contributes to the quantum reconstruction program and builds
+on the sequential product framework of van de Wetering (JMP, 2019).
+Suggested referees who work in this area include John van de Wetering,
+Howard Barnum, Markus M\"uller, and Martin Pl\'avala.
+
+The manuscript has not been submitted elsewhere.  AI tools were used
+throughout: Claude (Anthropic) as an interactive research tool for
+mathematical exploration, literature search, and manuscript drafting;
+GPT-5.4 (OpenAI) for adversarial review of mathematical claims; and Lean~4 with Mathlib for machine verification of the
+downstream derivation chain.  All definitions, theorems, and
+scientific conclusions are my own.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}

@@ -178,7 +178,7 @@ On a simple EJA, the trace form $(a, c) \mapsto \tau(a \circ c)$ is
 non-degenerate (Faraut--Kor\'anyi~\cite{FarautKoranyi1994},
 Proposition~III.4.2): if $\tau(a \circ c) = 0$ for all $a \in V$,
 then $c = 0$.  Since $\varphi: V_{B} \to V_{M}$ is an order
-isomorphism (Assumption~\ref{ass:faithful}), its inverse
+isomorphism (Definition~\ref{def:self-modeling-system}\ref{sms:faithful}), its inverse
 $\varphi^{-1}$ is a bijection.  Therefore, if $B(a, b) = 0$ for all
 $a \in V_{B}$, then $\tau(a \circ \varphi^{-1}(b)) = 0$ for all $a$,
 which gives $\varphi^{-1}(b) = 0$ by non-degeneracy, hence $b = 0$.
@@ -227,10 +227,12 @@ $\dim(V_{BM}) = \dim(V_{B}) \cdot \dim(V_{M})$.
 \end{proof}
 
 \begin{remark}[Role of simplicity]
-The simplicity assumption (\Cref{ass:simple}) enters at Step~2:
-the trace form is non-degenerate on simple EJAs but not on direct
-sums.  For a direct sum $V = V_{1} \oplus V_{2}$, the cross terms
-$\tau(a_{1} \circ a_{2}) = 0$ for $a_{1} \in V_{1}$,
-$a_{2} \in V_{2}$, so $B$ degenerates on cross-sector products.
-However, the argument applies to each simple summand independently.
+Simplicity (Definition~\ref{def:self-modeling-system}\ref{sms:simple})
+is not needed for trace-form non-degeneracy per se: a direct sum
+of simple EJAs has a block-diagonal trace form that is non-degenerate
+on each block.  Rather, simplicity ensures that the self-modeler
+models the \emph{whole} system as an irreducible unit.  A direct sum
+$V = V_{1} \oplus V_{2}$ decomposes into superselection sectors that
+are invisible to each other; a system in one sector cannot model
+another.  The theorem applies to each simple summand independently.
 \end{remark}

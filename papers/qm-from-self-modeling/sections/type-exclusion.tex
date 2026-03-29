@@ -134,7 +134,13 @@ Composite is locally tomographic
 \noindent
 Theorem~\ref{thm:vdW3} combined with the type exclusion of
 Section~\ref{subsec:exclusion} establishes that
-$V \cong M_n(\mathbb{C})^{\mathrm{sa}}$ for some $n \ge 2$.  This is
+$V \cong M_n(\mathbb{C})^{\mathrm{sa}}$ for some $n \ge 2$.  The case
+$n = 1$ ($V \cong \mathbb{R}$) is excluded by the nontriviality
+condition in
+Definition~\ref{def:self-modeling-system}\ref{sms:finite}: a
+one-dimensional OUS has no nontrivial projective units, so the
+Peirce structure is vacuous and the self-modeling cycle produces no
+nontrivial sequential product.  This is
 the self-adjoint part of the C*-algebra $M_n(\mathbb{C})$, and the
 C*-promotion is complete.
 
@@ -167,8 +173,11 @@ structure through entirely different mathematical machinery
 (JB-algebra tensor products rather than sequential product
 classification).
 
-Neither theorem is used in the derivation; both serve as cross-checks
-that the conclusion is robust.
+Neither of these two broader theorems is used in the derivation
+(unlike the specific dimension-counting and no-composite results
+of~\cite{BarnumWilce2014} and~\cite{BarnumUdudeckVdW2020} invoked
+in Section~\ref{subsec:exclusion} above); both serve as independent
+cross-checks that the conclusion is robust.
 \end{remark}
 
 %--------------------------------------------------------------------
@@ -204,23 +213,23 @@ We can now state the central result.
 
 \begin{theorem}[Self-modeling implies complex quantum
 mechanics]\label{thm:main}
-Let $(V, \le, \mathbf{1})$ be a finite-dimensional spectral order unit
-space. If $V$ admits a faithful self-model $\varphi\colon V \to V_M$
-with $V_M$ an isomorphic copy, and if the minimal composite $V_{BM}$
-satisfies non-signaling and product-form sequential product inheritance,
-then:
+Let $(V, \varphi, V_{BM})$ be a self-modeling system
+(Definition~\ref{def:self-modeling-system}).  Then:
 \begin{enumerate}
 \item $V \cong M_n(\mathbb{C})^{\mathrm{sa}}$ for some $n \ge 2$;
 \item the sequential product is the L\"uders product
-  $\sp{a}{b} = \sqrt{a}\, b\, \sqrt{a}$;
+  $\seqp{a}{b} = \sqrt{a}\, b\, \sqrt{a}$;
 \item $M_n(\mathbb{C})$ carries the conjugate-transpose involution
   $X^* = X^\dagger$.
 \end{enumerate}
 \end{theorem}
 
-In particular, the complex field, the Jordan product, the C*-involution,
-and local tomography are all \emph{derived} from the single operational
-premise of faithful self-modeling.
+In particular, the complex field, the Jordan product, and the
+C*-involution are all consequences of the self-modeling definition
+(Definition~\ref{def:self-modeling-system}).  Local tomography follows
+from the internal-accessibility condition~\ref{sms:minimal}; the
+complex field and C*-structure then follow from the classification
+machinery.
 
 \begin{proof}[Proof outline]
 \mbox{}%
@@ -237,7 +246,10 @@ premise of faithful self-modeling.
   S1--S7 (Proposition~\ref{prop:inheritance}), and state
   separation combined with minimality yields local tomography
   (Theorem~\ref{thm:local-tomo}).
-\item Dimension counting excludes all non-complex simple EJA types
+\item Dimension counting excludes real and quaternionic types;
+  published no-composite results exclude spin factors
+  (\cite{BarnumWilce2014}, Thm.~4.1) and the Albert algebra
+  (\cite{BarnumUdudeckVdW2020}, Thm.~1)
   (Section~\ref{subsec:exclusion}).
 \item Theorem~\ref{thm:vdW3} (C*-promotion via van de Wetering)
   yields $V = M_n(\mathbb{C})^{\mathrm{sa}}$ with the
