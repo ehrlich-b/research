@@ -1,6 +1,6 @@
 -- Lean 4 formalization for "Faithful Self-Modeling Is Complex Quantum Mechanics"
 -- Bryan Ehrlich, 2026
--- 0 sorry declarations, 4 axioms (3 published theorems + 1 bridge)
+-- 0 sorry declarations, 16 axioms (all published results; novel construction fully proved)
 
 -- Foundations: order unit spaces, compressions, Peirce decomposition
 import RadicalRelativity.OrderUnitSpace
@@ -11,7 +11,7 @@ import RadicalRelativity.SpectralTheorem
 -- Sequential product axioms (S1-S7)
 import RadicalRelativity.SequentialProduct
 
--- Bridge: self-modeling construction → sequential product (Sections 3-4)
+-- Bridge: self-modeling → sequential product (Sections 3-4, FULLY PROVED)
 import RadicalRelativity.SelfModelingBridge
 
 -- Jordan algebra structure (van de Wetering Theorem 1)

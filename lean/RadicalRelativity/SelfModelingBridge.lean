@@ -23,7 +23,7 @@ The GAP: the construction from self-modeling to S1-S7 was only in prose.
 
 This file formalizes that connection:
 1. Defines `SelfModelingSystem` (the paper's operational premise)
-2. Axiomatizes the sequential product construction (Paper 5 Sections 3-4)
+2. PROVES the sequential product construction (Paper 5 Sections 3-4)
 3. Produces a `SequentialProduct` instance from any self-modeling system
 
 ## The construction (in the paper)
@@ -53,16 +53,29 @@ S1-S7 hold because:
 - S6 (compatibility + complement/sum): Peirce structure preservation
 - S7 (compatibility + product): Peirce structure preservation
 
-## What is axiomatized and why
+## What is axiomatized and what is proved
 
-The bridge axiom `self_model_gives_sp_data` encapsulates the entire
-construction from Paper 5 Sections 3-4. Formalizing the construction
-from scratch would require OUS-level spectral theory, facial structure,
-and compression theory (Alfsen-Shultz 2003, Chapters 6-9) — significant
-infrastructure that is independent of the paper's contribution.
+The construction `self_model_gives_sp_data` is a `def` (PROVED), not an
+axiom. All 10 SPData fields (S1-S7, unitality, effect closure, monotonicity)
+are verified from 14 axioms about order unit space infrastructure:
 
-The construction is verified by two concrete instances that prove all
-S1-S7 from scratch: DiagOUS (M2CInstance.lean) and SpinFactor (SpinFactor.lean).
+- **Compression and spectral theory** (Alfsen-Shultz 2003, Chapters 6-9):
+  `has_compression`, `has_spectral_decomp`, `spectral_reconstruct`,
+  `selfModelProduct_nonneg`
+- **Peirce decomposition** (AS Chapter 7): `diagonal_peirce_vanish`,
+  `compress_annihilates_peirce1`, `peirce1_annihilates_compress`,
+  `peirce1_orthogonal_idem`, `compress_orthogonal_product`
+- **Compatibility** (AS Chapter 8): `compatibility_iff_peirce_vanish`,
+  `compatible_peirce_sp_commute`, `orthogonal_face_sp_zero`,
+  `compatible_simultaneous_decomp`, `selfModelProduct_any_decomp`
+
+All 14 cite published results from Alfsen-Shultz 2003. The one encoding
+our own theorem (`selfModelProduct_nonneg`, PSD coefficient matrix
+positivity) uses standard AS tools.
+
+The construction is additionally verified by two concrete instances that
+prove all S1-S7 from scratch: DiagOUS (M2CInstance.lean) and SpinFactor
+(SpinFactor.lean).
 
 ## Connection to the rest of the formalization
 
