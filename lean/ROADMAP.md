@@ -9,15 +9,26 @@ _Last updated: 2026-03-29_
 | Component | Files | Lines | Sorry | Axioms | Status |
 |-----------|-------|-------|-------|--------|--------|
 | Papers 1-4 | 1 | ~670 | 14 | 9 | Scaffold |
-| Paper 5 | 11 | ~2700 | **0** | **16** | **DONE** (bridge axiom eliminated) |
+| Paper 5 | 11 | ~2700 | **0** | **17** | **DONE** (bridge axiom eliminated, LT link added) |
 | Paper 6 | 3 | ~1000 | **0** | 13 | **DONE** |
-| Paper 7 + rho_J | 9 | ~2800 | 3 | 26 | F4/NonComposability/Octonions/RhoJ/UniverseAlgebra DONE, Albert 7/10 |
-| **Total** | **24** | **~7200** | **17** | **64** | |
+| Paper 7 + rho_J | 9 | ~2800 | 3 | 28 | F4/NonComposability/Octonions/RhoJ/UniverseAlgebra DONE, Albert 7/10 |
+| **Total** | **24** | **~7200** | **17** | **67** | |
 
-**Paper 5** is the crown jewel: 0 sorry, 16 axioms (all external published results
-or AS 2003 applied to our construction + 1 our theorem). Bridge axiom
-`self_model_gives_sp_data` **ELIMINATED** — 10/10 SPData fields proved as a def.
+**Paper 5** is the crown jewel: 0 sorry, 17 axioms (all external published results
+or AS 2003 applied to our construction + 1 our theorem + 1 Theorem 5.10).
+Bridge axiom `self_model_gives_sp_data` **ELIMINATED** — 10/10 SPData fields proved.
+`self_modeling_locally_tomographic` axiom closes the LT gap (Theorem 5.10).
+`SelfModelingSystem` now includes nontriviality (Definition 1 condition i).
 Complete chain self-modeling -> QM machine-verified.
+
+**Adversarial audit (2026-03-29)** identified and fixed:
+- C1: `SMGaugeGroupData` now encodes factor decomposition (1+3+8) + hypercharges
+- C2: Chirality uses typed `cl6_determines_embedding` + `furey_cl6_selects_left` axioms
+- C3: Hypercharges derived from `todorov_drenska`, not input by hand
+- M1: `SelfModelingSystem` includes nontriviality
+- M2: `self_modeling_locally_tomographic` axiom bridges to `IsLocallyTomographic`
+- M3: `SimpleEJA` enforces Jordan identity + commutativity
+See AUDIT.md for full findings.
 
 **Paper 6:** 0 sorry. All gaps are honest axioms labeled OPEN PROBLEM / CONJECTURE.
 

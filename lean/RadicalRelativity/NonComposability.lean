@@ -52,7 +52,9 @@ noncomputable section
 
 namespace NonComposability
 
-/-- A simple formally real Jordan algebra, characterized by its rank. -/
+/-- A simple formally real Jordan algebra, characterized by its rank.
+    A Jordan algebra satisfies commutativity (a ∘ b = b ∘ a) and the
+    Jordan identity (a ∘ (b ∘ a²) = (a ∘ b) ∘ a²). -/
 structure SimpleEJA where
   /-- The underlying type. -/
   carrier : Type*
@@ -62,6 +64,12 @@ structure SimpleEJA where
   rank : ℕ
   /-- Rank is at least 1. -/
   rank_pos : 1 ≤ rank
+  /-- Commutativity of the Jordan product: a ∘ b = b ∘ a. -/
+  jordan_comm : ∀ a b : carrier, jordanMul a b = jordanMul b a
+  /-- The Jordan identity: a ∘ (b ∘ a²) = (a ∘ b) ∘ a². -/
+  jordan_identity : ∀ a b : carrier,
+    jordanMul a (jordanMul b (jordanMul a a)) =
+    jordanMul (jordanMul a b) (jordanMul a a)
 
 /-- A nontrivial EJA has rank >= 2 (at least two orthogonal idempotents). -/
 def IsNontrivial (A : SimpleEJA) : Prop := 2 ≤ A.rank
@@ -224,7 +232,9 @@ theorem composite_iff_special (A : SimpleEJA.{u}) (hA : IsNontrivial A) :
     by_contra hns
     -- Witness: ULift ℝ with doubled product (2ab) is a nontrivial special EJA.
     -- ULift lifts ℝ from Type 0 to the correct universe for SimpleEJA.
-    let B : SimpleEJA.{u} := ⟨ULift.{u} ℝ, fun a b => ⟨2 * a.down * b.down⟩, 2, by norm_num⟩
+    let B : SimpleEJA.{u} := ⟨ULift.{u} ℝ, fun a b => ⟨2 * a.down * b.down⟩, 2, by norm_num,
+      fun a b => by ext1; dsimp; ring,
+      fun a b => by ext1; dsimp; ring⟩
     have hB_nt : IsNontrivial B := le_refl 2
     have hB_spec : IsSpecialEJA B :=
       ⟨ULift.{u} ℝ, inferInstance, fun x => x, fun _ _ h => h,

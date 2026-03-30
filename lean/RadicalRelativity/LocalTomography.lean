@@ -55,10 +55,6 @@ def ejaDim : EJAType → ℕ
   | .spin n    => n
   | .albert    => 27
 
-/-- Local tomography holds when dim(V⊗V) = dim(V)². -/
-def localTomographyHolds (t : EJAType) : Prop :=
-  ∃ (composeDim : ℕ), composeDim = ejaDim t * ejaDim t
-
 /-- The dimension of the composite for each type, as computed from
     the tensor product of Jordan algebras. -/
 def compositeDim : EJAType → ℕ
@@ -67,6 +63,10 @@ def compositeDim : EJAType → ℕ
   | .quatern n => n * n * (2 * n * n - 1)   -- dim of Mₙ²(ℍ)^sa
   | .spin _    => 0                           -- no locally tomographic composite exists
   | .albert    => 0                          -- no non-signaling composite exists
+
+/-- Local tomography holds when compositeDim(t) = ejaDim(t)². -/
+def localTomographyHolds (t : EJAType) : Prop :=
+  compositeDim t = ejaDim t * ejaDim t
 
 private lemma even_prod_succ (a : ℕ) : 2 ∣ a * (a + 1) := by
   rcases Nat.even_or_odd a with ⟨k, hk⟩ | ⟨k, hk⟩

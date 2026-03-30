@@ -5,6 +5,7 @@ Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.OrderUnitSpace
 import RadicalRelativity.SequentialProduct
+import RadicalRelativity.LocalTomography
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 set_option linter.style.longLine false
@@ -113,6 +114,9 @@ structure SelfModelingSystem (V : Type*) [OrderUnitSpace V] where
   phi_effect : ∀ {a : V}, IsEffect a → IsEffect (phi a)
   /-- φ⁻¹ preserves order (the inverse is also positive). -/
   phi_inv_mono : ∀ {a b : V}, phi a ≤ phi b → a ≤ b
+  /-- Condition (i): V is nontrivial (not just R · 1).
+      Paper 5 Definition 1: "system" requires at least two distinguishable states. -/
+  nontrivial : ∃ (a : V), a ≠ (0 : V) ∧ a ≠ ousUnit
 
 /-! ## Pre-Compression System
 
@@ -1055,5 +1059,22 @@ def self_model_gives_sp_data (V : Type*) [OrderUnitSpace V]
 def selfModelingSP (V : Type*) [OrderUnitSpace V]
     (sm : SelfModelingSystem V) : SequentialProduct V :=
   (self_model_gives_sp_data V sm).toSequentialProduct
+
+/-- **Paper 5, Theorem 5.10** (axiomatized): self-modeling systems are
+    locally tomographic. The minimal body-model composite has dim = dim(V)^2.
+
+    Proof sketch (Paper 5 Sections 4-5):
+    - Lower bound (dim ≥ d^2): the d^2 product effects {e_B(aᵢ) & e_M(bⱼ)}
+      are linearly independent (state separation in finite-dim OUS).
+    - Upper bound (dim ≤ d^2): their span satisfies composite axioms (C1)-(C4).
+      By minimality (condition iii of Definition 1), W is the smallest
+      such composite, so dim(W) ≤ d^2.
+
+    This axiom bridges the gap between SelfModelingSystem and IsLocallyTomographic.
+    The proof requires finite-dimensional OUS linear algebra beyond current scope.
+    Reference: Ehrlich 2026, "QM from Self-Modeling", Theorem 5.10. -/
+axiom self_modeling_locally_tomographic (V : Type*) [OrderUnitSpace V]
+    [FiniteDimensional ℝ V] (sm : SelfModelingSystem V) :
+    @LocalTomography.IsLocallyTomographic V (selfModelingSP V sm) _
 
 end

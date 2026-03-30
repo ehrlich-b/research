@@ -178,14 +178,25 @@ inductive EmbeddingType where
     in Spin(10). -/
 axiom sawin_two_classes : True
 
-/-- **The Furey mechanism**: Cl(6) volume form from the octonion splitting
-    automatically selects the LEFT (chiral) embedding.
+/-- The **embedding type determined by the Cl(6) volume form** from a complex
+    structure J on O. Each J determines a specific splitting O = C_J + C_J^3
+    that generates a Cl(6) subalgebra inside Cl(10), which in turn determines
+    how the SM gauge group embeds in Spin(10).
+    Reference: Furey, arXiv:1806.00612 (2018); Todorov, arXiv:2206.06912 (2022). -/
+axiom cl6_determines_embedding (J : Octonion.ComplexStructure) : EmbeddingType
 
-    Breaking chain:
-    Spin(10) -> [omega_6 stabilizer] -> Pati-Salam
-             -> [complex structure] -> SM with LEFT embedding -/
+/-- **Furey's theorem** (axiomatized): the Cl(6) volume form omega_6 from
+    the octonion splitting selects the LEFT (chiral) embedding.
+    Breaking chain: Spin(10) -[omega_6 stabilizer]-> Pati-Salam
+      -[complex structure]-> SM with LEFT embedding.
+    Reference: Furey, arXiv:1806.00612 (2018); Todorov, arXiv:2206.06912 (2022). -/
+axiom furey_cl6_selects_left (J : Octonion.ComplexStructure) :
+    cl6_determines_embedding J = EmbeddingType.left
+
+/-- The Furey mechanism selects the left embedding for any observer. -/
 theorem furey_selects_left (obs : ObserverConfig) :
-    ∃ (e : EmbeddingType), e = EmbeddingType.left := ⟨.left, rfl⟩
+    cl6_determines_embedding obs.complexStr = EmbeddingType.left :=
+  furey_cl6_selects_left obs.complexStr
 
 -- The full chirality chain
 
@@ -206,9 +217,11 @@ theorem furey_selects_left (obs : ObserverConfig) :
     c. Induces Cl(6) -> selects LEFT embedding (steps 5-8) -/
 theorem chirality_from_self_modeling (obs : ObserverConfig) :
     ∃ (G : SMGaugeGroupData) (e : EmbeddingType),
+      G.hypercharges.Y_lepton_L = -1 ∧
       e = EmbeddingType.left := by
-  obtain ⟨G, _⟩ := todorov_drenska obs
-  exact ⟨G, .left, rfl⟩
+  obtain ⟨G, hG⟩ := todorov_drenska obs
+  exact ⟨G, cl6_determines_embedding obs.complexStr,
+    hG.1, furey_cl6_selects_left obs.complexStr⟩
 
 -- Three generations (Boyle)
 
