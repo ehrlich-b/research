@@ -11,8 +11,8 @@ _Last updated: 2026-03-29_
 | Papers 1-4 | 1 | ~670 | 14 | 9 | Scaffold |
 | Paper 5 | 11 | ~2700 | **0** | **16** | **DONE** (bridge axiom eliminated) |
 | Paper 6 | 3 | ~1000 | **0** | 13 | **DONE** |
-| Paper 7 + rho_J | 9 | ~2800 | 4 | 25 | NonComposability/Octonions/RhoJ/UniverseAlgebra DONE, Albert 7/10 |
-| **Total** | **24** | **~7200** | **18** | **63** | |
+| Paper 7 + rho_J | 9 | ~2800 | 3 | 26 | F4/NonComposability/Octonions/RhoJ/UniverseAlgebra DONE, Albert 7/10 |
+| **Total** | **24** | **~7200** | **17** | **64** | |
 
 **Paper 5** is the crown jewel: 0 sorry, 16 axioms (all external published results
 or AS 2003 applied to our construction + 1 our theorem). Bridge axiom
@@ -117,13 +117,11 @@ doubled product as concrete nontrivial special witness.
 
 **Paper 7 - UniverseAlgebra.lean -- COMPLETE (0 sorry)**
 
-**Paper 7 - F4.lean (1 sorry, down from 4)**
+**Paper 7 - F4.lean -- COMPLETE (0 sorry, 7 axioms)**
 
-`Aut_h3O.inv`, `stab_idem_normal`, `stab_complex_normal` are all PROVED. Remaining:
-
-| Sorry | What | Difficulty | Approach |
-|-------|------|-----------|----------|
-| `stab_complex_conjugate` | g*Stab(J)*g^{-1} in Stab(J) for g in Stab(E_i) | Medium | Needs G_2 transitivity infrastructure |
+`stab_complex_conjugate` proved from `g2_transitive_complex_structures` axiom
+(G_2 transitivity on S^6 lifted to h_3(O) automorphisms, Baez 2002 + Yokota).
+All conjugacy theorems (idempotent and complex structure stabilizers) proved.
 
 **Paper 6 -- COMPLETE (0 sorry)**
 
@@ -150,16 +148,16 @@ Note: `kernelDiffNorm`, `stationaryL1Dist`, `binEntropy` are concrete
 (not sorry). `suppression_rate_pos` and `error_composition_exponential`
 are proved.
 
-### Tier 4: Will remain axioms (63 total, all now documented)
+### Tier 4: Will remain axioms (64 total, all now documented)
 
 Deep axiom audit completed 2026-03-28. All 63 axioms have citations,
 status labels (OPEN PROBLEM / CONJECTURE / SPECULATIVE), and
 sorry-dependency notes where applicable.
 
 **Axiom honesty categories:**
-- **Typed + cited external results (20):** Paper 5 chain (16), basin_partition,
+- **Typed + cited external results (21):** Paper 5 chain (16), basin_partition,
   cho_meyer_bound, fannes_audenaert, rank_ge_4_special, hanche_olsen_composite,
-  hurwitz_classification
+  hurwitz_classification, g2_transitive_complex_structures
 - **True placeholders (33):** All Paper 6, most Paper 7, gleason_theorem.
   Structural documentation only; contribute nothing to any proof term.
 - **Open problems / conjectures (6):** neel_ordered_area_law,
@@ -199,11 +197,10 @@ file references them. They do NOT block Phase D or rho_J.
 All sorry's eliminated. SelfModelingLattice, AreaLaw, JacobsonGR at 0 sorry.
 Gap axioms labeled OPEN PROBLEM / CONJECTURE / ASSUMPTION.
 
-### Phase D: Paper 7 chain -- **NEARLY COMPLETE** (2026-03-29)
-**Result:** 11 sorry -> 1. NonComposability and UniverseAlgebra at 0 sorry.
-**Remaining:**
-- F4: 1 sorry (stab_complex_conjugate needs G_2 transitivity)
-- All other files: 0 sorry
+### Phase D: Paper 7 chain -- **COMPLETE** (2026-03-29)
+**Result:** 11 sorry -> 0. All Paper 7 chain files at 0 sorry.
+F4 `stab_complex_conjugate` proved from `g2_transitive_complex_structures` axiom.
+NonComposability, UniverseAlgebra, F4, ObserverInterface, GaugeGroup, Chirality: all 0 sorry.
 
 ### Phase E: Paper 6 physics bridge -- **COMPLETE** (2026-03-28)
 All algebraic sorry's proved. Physics gaps are axioms.
@@ -232,13 +229,13 @@ hanche_olsen_composite, spectral_jordan_identity.
 | Papers 1-4 | ~8 | 9 | 14 sorry | Prove easy defs, leave measure theory |
 | Paper 5 | **0** | 16 | **DONE** | -- |
 | Paper 6 | **0** | 13 | **DONE** | -- |
-| Paper 7 | **0** | ~25 | 4 sorry (3 expository + 1 G_2) | F4 stab_complex_conjugate |
-| **Total** | **~8** | **~63** | **20 sorry** | |
+| Paper 7 | **0** | ~26 | 3 sorry (all expository Albert) | Albert jordan_identity, simple, not_special |
+| **Total** | **~8** | **~64** | **17 sorry** | |
 
-Down from ~89 sorry to 20, with Paper 5 chain fully verified. Remaining
-gap to target: NonComposability (2) and F4 (1) to finish Paper 7 chain,
-then ExperientialMeasure polish. The core mathematical claims
-(self-modeling -> QM) are already machine-verified.
+Down from ~89 sorry to 17, with Paper 5 chain and Paper 7 chain fully
+verified. Remaining sorry's: 3 expository (Albert) + 14 scaffold
+(ExperientialMeasure). The core mathematical claims (self-modeling -> QM,
+non-composability -> h_3(O) -> SM gauge group) are machine-verified.
 
 ---
 

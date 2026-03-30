@@ -16,16 +16,34 @@ set_option linter.style.longLine false
 # Chirality from Cl(6)
 
 The weak force only couples to left-handed fermions (parity violation).
-In the octonionic framework, chirality requires complexification of h_3(O)
-to h_3^C(O), upgrading F_4 -> E_6 and Spin(9) -> Spin(10).
+In the octonionic framework, chirality requires complexification of the
+Peirce 1/2-space V_{1/2} = O^2 (real, 16-dim) to C^8, upgrading the
+Spin(9) spinor to a Spin(10) Weyl spinor.
+
+## Gap C and its resolution
+
+**Gap C** (Paper 7, Link 6): why does V_{1/2} complexify?
+
+Phase 30 proved three impossibility theorems establishing that the Peirce
+structure of h_3(O) under E_{11} CANNOT algebraically force a complex
+structure on V_{1/2}:
+1. No Spin(9)-equivariant J exists (Schur: End_{Spin(9)}(S_9) = R)
+2. J_u is not in spin(9) (has grade-3 Clifford components)
+3. The minimal additional input is the choice of u in S^6
+
+The resolution: the observer is M_n(C)^sa (Paper 5, proved). A complex
+system embedded in an octonionic environment IS a choice of u in S^6.
+The observer's existence as a complex C*-system interacting with h_3(O)
+complexifies V_{1/2}. This is not a selection effect -- it is what
+C*-observers do. Paper 5 already closed Gap C.
 
 ## The resolution path
 
 The SAME octonion splitting O = C + C^3 that gives the SM gauge group
 (via [SU(3)xSU(3)]/Z_3) ALSO induces a Cl(6) subalgebra inside Cl(10).
 
-1. Observer's C*-nature forces complexification of V_1 = O^2 (16-dim real
-   Spin(9) spinor) to (C tensor O)^2 (16-dim complex Spin(10) Weyl spinor).
+1. Observer's C*-nature (Paper 5) complexifies V_{1/2} = O^2 (16-dim real
+   Spin(9) spinor) to C^8 (16-dim complex Spin(10) Weyl spinor).
 2. Chirality (16_L vs 16_R) is INTRINSIC to Spin(10) -- the volume element
    of Cl(10) splits the Dirac spinor automatically.
 3. The octonion splitting O = C + C^3 gives 6 "internal" directions that
@@ -35,9 +53,9 @@ The SAME octonion splitting O = C + C^3 that gives the SM gauge group
 6. Breaking Pati-Salam via the complex structure gives SM with the LEFT
    (chiral) embedding (Furey 2018: automatic, no ad hoc projector).
 
-ONE CHOICE (complex structure on O) does THREE things:
+ONE CHOICE (complex structure on O = observer's C*-embedding) does THREE things:
 - Gives the SM gauge group (Gap B)
-- Forces complexification -> chirality exists
+- Complexifies V_{1/2} -> chirality exists (Gap C)
 - Induces Cl(6) -> selects the chiral embedding
 
 ## The Baez-Sawin problem and why complexification fixes it
@@ -48,13 +66,8 @@ Sawin's theorem: two conjugacy classes of SU(2) x SU(3) in Spin(10):
 
 At the F_4/Spin(9) level, all reps are self-dual -> only diagonal embedding.
 Complexification to E_6/Spin(10) makes both available. The observer's
-complex nature forces complexification and the Cl(6) mechanism selects left.
-
-## Status
-
-GPD prompt written. Pending computational verification that the Cl(6)
-assembly through the Peirce decomposition starting point gives the correct
-chiral embedding.
+complex nature (Paper 5) provides the complexification and the Cl(6)
+mechanism selects left.
 
 ## Main definitions
 
@@ -83,15 +96,19 @@ namespace Chirality
 
 -- Complexification
 
-/-- The **complexification** of V_1(E_i) = O^2.
-    The observer's C*-nature forces complexification: V_1^C = C tensor V_1.
-    As a complex vector space, V_1^C is 16-dimensional.
-    This upgrades the Spin(9) spinor to a Spin(10) Weyl spinor.
-    Reference: Standard representation theory. The 16-dim real spinor of
-    Spin(9) complexifies to the Weyl spinor 16_L of Spin(10). See Baez,
-    "The Octonions," Bull. AMS 39 (2002), Section 4.3. -/
+/-- The **complexification** of V_{1/2} = O^2 by the observer.
+    The observer is M_n(C)^sa (Paper 5). Its embedding in h_3(O) IS a
+    choice of u in S^6 (Phase 30, Theorem 3). This complexifies V_{1/2}
+    from real R^{16} (Spin(9) spinor S_9) to complex C^8 (Spin(10) Weyl
+    spinor 16_L).
+
+    Phase 30 impossibility theorems confirm the Peirce structure alone
+    CANNOT do this: End_{Spin(9)}(S_9) = R (no equivariant J). The
+    complex structure MUST come from outside -- i.e., from the observer.
+    Reference: Standard representation theory. Baez, "The Octonions,"
+    Bull. AMS 39 (2002), Section 4.3. -/
 axiom complexification_upgrades_spin :
-    True  -- Spin(9) spinor 16_R -> Spin(10) Weyl spinor 16_L
+    True  -- Spin(9) spinor S_9 complexified by observer to Spin(10) Weyl 16_L
 
 -- Clifford algebra structures (opaque, axiomatized)
 

@@ -14,21 +14,20 @@ Lean 4 v4.28.0, Mathlib v4.28.0. Build must always pass - verify after every cha
 - **Paper 5 bridge**: SelfModelingBridge.lean. Self-modeling -> S1-S7 via corrected product construction. 0 sorry. 14 axioms (8 clean Alfsen-Shultz, 5 AS referencing our product, 1 our theorem). **10/10 SPData fields proved.** The one non-external axiom is `selfModelProduct_nonneg` (PSD coefficient matrix positivity). Produces `SequentialProduct V` instance from `SelfModelingSystem V`.
 - **Paper 5 LT**: LocalTomography.lean. `IsLocallyTomographic` is a class (not axiom) requiring dim(composite) = dim(V)^2. Type exclusion proved for real/quaternion. 0 sorry. Gap: no explicit theorem deriving LT from self-modeling minimality (Paper 5 Thm 5.10).
 - **Paper 6** (3 files): SelfModelingLattice (0 sorry), AreaLaw (0 sorry), JacobsonGR (0 sorry). DONE.
-- **Paper 7** (8 files): Octonions (0) -> Albert (3 expository) -> NonComposability (**0**) -> UniverseAlgebra (0) -> F4 (1 conjugacy) -> ObserverInterface (0) -> GaugeGroup (0) -> Chirality (0).
+- **Paper 7** (8 files): Octonions (0) -> Albert (3 expository) -> NonComposability (**0**) -> UniverseAlgebra (0) -> F4 (**0**) -> ObserverInterface (0) -> GaugeGroup (0) -> Chirality (0).
 - **Papers 1-4** (1 file): ExperientialMeasure. Low priority scaffold (14 sorry).
 
 ## Sorry inventory (as of 2026-03-29)
 
-**18 total sorry's. 0 sorry's in Paper 5. 0 sorry's in Paper 7 chain (NonComposability through Chirality).**
+**17 total sorry's. 0 sorry's in Paper 5. 0 sorry's in Paper 7 chain (NonComposability through Chirality).**
 
 | File | Sorry | Type | Status |
 |------|-------|------|--------|
 | Albert | jordan_identity, simple, not_special | theorem (3) | Expository only, no downstream use |
-| F4 | stab_complex_conjugate | theorem | Needs G_2 transitivity infrastructure |
 | ExperientialMeasure | stationaryDist, experientialFunctional, mu_stable, mu_BB, expectedExitTime, qsdMixingTime, spectralGap, BornFisherConjecture | def (8) | Low priority scaffold, need measure/spectral theory |
 | ExperientialMeasure | isomorphism_invariant, theorem_A, lipschitz_stability, lipschitz_constant_explicit, lipschitz_uniform_bound, born_fisher_falsified | theorem (6) | Blocked by sorry defs above |
 
-## Full axiom inventory (63 axioms, as of 2026-03-29)
+## Full axiom inventory (64 axioms, as of 2026-03-29)
 
 ### Paper 5 chain: 16 axioms — all load-bearing, all typed
 
@@ -54,14 +53,14 @@ IsLocallyTomographic from self-modeling minimality (Paper 5 Theorem 5.10).
 | AreaLaw | 5 | 3 proved external (WVCH, Hastings, Calabrese-Cardy), 1 OPEN PROBLEM (neel_ordered), 1 CONJECTURE (modular_hamiltonian) |
 | JacobsonGR | 6 | 2 proved external (BW continuum, Raychaudhuri), 4 OPEN PROBLEMS/CONJECTURES (Gaps 1-4) |
 
-### Paper 7: 25 axioms — mostly True placeholders
+### Paper 7: 26 axioms — mostly True placeholders
 
 | File | Axioms | Notes |
 |------|--------|-------|
 | Octonions | 3 | hurwitz (typed), aut_G2 + S6=G2/SU3 (True placeholders) |
 | Albert | 1 | zelmanov_uniqueness (True placeholder) |
 | NonComposability | 4 | 2 typed (rank_ge_4_special, hanche_olsen), 2 weak (jvnw rank-only, only_albert rank-only) |
-| F4 | 6 | all True placeholders, now all cited |
+| F4 | 7 | 6 True placeholders + g2_transitive_complex_structures (typed, proves stab_complex_conjugate) |
 | ObserverInterface | 1 | peirce1_complexified (True placeholder) |
 | GaugeGroup | 2 | todorov_drenska (vacuous exists), krasnov (True, preprint) |
 | Chirality | 7 | all True placeholders, boyle_three_generations is SPECULATIVE |
@@ -75,7 +74,7 @@ IsLocallyTomographic from self-modeling minimality (Paper 5 Theorem 5.10).
 
 ### Axiom honesty categories
 
-- **Typed + cited external results** (20): All Paper 5, basin_partition, cho_meyer_bound, fannes_audenaert, rank_ge_4_special, hanche_olsen_composite, hurwitz_classification
+- **Typed + cited external results** (21): All Paper 5, basin_partition, cho_meyer_bound, fannes_audenaert, rank_ge_4_special, hanche_olsen_composite, hurwitz_classification, g2_transitive_complex_structures
 - **True placeholders** (33): All Paper 6, most Paper 7, gleason_theorem. Structural documentation only; contribute nothing to any proof term.
 - **Open problems / conjectures** (6): neel_ordered_area_law, wilsonian_continuum_limit, emergent_lorentz_invariance, lattice_bisognano_wichmann, modular_hamiltonian_locality, local_equilibrium. All labeled with STATUS.
 - **Bounds on sorry defs** (5): ExperientialMeasure Lemmas 2-6. Axioms about undefined quantities.

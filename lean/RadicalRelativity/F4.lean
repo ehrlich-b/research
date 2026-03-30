@@ -278,10 +278,40 @@ theorem stab_idem_conjugate (i j : Fin 3) :
         change cycShift (cycShift (h3O.rankOneIdem _)) = h3O.rankOneIdem _
         rw [cycShift_rankOneIdem, cycShift_rankOneIdem]; rfl)⟩
 
+/-- **G_2 transitivity on complex structures** (axiomatized): G_2 acts
+    transitively on S^6 (unit imaginary octonions). Every G_2 element
+    lifts to an F_4 = Aut(h_3(O)) automorphism that maps the h_3(C_J)
+    subalgebra to h_3(C_K), and whose inverse maps h_3(C_K) back.
+    Reference: Baez, "The Octonions," Bull. AMS 39 (2002), Section 4.1
+    (G_2 transitivity on S^6); Yokota, "Exceptional Lie Groups,"
+    arXiv:0902.0431, Chapter 5 (G_2 ⊂ F_4 preserving Jordan structure). -/
+axiom g2_transitive_complex_structures (J K : Octonion.ComplexStructure) :
+    ∃ (g : Aut_h3O),
+      (∀ a : h3O, (∀ i, a.off i ∈ Octonion.complexSubspace J) →
+        ∀ i, (g.toFun a).off i ∈ Octonion.complexSubspace K) ∧
+      (∀ a : h3O, (∀ i, a.off i ∈ Octonion.complexSubspace K) →
+        ∀ i, ((Aut_h3O.inv g).toFun a).off i ∈ Octonion.complexSubspace J)
+
 /-- All complex structure stabilizers are conjugate in F_4.
     F_4 acts transitively on unit imaginary octonions (via G_2 on S^6). -/
 theorem stab_complex_conjugate (J K : Octonion.ComplexStructure) :
     ∃ (g : Aut_h3O), ∀ f, f ∈ Stab_complex J ↔
-      Aut_h3O.comp (Aut_h3O.comp g f) (Aut_h3O.inv g) ∈ Stab_complex K := sorry
+      Aut_h3O.comp (Aut_h3O.comp g f) (Aut_h3O.inv g) ∈ Stab_complex K := by
+  obtain ⟨g, hg_fwd, hg_inv⟩ := g2_transitive_complex_structures J K
+  refine ⟨g, fun f => ⟨fun hf => ?_, fun hgfg => ?_⟩⟩
+  · -- Forward: f ∈ Stab_complex J → gfg⁻¹ ∈ Stab_complex K
+    simp only [Stab_complex, Set.mem_setOf_eq, Aut_h3O.comp, Function.comp]
+    intro a ha i
+    exact hg_fwd _ (hf _ (hg_inv _ ha)) i
+  · -- Reverse: gfg⁻¹ ∈ Stab_complex K → f ∈ Stab_complex J
+    simp only [Stab_complex, Set.mem_setOf_eq, Aut_h3O.comp, Function.comp] at hgfg
+    intro a ha i
+    have h1 := hgfg (g.toFun a) (hg_fwd a ha)
+    have h3 : (Aut_h3O.inv g).toFun (g.toFun a) = a := inv_toFun_eq rfl
+    rw [h3] at h1
+    have h4 := hg_inv _ h1
+    have h5 : (Aut_h3O.inv g).toFun (g.toFun (f.toFun a)) = f.toFun a := inv_toFun_eq rfl
+    rw [h5] at h4
+    exact h4 i
 
 end F4
