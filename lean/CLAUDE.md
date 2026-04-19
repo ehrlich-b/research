@@ -11,13 +11,13 @@ Lean 4 v4.28.0, Mathlib v4.28.0. Build must always pass - verify after every cha
 ## Structure
 
 - **Paper 5** (11 files): 0 sorry, 2 axioms (spectral_jordan_identity, vdw_theorem_3). Locked for journal.
-- **Paper 5 bridge**: SelfModelingBridge.lean. Self-modeling -> S1-S7 via corrected product construction. 0 sorry. 15 axioms (8 clean Alfsen-Shultz, 5 AS referencing our product, 1 our theorem, 1 Theorem 5.10). **10/10 SPData fields proved.** `SelfModelingSystem` includes nontriviality (Definition 1 condition i). `self_modeling_locally_tomographic` axiom bridges to `IsLocallyTomographic` (Theorem 5.10).
+- **Paper 5 bridge**: SelfModelingBridge.lean. Self-modeling -> S1-S7 via corrected product construction. 0 sorry. 15 axioms (8 external AS 2003 / OUS citations + 1 Paper 5 postulate `S0_peirce_coherence` [§3.3] + 4 Peirce scaffolds [§3.3 Peirce-Preservation Lemma corollaries, pending formal derivation from S0 + compression additivity] + 1 `selfModelProduct_nonneg` + 1 `self_modeling_locally_tomographic` for Thm 5.10). **10/10 SPData fields proved.** `SelfModelingSystem` includes nontriviality (Definition 1 condition i).
 - **Paper 5 LT**: LocalTomography.lean. `IsLocallyTomographic` is a class (not axiom) requiring dim(composite) = dim(V)^2. Type exclusion proved for real/quaternion. 0 sorry.
 - **Paper 6** (3 files): SelfModelingLattice (0 sorry), AreaLaw (0 sorry), JacobsonGR (0 sorry). DONE.
 - **Paper 7** (8 files): Octonions (0) -> Albert (3 expository) -> NonComposability (**0**) -> UniverseAlgebra (0) -> F4 (**0**) -> ObserverInterface (0) -> GaugeGroup (0) -> Chirality (0). `SimpleEJA` enforces Jordan identity + commutativity. `SMGaugeGroupData` encodes factor decomposition (1+3+8) + hypercharges. Chirality derived from typed `cl6_determines_embedding` + `furey_cl6_selects_left` axioms.
 - **Papers 1-4** (1 file): ExperientialMeasure. Low priority scaffold (14 sorry).
 
-## Sorry inventory (as of 2026-03-29)
+## Sorry inventory (as of 2026-04-19)
 
 **17 total sorry's, 67 axioms. 0 sorry's in Paper 5. 0 sorry's in Paper 7 chain (NonComposability through Chirality).**
 
@@ -27,13 +27,13 @@ Lean 4 v4.28.0, Mathlib v4.28.0. Build must always pass - verify after every cha
 | ExperientialMeasure | stationaryDist, experientialFunctional, mu_stable, mu_BB, expectedExitTime, qsdMixingTime, spectralGap, BornFisherConjecture | def (8) | Low priority scaffold, need measure/spectral theory |
 | ExperientialMeasure | isomorphism_invariant, theorem_A, lipschitz_stability, lipschitz_constant_explicit, lipschitz_uniform_bound, born_fisher_falsified | theorem (6) | Blocked by sorry defs above |
 
-## Full axiom inventory (67 axioms, as of 2026-03-29)
+## Full axiom inventory (67 axioms, as of 2026-04-19)
 
 ### Paper 5 chain: 17 axioms — all load-bearing, all typed
 
 | File | Axioms | Source |
 |------|--------|--------|
-| SelfModelingBridge | 15 | 8 clean AS 2003 + 5 AS referencing our product + 1 our theorem + 1 Theorem 5.10 |
+| SelfModelingBridge | 15 | 8 external citations (AS 2003 / OUS theory) + 1 Paper 5 postulate (`S0_peirce_coherence`, §3.3) + 4 Peirce scaffolds (§3.3 Peirce-Preservation Lemma corollaries) + 1 our theorem (`selfModelProduct_nonneg`) + 1 Theorem 5.10 (`self_modeling_locally_tomographic`) |
 | JordanStructure | 1 (`spectral_jordan_identity`) | vdW 2019, section 4 |
 | CStarBridge | 1 (`vdw_theorem_3`) | vdW 2019, Theorem 3 |
 
@@ -74,7 +74,9 @@ axiom (Theorem 5.10) bridges SelfModelingSystem to IsLocallyTomographic.
 
 ### Axiom honesty categories
 
-- **Typed + cited external results** (24): All Paper 5 (17), basin_partition, cho_meyer_bound, fannes_audenaert, rank_ge_4_special, hanche_olsen_composite, hurwitz_classification, g2_transitive_complex_structures, cl6_determines_embedding, furey_cl6_selects_left
+- **Typed + cited external results** (17): Paper 5 external citations (10 — 8 AS 2003 / OUS theory in SelfModelingBridge + `spectral_jordan_identity` + `vdw_theorem_3`), basin_partition, cho_meyer_bound, fannes_audenaert, rank_ge_4_special, hanche_olsen_composite, hurwitz_classification, g2_transitive_complex_structures, cl6_determines_embedding, furey_cl6_selects_left
+- **Paper 5 postulates** (1): `S0_peirce_coherence` (§3.3, compression-level Peirce coherence; defended in paper via three canonical models + recovery from AS Prop. 7.50).
+- **Paper 5 scaffolds** (6): `diagonal_peirce_vanish`, `compress_annihilates_peirce1`, `peirce1_annihilates_compress`, `peirce1_orthogonal_idem` (§3.3 Peirce-Preservation Lemma corollaries), `selfModelProduct_nonneg` (Paper 5 §3 PSD argument), `self_modeling_locally_tomographic` (Paper 5 Thm 5.10).
 - **True placeholders** (33): All Paper 6, most Paper 7, gleason_theorem. Structural documentation only; contribute nothing to any proof term.
 - **Open problems / conjectures** (6): neel_ordered_area_law, wilsonian_continuum_limit, emergent_lorentz_invariance, lattice_bisognano_wichmann, modular_hamiltonian_locality, local_equilibrium. All labeled with STATUS.
 - **Bounds on sorry defs** (5): ExperientialMeasure Lemmas 2-6. Axioms about undefined quantities.
@@ -82,7 +84,7 @@ axiom (Theorem 5.10) bridges SelfModelingSystem to IsLocallyTomographic.
 
 ## Rules
 
-- **Axioms are honest citations** of published theorems we don't re-prove. Never add new axioms.
+- **Axioms are either (a) honest citations of external published results, (b) named Paper 5 postulates defended in the paper, or (c) scaffold/open-problem markers.** New axioms require explicit justification in one of these categories; see "Axiom honesty categories" above.
 - **Sorry = unproved claim.** Fill sorry's, don't add new ones.
 - **Don't change type signatures.** The statements are correct; only proofs are missing.
 - **Don't refactor structure/API.** Keep all existing types, defs, and theorem names.

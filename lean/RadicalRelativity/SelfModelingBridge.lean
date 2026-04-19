@@ -203,8 +203,41 @@ def prePeirceOneProj {V : Type*} [OrderUnitSpace V]
 
 /-! ## Published-Result Axioms
 
-Each axiom below is a published theorem from Alfsen-Shultz 2003
-or standard OUS theory. We cite rather than re-prove. -/
+Each axiom below falls into one of three categories:
+
+  (CITATION) An external published result we do not re-prove. Bulk from
+  Alfsen-Shultz 2003 Chapter 9 (spectral theory, Thm 9.33, 9.37),
+  Chapter 1 (Thm 1.23, state separation), and compression-system axioms
+  (Ch. 6). Standard OUS theory.
+
+  (PAPER 5 POSTULATE) An axiom stated IN Paper 5 itself, defended there
+  rather than cited externally:
+
+    * `S0_peirce_coherence` (§3.3 eq. S0): mutual annihilation of
+      compressions by orthogonal projective units. Defended in Paper 5
+      §3.3 via three canonical models + recovery from A-S Prop. 7.50.
+
+  (SCAFFOLD) A claim internal to Paper 5 that is pending full
+  formalization from OUS primitives. Each is marked "SCAFFOLD" in its
+  docstring:
+
+    * `diagonal_peirce_vanish`, `compress_annihilates_peirce1`,
+      `peirce1_annihilates_compress`, `peirce1_orthogonal_idem`: the
+      Peirce-structure facts used in §3.3. Paper 5 §3.3 derives all of
+      these as corollaries of the Peirce-Preservation Lemma, which is
+      itself proved from `{S0, S1, S3, linearity of L_a, A-S compression
+      axioms}`. The four remain Lean axioms pending formal derivation
+      (requires compression-additivity on orthogonal pairs, not yet a
+      `CompressionSystem` field).
+    * `selfModelProduct_nonneg`: PSD argument for the corrected
+      product's positivity. Paper 5 Section 3, our theorem.
+    * `self_modeling_locally_tomographic`: Paper 5 Theorem 5.10,
+      axiomatized because its proof needs finite-dim OUS linear algebra
+      infrastructure beyond current Lean scope.
+
+  The downstream chain from `SelfModelingSP` through the EJA classification
+  to the C*-algebra output is formally verified; what remains axiomatized is
+  the upstream OUS linear algebra that feeds it. -/
 
 /-- Every effect in a self-modeling OUS admits a spectral decomposition
     (Alfsen-Shultz 2003, Chapter 9). -/
@@ -221,38 +254,52 @@ axiom spectral_reconstruct (V : Type*) [OrderUnitSpace V]
     (sm : SelfModelingSystem V) (a : V) (ha : IsEffect a) :
     (has_spectral_decomp V sm a ha).reconstruct = a
 
-/-- For elements that are diagonal in a spectral decomposition (i.e., they are
-    linear combinations of the projections), the off-diagonal Peirce components
-    vanish (Alfsen-Shultz 2003, Prop 7.48). -/
+/-- SCAFFOLD (Paper 5 §3.3, corollary of the Peirce-Preservation Lemma).
+    For elements that are diagonal in a spectral decomposition
+    (`b = Σ μᵢ • pᵢ`), the off-diagonal Peirce components vanish.
+
+    In Paper 5 §3.3 this is the preliminary lemma feeding Parts (i)-(iii)
+    of the Peirce-Preservation Lemma, derived there from
+    `{S0, S1, S3, linearity of L_a, A-S compression additivity on
+    orthogonal pairs, finite-dim spectrality}`. It remains a Lean axiom
+    because `CompressionSystem` does not currently include
+    compression-additivity on orthogonal pairs. -/
 axiom diagonal_peirce_vanish (V : Type*) [OrderUnitSpace V]
     (cs : CompressionSystem V) (sd : PreSpectralDecomp V cs)
     {b : V} (hb_diag : ∃ μ : Fin sd.n → ℝ, (∑ i, μ i • sd.proj i) = b) :
     ∀ i j, i ≠ j → prePeirceOneProj cs (sd.proj i) (sd.proj j) b = 0
 
-/-- Compression annihilates Peirce 1-components: C_{pᵢ}(P₁ₖₗ(x)) = 0
-    for any i, k, l from the same spectral decomposition.
-    (Alfsen-Shultz 2003, Chapter 7, Peirce space orthogonality:
-    V₂(pᵢ), V₁(pₖ,pₗ), V₀ are mutually annihilated by compressions
-    from orthogonal projections in the same decomposition.) -/
+/-- SCAFFOLD (Paper 5 §3.3, corollary of the Peirce-Preservation Lemma).
+    `C_{pᵢ}(P₁ₖₗ(x)) = 0` for any `i, k, l` from the same spectral
+    decomposition.
+
+    Proved in Paper 5 §3.3 from `S0 + A-S compression additivity on
+    orthogonal pairs`. Remains a Lean axiom pending formal
+    compression-additivity in `CompressionSystem`. -/
 axiom compress_annihilates_peirce1 (V : Type*) [OrderUnitSpace V]
     (cs : CompressionSystem V) (sd : PreSpectralDecomp V cs)
     (i k l : Fin sd.n) (hkl : k ≠ l) (x : V) :
     cs.compress (sd.proj i) (prePeirceOneProj cs (sd.proj k) (sd.proj l) x) = 0
 
-/-- Peirce 1-projection annihilates compressed elements: P₁ᵢⱼ(C_{pₖ}(x)) = 0
-    for any i ≠ j and any k from the same spectral decomposition.
-    Dual of compress_annihilates_peirce1.
-    (Alfsen-Shultz 2003, Chapter 7, Peirce space orthogonality:
-    C_{pₖ}(x) ∈ V₂(pₖ), and P₁ᵢⱼ projects onto V₁(pᵢ,pⱼ),
-    which is orthogonal to V₂(pₖ) for any k.) -/
+/-- SCAFFOLD (Paper 5 §3.3, dual of `compress_annihilates_peirce1`).
+    `P₁ᵢⱼ(C_{pₖ}(x)) = 0` for any `i ≠ j` and any `k` from the same
+    spectral decomposition.
+
+    Same derivation as `compress_annihilates_peirce1`: proved in Paper 5
+    §3.3 from `S0 + A-S compression additivity on orthogonal pairs`.
+    Remains a Lean axiom pending formal compression-additivity. -/
 axiom peirce1_annihilates_compress (V : Type*) [OrderUnitSpace V]
     (cs : CompressionSystem V) (sd : PreSpectralDecomp V cs)
     (i j k : Fin sd.n) (hij : i ≠ j) (x : V) :
     prePeirceOneProj cs (sd.proj i) (sd.proj j) (cs.compress (sd.proj k) x) = 0
 
-/-- Peirce 1-projections are orthogonal idempotents: P₁ᵢⱼ(P₁ₖₗ(x)) = δ_{ij,kl} P₁ᵢⱼ(x)
-    where the Kronecker delta is on unordered pairs {i,j} = {k,l}.
-    (Alfsen-Shultz 2003, Prop 7.44: Peirce projections are orthogonal.) -/
+/-- SCAFFOLD (Paper 5 §3.3, orthogonal-idempotence of Peirce-1 projectors).
+    `P₁ᵢⱼ(P₁ₖₗ(x)) = δ_{ij,kl} P₁ᵢⱼ(x)`, Kronecker delta on unordered pairs.
+
+    Follows in Paper 5 §3.3 from the Peirce-Preservation Lemma applied
+    iteratively, i.e. from `S0 + compression additivity + linearity`.
+    Remains a Lean axiom pending formal compression-additivity in
+    `CompressionSystem`. -/
 axiom peirce1_orthogonal_idem (V : Type*) [OrderUnitSpace V]
     (cs : CompressionSystem V) (sd : PreSpectralDecomp V cs)
     (i j k l : Fin sd.n) (hij : i ≠ j) (hkl : k ≠ l) (x : V) :
@@ -262,15 +309,39 @@ axiom peirce1_orthogonal_idem (V : Type*) [OrderUnitSpace V]
       prePeirceOneProj cs (sd.proj i) (sd.proj j) x
     else 0
 
-/-- Compression of orthogonal projection products: C_{pᵢ}(C_{pₖ}(x)) = δᵢₖ C_{pᵢ}(x).
-    Follows from compression idempotence (i = k) and orthogonal annihilation (i ≠ k).
-    (Alfsen-Shultz 2003, Chapter 6: compression idempotence C_p ∘ C_p = C_p;
-    Chapter 7: orthogonal projections give C_{pᵢ} ∘ C_{pₖ} = 0 for i ≠ k.) -/
-axiom compress_orthogonal_product (V : Type*) [OrderUnitSpace V]
+/-- **Paper 5 §3.3 axiom (S0, Peirce Coherence, compression level).**
+
+    For a finite-dim spectral OUS with an orthogonal family of projective
+    units `{p_1, …, p_n}` from a spectral decomposition,
+        `C_{p_i} ∘ C_{p_j} = 0`   for all `i ≠ j`
+    i.e. `cs.compress (sd.proj i) (cs.compress (sd.proj j) x) = 0` for
+    every `x : V` and every pair `i ≠ j`.
+
+    Defended in Paper 5 (§3.3, "Canonical-example defense of S0") by the
+    three canonical spectral-OUS models where it is automatic:
+    (a) `M_n(ℂ)^sa` with `C_p(b) = p b p`;
+    (b) `C(X)` with compression = multiplication by `χ_A`;
+    (c) spin factors with disjoint-face P-projections.
+    Equivalent to Alfsen–Shultz 2003 Prop. 7.50 (compression-meet
+    identity) specialised to orthogonal projective units; stated here at
+    OUS+compression level to keep Paper 5 §3.3 independent of specific
+    A-S theorem numbers. -/
+axiom S0_peirce_coherence (V : Type*) [OrderUnitSpace V]
+    (cs : CompressionSystem V) (sd : PreSpectralDecomp V cs)
+    (i j : Fin sd.n) (hij : i ≠ j) (x : V) :
+    cs.compress (sd.proj i) (cs.compress (sd.proj j) x) = 0
+
+/-- Combined form of orthogonal-compression-product: diagonal case collapses
+    to `C_{p_i}(x)` via compression idempotence (`CompressionSystem.compress_idem`);
+    off-diagonal case vanishes via `S0_peirce_coherence`. -/
+theorem compress_orthogonal_product (V : Type*) [OrderUnitSpace V]
     (cs : CompressionSystem V) (sd : PreSpectralDecomp V cs)
     (i k : Fin sd.n) (x : V) :
     cs.compress (sd.proj i) (cs.compress (sd.proj k) x) =
-    if i = k then cs.compress (sd.proj i) x else 0
+    if i = k then cs.compress (sd.proj i) x else 0 := by
+  by_cases h : i = k
+  · subst h; simp [cs.compress_idem]
+  · simp [h, S0_peirce_coherence V cs sd i k h x]
 
 /-! ## The Corrected Product
 

@@ -41,7 +41,7 @@ not a quadratic one (IIT's phi, pairwise integration).
 
 ### Paper 5: Self-Modeling --> QM (FORMALIZED)
 
-10 files, ~2400 lines, **0 sorry's**, 3 axioms (published theorems).
+11 files, **0 sorry's**, 17 axioms across the Paper 5 chain.
 
 The complete derivation chain is machine-verified:
 
@@ -55,13 +55,20 @@ Self-modeling premise
   --> Quantum mechanics
 ```
 
-**Axioms** (3, all published theorems we cite rather than re-prove):
+**Axioms** (17 in the Paper 5 chain):
 
-| Axiom | Source | What it says |
-|-------|--------|-------------|
-| `spectral_jordan_identity` | van de Wetering, Alfsen-Shultz | General Jordan identity via spectral decomposition |
-| `vdw_theorem_3` | van de Wetering + Barnum-Wilce + Hanche-Olsen | EJA + local tomography = C*-algebra |
-| `sp_sub_right_general` | van de Wetering S2 continuity | Linearity of measurement maps on effect differences |
+- `SelfModelingBridge.lean` (15): 8 cite Alfsen-Shultz 2003 / OUS theory;
+  1 is the named Paper 5 §3.3 postulate `S0_peirce_coherence` (Peirce
+  Coherence at compression-OUS level), defended in the paper via three
+  canonical models + recovery from AS Prop. 7.50; 6 are SCAFFOLD internal
+  to Paper 5 (`diagonal_peirce_vanish`, `compress_annihilates_peirce1`,
+  `peirce1_annihilates_compress`, `peirce1_orthogonal_idem`,
+  `selfModelProduct_nonneg`, `self_modeling_locally_tomographic`).
+  The four Peirce scaffolds are §3.3 Peirce-Preservation Lemma corollaries,
+  derivable in the paper from S0 + compression-additivity on orthogonal
+  pairs; they remain Lean axioms pending formal compression-additivity.
+- `JordanStructure.lean` (1): `spectral_jordan_identity` (van de Wetering, Alfsen-Shultz)
+- `CStarBridge.lean` (1): `vdw_theorem_3` (van de Wetering Theorem 3)
 
 **Concrete models** (S1-S7 verified from scratch, no axioms):
 - `SpinFactor`: The 3D spin factor (Bloch ball). First machine-checked non-commutative
@@ -84,22 +91,29 @@ argument to yield Einstein's field equations.
 Four gaps (all standard, none bespoke): (1) emergent Lorentz invariance d≥2,
 (2) lattice Bisognano-Wichmann, (3) local equilibrium, (4) continuum limit.
 
-### Paper 7: h_3(O) --> SM Gauge Group (PARTIAL)
+### Paper 7: h_3(O) --> SM Gauge Group (CHAIN COMPLETE)
 
-The conceptual chain is complete (both gaps closed, 2026-03-23). Octonions and
-Albert algebra core are proved. Scaffold files cover the remaining chain.
+The full chain NonComposability → Chirality is sorry-free as of 2026-03-29
+(commits 229aa99, 328886c, ce21913). Albert retains 3 expository sorry's
+(jordan_identity, simple, not_special) that are not load-bearing downstream.
 
 | File | Status | Sorry | Axioms | Description |
 |------|--------|-------|--------|-------------|
 | `Octonions.lean` | **DONE** | **0** | 3 | Fano-plane mul, all identities proved, Hurwitz/G2/S6 axioms |
-| `Albert.lean` | **7/10** | 3 | 1 | jordanMul, det, idempotents, formally_real, Peirce proved. 3 hard sorry remain |
+| `Albert.lean` | Expository | 3 | 1 | jordanMul, det, idempotents, formally_real, Peirce proved. 3 sorry expository only |
 | `RhoJ.lean` | **DONE** | **0** | 1 | rho_J uniqueness theorem, boundary conditions, concrete evaluations |
-| `NonComposability.lean` | Scaffold | 3 | 4 | BGW rank argument, exceptional_no_composite |
-| `UniverseAlgebra.lean` | Scaffold | 2 | 0 | universe_contains_h3O (Gap A capstone) |
-| `F4.lean` | Scaffold | 4 | 6 | Aut_h3O, Stab_idem (Spin(9)), Stab_complex, Borel-dS |
-| `ObserverInterface.lean` | Scaffold | 2 | 2 | ObserverConfig, residualGaugeGroup, h3C_subalgebra |
-| `GaugeGroup.lean` | Scaffold | 2 | 2 | SMGaugeGroupData, Todorov-Drenska, hypercharge |
-| `Chirality.lean` | Scaffold | 0 | 7 | EmbeddingType, Furey/Sawin, chirality_from_self_modeling |
+| `NonComposability.lean` | **DONE** | **0** | 4 | BGW rank argument, exceptional_no_composite |
+| `UniverseAlgebra.lean` | **DONE** | **0** | 0 | universe_contains_h3O (Gap A capstone) |
+| `F4.lean` | **DONE** | **0** | 7 | Aut_h3O, Stab_idem (Spin(9)), Stab_complex incl. stab_complex_conjugate, Borel-dS |
+| `ObserverInterface.lean` | **DONE** | **0** | 1 | ObserverConfig, residualGaugeGroup, h3C_subalgebra |
+| `GaugeGroup.lean` | **DONE** | **0** | 2 | SMGaugeGroupData (factor dims 1+3+8 + hypercharges), Todorov-Drenska, Krasnov |
+| `Chirality.lean` | **DONE** | **0** | 9 | EmbeddingType, typed `cl6_determines_embedding` + `furey_cl6_selects_left` (Furey 2018) |
+
+Note: JMP review of Paper 7 (prose) = MAJOR REVISION. Adversarial subagent
+2026-04-16 identified Step 3 embedding ι: M_16(ℝ) → M_n(ℂ) as glossed-over
+"standard inclusion" that is actually load-bearing for the complexification
+crux. Not yet reflected in Lean (likely needs new axiom or lemma once the
+paper-level decision lands).
 
 ### Roadmap
 
