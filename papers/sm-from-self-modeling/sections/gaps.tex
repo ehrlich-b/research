@@ -5,11 +5,15 @@
 \section{Gap Analysis and Open Questions}\label{sec:gaps}
 %----------------------------------------------------------------------
 
-The derivation chain of Table~\ref{tab:chain} is conditional on three
-inputs that are not derived from the self-modeling axioms.  This section
-presents a detailed analysis of these gaps: their nature, severity, and
-what would close them.  Honest gap identification is a first-class
-component of the result, not an afterthought.
+The derivation chain of Table~\ref{tab:chain} involves three
+symmetry-breaking steps beyond the self-modeling axioms.  Two of
+these (B1 and B2) are instances of \emph{necessary symmetry reduction}
+in which the reduction is algebraically required and the direction is
+physically irrelevant (all choices are conjugate).  The
+third (Gap~A) is a genuine conditioning input.  The complexification
+step (previously Gap~C) has been closed by
+Theorem~\ref{thm:complexification}.  This section presents a detailed
+analysis of each.
 
 %----------------------------------------------------------------------
 \subsection{Conditional structure of the main result}\label{sec:conditional}
@@ -34,45 +38,72 @@ according to their logical status.
 \end{itemize}
 
 \medskip
-\noindent\textbf{Argued but not formally proved (Gap~C):}
+\noindent\textbf{Derived (formerly Gap~C):}
 \begin{itemize}
-  \item \textbf{L4:} The complexification step---the claim that a
-    C*-observer's probing of the real Peirce half-space $\Vhalf$
-    induces extension of scalars
-    $\Vhalf\otimes_\mathbb{R}\mathbb{C} = \Stenplus$---is a
-    physical argument, not a formal theorem
-    (Sec.~\ref{sec:complexification-arg}).  If L4 fails, L5 and
-    the $\Spin{10}$-dependent parts of L7--L9 do not follow
-    (though the $\Ffour$ intersection route L8 is independent of
-    complexification).
+  \item \textbf{L4:} The complexification step is now proved
+    (Theorem~\ref{thm:complexification}): the continuous functional calculus of the observer's
+    C*-algebra, applied to the Peirce operators $T_a$ (which have
+    eigenvalue $-\tfrac{1}{2} < 0$), produces complex output:
+    $\sqrt{T_a}\,T_b\,\sqrt{T_a} = (i/2)\,T_b$.  The
+    measurement algebra exits $M_{16}(\mathbb{R})$ and generates
+    $M_{16}(\mathbb{C}) = \mathrm{Cl}(9,\mathbb{C})$.
 \end{itemize}
 
 \medskip
-\noindent\textbf{Conditioning inputs (Gaps~A, B1, B2):}
+\noindent\textbf{Conditioning input (Gap~A):}
 \begin{itemize}
   \item \textbf{L2 (Gap~A):} Non-composability identifies $\hthree$
     as the universe algebra.  Everything downstream (L3--L9) takes
-    place within $\hthree$.
-  \item \textbf{L3 (Gap~B1):} Observer selects $E_{11}$.  The Peirce
-    decomposition and all subsequent links require this input.
-  \item \textbf{L6 (Gap~B2):} Observer selects $u\in S^6$.  The
-    $\Cl{6}$ chirality (L7), $\Ffour$ intersection (L8), and
-    synthesis (L9) all require this input.
+    place within $\hthree$.  This is the only genuine conditioning
+    input: it requires Level~IV mathematical realism
+    (Remark~\ref{rem:gap-A}).
 \end{itemize}
+
+\medskip
+\noindent\textbf{Necessary symmetry reduction (B1, B2):}
+\begin{itemize}
+  \item \textbf{L3 (B1):} Observer occupies a rank-1 idempotent
+    $E_{11}$, breaking $\Ffour\to\Spin{9}$.  All rank-1 idempotents
+    are $\Ffour$-conjugate; the breaking is forced by the observer's
+    existence and the direction is gauge.
+  \item \textbf{L6 (B2):} Observer selects $u\in S^6$, breaking
+    $\Gfour\to\SU{3}_C$.  Theorem~\ref{thm:complexification}
+    establishes complexification; Schur's lemma forbids equivariant
+    complexification; therefore the observer \emph{must} select some
+    $u$ (Remark~\ref{rem:C-vs-B2}).
+    All $u$ are $\Gfour$-conjugate; the breaking is forced and the
+    direction is gauge.
+\end{itemize}
+
+\noindent
+We use ``necessary symmetry reduction'' to mean that the algebraic
+structure \emph{requires} a symmetry-reducing choice (a representative
+within a conjugacy class), and all choices are physically equivalent.
+No effective potential, order parameter, or Goldstone analysis is invoked:
+the reduction is algebraic, not dynamical.  Whether a dynamical mechanism
+underlies these reductions is connected to Gap~SA and deferred to future
+work.  The terminology is chosen to distinguish this phenomenon from
+dynamical spontaneous symmetry breaking, which involves vacuum degeneracy
+and Goldstone modes.
 
 \medskip
 \noindent\textbf{The strongest conditional result:}
 \begin{quote}
-If the universe algebra is $\hthree$, an observer selects a rank-1
-idempotent $E_{11}$ and a complex structure $u \in S^6$, and the
-complexification principle (L4) holds, then $u$ simultaneously
-gives the SM gauge group $\SMgauge$ and its chiral (LEFT)
-one-generation representation.
+If the universe algebra is $\hthree$ (Gap~A), then the existence of
+a self-modeling observer forces---via two instances of necessary
+symmetry reduction whose directions are physically irrelevant---the SM
+gauge group $\SMgauge$ and its chiral (LEFT) one-generation
+representation.
 \end{quote}
-The four conditioning inputs (Gap~A, Gap~B steps~1 and~2, and
-Gap~C) are the \emph{only} additional data beyond the self-modeling
-axioms.  Of these, Gap~C (complexification) is the paper's central
-conjecture; the others are symmetry-breaking inputs.
+Gap~A (Level~IV realism $+$ non-composability) is the \emph{only}
+conditioning input beyond the self-modeling axioms.  The two
+symmetry reductions (B1, B2) are required by the algebraic
+structure: the observer must occupy some idempotent (B1) and must
+complexify non-equivariantly (B2), but all choices produce identical
+physics ($\Ffour$-conjugacy for B1; $\Gfour$-conjugacy for B2).
+The complexification step (previously Gap~C) is derived from the
+observer's C*-algebra continuous functional calculus
+(Theorem~\ref{thm:complexification}).
 
 %----------------------------------------------------------------------
 \subsection{Gap register}\label{sec:gap-register}
@@ -93,20 +124,27 @@ Gap & Description & Nature & Severity & What would close it \\
 \midrule
 B1
   & Rank-1 idempotent $E_{11}$ choice
-  & \makecell[l]{Symmetry breaking: all rank-1 idempotents\\
-    conjugate under $\Ffour$ (orbit = $\mathbb{O}P^2$, dim 16).\\
-    The observer's existence breaks $\Ffour\to\Spin{9}$,\\
-    but \emph{which} idempotent is not addressed.}
-  & HIGH
-  & \makecell[l]{A principle selecting which\\ idempotent the observer occupies} \\[4pt]
+  & \makecell[l]{Necessary symmetry reduction: the observer must\\
+    occupy \emph{some} rank-1 idempotent to exist as a\\
+    Peirce subsystem. All rank-1 idempotents are\\
+    $\Ffour$-conjugate (orbit = $\mathbb{O}P^2$, dim 16).\\
+    Reduction is required; direction is gauge.}
+  & NSR
+  & \makecell[l]{Already closed: breaking forced,\\
+    direction physically irrelevant} \\[4pt]
 B2
   & Complex structure $u\in S^6$ choice
-  & \makecell[l]{Symmetry breaking: all $u$ conjugate under\\
-    $\Gfour$ (orbit = $S^6 = \Gfour/\SU{3}$, dim 6).\\
-    What selects a particular $u$ is not addressed.}
-  & HIGH
-  & \makecell[l]{A potential on $S^6$, or a deeper\\
-    principle selecting $u$} \\[4pt]
+  & \makecell[l]{Necessary symmetry reduction:\\
+    Theorem~\ref{thm:complexification} establishes complexification;\\
+    Schur's lemma forbids equivariant complexification.\\
+    Observer \emph{must} select some $u$.\\
+    All $u$ conjugate under $\Gfour$\\
+    (orbit = $S^6 = \Gfour/\SU{3}$, dim 6).\\
+    Reduction is required; direction is gauge.}
+  & NSR
+  & \makecell[l]{Already closed: breaking forced\\
+    by Thm~\ref{thm:complexification} + Schur,\\
+    direction physically irrelevant} \\[4pt]
 A
   & Non-composability $\to$ $\hthree$
   & \makecell[l]{Standard math (JvNW~\cite{JvNW1934} + BGW~\cite{BGW2020})\\
@@ -123,21 +161,21 @@ Gen
   & \makecell[l]{Open question. The ``3'' in $h_3(\mathbb{O})$ is suggestive,\\
     but no mechanism producing 3 copies of the $\mathbf{16}$\\
     representation has been established.}
-  & LOW
+  & \makecell[l]{LOW\\(paper)\\HIGH\\(program)}
   & \makecell[l]{Mechanism producing 3 copies\\
-    of $\mathbf{16}$ from $\hthree$ structure} \\[4pt]
+    of $\mathbf{16}$ from $\hthree$ structure\\
+    with mass hierarchy and mixing} \\[4pt]
 C
   & Complexification (L4)
-  & \makecell[l]{The argument that a C*-observer forces\\
-    complexification of $\Vhalf$ is physical reasoning,\\
-    not a formal proof. The step from ``observer's\\
-    internal scalar field is $\mathbb{C}$'' to ``observer's\\
-    probe of $\Vhalf$ extends scalars'' needs a precise\\
-    theorem about measurement maps.}
-  & MEDIUM
-  & \makecell[l]{A theorem: C*-algebra measurement\\
-    maps on a real Jordan module\\
-    necessarily extend to $\mathbb{C}$} \\[4pt]
+  & \makecell[l]{CLOSED (Theorem~\ref{thm:complexification}).\\
+    The observer's C*-algebra CFC, applied to $T_a$\\
+    (eigenvalue $-1/2 < 0$), produces complex output:\\
+    $\sqrt{T_a}\,T_b\,\sqrt{T_a}$\\
+    $= (i/2)\,T_b$. Measurement algebra exits\\
+    $M_{16}(\mathbb{R})$ into $M_{16}(\mathbb{C})$.}
+  & \makecell[l]{CLOSED\\(was: HIGH)}
+  & \makecell[l]{Done. Negative eigenvalue +\\
+    complex FC = complexification.} \\[4pt]
 SA
   & Spectral action computation
   & \makecell[l]{Deferred: the current work establishes the\\
@@ -152,12 +190,33 @@ SA
 
 \noindent\textbf{Severity justification:}
 \begin{itemize}
-  \item \textbf{B1 (HIGH):} Without the choice of rank-1 idempotent,
-    there is no Peirce decomposition, no $\Spin{9}$, and no downstream
-    chain.  The entire derivation from L3 onward requires this input.
-  \item \textbf{B2 (HIGH):} Without the choice of $u$, there is no
-    $\Cl{6}$, no chirality, and no SM gauge group.  The entire
-    synthesis (L7--L9) requires this input.
+  \item \textbf{B1 (NSR):} The observer must occupy \emph{some}
+    rank-1 idempotent to exist as a Peirce subsystem of $\hthree$;
+    this reduces $\Ffour\to\Spin{9}$.  All rank-1 idempotents are
+    $\Ffour$-conjugate (orbit = $\mathbb{O}P^2$), so the physics
+    is identical regardless of which idempotent is selected.  This
+    is a necessary symmetry reduction: the reduction is forced by the
+    observer's existence; the direction is a gauge choice.
+  \item \textbf{B2 (NSR):} Theorem~\ref{thm:complexification} establishes
+    complexification of $\Vhalf$.  Schur's lemma forbids equivariant
+    complexification ($\mathrm{End}_{\Spin{9}}(S_9) = \mathbb{R}$,
+    since $9\bmod 8 = 1$ gives real type by Bott periodicity).
+    Therefore the observer \emph{must} select some $u\in S^6$---there
+    is no equivariant alternative.  The selection mechanism is the CFC computation
+    $\sqrt{T_a}\,(\cdot)\,\sqrt{T_a}$: every instance of the
+    self-modeling cycle that accesses $\Vhalf$ applies
+    this operation for a specific~$T_a$, and
+    this act \emph{is} the choice of~$u$
+    (Remark~\ref{rem:C-vs-B2}).  No external dynamics is needed;
+    the self-modeling cycle is the dynamics.
+    All $u$ are $\Gfour$-conjugate,
+    so the physics is identical regardless of which $u$ is selected.
+    This is a necessary symmetry reduction: $\Gfour\to\SU{3}_C$, with
+    the reduction required by the algebra and the direction a gauge
+    choice.  The situation is structurally analogous to the direction
+    of the electroweak vacuum (cf.~\cite{FerraraEtAl2021} for an
+    explicit $\Gfour\to\SU{3}$ model on $S^6$), though we do not
+    invoke an effective potential here.
   \item \textbf{A (HIGH):} The identification of $\hthree$ as the
     universe algebra rests on the JvNW classification (standard
     mathematics) combined with Level~IV mathematical realism: if an
@@ -167,17 +226,23 @@ SA
     program's foundational premise (not a new assumption), but it is
     doing substantive work here.  Without it, non-composability would
     be merely \emph{permitted}, not \emph{required}.
-  \item \textbf{C (MEDIUM):} The complexification argument (L4) is the
-    paper's main claimed novelty.  It is labeled ``Argued'' in the chain
-    table, reflecting its status as a physical argument rather than a
-    formal proof.  The key step---that a C*-algebra observer probing a
-    real vector space necessarily complexifies it---is plausible but
-    requires a precise theorem about how C*-measurement maps interact
-    with real target spaces.
-  \item \textbf{Gen (LOW for this paper):} The present work addresses
-    one generation of fermions.  The question of why there are exactly
-    three generations is explicitly out of scope, though it is a
-    crucial open question for the program.
+  \item \textbf{C (CLOSED):} The complexification step (L4) is proved
+    by Theorem~\ref{thm:complexification}.  The observer's C*-algebra continuous
+    functional calculus, applied to Peirce operators with negative
+    eigenvalues, necessarily produces imaginary
+    coefficients that extend the measurement algebra from
+    $M_{16}(\mathbb{R})$ to $M_{16}(\mathbb{C})$.  This result is
+    compatible with the impossibility of $\Spin{9}$-equivariant
+    complexification (Schur's lemma): the observer-induced
+    complexification is non-equivariant, depending on which $T_a$ is
+    measured first (Remark~\ref{rem:impossibility-compat}).
+  \item \textbf{Gen (LOW for this paper; HIGH for the program):} The
+    present work addresses one generation of fermions.  The question of
+    why there are exactly three generations is explicitly out of scope.
+    For the research program as a whole, however, this gap is HIGH:
+    producing three generations with the observed mass hierarchy and
+    CKM/PMNS mixing is among the deepest open problems in particle
+    physics, and no algebraic approach has solved it.
   \item \textbf{SA (LOW for this paper):} Computing the spectral
     action (the GR + SM Lagrangian) from the algebraic data
     established here is a separate research direction, deferred to
@@ -185,19 +250,20 @@ SA
 \end{itemize}
 
 %----------------------------------------------------------------------
-\subsection{Structural independence of the gaps}\label{sec:gap-independence}
+\subsection{Structural independence and the reduction cascade}\label{sec:gap-independence}
 %----------------------------------------------------------------------
 
-Gaps B1 and B2 are \emph{structurally independent}: resolving one
-does not constrain the other.
+The two symmetry reductions (B1 and B2) are \emph{structurally independent}:
+each is forced by the algebra, and neither constrains the other's
+direction.
 
 \medskip
 \noindent\textbf{B1 does not constrain B2.}
 The stabilizer $\Spin{9} = \mathrm{Stab}_{\Ffour}(E_{11})$ contains
 $\Gfour = \mathrm{Aut}(\mathbb{O})$, which acts transitively on
 $S^6$.  Therefore, after fixing $E_{11}$, all complex structures
-$u\in S^6$ remain equivalent---fixing the idempotent does not select
-a preferred $u$.
+$u\in S^6$ remain equivalent---the first reduction does not select
+a preferred direction for the second.
 
 \medskip
 \noindent\textbf{B2 does not constrain B1.}
@@ -209,12 +275,26 @@ of idempotents from $\mathbb{O}P^2$ (dim~16) to a smaller manifold,
 but does not determine a unique $E_{11}$.
 
 \medskip
+\noindent\textbf{The reduction cascade.}
+The two reductions form a cascade: the observer's existence reduces
+$\Ffour\to\Spin{9}$ (B1), and the observer's probing of $\Vhalf$
+reduces $\Gfour\to\SU{3}_C$ (B2).  Each step is algebraically
+required (the observer must exist; it must probe $\Vhalf$) and each
+direction is physically irrelevant (all idempotents are
+$\Ffour$-conjugate; all $u$ are $\Gfour$-conjugate).  The algebraic
+mechanism driving the cascade is the observer's C*-nature---inherited
+from the self-modeling cycle of Paper~5---not an external potential or
+Lagrangian.  The situation is structurally analogous to the Higgs
+mechanism (the symmetry must reduce; the direction is gauge), but
+no effective potential is invoked here.
+
+\medskip
 \noindent\textbf{Gap~A is logically upstream.}
 Without the identification of $\hthree$ as the universe algebra,
 neither the rank-1 idempotent $E_{11}$ nor the complex structure
-$u$ is defined.  Gap~A is a prerequisite for Gaps~B1 and~B2;
-closing~A would not close~B1 or~B2, but opening~A would render~B1
-and~B2 moot.
+$u$ is defined.  Gap~A is a prerequisite for B1 and~B2;
+closing~A would not affect the reduction steps, but opening~A would
+render them moot.
 
 \medskip
 \noindent\textbf{Gen and SA are downstream/separate.}

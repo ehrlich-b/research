@@ -89,10 +89,21 @@ color group.
 %----------------------------------------------------------------------
 
 The 6 directions of $W$ become generators of a Clifford subalgebra
-inside $\Cl{10}$.  Recall from Section~\ref{sec:spin-upgrade} that
-$\Spin{10}$ acts on $\Stenplus$ via the Clifford algebra $\Cl{10}$
-with generators $\Gamma_1,\ldots,\Gamma_{10}$ satisfying
-$\{\Gamma_A,\Gamma_B\} = 2\delta_{AB}$.
+inside $\Cl{10}$.  The bridge between the Peirce operators of
+Section~\ref{sec:complexification} and the $\Cl{10}$ generators used
+here is as follows.  The 9 rescaled Peirce operators
+$\gamma_i = 2T_{a_i}$ ($i = 1,\ldots,9$) generate $\Cl{9}$ inside
+$\mathrm{End}(\Vhalf) = M_{16}(\mathbb{R})$
+(Eq.~\eqref{eq:T_a-clifford}).  After the complexification of
+Theorem~\ref{thm:complexification}, $\mathrm{End}(\Vhalf^{\,\mathbb{C}})
+= M_{16}(\mathbb{C})$ admits a 10th generator (arising from the
+structure group upgrade $\Spin{9}\to\Spin{10}$,
+Sec.~\ref{sec:spin-upgrade}), extending $\Cl{9}$ to $\Cl{10}$.  We
+denote the full set of $\Cl{10}$ generators by
+$\Gamma_1,\ldots,\Gamma_{10}$, satisfying
+$\{\Gamma_A,\Gamma_B\} = 2\delta_{AB}$, where $\Gamma_i = \gamma_i$
+for $i = 1,\ldots,9$ and $\Gamma_{10}$ is the new generator from
+complexification.
 The 6 generators corresponding to the $W$ directions define
 \begin{equation}\label{eq:cl6-gens}
   \gamma_k := \Gamma_k, \quad k=1,\ldots,6,
@@ -107,13 +118,27 @@ generating the subalgebra
 \end{equation}
 
 The remaining 4 generators $\Gamma_7,\Gamma_8,\Gamma_9,\Gamma_{10}$
-correspond to the complement: the $u = e_7$ direction plus three
-additional directions from the $\Vzero$ Peirce space
-(the $h_2(\mathbb{O})$ sector).
+correspond to: the $u = e_7$ direction, two further traceless
+directions of $h_2(\mathbb{O})$ (the real-diagonal traceless part of
+$\Vzero$), and the 10th generator $\Gamma_{10}$ arising from the
+complexification (Sec.~\ref{sec:spin-upgrade}).
 
 \emph{The $\Cl{6}$ subalgebra is not introduced ad hoc}: it is
 induced by the choice of complex structure $u$, which selects the
 6 directions $e_1,\ldots,e_6\in W = u^\perp\cap\mathrm{Im}(\mathbb{O})$.
+Concretely, the six imaginary octonion units $e_k\in W$ act on
+$\Vhalf = \mathbb{O}^2$ as real-linear maps whose mutual
+anticommutativity ($e_i\cdot e_j + e_j\cdot e_i = -2\delta_{ij}$
+for $i\neq j$, from the octonion multiplication table) provides
+a $\mathrm{Cl}(0,6)$ relation.  The sign is absorbed by
+identifying the $\Cl{6}$ generators with the corresponding
+$\Cl{10}$ generators $\gamma_k := \Gamma_k$
+(Eq.~\eqref{eq:cl6-gens}), which satisfy the positive convention
+$\{\gamma_i,\gamma_j\} = 2\delta_{ij}$ by construction.  The
+two conventions are related by $\gamma_k = i\,L_{e_k}$ (where
+$L_{e_k}$ is left multiplication by $e_k$), with the factor of
+$i$ provided by the complexification of
+Theorem~\ref{thm:complexification}.
 
 \begin{remark}[Fock space vs.\ spinor dimensions]
 The $\Cl{6}$ Fock space (from 3 creation operators $a_j^\dagger$)
@@ -271,15 +296,24 @@ i.e.\ on left-handed fermions.  Right-handed fermions are $\SU{2}_L$
 singlets.  This is precisely the chirality pattern of the Standard
 Model.
 
-\begin{remark}[Left vs.\ diagonal embedding~\cite{BaezSawin}]\label{rem:left-vs-diag}
-In the diagonal embedding, a single $\SU{2}$ would act on
+\begin{remark}[Left vs.\ diagonal embedding]\label{rem:left-vs-diag}
+In a diagonal embedding, a single $\SU{2}$ would act on
 \emph{both} chiralities symmetrically, producing a non-chiral
-theory.  The theorem of Sawin (as cited in~\cite{BaezSawin})
-establishes that the $\Spin{10}$ GUT embedding of the SM is the
-LEFT embedding, not the diagonal.  Our construction reproduces
-this: the volume form $\omegasix$ separates left and right sectors
-\emph{before} the Pati-Salam breaking, ensuring $\SU{2}_L$
-acts only on the left-handed component.
+theory.  Our construction excludes the diagonal embedding
+directly, without appeal to an external classification result.
+The $\Cl{6}$ volume form $\omegasix$ defines a chirality
+grading ($\omegasix = -i\cdot(-1)^N$ on Fock states,
+Eq.~\eqref{eq:omega6-witt}) that commutes with
+$\SU{4} = \Spin{6}$ (the ``internal'' part, spanned by
+$\gamma_1,\ldots,\gamma_6$) but anticommutes with the remaining
+four $\Cl{10}$ generators spanning
+$\Spin{4} = \SU{2}_L\times\SU{2}_R$.  The factor $\SU{2}_L$
+is \emph{by definition} the subgroup of $\Spin{4}$ preserving
+the $\omegasix = +i$ eigenspace; it therefore acts only on
+left-handed states.  Right-handed states (the $\omegasix = -i$
+eigenspace) are $\SU{2}_L$ singlets.  This is a direct
+consequence of the Clifford algebra structure, not an imported
+result.
 \end{remark}
 
 %----------------------------------------------------------------------
@@ -302,7 +336,10 @@ giving the Standard Model gauge group:
 \end{equation}
 with hypercharge $Y = (B-L) + 2J_3^R$, where $B-L$ comes from
 $\SU{4}\to\SU{3}\times\mathrm{U}(1)_{B-L}$
-and $J_3^R$ from $\SU{2}_R$.
+and $J_3^R$ from $\SU{2}_R$.  This is the standard
+Gell-Mann--Nishijima normalization ($Q = J_3^L + Y/2$), consistent
+with the quantum number assignments in
+Sec.~\ref{sec:quantum-numbers}.
 
 \noindent\textbf{Dimension check:}
 $\dim(\SU{3}_C) + \dim(\SU{2}_L) + \dim(\mathrm{U}(1)_Y)
@@ -402,6 +439,13 @@ $Y = (B-L) + 2J_3^R$ and $Q = J_3^L + Y/2$ verified for all 16 states.
 Particle content: $u_L\times 3$, $d_L\times 3$, $\nu_L$, $e_L$,
 $u_R\times 3$, $d_R\times 3$, $\nu_R$, $e_R$ --- complete
 one-generation SM fermion content.
+Anomaly cancellation for one generation follows from the standard
+$\Spin{10}$ representation theory: the $\rep{16}$ is anomaly-free
+and does not require a separate check~\cite{Todorov2022}.
+(The Fock-space particle number $N$ is a $\Cl{6}$-algebraic label, not
+a measure of compositeness: leptons occupy the $N = 3$ sector because
+they are color singlets---all three color creation operators are
+``occupied''---while quarks at $N = 1$ carry a single color index.)
 
 \begin{remark}[Right-handed neutrino]
 The $\rep{16}$ of $\Spin{10}$ necessarily includes $\nu_R$, a

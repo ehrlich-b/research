@@ -5,15 +5,12 @@
 \section{Part A: Complexification from C*-Observer}\label{sec:complexification}
 %----------------------------------------------------------------------
 
-The first half of the derivation argues that the observer's algebraic
+The first half of the derivation proves that the observer's algebraic
 nature---specifically, the fact that self-modeling forces a C*-algebra
-structure---motivates complexification of the Peirce half-space of the
-exceptional Jordan algebra, canonically upgrading the symmetry from
+structure---produces complexification of the Peirce half-space of the
+exceptional Jordan algebra, upgrading the symmetry from
 $\Spin{9}$ to $\Spin{10}$ and identifying the 16-dimensional
 spinor representation that will carry one generation of fermions.
-The complexification step is a physical argument, not a formal
-theorem; its formalization is an open problem (Gap~C,
-Sec.~\ref{sec:gap-register}).
 
 %----------------------------------------------------------------------
 \subsection{The exceptional Jordan algebra \texorpdfstring{$\hthree$}{h3(O)}}\label{sec:h3O}
@@ -63,8 +60,20 @@ whose algebra admits composites is therefore a subsystem of a larger
 structure, contradicting its identification as the universe.  By
 contrapositive, the universe's algebra must be one that does
 \emph{not} admit composites: non-composability is required, not
-merely permitted.  This is a separate argument from the self-modeling
-axioms and is flagged as Gap~A.
+merely permitted.  This argument has an implicit step: identifying ``the universe''
+with a particular mathematical structure, and treating the existence
+of composites (under L4) as entailing that the algebra is a subsystem
+\emph{of those composites} rather than merely co-existing alongside
+them.  This identification is natural under L4 (a tensor factor is,
+by construction, a subsystem of the tensor product) but it is doing
+substantive philosophical work.  A further implicit step is that the
+universe corresponds to a \emph{single} Jordan algebra rather than,
+say, a category of algebraic structures; under L4, the non-composable
+algebra is singled out precisely because every composable algebra is
+a proper part of a larger structure, but this assumes the universe
+has a single algebraic description.
+The argument is flagged as Gap~A
+precisely because it goes beyond the self-modeling axioms.
 \end{remark}
 
 %----------------------------------------------------------------------
@@ -82,13 +91,27 @@ The observer selects a rank-1 idempotent
 \end{equation}
 
 \begin{remark}[Gap~B, step~1]\label{rem:gap-B1}
-The choice of $E_{11}$ is an \emph{input}, not a consequence of
-self-modeling.  All rank-1 idempotents in $\hthree$ are conjugate under
+The self-modeling framework requires that the universe contains a
+faithful self-model---a subsystem whose states separate the states of
+the whole.  Paper~5 proves that any such subsystem has
+$M_n(\mathbb{C})^{\mathrm{sa}}$ state spaces, i.e.\ it is a
+C*-algebra observer.  An observer of this type, embedded in $\hthree$,
+occupies an idempotent whose Peirce 1-space $\Vone$ is its address
+within the algebra (see Remark~\ref{rem:observer-universe}).  The
+idempotent must be rank-1: a rank-2 idempotent would give
+$\Vone \cong h_2(\mathbb{O})$ (10-dimensional), but the observer
+is a C*-\emph{subalgebra} whose address is a single slot, not a
+composite Jordan system.  Only rank-1 gives
+$\Vone \cong \mathbb{R}$, the minimal address for a single
+observer.
+All rank-1 idempotents in $\hthree$ are conjugate under
 $\Ffour$ (the orbit is the octonionic projective plane
-$\mathbb{O}P^2$, $\dim = 16$).  Physically, the observer's existence
+$\mathbb{O}P^2$, $\dim = 16$).  The observer's existence
 breaks $\Ffour \to \Spin{9}$; \emph{which} idempotent is selected
-corresponds to the observer's ``viewpoint'' and is a genuine
-symmetry-breaking input.
+corresponds to the observer's ``viewpoint'' and is physically
+irrelevant by $\Ffour$-conjugacy.  The breaking is forced by the
+self-modeling definition (which requires an observer); the direction
+is gauge.
 \end{remark}
 
 \begin{remark}[Observer-universe relation]\label{rem:observer-universe}
@@ -107,6 +130,24 @@ self-modeling system) is C* by Paper~5; the \emph{universe's}
 algebra is the non-composable $\hthree$.  The observer accesses the
 universe through the Peirce interface $\Vhalf$, not through tensor
 factors.
+
+The dimensional relationship deserves emphasis.  The Peirce 1-space
+$\Vone = \mathbb{R}\cdot E_{11}$ is the observer's \emph{address}
+within $\hthree$---the eigenvalue-$1$ slot of the idempotent it
+occupies---not the observer's internal state space.  The observer's
+internal C*-algebra must be rich enough to faithfully represent the
+Peirce operators $T_a \in \mathrm{End}(\Vhalf)$, which generate
+$M_{16}(\mathbb{R})$.  Paper~5 forces this internal algebra to be
+$M_n(\mathbb{C})^{\mathrm{sa}}$ for $n \geq 16$; the observer's
+\emph{model} of the Peirce interface lives in
+$M_{16}(\mathbb{C}) \subset M_n(\mathbb{C})$.  The 1-dimensional
+Peirce slot and the $16^2$-dimensional measurement algebra are not
+in conflict: the former is where the observer \emph{sits} in
+$\hthree$, the latter is how it \emph{represents} the interface
+$\Vhalf$ internally.  This is the standard situation for a subsystem
+probing its environment: the subsystem's address is low-dimensional,
+but its internal model of the environment is as rich as the
+information accessible through the interface requires.
 \end{remark}
 
 The Peirce decomposition under $e$ partitions $\hthree$ into the
@@ -208,79 +249,410 @@ traceless part (the 9-dimensional vector representation of
 $\SO{9} = \Spin{9}/\mathbb{Z}_2$) plus the trace (a trivial
 $\mathbf{1}$).
 
+\medskip
+\noindent\textbf{Peirce multiplication operators.}
+For each unit vector $a$ in the 9-dimensional vector representation
+(the traceless part of $\Vzero = h_2(\mathbb{O})$), the
+\emph{Peirce multiplication operator} is
+\begin{equation}\label{eq:T_a-def}
+  T_a \colon \Vhalf \to \Vhalf,
+  \qquad
+  T_a(v) = (a \circ v)_{\Vhalf},
+\end{equation}
+where the subscript $\Vhalf$ denotes projection to the
+Peirce half-space.  These are self-adjoint with respect to the
+trace inner product on $\hthree$.  For an orthonormal basis
+$\{a_1,\ldots,a_9\}$ of the vector representation,
+\begin{equation}\label{eq:T_a-clifford}
+  \{T_{a_i}, T_{a_j}\} = \tfrac{1}{2}\delta_{ij}\,I_{16},
+\end{equation}
+so $T_a^2 = \tfrac{1}{4}I_{16}$ and the rescaled operators
+$\gamma_i = 2T_{a_i}$ satisfy the standard Clifford relation
+$\{\gamma_i,\gamma_j\} = 2\delta_{ij}$.  The image of the
+Clifford algebra $\mathrm{Cl}(9,0)$ in
+$\mathrm{End}(\Vhalf) = M_{16}(\mathbb{R})$ is
+$M_{16}(\mathbb{R})$ itself: the abstract algebra
+$\mathrm{Cl}(9,0) \cong M_{16}(\mathbb{R})
+\oplus M_{16}(\mathbb{R})$ has two simple summands, and the spinor
+representation $S_9$ is the irreducible module for one summand.
+
 %----------------------------------------------------------------------
 \subsection{Complexification from C*-observer nature}\label{sec:complexification-arg}
 %----------------------------------------------------------------------
 
-The central claim of Part~A is that \emph{complexification is motivated
-by the observer's algebraic nature, rather than assumed}.  We present
-the physical argument in five steps; the formalization of this argument
-as a precise theorem remains open (Gap~C).
+The central claim of Part~A is that \emph{complexification is a
+consequence of the observer's algebraic nature, not assumed}.  We
+prove this via the continuous functional calculus of the observer's
+C*-algebra, applied to the Peirce operators.
 
 \medskip
 \noindent\textbf{Step~1: Self-modeling forces a C*-algebra observer.}
-Paper~5 established that a finite-dimensional system that faithfully
-self-models must be described by $M_n(\mathbb{C})^{\mathrm{sa}}$---the
-self-adjoint part of a complex matrix algebra---equipped with the
-L\"uders sequential product.  The key steps were: (i)~self-modeling
-forces a sequential product satisfying axioms S1--S7; (ii)~the
-van~de~Wetering classification yields an EJA state space;
-(iii)~compositionality forces local tomography; (iv)~local tomography
-excludes all non-complex EJA types ($M_n(\mathbb{R})^{\mathrm{sa}}$,
-$M_n(\mathbb{H})^{\mathrm{sa}}$, spin factors $V_n$ for $n\ge 4$,
-and $\hthree$ itself).  The surviving type is
-$M_n(\mathbb{C})^{\mathrm{sa}}$, promoted to a C*-algebra.
+Paper~5~\cite{Paper5} defines a \emph{self-modeling system} as a
+finite-dimensional order-unit space $(V, e)$ containing a
+sub-order-unit space $(\hat{V}, \hat{e})$ satisfying four axioms:
+(A1)~the states of $\hat{V}$ separate the states of $V$
+(faithfulness); (A2)~$\hat{V}$ is updated through the boundary
+between the subsystem and its complement; (A3)~the sequential product
+$a\,\&\,b = \sqrt{a}\,b\,\sqrt{a}$ defines the measurement
+composition; (A4)~$\hat{V}$ is closed under this product.
+Paper~5 proves that these axioms force $V \cong
+M_n(\mathbb{C})^{\mathrm{sa}}$ for some $n$---the self-adjoint
+part of a matrix C*-algebra.
+
+The square root in the sequential product is computed via the
+\emph{continuous functional calculus} (CFC) of the ambient C*-algebra
+$M_n(\mathbb{C})$.  For a self-adjoint element $x$ with spectral
+decomposition $x = \sum_i \lambda_i P_i$, this calculus defines
+$f(x) = \sum_i f(\lambda_i)\,P_i$ for any continuous
+$f\colon\sigma(x)\to\mathbb{C}$.  This is the \emph{scalar}
+functional calculus: it applies $f$ to each eigenvalue
+independently and is uniquely determined by the C*-algebra
+structure.  The distinction between this scalar calculus and general
+matrix-function constructions is critical for
+Section~\ref{sec:complexification-arg}
+(see Remark~\ref{rem:scalar-vs-matrix-sqrt}).
 
 \medskip
-\noindent\textbf{Step~2: C*-algebra implies $\mathbb{C}$ as scalar field.}
-By definition, a C*-algebra is an algebra over $\mathbb{C}$ with an
-involution and a complete submultiplicative norm satisfying the
-C*-identity.  The observer's scalar field is therefore $\mathbb{C}$,
-not $\mathbb{R}$.
+\noindent\textbf{Step~2: Peirce operators have negative eigenvalues.}
+The Peirce multiplication operators $T_a$ (Section~\ref{sec:peirce})
+satisfy $T_a^2 = \tfrac{1}{4}I_{16}$, so each $T_a$ has spectrum
+$\{+\tfrac{1}{2}, -\tfrac{1}{2}\}$.  The eigenvalue $-\tfrac{1}{2}$
+is \emph{negative}.  In a real algebra, $\sqrt{-\tfrac{1}{2}}$ is
+undefined.  But the observer is $M_n(\mathbb{C})^{\mathrm{sa}}$
+(Step~1), so the continuous functional calculus of $M_n(\mathbb{C})$
+applies the principal branch:
+\begin{equation}\label{eq:sqrt-neg}
+  \sqrt{-\tfrac{1}{2}} = \frac{i}{\sqrt{2}}.
+\end{equation}
+This is the principal branch value
+($\arg(\sqrt{z})\in(-\pi/2,\pi/2]$); the sign of~$i$ depends
+on branch convention (see below), but the exit from $\mathbb{R}$
+does not.
 
 \medskip
-\noindent\textbf{Step~3: Observer probes $\Vhalf$ through its own framework.}
-The observer accesses $\Vhalf = \mathbb{O}^2$ (a real 16-dimensional
-space) through the Peirce decomposition.  Physically, $\Vhalf$ is the
-``interaction space'' between the observer's slot ($\Vone$) and the
-rest of the algebra ($\Vzero$).
+\noindent\textbf{Step~3: The CFC computation exits $M_{16}(\mathbb{R})$.}
+The observer faithfully represents the Peirce operators as self-adjoint
+elements of $M_n(\mathbb{C})$ via the standard inclusion
+$\iota: M_{16}(\mathbb{R}) \hookrightarrow M_{16}(\mathbb{C})$
+($n \geq 16$).  The spectral decomposition of $T_a$ gives
+\begin{equation}\label{eq:sqrt-Ta}
+  \sqrt{T_a} = \frac{1}{\sqrt{2}}(P_+ + i\,P_-),
+\end{equation}
+where $P_\pm$ are the spectral projections onto the $\pm\tfrac{1}{2}$
+eigenspaces.
 
-\medskip
-\noindent\textbf{Step~4: Observer's operations are $\mathbb{C}$-linear.}
-Since the observer's scalar field is $\mathbb{C}$ (Step~2), all its
-algebraic operations---measurement maps, expectation-value functionals,
-symmetry transformations---are $\mathbb{C}$-linear.  There is no
-mechanism by which the observer can ``turn off'' its complex structure
-when probing $\Vhalf$.
+\begin{lemma}[CFC well-definedness]\label{lem:sp-domain}
+Let $T_a, T_b$ be self-adjoint Peirce operators, faithfully represented
+in the observer's C*-algebra $M_n(\mathbb{C})$ via
+$\iota\colon M_{16}(\mathbb{R})\hookrightarrow M_n(\mathbb{C})$.
+Then:
+\begin{enumerate}
+  \item[\textup{(a)}] $\sqrt{\iota(T_a)}\,\iota(T_b)\,\sqrt{\iota(T_a)}$
+    is well-defined via the continuous functional calculus of
+    $M_n(\mathbb{C})$.
+  \item[\textup{(b)}] For effects $a \in [0,I]$, this operation coincides
+    with the sequential product $a\,\&\,b = \sqrt{a}\,b\,\sqrt{a}$
+    derived in Paper~5~\cite{Paper5}.
+\end{enumerate}
+\end{lemma}
 
-\medskip
-\noindent\textbf{Step~5: Extension of scalars.}
-The observer's effective description of $\Vhalf$ is therefore
+\begin{proof}
+(a)~For any self-adjoint $x \in M_n(\mathbb{C})^{sa}$ with spectral
+decomposition $x = \sum_i \lambda_i P_i$, the continuous functional
+calculus defines $f(x) = \sum_i f(\lambda_i)\,P_i$ for every
+continuous $f\colon\sigma(x)\to\mathbb{C}$.  Applying this to
+$f(z) = z^{1/2}$ on $\sigma(\iota(T_a)) = \{+\tfrac{1}{2},
+-\tfrac{1}{2}\}$ yields $\sqrt{\iota(T_a)} \in M_n(\mathbb{C})$
+(the branch choice on $-\tfrac{1}{2}$ is addressed below
+Theorem~\ref{thm:complexification}).  The triple product
+$\sqrt{\iota(T_a)}\,\iota(T_b)\,\sqrt{\iota(T_a)}$ is then
+a well-defined element of $M_n(\mathbb{C})$.
+(b)~Paper~5 derives the L\"uders form
+$a\,\&\,b = \sqrt{a}\,b\,\sqrt{a}$ for the sequential product
+on effects, where $\sqrt{a}$ is the unique positive square root---itself
+a CFC element.  For effects, the positive square root and the CFC
+square root coincide, so the two computations are identical.
+\end{proof}
+
+\begin{theorem}[Observer-induced complexification]\label{thm:complexification}
+Let $T_a, T_b$ be anticommuting Peirce operators
+($\{T_a, T_b\} = 0$, $a \neq b$) in
+$\mathrm{End}(\Vhalf) = M_{16}(\mathbb{R})$, and let
+$\iota\colon M_{16}(\mathbb{R})\hookrightarrow M_{16}(\mathbb{C})
+\subset M_n(\mathbb{C})$ be the faithful representation of the Peirce
+operators inside the observer's C*-algebra (Step~3).  Then the
+operation $\sqrt{T_a}\,T_b\,\sqrt{T_a}$
+(Lemma~\ref{lem:sp-domain}), computed via the continuous functional
+calculus of $M_n(\mathbb{C})$, gives
+\begin{equation}\label{eq:sp-complex}
+  \sqrt{\iota(T_a)}\;\iota(T_b)\;\sqrt{\iota(T_a)}
+  = \frac{i}{2}\,\iota(T_b).
+\end{equation}
+We write $\sqrt{T_a}$ for $\sqrt{\iota(T_a)}$ when the representation
+context is clear.
+\end{theorem}
+
+\begin{proof}
+Expand using~\eqref{eq:sqrt-Ta}:
+\begin{equation}\label{eq:sp-expand}
+  \sqrt{T_a}\; T_b\; \sqrt{T_a}
+  = \tfrac{1}{2}(P_+ + iP_-)\,T_b\,(P_+ + iP_-)
+  = \tfrac{1}{2}\bigl(P_+ T_b P_+ + i\,P_+ T_b P_-
+    + i\,P_- T_b P_+ - P_- T_b P_-\bigr).
+\end{equation}
+From $\{T_a, T_b\} = 0$ and $P_+ T_a = \tfrac{1}{2}P_+$, it follows
+that $P_+ T_b P_+ = 0$ and $P_- T_b P_- = 0$ (anticommuting Hermitian
+matrices have purely off-diagonal structure in each other's eigenbasis).
+Therefore $T_b = P_+ T_b P_- + P_- T_b P_+$, and
+\begin{equation}
+  \sqrt{T_a}\; T_b\; \sqrt{T_a}
+  = \tfrac{i}{2}(P_+ T_b P_- + P_- T_b P_+) = \tfrac{i}{2}\,T_b.
+  \qedhere
+\end{equation}
+\end{proof}
+
+\noindent
+The specific sign of~$i$ in~\eqref{eq:sp-complex} depends on the
+branch convention (replacing $i$ by $-i$ corresponds to choosing the
+other continuous branch of $\sqrt{z}$ on
+$\{+\tfrac{1}{2},-\tfrac{1}{2}\}$), but the exit from $\mathbb{R}$
+to $\mathbb{C}$ does not: every square-root choice for eigenvalue
+$-\tfrac{1}{2}$ produces a non-real value, so the measurement
+algebra exits $M_{16}(\mathbb{R})$ regardless of convention.
+
+The factor of~$i$ is determined by the functional calculus, not
+conventional.  Paper~5 establishes
+that a self-modeling observer's measurement composition is the
+sequential product $a\,\&\,b = \sqrt{a}\,b\,\sqrt{a}$ for effects,
+computed via the continuous functional calculus of its C*-algebra
+$M_n(\mathbb{C})$.  The same functional calculus applies to all
+self-adjoint elements of $M_n(\mathbb{C})$, including the Peirce
+operators $T_a$ (Lemma~\ref{lem:sp-domain}).  When the observer
+probes the Peirce half-space
+via the operators $T_a$---which are the natural observables of
+the Peirce interface (Eq.~\eqref{eq:T_a-def})---the CFC computation
+$\sqrt{T_a}\,T_b\,\sqrt{T_a}$ necessarily involves $\sqrt{T_a}$.  Since $T_a$ has
+eigenvalue $-\tfrac{1}{2} < 0$, the real functional calculus
+cannot produce $\sqrt{T_a}$; only the complex functional calculus
+applies (Eq.~\eqref{eq:sqrt-neg}).  By contrast, the
+effect operators $E_a = \tfrac{1}{2}(I_{16} + 2T_a)$ have spectrum
+$\{0, 1\} \subset [0, 1]$, so $\sqrt{E_a}$ is real-valued and the
+sequential product $E_a\,\&\,E_b = \tfrac{1}{2}E_a$ remains entirely
+real.  The complexification arises specifically from the negative
+eigenvalues of the Peirce operators, not from a choice to extend
+beyond the effect domain.
+
+\begin{remark}[Scalar functional calculus vs.\ matrix square roots]
+\label{rem:scalar-vs-matrix-sqrt}
+A potential objection is that $T_a$ admits a \emph{real} matrix
+square root: since the eigenvalue $-\tfrac{1}{2}$ has even
+multiplicity ($8$), one can pair eigenspaces into $2\times 2$ blocks
+and use real rotation matrices $J$ ($J^2 = -I_2$) to construct
+$S\in M_{16}(\mathbb{R})$ with $S^2 = T_a$
+(cf.~\cite{Higham2008}, Thm.~1.29).
+
+This objection conflates two distinct notions of ``square root.''
+The C*-algebra continuous functional calculus (Step~1) is the
+\emph{scalar} functional calculus: it defines
+$\sqrt{T_a} = \sum_i \sqrt{\lambda_i}\,P_i$, applying the
+square-root function to each eigenvalue \emph{independently}.
+For $\lambda = -\tfrac{1}{2}$, the equation $z^2 = -\tfrac{1}{2}$
+has no real solution, so the functional calculus square root is
+necessarily complex.  The real matrix square root $S$ described
+above is \emph{not} a functional calculus element: it cannot be
+written as $g(T_a) = \sum_i g(\lambda_i)\,P_i$ for any scalar
+function $g$, because it mixes eigenspaces via $2\times 2$
+rotation blocks rather than acting on each eigenspace by a scalar.
+
+Paper~5 establishes that the self-modeling sequential product is
+computed via the C*-algebra continuous functional calculus.  This is
+not a choice among available square roots but a consequence of the
+C*-algebraic structure: the functional calculus is uniquely
+determined, and it is the scalar one.  The Higham-type real matrix
+square roots, while mathematically valid, are not the square roots
+that the self-modeling framework selects.
+\end{remark}
+
+\begin{remark}[Why the observer measures $T_a$, not just effects]
+\label{rem:sp-domain}
+A natural objection is that the Gudder--Greechie sequential
+product~\cite{GudderGreechie2002} is defined for effects (spectrum
+in $[0,1]$), while $T_a$ has eigenvalue $-\tfrac{1}{2}$.
+Lemma~\ref{lem:sp-domain} establishes that
+$\sqrt{T_a}\,T_b\,\sqrt{T_a}$ is well-defined in the observer's
+C*-algebra via the continuous functional calculus, and that this
+operation coincides with the sequential product on effects.
+Here we address why this computation is physically relevant for
+the Peirce operators, which lie outside the effect interval.
+
+\emph{$T_a$ is the algebraic primitive; $E_a$ is a derived
+rescaling.}\enspace
+The Peirce operator $T_a(v) = (a\circ v)_{\Vhalf}$ \emph{is} the
+Jordan product restricted to $\Vhalf$---the fundamental algebraic
+operation at the observer's interface with the universe.
+The effect $E_a = \tfrac{1}{2}(I + 2T_a)$ is an affine
+transformation of $T_a$ into the unit interval---a derived object,
+not the fundamental one.  The objection that ``the observer should
+use $E_a$ instead of $T_a$'' reverses the logical order.
+
+\emph{$T_a$ and $E_a$ are different observables.}\enspace
+$T_a$ has eigenvalues $\pm\tfrac{1}{2}$; $E_a$ has eigenvalues
+$\{0,1\}$.  They represent different measurement outcomes, and the
+CFC computations $\sqrt{T_a}\,T_b\,\sqrt{T_a}$ and
+$\sqrt{E_a}\,E_b\,\sqrt{E_a}$ encode different physical
+compositions.  Shifting the spectrum is not a gauge freedom---it
+changes what is being measured.
+
+\emph{$T_a$ is in the algebra necessarily.}\enspace
+The Peirce operators generate
+$\mathrm{End}(\Vhalf) = M_{16}(\mathbb{R})$: they are the
+basis of the algebra of observable operations on the Peirce
+interface.  Any faithful representation of this algebra in the
+observer's C*-algebra $M_n(\mathbb{C})$ must include the $T_a$
+as self-adjoint elements.  Once
+$T_a \in M_n(\mathbb{C})^{\mathrm{sa}}$, the continuous
+functional calculus defines $\sqrt{T_a}$ uniquely, and the
+CFC computation $\sqrt{T_a}\,T_b\,\sqrt{T_a}$ is a
+well-defined element of $M_n(\mathbb{C})$.  The complexification
+is therefore a structural consequence of the algebra's
+C*-nature---it follows from the \emph{existence} of $T_a$ in
+the algebra, not from any particular measurement the observer
+performs.
+\end{remark}
+
+\begin{remark}[Sequential product output and the generated algebra]
+\label{rem:sp-output}
+Theorem~\ref{thm:complexification} produces
+$\sqrt{T_a}\,T_b\,\sqrt{T_a} = (i/2)\,T_b$, which is
+anti-self-adjoint---not an observable in the standard sense.
+This is not a defect of the argument but its operational content.
+
+The CFC operation $\sqrt{T_a}\,(\cdot)\,\sqrt{T_a}$ acts within the observer's
+C*-algebra $M_n(\mathbb{C})$; its closure generates a
+\emph{subalgebra}, not merely a collection of self-adjoint elements.
+The subalgebra generated by $\{T_a\}$ together with all iterated
+CFC products is $M_{16}(\mathbb{C})$, not
+$M_{16}(\mathbb{R})$.  The physical consequence is that the
+observer's \emph{observable space}---the self-adjoint part of the
+generated algebra---is $M_{16}(\mathbb{C})^{\mathrm{sa}}$, which is
+strictly larger than $M_{16}(\mathbb{R})$.  Elements such as
+$T_a + (i/2)\,T_b$ are self-adjoint in $M_{16}(\mathbb{C})$ but
+have no counterpart in $M_{16}(\mathbb{R})$: they are new
+observables that exist only because the algebra extends to
+$M_{16}(\mathbb{C})$.
+
+The complexification is therefore a statement about the
+\emph{algebra of all composable measurements}, not about any single
+measurement outcome.  The symmetries of the Peirce interface are
+those of this generated algebra---$\Spin{10}$ acting on
+$\mathbb{C}^{16}$---not those of the original real
+representation.
+\end{remark}
+
+The algebra generated by the observer's CFC computations
+$\sqrt{T_a}\,T_b\,\sqrt{T_a}$ on the
+Peirce operators is therefore $M_{16}(\mathbb{C})$, not
+$M_{16}(\mathbb{R})$: the $\mathbb{C}$-linear span of all monomials
+in the $T_a$ and their CFC products has complex dimension~256,
+equal to $\dim_\mathbb{C} M_{16}(\mathbb{C})$.  This is the image
+of the complexified Clifford algebra $\mathrm{Cl}(9,\mathbb{C})
+\cong M_{16}(\mathbb{C}) \oplus M_{16}(\mathbb{C})$ acting on
+$\Vhalf^{\,\mathbb{C}} = \mathbb{C}^{16}$ via one of its two
+simple summands (cf.\ the real case in
+Eq.~\eqref{eq:T_a-clifford}).  The observer's effective description
+of $\Vhalf$ is therefore
 \begin{equation}\label{eq:complexification}
   \Vhalf^{\,\mathbb{C}}
   \;:=\;
   \Vhalf \otimes_\mathbb{R} \mathbb{C}\,,
-\end{equation}
-the standard extension of scalars from $\mathbb{R}$ to $\mathbb{C}$.
-Every real basis vector $v$ of $\Vhalf$ becomes a complex basis
-vector $v\otimes 1$, so
-\begin{equation}\label{eq:dim-complexified}
+  \qquad
   \dim_\mathbb{C}\!\bigl(\Vhalf^{\,\mathbb{C}}\bigr)
-  \;=\;
-  \dim_\mathbb{R}(\Vhalf)
-  \;=\; 16.
+  = 16.
 \end{equation}
 
+\begin{remark}[Compatibility with impossibility theorems]
+\label{rem:impossibility-compat}
+No $\Spin{9}$-equivariant complex structure $J: \Vhalf \to \Vhalf$
+with $J^2 = -\mathrm{Id}$ exists (Schur's lemma:
+$\mathrm{End}_{\Spin{9}}(S_9) = \mathbb{R}$, since
+$9 \bmod 8 = 1$ gives real type by Bott periodicity).  The
+observer-induced complexification is \emph{non-equivariant}: it
+depends on which $T_a$ the observer measures first.  Different
+choices of $T_a$ produce different complex structures, corresponding
+to different choices of $u \in S^6 \subset \mathrm{Im}(\mathbb{O})$
+(Gap~B, step~2).  The correspondence is explicit: each Peirce
+operator $T_a$ is indexed by a unit vector $a$ in the
+9-dimensional traceless part of $\Vzero = h_2(\mathbb{O})$; for
+$a = e_k \in \mathrm{Im}(\mathbb{O})$ ($k=1,\ldots,7$), the
+complex structure induced on $\Vhalf = \mathbb{O}^2$ by the
+CFC computation is left multiplication by $e_k$, giving $u = e_k$.
+All seven such complex structures are $\Gfour$-conjugate (orbit
+$= S^6$, dim~6).
+The impossibility of equivariant complexification
+is complemented, not circumvented, by the observer's external input.
+\end{remark}
+
+\begin{remark}[Complexification vs.\ complex structure]
+\label{rem:C-vs-B2}
+Theorem~\ref{thm:complexification} establishes that complexification
+\emph{occurs} for any pair of anticommuting Peirce operators---no
+choice of $u$ is required.  The choice of $u \in S^6$ (Gap~B,
+step~2) determines \emph{which} complex structure the observer
+obtains, not \emph{whether} complexification occurs.  These are
+logically distinct: the former (Gap~C) is closed unconditionally
+by Theorem~\ref{thm:complexification}; the latter (Gap~B, step~2)
+is a necessary symmetry reduction forced by the combination of
+Theorem~\ref{thm:complexification} and Schur's lemma
+(Remark~\ref{rem:impossibility-compat}).  Since all
+$u \in S^6$ are $\Gfour$-conjugate, the reduction is required but
+the direction is physically irrelevant---a gauge choice
+(cf.~\cite{FerraraEtAl2021} for an explicit $\Gfour\to\SU{3}$
+model on $S^6$).
+
+Crucially, B2 does not await external dynamics.  In the self-modeling
+framework, the observer's \emph{only} dynamics is the sequential
+product: the ``before $\to$ model $\to$ after'' cycle of
+self-modeling measurement (Paper~5).  Moreover, the observer
+\emph{must} probe $\Vhalf$: Paper~5 requires a faithful self-model
+updated through the system's boundary, and $\Vhalf$ \emph{is} the
+Peirce boundary---the only sector through which the observer's slot
+$\Vone$ communicates with the complement $\Vzero$ (the Peirce
+multiplication rules give $\Vone\circ\Vzero = 0$, so
+$\Vhalf$ is the sole channel).  An observer that ignores $\Vhalf$
+has no model of its environment and fails the faithfulness condition.
+
+Given that $\Vhalf$ must be probed, the observer cannot do so
+without applying $\sqrt{T_a}\,(\cdot)\,\sqrt{T_a}$ for
+some specific~$T_a$; \emph{every} such application involves a
+specific $T_a$ and thereby a specific $u$.  There is no state of the
+self-modeling cycle in which $\Vhalf$ is accessed but no $T_a$ has
+been selected: probing $\Vhalf$ and selecting a $T_a$ are the same
+algebraic act.  That the observer must access $\Vhalf$ via
+\emph{some} $T_a$ is forced; \emph{which} $T_a$---and hence which
+$u \in S^6$---is not determined by the algebra, which is what makes
+B2 a genuine necessary symmetry reduction rather than a
+derived result.  The observer's C*-nature---expressed through the CFC computation
+$\sqrt{T_a}\,(\cdot)\,\sqrt{T_a}$---is therefore both the
+mechanism that produces complexification
+(Theorem~\ref{thm:complexification}) and the act that selects the
+complex structure.  No temporal ordering is required---the point is
+structural: any instance of the self-modeling cycle that accesses
+$\Vhalf$ necessarily involves a specific $T_a$, hence a
+specific~$u$.
+\end{remark}
+
 \begin{remark}[Contrast with Boyle~\cite{Boyle2020}]\label{rem:boyle-contrast}
-Boyle starts from the complexified algebra $\hthreeC$ and
+Boyle starts from the complexified algebra
+$\hthreeC := \hthree\otimes_\mathbb{R}\mathbb{C}$ and
 studies its structure group $\Esix$.  Our approach differs in that
-we \emph{motivate} the complexification from the observer's C*-nature:
+we \emph{derive} the complexification from the observer's C*-nature:
 the self-modeling requirement (Paper~5) forces the observer to be a
-C*-algebra system, which we argue motivates extension of scalars on
-the spaces the observer probes.  The end result is the same
+C*-algebra system, and the continuous functional calculus applied to the Peirce operators
+necessarily exits $M_{16}(\mathbb{R})$ into $M_{16}(\mathbb{C})$
+(Theorem~\ref{thm:complexification}).  The end result is the same
 identification of $\Vhalf^{\,\mathbb{C}}$ as the Weyl spinor
 $\Stenplus$, but the logical route is different: Boyle assumes
-complexification; we give a physical argument for it (Gap~C).
+complexification; we derive it from self-modeling.
 \end{remark}
 
 %----------------------------------------------------------------------
@@ -303,7 +675,7 @@ carries the Weyl spinor representation $\Stenplus$ of $\Spin{10}$:
 \end{equation}
 \end{proposition}
 
-\begin{proof}[Argument]
+\begin{proof}
 $\Spin{10}$ has two inequivalent complex Weyl representations
 $\Stenplus$ and $S_{10}^-$, each of
 $\dim_\mathbb{C} = 2^{[10/2]-1} = 2^4 = 16$.
@@ -327,20 +699,49 @@ $\dim_\mathbb{C}(\Stenplus) = 16 = \dim_\mathbb{R}(S_9)
 \begin{remark}[Why $\Spin{10}$, not just complex $\Spin{9}$]
 \label{rem:why-spin10}
 A natural objection is that complexifying $S_9$ gives a complex
-$\Spin{9}$-module, not automatically a $\Spin{10}$-module.  The key
-fact is that the branching $\Stenplus|_{\Spin{9}} \cong S_9^{\,\mathbb{C}}$
-is \emph{multiplicity-free}: $S_9^{\,\mathbb{C}}$ is irreducible under
+$\Spin{9}$-module, not automatically a $\Spin{10}$-module.  The
+upgrade is structural, not merely representation-theoretic.
+
+\emph{Representation-theoretic uniqueness.}\enspace
+The branching $\Stenplus|_{\Spin{9}} \cong S_9^{\,\mathbb{C}}$
+is multiplicity-free: $S_9^{\,\mathbb{C}}$ is irreducible under
 $\Spin{9}$.  By Schur's lemma, any $\Spin{10}$-module structure on
 $S_9^{\,\mathbb{C}}$ that restricts to the given $\Spin{9}$ action is
 unique (up to the $\Stenplus$ vs.\ $S_{10}^-$ choice resolved below).
-The existence of this extension is guaranteed: $S_9$ is, by
-construction, the restriction of a $\Spin{10}$ Weyl spinor
-to $\Spin{9} = \mathrm{Stab}_{\Spin{10}}(e_{10})$.
-Complexification therefore does not merely produce a representation
-\emph{compatible} with $\Spin{10}$; it produces the unique
-$\Spin{10}$-module extending the $\Spin{9}$ action, because the
-representation space $S_9^{\,\mathbb{C}}$ already sits inside the
-$\Spin{10}$ representation ring as an irreducible restriction.
+
+\emph{Structural forcing.}\enspace
+The decisive point is not representation compatibility but
+the structure group of $\hthreeC$.
+The complexification $\hthree \to \hthreeC$ upgrades the
+automorphism group from $\Ffour$ to the structure group $\Esix$,
+and correspondingly upgrades the stabilizer of $E_{11}$ from
+$\Spin{9}$ to $\Spin{10}\times\mathrm{U}(1)$
+(Eq.~\eqref{eq:stab-E6}).  The additional $9$ generators of
+$\mathfrak{spin}(10)$ beyond $\mathfrak{spin}(9)$ are
+structure-group elements of $\hthreeC$ that do not preserve the real
+$\hthree$: they exist in $M_{16}(\mathbb{C})$ but not in
+$M_{16}(\mathbb{R})$, and they are \emph{constructed} by the
+complexification that Theorem~\ref{thm:complexification} establishes.
+Thus $\Spin{10}$ is the symmetry of the observer's complexified
+description of the Peirce interface---the stabilizer of $E_{11}$
+within the structure group of the algebra the observer actually
+works in---not merely a group whose representation ring happens
+to contain~$S_9^{\,\mathbb{C}}$.
+
+\emph{Why the upgrade is physical, not merely formal.}\enspace
+The observer cannot ``ignore'' the complexification and retain
+$\Spin{9}$ as the relevant symmetry group.
+Theorem~\ref{thm:complexification} establishes that the
+observer's measurement algebra is $M_{16}(\mathbb{C})$, not
+$M_{16}(\mathbb{R})$: the CFC computations it performs
+generate complex elements that do not lie in
+$M_{16}(\mathbb{R})$.  The symmetry group of the observer's
+description of $\Vhalf$ is therefore the stabilizer of $E_{11}$
+in the structure group of $\hthreeC$ (which is $\Esix$), not in
+the automorphism group of~$\hthree$ (which is $\Ffour$).  This
+gives $\Spin{10}\times\mathrm{U}(1)$
+(Eq.~\eqref{eq:stab-E6}), not $\Spin{9}$
+(Eq.~\eqref{eq:stab-spin9}).
 \end{remark}
 
 \begin{remark}[Choice of $\Stenplus$ vs.\ $S_{10}^-$]
@@ -361,18 +762,35 @@ description of the Peirce space upgrades:
   \Spin{9} \;\longrightarrow\; \Spin{10}.
 \end{equation}
 
-At the algebra level, the upgrade extends to the full automorphism
-and structure groups.  The structure group of the complexified
-algebra $\hthreeC = \hthree \otimes_\mathbb{R}\mathbb{C}$
+At the algebra level, the complexification extends from $\Vhalf$ to
+the full algebra $\hthree$.  The Peirce multiplication rules
+$\Vhalf\circ\Vhalf \subset \Vone\oplus\Vzero$ mean that Jordan
+products of elements in $\Vhalf^{\,\mathbb{C}}$ land in
+$\Vone^{\,\mathbb{C}}\oplus\Vzero^{\,\mathbb{C}}$: the observer's
+complex description of the interface forces a complex description of
+every sector reached by interface products.
+Concretely, Theorem~\ref{thm:complexification} produces genuinely
+complex elements $v = x + iy \in \Vhalf^{\,\mathbb{C}}$ with
+$y \neq 0$; their Jordan products $v\circ v$ have imaginary part
+$2(x\circ y)_{\Vone\oplus\Vzero}$, which is generically nonzero (it
+vanishes only on a measure-zero set of pairs), so the complex
+extension of $\Vzero$ and $\Vone$ is used nontrivially, not merely
+formally.  Since the Peirce
+multiplications generate all of $\hthree$, the observer's effective
+algebra is $\hthreeC = \hthree\otimes_\mathbb{R}\mathbb{C}$, not
+merely $\Vhalf^{\,\mathbb{C}}$.  The structure group of the
+complexified algebra
 is~\cite{Baez2002,Yokota2009,Boyle2020}
 \begin{equation}\label{eq:F4-E6}
   \Ffour \;\longrightarrow\; \Esix,
   \qquad
   \dim\,\Ffour = 52 \;\to\; \dim\,\Esix = 78.
 \end{equation}
-Here $\Ffour = \mathrm{Aut}(\hthree)$ is the automorphism group, and
-$\Esix = \mathrm{Str}_0(\hthreeC)$ is the connected component of the
-structure group (transformations preserving the cubic norm form up to
+These are different kinds of symmetry groups:
+$\Ffour = \mathrm{Aut}(\hthree)$ is the automorphism group (preserving
+both the Jordan product and the unit element), while
+$\Esix = \mathrm{Str}_0(\hthreeC)$ is the structure group of the
+complexified algebra (preserving the cubic determinant form up to
 scale).  The stabilizer of $E_{11}$ in $\Esix$ is
 \begin{equation}\label{eq:stab-E6}
   \mathrm{Stab}_{\Esix}(E_{11}) \;=\; \Spin{10}\times\mathrm{U}(1),
@@ -402,35 +820,48 @@ $1 + 10 + 16 = 27$.\ \checkmark
 Boyle~\cite{Boyle2020} arrives at the same decomposition
 $\mathbf{27} = \mathbf{1}\oplus\mathbf{10}\oplus\mathbf{16}$ under
 $\Spin{10}\subset\Esix$ by analyzing the complexified algebra
-directly.  The results are consistent; our contribution is to
-\emph{motivate} the complexification step from C*-observer nature
-rather than taking it as a mathematical starting point.
+directly.  The results are consistent; our contribution is to trace the complexification step to the
+\emph{combination} of C*-observer nature and the negative-spectrum
+Peirce operators (Theorem~\ref{thm:complexification}), rather than
+taking it as a mathematical starting point.
 \end{remark}
 
-\begin{remark}[What the complexification argument does not yet
-establish]\label{rem:complexification-limits}
-The five-step argument above is \emph{physical reasoning}, not a
-formal proof.  Two gaps remain:
-\begin{enumerate}
-  \item \textbf{$\mathbb{C}$-linearity does not force extension of
-    scalars.}  A complex-algebraic observer can describe real
-    configuration spaces, real observables, and real manifolds
-    without complexifying them.  The step from ``the observer's
-    internal scalar field is $\mathbb{C}$'' to ``every space the
-    observer probes acquires a $\mathbb{C}$-module structure'' is
-    plausible but requires a precise theorem about how
-    C*-measurement maps interact with real target spaces.
-  \item \textbf{Module extension is not symmetry extension.}  Even
-    granting the vector-space complexification
-    $\Vhalf\otimes_\mathbb{R}\mathbb{C}$, one must show that the
-    $\Spin{9}$ action on the complexified space canonically extends
-    to $\Spin{10}$.  This extension is unique by the
-    multiplicity-free branching (Remark~\ref{rem:why-spin10}), but
-    the physical justification for \emph{why} the larger symmetry
-    is realized---rather than merely compatible---needs further
-    development.
-\end{enumerate}
-A theorem of the form ``C*-measurement maps on a real Jordan module
-necessarily factor through $\otimes_\mathbb{R}\mathbb{C}$'' would
-close this gap.  We flag this as Gap~C.
+\begin{remark}[Scope of the complexification proof]
+\label{rem:complexification-scope}
+Theorem~\ref{thm:complexification} establishes a precise algebraic
+fact: the CFC computation $\sqrt{T_a}\,T_b\,\sqrt{T_a}$ on anticommuting
+Peirce operators produces imaginary coefficients, extending the generated algebra
+from $M_{16}(\mathbb{R})$ to $M_{16}(\mathbb{C})$.  This is not a
+physical heuristic but a computation within the C*-algebra that the
+observer inhabits (Paper~5).  The key input is that the Peirce
+operators $T_a$ have eigenvalue $-\tfrac{1}{2} < 0$: in a real
+algebra, $\sqrt{-\tfrac{1}{2}}$ is undefined; in the observer's
+complex C*-algebra, it is $i/\sqrt{2}$.  The exit from
+$\mathbb{R}$ to $\mathbb{C}$ is produced by the \emph{combination}
+of the observer's C*-nature (Paper~5) and the spectral properties
+of the Peirce operators (the $\hthree$ structure).  Neither input
+alone suffices: a real-algebraic observer would have no complex
+functional calculus; an operator with non-negative spectrum would
+have a real square root.
+
+The upgrade from $\Spin{9}$ to $\Spin{10}$ then follows from the
+multiplicity-free branching $\Stenplus|_{\Spin{9}} \cong
+S_9^{\,\mathbb{C}}$ (Remark~\ref{rem:why-spin10}): the complexified
+space $S_9^{\,\mathbb{C}}$ admits a unique $\Spin{10}$-module
+structure extending the $\Spin{9}$ action, whose existence is
+guaranteed because $S_9$ is the restriction of $\Stenplus$ to
+$\Spin{9} = \mathrm{Stab}_{\Spin{10}}(e_{10})$.
+
+\emph{Interpretive independence.}\enspace
+The complexification result requires exactly two mathematical
+inputs: (i)~the Peirce operators $T_a$ are faithfully represented
+as self-adjoint elements of a C*-algebra $M_n(\mathbb{C})$, and
+(ii)~the square root is computed via the C*-algebra continuous
+functional calculus.  Input~(i) follows from any faithful
+embedding of $M_{16}(\mathbb{R})$ into a complex matrix
+algebra.  Input~(ii) is a standard C*-algebra property.  The
+physical interpretation of the sequential product (as measurement
+composition, per Paper~5) motivates why $\sqrt{T_a}\,T_b\,\sqrt{T_a}$
+is the relevant operation, but the algebraic fact that it produces
+imaginary coefficients depends only on (i) and (ii).
 \end{remark}

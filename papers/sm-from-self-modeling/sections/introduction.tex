@@ -9,13 +9,12 @@ representation---left-handed doublets and right-handed singlets under
 $\SU{2}_L$---is the empirical target of any program that seeks to derive
 particle physics from deeper principles. In a companion paper~\cite{Paper5},
 we showed that \emph{self-modeling}---the requirement that a physical system
-contains a faithful model of itself, updated through its boundary---forces
+contains a faithful model of itself (a subsystem whose states separate
+the states of the whole), updated through its boundary---forces
 quantum mechanics: the state space of any self-modeling system is isomorphic
 to $M_n(\mathbb{C})^{sa}$, the self-adjoint part of a matrix C*-algebra.
-A second companion paper~\cite{Paper6} showed that self-modeling locality on
-a lattice yields Einstein's equations at long wavelengths.
 
-These results leave open a structural question. Simple $M_n(\mathbb{C})$
+This result leaves open a structural question. Simple $M_n(\mathbb{C})$
 algebras produce the gauge group $\UU{n}$ via the spectral triple
 construction of Connes~\cite{CCM2007}---not the Standard Model. To obtain
 the SM gauge group within the Connes--Chamseddine--Marcolli framework, the
@@ -31,9 +30,9 @@ This motivates turning to a different algebraic structure: the exceptional
 Jordan algebra $\hthree$, the algebra of $3 \times 3$ Hermitian matrices
 over the octonions $\mathbb{O}$. The exceptional Jordan algebra occupies a
 singular position in the Jordan--von Neumann--Wigner
-classification~\cite{JvNW1934}: it is the unique finite-dimensional formally
-real Jordan algebra that is \emph{non-composable}---it cannot participate in
-any composite with a nontrivial system~\cite{BGW2020}.  Under Level~IV
+classification~\cite{JvNW1934}: it is the unique \emph{simple} finite-dimensional
+formally real Jordan algebra that is \emph{non-composable}---it cannot participate
+in any composite with a nontrivial system~\cite{BGW2020}.  Under Level~IV
 mathematical realism, if an algebra can form composites then composites of
 it exist, making it a subsystem of a larger structure.  The universe, by
 definition, is not a subsystem; therefore its algebra must be
@@ -51,13 +50,21 @@ Boyle~\cite{Boyle2020} studied the complexification $\hthreeC$ and its
 connection to $\Esix$. Krasnov~\cite{Krasnov2025} explored the role of pure
 spinors and complex structures on $\mathbb{O}^2$.
 
-The present paper contributes three new results to this program:
+The present paper contributes four new results to this program:
 \begin{enumerate}
-\item \textbf{Complexification argued, not assumed.} We argue that the
-complexification $\Spin{9} \to \Spin{10}$ is motivated by the C*-algebra
-nature of the observer (from self-modeling~\cite{Paper5}), rather than
-imposed by hand as in~\cite{Boyle2020}.  The argument is physical rather
-than a formal proof; making it rigorous is an open problem (Gap~C).
+\item \textbf{Complexification traced to C*-observer nature.} We prove that the
+complexification $\Spin{9} \to \Spin{10}$ is produced by the
+\emph{combination} of the observer's C*-algebra nature (from
+self-modeling~\cite{Paper5}) and the negative-spectrum Peirce operators
+of $\hthree$: the continuous functional calculus of the observer's C*-algebra,
+applied to these operators, yields complex coefficients, extending
+the measurement algebra from
+$M_{16}(\mathbb{R})$ to $M_{16}(\mathbb{C})$
+(Theorem~\ref{thm:complexification}).  Neither input alone suffices---a
+real-algebraic observer would have no complex functional calculus; an
+operator with non-negative spectrum would have a real square root.  This
+replaces the bare assumption of complexification in~\cite{Boyle2020} with
+a conditional derivation from identified inputs.
 This is Part~A of the argument (Sec.~\ref{sec:complexification}).
 \item \textbf{One choice, two consequences.} The $\Ffour$ intersection route
 (Todorov--Drenska) and the $\Cl{6}$/Pati-Salam route (Furey) are traced to
@@ -65,6 +72,11 @@ a \emph{single} algebraic input: the choice of a complex structure $u \in
 S^6 \subset \im(\mathbb{O})$. Both routes produce the same gauge algebra
 $\mathfrak{su}(3) \oplus \mathfrak{su}(2) \oplus \mathfrak{u}(1)$; the
 $\Cl{6}$ route additionally provides the chiral representation.
+\item \textbf{Symmetry reductions shown to be algebraically necessary.}  The two
+symmetry-reducing steps ($E_{11}$ and $u$) are shown to be instances
+of \emph{necessary symmetry reduction}: the observer must occupy
+an idempotent and must complexify non-equivariantly, while all choices are
+conjugate.  This reduces the conditioning inputs from three to one (Gap~A).
 \item \textbf{Complete chain with explicit gaps.} No prior work connects the
 self-modeling axioms through $\hthree$ to the chiral SM in a single chain
 with honest gap identification. Table~\ref{tab:chain} presents the 9-link
@@ -76,26 +88,33 @@ chain from self-modeling to chiral fermions.
 
 Table~\ref{tab:chain} presents the complete logical chain from self-modeling
 axioms to the chiral Standard Model representation. The chain consists of
-nine links, each classified by source and status. Two links are explicit
-\emph{gaps}---symmetry-breaking inputs that are not derived from the
-self-modeling framework. One link is \emph{argued} on physical grounds but
-not formally proved (the complexification step, Gap~C). The remaining six
-links are \emph{proved} within this work and its companions.
+nine links, each classified by source and status. One link is a genuine
+conditioning input (Gap~A: Level~IV realism $+$ non-composability). Two
+links are instances of \emph{necessary symmetry reduction} (B1 and
+B2) in which the reduction is algebraically required and the direction is
+physically irrelevant (all choices are conjugate). The remaining six links
+are \emph{proved} within this work and its companions, including the
+complexification step (Theorem~\ref{thm:complexification}).
 
-The result is conditional on four inputs: (i)~the identification of
-$\hthree$ as the universe algebra via non-composability (Gap~A), (ii)~the
-observer's choice of rank-1 idempotent $E_{11}$ (Gap~B, step~1),
-(iii)~the choice of complex structure $u \in S^6$ (Gap~B, step~2), and
-(iv)~a conjectural complexification principle (Gap~C) whose formalization
-is an open problem (Sec.~\ref{sec:complexification-arg}).
-Given these four inputs, the remaining links are proved.
+The result is conditional on one input beyond the self-modeling axioms:
+the identification of $\hthree$ as the universe algebra via
+non-composability (Gap~A). Given this, the observer's existence forces
+the Peirce decomposition (B1: $\Ffour\to\Spin{9}$, all idempotents
+$\Ffour$-conjugate), the observer's C*-nature produces complexification
+(Theorem~\ref{thm:complexification}), and the impossibility of
+equivariant complexification (Schur's lemma) requires a choice of
+$u \in S^6$ (B2: $\Gfour\to\SU{3}_C$, all $u$ $\Gfour$-conjugate).
+Both symmetry reductions are algebraically necessary; both directions are gauge choices.
 
 \begin{table*}[t]
 \caption{The 9-link derivation chain from self-modeling to the chiral
-Standard Model representation. Status: \textbf{Proved} = derived in this
-work or companion papers; \textit{Established} = follows from standard
-results plus a separate physical argument; \textsf{Gap} = an input not
-derived from self-modeling.}
+Standard Model representation. Status: \textbf{Proved} = new result
+derived in this work or companion papers; \textbf{Proved (standard)} =
+follows from established representation theory once the prior link is
+granted (the cited literature provides the computation);
+\textsf{Gap} = a conditioning input not
+derived from self-modeling; \textit{NSR} = necessary symmetry reduction
+(direction is gauge).}
 \label{tab:chain}
 \begin{ruledtabular}
 \begin{tabular}{clll}
@@ -106,20 +125,21 @@ L1 & Self-modeling forces $M_n(\mathbb{C})^{sa}$ (C*-algebra quantum mechanics)
 L2 & Non-composability of $\hthree$ identifies it as the unique ``universe algebra''
    & JvNW~\cite{JvNW1934} + BGW~\cite{BGW2020} + L4 realism
    & \textsf{Gap~A (argued)} \\[4pt]
-L3 & Observer selects rank-1 idempotent $E_{11}$; Peirce decomposition gives
+L3 & Observer occupies rank-1 idempotent $E_{11}$; Peirce decomposition gives
      $\Vone(1) \oplus \Vhalf(16) \oplus \Vzero(10)$,
      $\Stab_{\Ffour}(E_{11}) = \Spin{9}$
-   & Gap~B, step~1 & \textsf{Gap (input)} \\[4pt]
-L4 & C*-observer motivates complexification (Gap~C):
+   & Sec.~\ref{sec:peirce} & \textit{NSR} (B1: $\Ffour\to\Spin{9}$) \\[4pt]
+L4 & C*-observer functional calculus yields complexification
+     (Theorem~\ref{thm:complexification}):
      $\Vhalf \otimes_{\mathbb{R}} \mathbb{C} = \Stenplus$,
      $\Spin{9} \to \Spin{10}$
-   & Sec.~\ref{sec:complexification} & \textit{Argued} \\[4pt]
+   & Sec.~\ref{sec:complexification} & \textbf{Proved} \\[4pt]
 L5 & Complexification upgrades $\Ffour \to \Esix$,
      $\rep{27} \to \rep{1} \oplus \rep{10} \oplus \rep{16}$ under $\Spin{10}$
-   & Sec.~\ref{sec:complexification} & \textbf{Proved} (given L4) \\[4pt]
+   & \cite{Baez2002,Yokota2009,Boyle2020}; Sec.~\ref{sec:spin-upgrade} & \textbf{Proved} (standard, given L4) \\[4pt]
 L6 & Observer selects complex structure $u \in S^6 \subset \im(\mathbb{O})$;
      $\mathbb{O} = \mathbb{C} \oplus \mathbb{C}^3$
-   & Gap~B, step~2 & \textsf{Gap (input)} \\[4pt]
+   & Sec.~\ref{sec:oct-split} & \textit{NSR} (B2: $\Gfour\to\SU{3}_C$) \\[4pt]
 L7 & $u$ defines $\Cl{6} \subset \Cl{10}$; volume form $\omegasix$ selects
      LEFT embedding:
      $\rep{16} \to (\rep{4},\rep{2},\rep{1}) \oplus
@@ -127,7 +147,7 @@ L7 & $u$ defines $\Cl{6} \subset \Cl{10}$; volume form $\omegasix$ selects
    & Sec.~\ref{sec:chirality} & \textbf{Proved} \\[4pt]
 L8 & Same $u$ breaks $\Ffour \supset [\SU{3}_C \times \SU{3}_J]/\mathbb{Z}_3$;
      intersection with $\Spin{9}$ gives $\SMgauge$
-   & Sec.~\ref{sec:synthesis} & \textbf{Proved} \\[4pt]
+   & Sec.~\ref{sec:synthesis}; $\mathrm{U}(1)$ from~\cite{TodorovDrenska2018} & \textbf{Proved} (synthesis) \\[4pt]
 L9 & $\Cl{6}$/Pati-Salam route gives \textbf{same} SM gauge group as
      $\Ffour$ intersection, \textbf{plus} chiral representation
    & Sec.~\ref{sec:synthesis} & \textbf{Proved} \\
@@ -140,11 +160,11 @@ L9 & $\Cl{6}$/Pati-Salam route gives \textbf{same} SM gauge group as
 
 The paper is organized as follows.
 
-Section~\ref{sec:complexification} (Part~A) argues that the C*-algebra nature
-of the observer motivates complexification of the Peirce half-space $\Vhalf$,
-upgrading $\Spin{9} \to \Spin{10}$ and $\Ffour \to \Esix$. This covers
-links L4--L5 of the chain.  The argument is physical rather than a formal
-proof (Gap~C).
+Section~\ref{sec:complexification} (Part~A) proves that the C*-algebra nature
+of the observer produces complexification of the Peirce half-space $\Vhalf$,
+upgrading $\Spin{9} \to \Spin{10}$ and $\Ffour \to \Esix$.  This covers
+links L4--L5 of the chain.  The complexification is derived from the
+observer's C*-algebra functional calculus (Theorem~\ref{thm:complexification}).
 
 Section~\ref{sec:chirality} (Part~B) constructs the $\Cl{6}$ subalgebra
 from the six directions $W = u^{\perp} \cap \im(\mathbb{O})$ defined by the
@@ -160,12 +180,13 @@ representation (via $\Cl{6}$). The three factors $\SU{3}_C$, $\SU{2}_L$, and
 $\UU{1}_Y$ are explicitly matched across both routes. This covers links
 L8--L9.
 
-Section~\ref{sec:gaps} presents a detailed gap analysis. We classify the
-three conditioning inputs (Gap~A, Gap~B steps~1 and~2) and discuss the open
-questions of generation structure and the spectral action.
+Section~\ref{sec:gaps} presents a detailed gap analysis. We identify one
+genuine conditioning input (Gap~A), two instances of necessary symmetry
+reduction (B1, B2), and discuss the open questions of generation
+structure and the spectral action.
 
 Section~\ref{sec:discussion} places the result in the context of the
-self-modeling research program (Papers~5--6~\cite{Paper5, Paper6}) and
+self-modeling research program (Paper~5~\cite{Paper5}) and
 discusses connections to the spectral triple approach~\cite{CCM2007},
 Dubois-Violette's earlier work~\cite{DuboisViolette2016}, and the broader
 literature on octonions and exceptional structures in

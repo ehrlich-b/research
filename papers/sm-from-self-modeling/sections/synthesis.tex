@@ -45,8 +45,10 @@ within~$\Ffour$:
   \;=\;
   \Spin{9} \;\cap\;
   \frac{\SU{3}_C\times\SU{3}_J}{\mathbb{Z}_3}
-  \;\supset\;
-  \SU{3}_C \times \SU{2} \times \mathrm{U}(1).
+  \;=\;
+  \SU{3}_C \times \SU{2} \times \mathrm{U}(1)
+  \qquad
+  \text{(at the Lie algebra level).}
 \end{equation}
 The intersection works as follows: $\SU{3}_C\subset\Gfour\subset\Spin{9}$,
 so it passes through the intersection intact.  The
@@ -57,10 +59,13 @@ reduces to $\mathrm{U}(2)_J = [\SU{2}\times\mathrm{U}(1)]/\mathbb{Z}_2$.
 \noindent\textbf{Dimension:}
 $8 + 3 + 1 = 12 = \dim(\SMgauge)$.\ \checkmark
 
-\noindent The containment is an equality at the Lie algebra level:
-the intersection has dimension~12 (verified by explicit computation of
-the common generators in~\cite{TodorovDrenska2018}, Sec.~4), matching
-$\dim(\SU{3}_C \times \SU{2} \times \mathrm{U}(1)) = 8 + 3 + 1 = 12$.
+\noindent The equality is at the Lie algebra level:
+the intersection has $\dim = 12$, verified by explicit computation of
+the common generators in~\cite{TodorovDrenska2018}, Sec.~4.  At the
+group level, discrete quotients (the $\mathbb{Z}_3$ from
+$\SU{3}_C\times\SU{3}_J/\mathbb{Z}_3$ and the $\mathbb{Z}_2$ from
+$[\SU{2}\times\mathrm{U}(1)]/\mathbb{Z}_2$) affect the global
+structure but not the gauge interactions.
 
 \begin{remark}[No chirality from $\Ffour$]
 The $\Ffour$ route gives the gauge group but does \emph{not}
@@ -95,8 +100,9 @@ Then the single choice of $u$ determines:
     The splitting $\mathbb{O} = \mathbb{C}\oplus\mathbb{C}^3$
     induces $[\SU{3}_C\times\SU{3}_J]/\mathbb{Z}_3\subset\Ffour$.
     Its intersection with $\Spin{9} = \mathrm{Stab}_{\Ffour}(E_{11})$
-    contains $\SU{3}_C\times\SU{2}\times\mathrm{U}(1)$
-    \textup{(the SM gauge group, $\dim = 12$)}.
+    gives $\SU{3}_C\times\SU{2}\times\mathrm{U}(1)$
+    at the Lie algebra level
+    \textup{($\dim = 12$;~\cite{TodorovDrenska2018}, Sec.~4)}.
   \item[\textup{(ii)}] \textbf{The $\Cl{6}$ construction.}\enspace
     The same $W$ provides the 6 generators of
     $\Cl{6}\subset\Cl{10}$, whose volume form $\omegasix$ breaks
@@ -194,19 +200,22 @@ left/right distinction.\ $\therefore$ \textbf{Same $\SU{2}$.}
     $h_3(\mathbb{C})\subset\hthree$, distinguishing the observer's
     slot ($E_{11}$) from the remaining two.
   \item Route~B: $\mathrm{U}(1)_Y$ with hypercharge
-    $Y = \tfrac{1}{2}(B\!-\!L) + I_3^R$.  The generator $B\!-\!L$
+    $Y = (B\!-\!L) + 2J_3^R$.  The generator $B\!-\!L$
     comes from the $\mathrm{U}(1)$ factor in
     $\SU{4}\to\SU{3}_C\times\mathrm{U}(1)_{B-L}$, which is
     induced by the same $u$ that splits $\mathbb{O}$.
 \end{itemize}
 Both generators live in the rank-4 Cartan subalgebra of $\Ffour$
-and are orthogonal to $\SU{3}_C$ and $\SU{2}$.  The explicit
+and are orthogonal to $\SU{3}_C$ and $\SU{2}$.  We do not independently derive the hypercharge formula; the explicit
 identification of the Route~A generator with Route~B hypercharge
 follows from Todorov and Drenska~\cite{TodorovDrenska2018}, who
 verify that the $\mathrm{U}(1)$ center of $\mathrm{U}(2)_J$ acts
 on the Peirce half-space $\Vhalf$ with the same eigenvalues as the
-hypercharge $Y$ acts on $\Stenplus$.  This is a computation, not
-just a rank count.\ $\therefore$ \textbf{Same $\mathrm{U}(1)$.}
+hypercharge $Y$ acts on $\Stenplus$.  This is a computation in
+\cite{TodorovDrenska2018}, not just a rank count; our contribution
+is the framework that determines the algebraic input, not the
+hypercharge eigenvalue verification.\ $\therefore$
+\textbf{Same $\mathrm{U}(1)$.}
 
 \begin{center}
 \small
@@ -237,10 +246,15 @@ Let $\hthree$ be the exceptional Jordan algebra.  Assume:
 \begin{itemize}
   \item \textup{(Gap~A)} $\hthree$ is identified as the universe
     algebra via non-composability.
-  \item \textup{(Gap~B, step~1)} An observer selects a rank-1
-    idempotent $e = E_{11}$, breaking $\Ffour\to\Spin{9}$.
-  \item \textup{(Gap~B, step~2)} A complex structure
-    $u\in S^6\subset\mathrm{Im}(\mathbb{O})$ is chosen.
+  \item \textup{(B1)} An observer occupies a rank-1
+    idempotent $e = E_{11}$, reducing $\Ffour\to\Spin{9}$
+    (all idempotents $\Ffour$-conjugate; necessary symmetry
+    reduction).
+  \item \textup{(B2)} A complex structure
+    $u\in S^6\subset\mathrm{Im}(\mathbb{O})$ is selected
+    (necessary symmetry reduction forced by
+    Theorem~\ref{thm:complexification} $+$ Schur;
+    all $u$ $\Gfour$-conjugate).
 \end{itemize}
 Then:
 

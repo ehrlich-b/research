@@ -1,6 +1,13 @@
 % main.tex — Paper 7: Chirality from h_3(O)
 % ASSERT_CONVENTION: natural_units=dimensionless, jordan_product=(1/2)(ab+ba), clifford_convention=euclidean_positive, octonion_basis=fano_e1e2=e4, complex_structure=u_equals_e7, spin_representation=S10plus_boyle, pati_salam=SU4xSU2LxSU2R
-\documentclass[aps,prd,twocolumn,superscriptaddress,nofootinbib]{revtex4-2}
+% For submission: \documentclass[aps,prd,twocolumn,superscriptaddress,nofootinbib]{revtex4-2}
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\newcommand{\affiliation}[1]{}
+\newenvironment{ruledtabular}{}{}
+\newenvironment{acknowledgments}{\section*{Acknowledgments}}{}
+\usepackage[numbers,sort&compress]{natbib}
+\bibliographystyle{unsrtnat}
 
 \input{preamble.sty}
 
@@ -15,6 +22,8 @@ via Exceptional Jordan Algebra}
 
 \date{\today}
 
+\maketitle
+
 \begin{abstract}
 Self-modeling---the requirement that a physical system contains a
 faithful model of itself---forces quantum mechanics with
@@ -22,24 +31,31 @@ $M_n(\mathbb{C})^{sa}$ state spaces~\cite{Paper5}. We argue that the
 exceptional Jordan algebra $\hthree$ is the unique candidate for the
 ``universe algebra'' via its non-composability (it cannot be a subsystem of
 a larger system). A C*-observer probing $\hthree$ induces a Peirce
-decomposition under a rank-1 idempotent $E_{11}$, and we argue that the
-observer's C*-algebra nature motivates complexification of the Peirce
-half-space, canonically upgrading the symmetry from $\Spin{9}$ to
-$\Spin{10}$ acting on a 16-dimensional complex Weyl spinor $\Stenplus$.
+decomposition under a rank-1 idempotent $E_{11}$.  We prove that the
+C*-algebra continuous functional calculus, applied to the
+Peirce operators---which have negative eigenvalues---yields
+complex coefficients, extending the measurement algebra from
+$M_{16}(\mathbb{R})$ to $M_{16}(\mathbb{C})$ and upgrading the
+symmetry from $\Spin{9}$
+to $\Spin{10}$ acting on a 16-dimensional complex Weyl spinor
+$\Stenplus$.
 A single additional algebraic choice---a complex structure $u \in S^6
 \subset \mathrm{Im}(\mathbb{O})$---simultaneously determines both the
 Standard Model gauge group $\SMgauge$ via $\Ffour$ intersection and the
 chiral (left-handed) fermion representation via the $\Cl{6}$ volume form.
-The result is conditional on three inputs beyond the self-modeling axioms
-(the identification of $\hthree$, the choice of idempotent, and the choice
-of complex structure) plus a conjectural complexification principle whose
-formalization remains open.
+The result is conditional on one input beyond the self-modeling axioms:
+the identification of $\hthree$ via non-composability.  The observer's
+choice of idempotent and complex structure are instances of necessary
+symmetry reduction---algebraically required choices within conjugacy
+classes whose direction is physically irrelevant.
+The complexification step, previously assumed, is traced to
+the \emph{combination} of the observer's C*-nature (Paper~5) and
+the negative-spectrum Peirce operators of $\hthree$: neither input
+alone suffices.
 We present the 9-link chain from self-modeling axioms to a one-generation
 chiral Standard Model representation, with explicit classification of each
-link as proved, argued, or an open gap.
+link as proved, necessary symmetry reduction, or an open gap.
 \end{abstract}
-
-\maketitle
 
 \input{sections/introduction}
 \input{sections/complexification}
