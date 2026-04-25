@@ -554,17 +554,15 @@ self-modeling \emph{is} in the finite-dimensional OUS setting.
 
 \paragraph{Machine verification.}
 The derivation chain is formalized in Lean~4 with Mathlib (v4.28.0).
-The formalization comprises 10 files (${\sim}2{,}400$ lines) and
-produces zero \texttt{sorry} declarations.  Four axioms are used:
-(1)~the self-modeling bridge, which encapsulates the sequential
-product construction of Sections~3--4;
-(2)~the spectral Jordan identity (van de Wetering 2019, \S4);
-(3)~local tomography
-(Definition~\ref{def:self-modeling-system}\ref{sms:minimal}---the
-minimality-to-dimension argument of \Cref{thm:local-tomo}); and
-(4)~the $C^{*}$-promotion theorem (van de Wetering 2019,
-Theorem~3).  Axioms (2)--(4) are published theorems; axiom~(1)
-bridges the paper's novel construction to the formalized framework.
+The formalization comprises 11 files (${\sim}3{,}400$ lines) and
+produces zero \texttt{sorry} declarations.  Sixteen axioms are used,
+all citing published external results: 14 encode order unit space
+and Peirce decomposition properties from Alfsen--Shultz (2003,
+Chapters~6--9), one encodes the spectral Jordan identity (van de
+Wetering 2019, \S4), and one encodes the $C^{*}$-promotion theorem
+(van de Wetering 2019, Theorem~3).  The novel construction of
+Sections~3--4 (self-modeling to sequential product, all 10 SPData
+fields) is \emph{fully proved}, not axiomatized.
 Two concrete models---diagonal $2 \times 2$ matrices and the spin
 factor---satisfy all S1--S7 from scratch, verifying that the axiom
 system is consistent.  The formalization is available at

@@ -55,7 +55,16 @@ Self-modeling premise
   --> Quantum mechanics
 ```
 
-**Axioms** (17 in the Paper 5 chain):
+> **Version note (2026-04-24):** The deployed Paper 5 PDF (Zenodo DOI
+> 10.5281/zenodo.19342703 and the website) is the JMP-submitted version
+> with 16 axioms and no S0 postulate. This Lean formalization is one
+> revision ahead: it tracks the post-submission §3.3 rewrite (S0 axiom
+> + Peirce-Preservation Lemma) which is parked on the
+> `paper5-enhancement` branch in the blog repo and will land in a
+> revised Paper 5 once the JMP referee report arrives. Counts and
+> citations below describe the Lean state, not the deployed PDF.
+
+**Axioms** (17 in the Paper 5 chain, post-submission §3.3 revision):
 
 - `SelfModelingBridge.lean` (15): 8 cite Alfsen-Shultz 2003 / OUS theory;
   1 is the named Paper 5 §3.3 postulate `S0_peirce_coherence` (Peirce

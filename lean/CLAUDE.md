@@ -1,5 +1,14 @@
 # Lean Formalization of Radical Relativity
 
+> **Paper 5 deployment skew (2026-04-24):** This Lean formalization is
+> ahead of the deployed Paper 5 PDF. The deployed PDF (Zenodo +
+> bryan.ehrlich.dev) is the JMP-submitted version (16 axioms, no S0).
+> The Lean tracks the post-submission §3.3 rewrite (S0 +
+> Peirce-Preservation Lemma) which is parked on the
+> `paper5-enhancement` branch in the blog repo until the JMP referee
+> report arrives. Lemma/axiom counts below describe Lean state, not the
+> deployed PDF.
+
 ## Build
 
 ```bash
