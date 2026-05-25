@@ -46,34 +46,148 @@ octonion off-diagonal entries contribute $3\times 8 = 24$.  Hence
 $\dim(\hthree) = 3 + 24 = 27$.
 \end{remark}
 
-\begin{remark}[Non-composability and Gap~A]\label{rem:gap-A}
-Among the formally real Jordan algebras classified by
-Jordan--von~Neumann--Wigner, $\hthree$ is the unique
-\emph{exceptional} algebra: it does not embed into any associative
-algebra and cannot be realized as a tensor factor of a larger
-system~\cite{Baez2002}.  We identify it as the ``universe algebra''
-on the following grounds.  Under Tegmark's Level~IV mathematical
-universe hypothesis~\cite{Tegmark2008} (the program's foundational
-premise), if an algebra \emph{can} form composites, then composites
-of it \emph{exist} as consistent mathematical structures.  A system
-whose algebra admits composites is therefore a subsystem of a larger
-structure, contradicting its identification as the universe.  By
-contrapositive, the universe's algebra must be one that does
-\emph{not} admit composites: non-composability is required, not
-merely permitted.  This argument has an implicit step: identifying ``the universe''
-with a particular mathematical structure, and treating the existence
-of composites (under L4) as entailing that the algebra is a subsystem
-\emph{of those composites} rather than merely co-existing alongside
-them.  This identification is natural under L4 (a tensor factor is,
-by construction, a subsystem of the tensor product) but it is doing
-substantive philosophical work.  A further implicit step is that the
-universe corresponds to a \emph{single} Jordan algebra rather than,
-say, a category of algebraic structures; under L4, the non-composable
-algebra is singled out precisely because every composable algebra is
-a proper part of a larger structure, but this assumes the universe
-has a single algebraic description.
-The argument is flagged as Gap~A
-precisely because it goes beyond the self-modeling axioms.
+The identification of $\hthree$ as the algebraic basin in which a
+self-modeling observer lives is packaged here as a Definition plus a
+Theorem.  The Definition states the structural conditions any
+candidate basin must satisfy; the Theorem is that, up to isomorphism,
+$\hthree$ is the unique candidate.  An interpretive remark
+relating the conditions to the Level~IV realism premise is recorded
+afterwards (Remark~\ref{rem:basin-scope}); it is upstream motivation,
+not part of the proof.
+
+\begin{definition}[Observer-grade JA basin]\label{def:basin}
+A simple finite-dimensional formally real Jordan algebra $A$ is an
+\emph{observer-grade JA basin} if all three conditions hold:
+\begin{enumerate}[label=(\roman*)]
+  \item $A$ admits a Peirce decomposition at a rank-1 idempotent $E$
+    whose Peirce 0-space (spectator complement) $V_0(E)$ is
+    isomorphic to $h_2(\mathbb{K})$ for some composition algebra
+    $\mathbb{K}\in\{\mathbb{R},\mathbb{C},\mathbb{H},\mathbb{O}\}$;
+  \item $\mathbb{K}$ admits a complex structure: there exists
+    $u\in\mathbb{K}$ with $u^2=-1$, so that
+    $\mathbb{C}_u=\mathbb{R}\oplus\mathbb{R}u\subseteq\mathbb{K}$
+    is a complex subfield and $h_2(\mathbb{C}_u)\cong
+    M_2(\mathbb{C})^{sa}$ sits inside $h_2(\mathbb{K})$ as a
+    (Jordan-)subalgebra;
+  \item $A$ is not a non-trivial Jordan-tensor factor in the
+    Barnum--Graydon--Wilce~\cite{BGW2020} symmetric monoidal
+    category of formally real JC-algebras (special FRJAs).
+\end{enumerate}
+\end{definition}
+
+\noindent
+Condition~(i) restricts attention to rank-3 algebras over a
+composition algebra (it fails for spin factors of rank~2 and for
+$h_n(\mathbb{K})$ with $n\geq 4$, where $V_0$ has the wrong shape).
+Condition~(ii) excludes the case $\mathbb{K}=\mathbb{R}$, where no
+complex sub-line exists and the C*-bottleneck of
+Lemma~\ref{lem:bottleneck} below is not defined; for
+$\mathbb{K}\in\{\mathbb{C},\mathbb{H},\mathbb{O}\}$ a complex
+structure exists ($u=i$, $u\in\{i,j,k\}$, or $u\in S^6$,
+respectively).  Condition~(iii) is the categorical
+non-composability statement: it excludes the special simple FRJAs,
+which are the objects of the BGW category, leaving only $\hthree$.
+
+\begin{theorem}[Restricted Basin]\label{thm:basin}
+Up to isomorphism, the unique observer-grade JA basin is $\hthree$.
+\end{theorem}
+
+\begin{proof}
+By the JvNW classification~\cite{JvNW1934}, every simple finite-
+dimensional formally real Jordan algebra is one of $h_n(\mathbb{R})$,
+$h_n(\mathbb{C})$, $h_n(\mathbb{H})$ for $n\geq 3$, the spin factors
+$V_k$ for $k\geq 2$, or $\hthree$.  We check each family against
+Definition~\ref{def:basin}.
+\begin{enumerate}
+  \item \textbf{Spin factors $V_k$ ($k\geq 2$) fail (i).}
+    A spin factor has rank~$2$; for any rank-1 idempotent the
+    Peirce 0-space is the orthogonal rank-1 idempotent's span,
+    which is one-dimensional and not of the form $h_2(\mathbb{K})$
+    for any composition algebra.
+  \item \textbf{$h_n(\mathbb{K})$ for $n\geq 4$,
+    $\mathbb{K}\in\{\mathbb{R},\mathbb{C},\mathbb{H}\}$, fail (i).}
+    For $n\geq 4$ a rank-1 idempotent has Peirce 0-space
+    $V_0(E)\cong h_{n-1}(\mathbb{K})$, which is not of the form
+    $h_2(\mathbb{K})$.
+  \item \textbf{$h_3(\mathbb{R})$ fails (ii).}  $\mathbb{K}=\mathbb{R}$
+    contains no element $u$ with $u^2=-1$, so no complex sub-line
+    $\mathbb{C}_u\subseteq\mathbb{R}$ exists; condition~(ii) is
+    vacuously violated.
+  \item \textbf{$h_3(\mathbb{C})$ and $h_3(\mathbb{H})$ fail (iii).}
+    Both are special simple FRJAs, equivalently formally real
+    JC-algebras: each embeds as the self-adjoint part of an
+    associative matrix algebra ($M_3(\mathbb{C})$ and $M_3(\mathbb{H})$
+    respectively) with Jordan product $a\circ b=\tfrac12(ab+ba)$.
+    By BGW Theorem~4.15~\cite{BGW2020}, simple special EJAs $A,B$
+    admit a composite $AB$ that is an ideal in the Hanche-Olsen
+    universal tensor product $A\widetilde{\otimes}B$, and by
+    Proposition~5.4 the canonical tensor product
+    $A\odot B$ is a composite in the sense of BGW Definition~4.1.
+    Applying these to $A=h_3(\mathbb{C})$ or $h_3(\mathbb{H})$ with
+    any non-trivial special EJA $B$ exhibits both as non-trivial
+    Jordan-tensor factors.
+  \item \textbf{$\hthree$ satisfies all three.}
+    \begin{enumerate}[label=(\alph*)]
+      \item (i) $\mathbb{K}=\mathbb{O}$: rank-1 idempotents in
+        $\hthree$ have Peirce 0-space $V_0(E)\cong h_2(\mathbb{O})$
+        (Proposition~\ref{prop:peirce-spaces}).
+      \item (ii) $\mathbb{O}$ admits complex structures $u\in S^6
+        \subset\mathrm{Im}\,\mathbb{O}$, so
+        $h_2(\mathbb{C}_u)\hookrightarrow h_2(\mathbb{O})$
+        (Lemma~\ref{lem:bottleneck}, proved below).
+      \item (iii) $\hthree$ is the unique non-special simple FRJA
+        by Zelmanov's classification~\cite{Zelmanov1979}; in
+        particular it is not a JC-algebra.  By BGW
+        Proposition~4.14~\cite{BGW2020}: \emph{if $A$ contains an
+        exceptional ideal and $B$ contains a non-trivial ideal,
+        there exists no composite $AB$ in the sense of BGW
+        Definition~4.1.}  Equivalently~\cite[remark following
+        Prop.~4.14]{BGW2020}, if $A$ is exceptional and any
+        composite $AB$ exists, then $B$ must be a direct sum of
+        one-dimensional Jordan algebras (a classical system).
+        Hence $\hthree$ admits no non-trivial Jordan-tensor
+        composite and therefore is not a non-trivial Jordan-tensor
+        factor in the BGW category.
+    \end{enumerate}
+\end{enumerate}
+By 1--5, $\hthree$ is the unique observer-grade JA basin up to
+isomorphism.
+\end{proof}
+
+\begin{remark}[Scope of Theorem~\ref{thm:basin}; relation to Gap~A]
+\label{rem:basin-scope}
+Three categorical points are worth flagging.
+
+\textbf{(a) ``Composite'' is BGW-Jordan-monoidal.}  Condition~(iii)
+references the BGW Jordan-monoidal category~\cite{BGW2020}, which is
+the natural categorical setting for formally real Jordan composites.
+Other monoidal structures on Jordan-like categories may give other
+notions of ``composite'' and other lists of basins;
+Theorem~\ref{thm:basin} is sharp within BGW-Jordan-composability.
+
+\textbf{(b) ``Universe'' is anthropic.}  The restriction to
+\emph{observer-grade} basins is motivated by ``we are observers, so
+we live in an observer-grade basin.''  Other simple finite-dimensional
+formally real Jordan algebras (the spin factors and $h_n(\mathbb{K})$
+for $\mathbb{K}\in\{\mathbb{R},\mathbb{C},\mathbb{H}\}$, $n\geq 3$)
+exist as consistent mathematical structures; the program does not
+claim they fail to host \emph{any} structure, only that they fail to
+be observer-grade JA basins in the sense of
+Definition~\ref{def:basin}.  Under Tegmark's Level~IV mathematical
+realism~\cite{Tegmark2008} those alternatives exist and host whatever
+structure their algebra permits; the program selects $\hthree$ as
+\emph{ours} by anthropic restriction, not by uniqueness across all
+possible worlds.  This is what was previously labeled Gap~A; the
+present formulation makes the L4 step explicit and external to the
+proof, rather than embedded in a prose argument.
+
+\textbf{(c) Peirce sublocalization is not BGW-composition.}
+Condition~(iii) refers to BGW Jordan-tensor factorization; the
+arrow $A\to V_0(E)$ in this paper is a Peirce sublocalization
+(Section~\ref{sec:peirce}).  These are different relations.  In
+particular, $V_0(E) = h_2(\mathbb{O})$ is a Peirce 0-subspace of
+$\hthree$ but not a BGW-Jordan factor of it; no contradiction with
+$\hthree$ satisfying~(iii) arises.
 \end{remark}
 
 %----------------------------------------------------------------------
@@ -275,6 +389,134 @@ $M_{16}(\mathbb{R})$ itself: the abstract algebra
 $\mathrm{Cl}(9,0) \cong M_{16}(\mathbb{R})
 \oplus M_{16}(\mathbb{R})$ has two simple summands, and the spinor
 representation $S_9$ is the irreducible module for one summand.
+
+%----------------------------------------------------------------------
+\subsection{C*-bottleneck universality}\label{sec:bottleneck}
+%----------------------------------------------------------------------
+
+A C*-observer accessing $\hthree$ probes the algebra through positive
+unital projections (conditional expectations) onto C*-subalgebras.
+A natural reviewer question is whether the complexification of
+Section~\ref{sec:complexification-arg} below depends on a free choice
+of C*-target: ``why $h_3(\mathbb{C}_u)$ rather than another convenient
+slice?''  Lemma~\ref{lem:bottleneck} answers that the family of
+admissible C*-targets is structurally determined: up to
+$\Ffour$-action, the maximal-range targets are exactly the algebras
+$h_3(\mathbb{C}_u)$ indexed by $u\in S^6\subset\mathrm{Im}\,\mathbb{O}$.
+The selection of $u$ inside $S^6$ is then necessary but
+direction-irrelevant (Gap~B2; cf.~Section~\ref{sec:gap-register}).
+
+\begin{lemma}[C*-bottleneck universality]\label{lem:bottleneck}
+Let $\mathcal{E}(\hthree)$ denote the family of positive unital
+idempotents (conditional expectations)
+$\mathcal{E}\colon\hthree\to A$ with $A\subseteq\hthree$ a Jordan
+subalgebra (the embedding $A\hookrightarrow\hthree$ preserves the
+Jordan product) that is isomorphic to the self-adjoint part of a
+finite-dimensional complex C*-algebra.  Then:
+\begin{enumerate}[label=(\roman*)]
+  \item For every $\mathcal{E}\in\mathcal{E}(\hthree)$, the range
+    $A=\mathcal{E}(\hthree)$ is a real Jordan subalgebra of
+    $\hthree$ of the form
+    $A\cong\bigoplus_{k=1}^{r} M_{n_k}(\mathbb{C})^{sa}$ with
+    $\sum_k n_k\leq 3$ and (consequently) each $n_k\leq 3$.
+  \item The maximal-range elements of $\mathcal{E}(\hthree)$
+    (those with $\dim_{\mathbb{R}} A$ maximal) have
+    $A\cong M_3(\mathbb{C})^{sa}\cong h_3(\mathbb{C}_u)$ for some
+    $u\in S^6\subset\mathrm{Im}\,\mathbb{O}$, where
+    $\mathbb{C}_u=\mathbb{R}\oplus\mathbb{R}u$ is the complex line
+    through~$u$.  The family $\{h_3(\mathbb{C}_u):u\in S^6\}$ forms
+    a single $\Ffour$-orbit.
+  \item For any rank-1 idempotent $E\in h_3(\mathbb{C}_u)$, the
+    Peirce 0-space within the maximal C*-target satisfies
+    $V_0(E)\cap h_3(\mathbb{C}_u)\cong h_2(\mathbb{C}_u)\cong
+    M_2(\mathbb{C})^{sa}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\textbf{(i)}~Effros-St{\o}rmer~\cite{EffrosStormer1979}: the range
+of a positive unital idempotent on a JB-algebra is a JB-subalgebra.
+In finite dimensions over $\mathbb{R}$ this is just a Jordan
+subalgebra; by the hypothesis on $\mathcal{E}$ the embedding is
+moreover Jordan-product-preserving, so $A\subseteq\hthree$ as a
+Jordan subalgebra.  The hypothesis that $A$ is isomorphic to the
+self-adjoint part of a finite-dimensional complex C*-algebra,
+combined with the Artin--Wedderburn classification, gives
+$A\cong\bigoplus_{k=1}^{r} M_{n_k}(\mathbb{C})^{sa}$ for some
+positive integers $n_1,\ldots,n_r$.  The Jordan rank of
+$M_{n_k}(\mathbb{C})^{sa}$ is $n_k$ (the maximum number of
+mutually orthogonal idempotents), so the rank of $A$ is
+$\sum_k n_k$.  Since $A$ is a Jordan subalgebra of $\hthree$ and
+Jordan rank decreases under Jordan subalgebra inclusion, we have
+$\sum_k n_k\leq\mathrm{rank}(\hthree)=3$.  In particular each
+$n_k\leq 3$.
+
+\textbf{(ii)}~Maximizing $\dim_{\mathbb{R}} A$ subject to
+$\sum_k n_k\leq 3$ and each summand $M_{n_k}(\mathbb{C})^{sa}$
+having $\dim_{\mathbb{R}}=n_k^2$, the unique maximizer is
+$r=1$, $n_1=3$, giving $\dim_{\mathbb{R}} A=9$.  (The other
+options---$M_2\oplus M_1$, $M_1\oplus M_1\oplus M_1$, $M_2$, $M_1$,
+etc.---all give $\dim_{\mathbb{R}} A\leq 5$.)  So a maximal
+$A\cong M_3(\mathbb{C})^{sa}$.  We now identify the embedding into
+$\hthree$.  Fixing any $u\in\mathbb{O}$ with $u^2=-1$ defines the
+associative subfield $\mathbb{C}_u=\mathbb{R}\oplus\mathbb{R}u
+\subset\mathbb{O}$, and
+\[
+  h_3(\mathbb{C}_u) \;:=\; \{X\in\hthree : X_{ij}\in\mathbb{C}_u
+  \text{ for all } i,j\} \;\cong\; M_3(\mathbb{C})^{sa}
+\]
+is a Jordan subalgebra of $\hthree$ of dimension~$9$.  By the
+Baez classification of Jordan subalgebras of
+$\hthree$~\cite[\S 3.4 \& \S 4.4]{Baez2002}, the rank-3
+Jordan subalgebras of $\hthree$ isomorphic to $M_n(\mathbb{C})^{sa}$
+are exactly $h_3(\mathbb{C}_u)$ for $u\in S^6
+\subset\mathrm{Im}\,\mathbb{O}$ (the rank-3 quaternionic and real
+forms $h_3(\mathbb{H}),h_3(\mathbb{R})\subset\hthree$ are not
+isomorphic to any $M_n(\mathbb{C})^{sa}$ and so do not occur in
+$\mathcal{E}(\hthree)$).  The automorphism group
+$G_2=\Aut(\mathbb{O})\subset\Ffour$ acts transitively on the
+imaginary unit sphere ($S^6\cong G_2/\SU{3}$), so
+$\{h_3(\mathbb{C}_u)\}_{u\in S^6}$ forms a single $\Ffour$-orbit.
+
+\textbf{(iii)}~Within $h_3(\mathbb{C}_u)\cong M_3(\mathbb{C})^{sa}$,
+a rank-1 idempotent $E$ has the standard Peirce decomposition
+$h_3(\mathbb{C}_u) = V_1(E)\oplus V_{1/2}(E)\oplus V_0(E)$
+with $V_1(E)\cong\mathbb{R}$, $V_{1/2}(E)\cong\mathbb{C}_u^2$,
+and $V_0(E)\cong h_2(\mathbb{C}_u)\cong M_2(\mathbb{C})^{sa}$.
+Hence $V_0(E)\cap h_3(\mathbb{C}_u)\cong h_2(\mathbb{C}_u)$.
+\end{proof}
+
+\begin{remark}[Lorentzian signature on
+$h_2(\mathbb{C}_u)$]\label{rem:minkowski}
+The space $h_2(\mathbb{C}_u)\cong M_2(\mathbb{C})^{sa}$ carries the
+real quadratic form $X\mapsto -\det(X)$, which is of signature
+$(1,3)$ when $X$ is written in the basis
+$(\sigma_0,\sigma_1,\sigma_2,\sigma_3)$ of $2\times 2$ Hermitian
+matrices.  This is the standard Minkowski metric on Hermitian
+$2\times 2$ matrices.  Lemma~\ref{lem:bottleneck}~(iii) records the
+spectator complement of the C*-bottleneck as $h_2(\mathbb{C}_u)$ and
+this remark notes that it carries Lorentzian signature canonically;
+the use of the bottleneck for spacetime identification is downstream
+work and does not affect the chirality derivation in this paper.
+\end{remark}
+
+\begin{remark}[Selection vs.\ forcing]\label{rem:sel-vs-force}
+Lemma~\ref{lem:bottleneck} establishes that the menu of maximal
+C*-targets is the $\Ffour$-orbit
+$\{h_3(\mathbb{C}_u):u\in S^6\}$, no more and no less.  The selection
+of a particular $u\in S^6$ (Gap~B2; see
+Section~\ref{sec:gap-register}) is required: Schur's lemma
+($\mathrm{End}_{\Spin{9}}(S_9)=\mathbb{R}$ since $9\bmod 8=1$)
+forbids equivariant complexification, so no canonical $u$ exists.
+The selection produces $\Ffour$-conjugate physics, so the direction
+is gauge.  The complexification of $\Vhalf$ established by
+Theorem~\ref{thm:complexification} below is the dynamical realization
+of one such selection: when the observer's continuous functional
+calculus is applied to a specific Peirce operator $T_a$, the resulting
+imaginary structure pins down an associated $u\in S^6$, and the
+universal-property statement here certifies that this is the maximal
+admissible target rather than a convenient one.
+\end{remark}
 
 %----------------------------------------------------------------------
 \subsection{Complexification from C*-observer nature}\label{sec:complexification-arg}
@@ -599,7 +841,7 @@ Theorem~\ref{thm:complexification} establishes that complexification
 choice of $u$ is required.  The choice of $u \in S^6$ (Gap~B,
 step~2) determines \emph{which} complex structure the observer
 obtains, not \emph{whether} complexification occurs.  These are
-logically distinct: the former (Gap~C) is closed unconditionally
+logically distinct: the former (Gap~C, that complexification \emph{occurs}) is closed conditional on the observer's $T_a$-probing premise (Remark~\ref{rem:sp-domain}; equivariant forcing is impossible by Schur)---not unconditionally
 by Theorem~\ref{thm:complexification}; the latter (Gap~B, step~2)
 is a necessary symmetry reduction forced by the combination of
 Theorem~\ref{thm:complexification} and Schur's lemma

@@ -3,7 +3,7 @@
 \section{Why Self-Modelers?}
 \label{sec:why-self-modelers}
 
-\subsection{Experiential measure}
+\subsection{The self-reference density (the Observable-side weight)}
 \label{subsec:experiential-measure}
 
 Structure space $\mathcal{S}$ contains every consistent mathematical
@@ -19,7 +19,7 @@ Markov processes $(B, M)$ in which a body component $B$ is tracked by
 a model component $M$ through a factorizable transition kernel.
 \end{postulate}
 
-Paper~1~\citep{ehrlich2026measure} defines the experiential density
+Paper~1~\citep{ehrlich2026measure} defines the self-reference density
 \begin{equation}
 \label{eq:rho}
 \rho(p) = I_p(B;\,M)\,\bigl(1 - I_p(B;\,M) / H_p(B)\bigr),
@@ -34,7 +34,9 @@ qualitative features:
 \item $\rho > 0$ at intermediate fidelity: imperfect but active
   self-modeling.
 \end{enumerate}
-Rocks, thermostats, and unstructured noise score $\rho = 0$.  Cells
+$\rho$ is the instantaneous Observable-side \emph{weight}; the magnitude
+of experience is the Stream functional $\Phi$ of Paper~1, which vanishes
+wherever $\rho$ does.  Rocks, thermostats, and unstructured noise score $\rho = 0$.  Cells
 score near zero.  Brains with rich self-models score high.  Boltzmann
 brains --- brief thermal fluctuations --- score near zero when
 integrated over duration, because their self-modeling is fleeting
@@ -116,12 +118,17 @@ declare the question confused) but \emph{location}: the question is
 self-referential, and the self-reference is the phenomenon it asks
 about.
 
-\begin{remark}[Compression ratio]
-The model (low $\rho$, compressed) does not feel like the experience
-(high $\rho$, lived).  The explanatory gap between physical
-description and phenomenal experience \emph{is} the compression
-ratio.  Close the gap ($I \to H$, perfect self-knowledge) and
-$\rho \to 0$: experience vanishes.  The hard problem exists precisely
-because the model and the experience are at different $\rho$ levels.
-The gap is the feature, not the bug.
+\begin{remark}[Where the gap lives]
+The model is an \emph{Observable} record---compressed, and recoverable
+by a third party.  The experience is $\Phi$, a functional of the
+self-modeling \emph{trajectory} (Paper~1), whose magnitude lives in
+path-space content that the Observable record provably underdetermines.
+The explanatory gap between physical description and phenomenal
+experience is therefore an \emph{inaccessibility}, not a difference in
+$\rho$-levels: the live research target
+(\texttt{phi-inaccessibility-program}) is that no self-modeler can
+recover its own $\Phi$ from any Observable record it can persist---a
+G\"odel/Tarski-type self-reference limit, stated but not yet proved.
+$\rho$ is the Observable-side weight, not the experience; the gap is
+the feature, not the bug.
 \end{remark}

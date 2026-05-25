@@ -1,0 +1,226 @@
+% sections/lagrangian.tex
+
+\section{Identification with exceptional supergravity}
+\label{sec:identification}
+
+The algebraic data of $\hthree$ (the Peirce decomposition, the cubic
+norm $\det(X)$, and the $\Esix$ structure group) uniquely match the
+exceptional entry in the Gunaydin-Sierra-Townsend (GST) classification
+of $N{=}2$ Maxwell-Einstein supergravity theories. This identification
+plays the same role as the Jordan-von~Neumann-Wigner classification in
+Paper~5: the algebraic structure is proved, and a classification theorem
+identifies it with a known physical theory. The $N{=}2$ supersymmetric
+structure is \emph{identified} via the GST bijection as the unique match
+to the algebraic data, not assumed as an input.
+
+\subsection{The GST classification}
+
+Gunaydin, Sierra, and Townsend~\cite{GST1983,GST1984} (see
+also~\cite{Gunaydin2008} for a modern review) proved that
+degree-3 Euclidean Jordan algebras with positive-definite trace form are
+in bijection with $N{=}2$ Maxwell-Einstein supergravity theories in five
+dimensions. Given such an algebra $J$ with cubic norm $N(h)$, the
+5-dimensional bosonic Lagrangian is uniquely determined:
+\begin{align}
+\label{eq:5d-lagrangian}
+e^{-1}\mathcal{L}_5 &= -\frac{R}{2}
+  - g_{ij}\,\partial_\mu \phi^i\,\partial^\mu \phi^j
+  - \tfrac{1}{4}\,G_{IJ}\,F^I_{\mu\nu}\,F^{J\mu\nu}
+  \nonumber\\
+  &\quad - \tfrac{C_{IJK}}{24}\,\epsilon^{\mu\nu\rho\sigma\tau}\,
+    F^I_{\mu\nu}\,F^J_{\rho\sigma}\,A^K_\tau,
+\end{align}
+where $C_{IJK} = \frac{1}{6}\,d_{IJK}$, the scalar metric $g_{ij}$
+and gauge kinetic matrix $G_{IJ}$ are derived from the cubic norm $N$
+via very special real (VSR) geometry, and $R$ is the Ricci scalar. The
+Einstein-Hilbert term $-R/2$ is part of the GST output: the bijection
+identifies the full bosonic Lagrangian, including gravity.
+
+\begin{proposition}
+\label{prop:gst-hypotheses}
+The algebra $\hthree$ satisfies all three GST hypotheses:
+\begin{enumerate}[label=(H\arabic*)]
+\item \textbf{Degree 3:} $\hthree$ has a cubic norm $\det(X)$
+  (Theorem~\ref{thm:springer}).
+\item \textbf{Formally real:} $\hthree$ is one of the five algebras
+  in the Jordan-von~Neumann-Wigner
+  classification~\cite{JordanVonNeumannWigner1934} that are formally
+  real (equivalently: $\jp{X}{X} = 0$ implies $X = 0$).
+\item \textbf{Positive-definite trace form:} The bilinear form
+  $\Tr(\jp{X}{X}) = \alpha^2 + \beta^2 + \gamma^2 + 2(|x_1|^2 +
+  |x_2|^2 + |x_3|^2) > 0$ for $X \neq 0$. On the 26-dimensional
+  tangent space at the identity, all eigenvalues are positive
+  (minimum eigenvalue $\frac{1}{4}$).
+\end{enumerate}
+\end{proposition}
+
+By the GST bijection, $\hthree$ therefore uniquely determines a
+5-dimensional $N{=}2$ MESGT: the exceptional magic supergravity.
+The 4-dimensional theory is obtained via the $r$-map (dimensional
+reduction on a circle)~\cite{deWitVanProeyen1992}, giving a special
+K\"ahler scalar manifold
+\begin{equation}
+\label{eq:scalar-manifold}
+\mathcal{M} = \frac{\Eseven}{E_{6(-78)} \times \UU{1}},
+\quad \dim_{\mathbb{R}} = 54.
+\end{equation}
+
+\subsection{Field content}
+
+The 4-dimensional field content, organized by Peirce sector, is:
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Peirce sector & $I$ range & Vectors & Scalars \\
+\midrule
+$\Vone$ (observer) & $1$ & 1 & 2 \\
+$\Vhalf$ (SM matter) & $2$--$17$ & 16 & 32 \\
+$\Vzero$ (spacetime + internal) & $18$--$27$ & 10 & 20 \\
+Graviphoton & $0$ & 1 & 0 \\
+\midrule
+Total & & 28 & 54 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The 28 vectors include the graviphoton ($I = 0$) from the gravity
+multiplet and 27 matter vectors from the Peirce decomposition.
+The 54 real scalars parametrize the K\"ahler manifold
+$\mathcal{M}$~\cite{FerraraGunaydin2006}. After dimensional reduction
+via the $r$-map, all 27 Jordan algebra directions contribute to these
+scalars, including the 6 internal $W$-directions from
+$\ker(\pi_u)$ and the 4 spacetime-identified directions of $\Vzero$.
+The $W$-directions are not lost in the reduction; they become internal
+scalar moduli of the 4-dimensional theory.
+
+\subsection{Coupling decomposition}
+
+The $C_{IJK} = \frac{1}{6}\,d_{IJK}$ tensor governs all
+matter-gravity couplings. Its 106 nonzero entries decompose into three
+physical channels:
+
+\begin{enumerate}
+\item \textbf{Gravitational self-coupling} ($\Vone, \Vzero, \Vzero$):
+  10 entries, reproducing the $\det_2$ bilinear form on $\Vzero$. This
+  couples the observer degree of freedom ($I = 1$) to the spacetime
+  sector.
+
+\item \textbf{Matter-spacetime coupling} ($\Vhalf, \Vhalf, \Vzero$
+  restricted to the 4 spacetime directions of $\htwo{C}_u$): 48 entries.
+  Per-index counts: indices 18 and 19 each couple to 16 matter fields;
+  indices 20 and 27 each couple to 8.
+
+\item \textbf{Matter-internal coupling} ($\Vhalf, \Vhalf, \Vzero$
+  restricted to the 6 internal $W$-directions): 48 entries, 8 per
+  internal index.
+\end{enumerate}
+
+The coupling is \emph{universal}: every matter field in $\Vhalf$ couples
+to every spacetime direction. This universality is a structural property
+of the $d_{IJK}$ tensor, reflecting the algebraic coupling of all matter
+to the spacetime sector.
+
+\subsection{The 4-dimensional Lagrangian}
+
+The complete 4-dimensional bosonic Lagrangian, identified via the GST
+bijection and $r$-map, is~\cite{deWitVanProeyen1992,
+LauriaVanProeyen2020}:
+\begin{align}
+\label{eq:4d-lagrangian}
+e^{-1}\mathcal{L}_{\mathrm{bos}} &= -\frac{R}{2}
+  + g_{i\bar{j}}\,\partial_\mu z^i \partial^\mu \bar{z}^{\bar{j}}
+  \nonumber\\
+  &\quad + \im(\mathcal{N}_{IJ})\, F^I_{\mu\nu} F^{J\mu\nu}
+  + \re(\mathcal{N}_{IJ})\, F^I_{\mu\nu} {*F}^{J\mu\nu},
+\end{align}
+where:
+\begin{itemize}
+\item $g_{i\bar{j}} = \partial_i \partial_{\bar{j}} K$ is the
+  K\"ahler metric, with K\"ahler potential $K$ derived from the
+  prepotential $F(X) = d_{IJK} X^I X^J X^K / (6 X^0)$, where
+  $I, J, K = 1, \ldots, 27$ run over the matter fields and $X^0$ is
+  the projective coordinate (graviphoton section).
+
+\item $\mathcal{N}_{IJ}$ is the gauge kinetic matrix (period matrix),
+  also derived from $F(X)$ via special K\"ahler geometry.
+
+\item $R$ is the 4-dimensional Ricci scalar.
+\end{itemize}
+
+\begin{remark}[What $\det(X)$ determines]
+\label{rem:precise-claim}
+The prepotential $\det(X)$ determines the scalar manifold
+$\mathcal{M}$, the gauge kinetic matrix $\mathcal{N}_{IJ}$, and all
+matter-gravity couplings $C_{IJK}$. The Einstein-Hilbert term $-R/2$
+is part of the identified MESGT Lagrangian: the GST bijection maps the
+algebraic data of $\hthree$ to the \emph{complete} bosonic Lagrangian
+including the gravitational sector. The identification is with a theory
+that has gravity; gravity is not independently derived from $\det(X)$.
+\end{remark}
+
+\subsection{$N{=}2$ supersymmetry as a consequence}
+\label{sec:n2-derived}
+
+In the construction above, $N{=}2$ supersymmetry was not assumed.
+The bosonic Lagrangian is established in two logically independent
+steps: very special real (VSR) geometry gives the Lagrangian from the
+cubic prepotential without any supersymmetric input, and the GST
+classification then identifies the same Lagrangian as the bosonic
+sector of the exceptional $N{=}2$ MESGT.
+
+\paragraph{Step 1: VSR geometry (no SUSY input).}
+The chain from $\hthree$ to the bosonic Lagrangian is:
+
+\begin{enumerate}[label=(\roman*)]
+\item $\hthree$ is a degree-3 Euclidean Jordan algebra (algebraic
+  definition).
+\item $\Ffour = \Aut(\hthree)$ gives the $\rep{27}$ representation
+  (representation theory).
+\item $\Esix$ structure group defines the scalar manifold (symmetric
+  space theory).
+\item The VSR metric $g_{ij}$ is $\Esix$-covariant (Schur's lemma).
+\item The cubic prepotential $V = C_{IJK} h^I h^J h^K$ is unique
+  (Springer).
+\item The gauge kinetic matrix $G_{IJ}$ is uniquely fixed (VSR
+  geometry~\cite{deWitVanProeyen1992}).
+\item Gauge invariance determines the Chern-Simons coupling
+  (gauge theory).
+\end{enumerate}
+
+Steps (i)--(vii) produce the unique bosonic Lagrangian determined by
+the cubic prepotential $\det(X)$ within VSR geometry. No
+supersymmetry appears at any step. (VSR geometry was developed within
+the $N{=}2$ supergravity program~\cite{deWitVanProeyen1992}; the
+steps above use only the cubic-polynomial structure, not SUSY
+variations, but the framework's origin should be noted.)
+
+\paragraph{Step 2: GST classification ($N{=}2$ identification).}
+The GST classification~\cite{GST1983,GST1984} is exhaustive within its
+category: every degree-3 formally real Jordan algebra with
+positive-definite trace form corresponds to a unique $N{=}2$ MESGT. The
+existence of this bijection was established by GST through explicit
+verification of $N{=}2$ supersymmetry closure. Since $\hthree$ satisfies
+all three GST hypotheses (Proposition~\ref{prop:gst-hypotheses}), the
+GST bijection identifies the VSR Lagrangian from Step~1 as the bosonic
+sector of the exceptional $N{=}2$ MESGT.
+
+The $N{=}2$ label appears only in Step~2, as the \emph{output} of
+the classification, not as an input to any step that builds the
+Lagrangian. A circularity audit confirms that supersymmetry is absent
+from Steps (i)--(vii). To be precise: the $N{=}2$ label enters because
+the GST classification theorem classifies $N{=}2$ MESGTs; it is not
+derived from the self-modeling framework independently of this
+classification context. The VSR and GST routes give the same Lagrangian,
+confirming that the result is not an artifact of the $N{=}2$ framework.
+
+\subsection{Cosmological constant}
+
+The ungauged $N{=}2$ MESGT has an identically vanishing scalar potential
+$V(z, \bar{z}) = 0$~\cite{LauriaVanProeyen2020}, giving $\Lambda = 0$
+at the classical level. The observed cosmological constant
+$\Lambda > 0$ is not explained by this framework. Obtaining $\Lambda
+\neq 0$ would require either gauging the theory (introducing a scalar
+potential) or invoking quantum corrections. This is an open limitation,
+shared with essentially all approaches to the cosmological constant
+problem.

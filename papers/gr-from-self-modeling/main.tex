@@ -1,0 +1,75 @@
+% main.tex -- General Relativity from Self-Modeling on h_3(O)
+% ASSERT_CONVENTION: natural_units=natural, metric_signature=mostly_minus,
+%   jordan_product=(1/2)(ab+ba), clifford=Cl(9,0)_{T_a,T_b}=(1/2)delta_{ab}I,
+%   octonion_basis=fano_e1e2=e4, complex_structure=u_equals_e7,
+%   peirce_idempotent=E_{11}, real_form=E6(-26)
+
+\documentclass[11pt]{article}
+\usepackage{preamble}
+
+\title{The Self-Modeling Basin Is Exceptional Supergravity}
+
+\author{Bryan Ehrlich\\[4pt]
+  \normalsize Independent researcher, Trumbull, Connecticut 06611, USA\\
+  \normalsize ehrlich.bryan@gmail.com}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The self-modeling framework identifies quantum mechanics with
+faithful self-modeling: a finite-dimensional system that contains a
+faithful model of itself necessarily has
+$M_n(\mathbb{C})^{\mathrm{sa}}$ state spaces. A companion paper
+identifies the exceptional Jordan algebra $\hthree$ as the unique
+\emph{observer-grade} self-modeling basin (conditional on the anthropic observer-grade restriction of Paper~7), forced by non-composability within that restricted class. We show that the
+algebraic data of $\hthree$ uniquely match the exceptional entry in
+the Gunaydin-Sierra-Townsend (GST) classification of $N{=}2$
+Maxwell-Einstein supergravity theories: within the GST
+classification, the algebraic data of $\hthree$ uniquely select the
+exceptional entry, whose bosonic Lagrangian includes the
+Einstein-Hilbert term $-R/2$. An
+observer at a rank-1 idempotent induces a Peirce decomposition
+$27 = 1 \oplus 16 \oplus 10$. The $C^*$-bottleneck projects the
+Peirce complement $\Vzero = \htwo{O}$ to
+$\htwo{C}_u \cong \mathbb{R}^{3,1}$, yielding a 4-dimensional
+algebraic Minkowski space with conformal algebra
+$\mathfrak{so}(4,2)$. The unique $\Ffour$-invariant cubic form
+$\det(X)$ on $\hthree$ (Springer uniqueness), which also governs
+the self-modeling density $\rho_J$, serves as the gravitational
+prepotential. The algebra $\hthree$ satisfies all three GST
+hypotheses (degree~3, formally real, positive-definite trace form),
+and the GST bijection uniquely identifies the algebraic data with
+the exceptional $N{=}2$ Maxwell-Einstein supergravity in five
+dimensions. The $r$-map (dimensional reduction) gives the
+4-dimensional theory with scalar manifold
+$\Eseven / (E_{6(-78)} \times \UU{1})$ and 28 vectors (27~matter
+plus graviphoton), with all couplings determined by $\det(X)$.
+The $N{=}2$ structure appears only as the \emph{output} of the
+classification, not as an input. The result follows from two
+inputs (the self-modeling definition and the identification of
+$\hthree$ as the basin) plus the shared assumption that the
+algebraic spacetime carries field-theoretic dynamics on a smooth
+manifold.
+\end{abstract}
+
+\input{sections/introduction}
+\input{sections/basin}
+\input{sections/spacetime}
+\input{sections/prepotential}
+\input{sections/lagrangian}
+\input{sections/discussion}
+
+\section*{Acknowledgments}
+
+AI language models (Claude, Anthropic) were used as interactive research
+tools for mathematical exploration, literature search, and manuscript
+drafting.  All derivations, proofs, and claims were conceived and verified
+by the author.
+
+\bibliographystyle{unsrt}
+\bibliography{refs}
+
+\end{document}

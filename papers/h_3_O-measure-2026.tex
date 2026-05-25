@@ -1,0 +1,1471 @@
+% ====================================================================
+% Faithful Self-Modeling Splits h_3(O) into Observable and Beable
+% Paper 1 (culmination of Papers 5, 7, 6).
+% ====================================================================
+
+\documentclass[12pt]{article}
+
+% --- Packages ---
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{float}
+
+% --- Hyperref ---
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=green!40!black,
+  urlcolor=blue!70!black
+}
+
+% --- Theorem environments ---
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{postulate}[theorem]{Postulate}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% --- Notation shortcuts ---
+\newcommand{\hthree}{h_3(\mathbb{O})}
+\newcommand{\Ffour}{F_4}
+\newcommand{\rhoJ}{\rho_J}
+\newcommand{\Phiexp}{\Phi}
+\newcommand{\Stream}{\mathcal{X}}
+\newcommand{\Aut}{\mathrm{Aut}}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\Jnorm}[1]{\lVert #1 \rVert_J}
+
+% --- Title ---
+\title{Faithful Self-Modeling Splits $\hthree$ into Observable and Beable}
+\author{Bryan Ehrlich}
+\date{}
+
+\begin{document}
+\maketitle
+
+% ====================================================================
+% ABSTRACT
+% ====================================================================
+
+\begin{abstract}
+The exceptional Jordan algebra $\hthree$, with Jordan product
+$X \circ Y = \tfrac{1}{2}(XY + YX)$, automorphism group
+$\Ffour = \Aut\hthree$, Jordan norm $\Jnorm{Y}^2 = \Tr(Y^2)$, and
+state space $\Omega = \{X \in \hthree : X \succeq 0,\ \Tr X = 1\}$,
+carries a normalized self-modeling iteration $\phi(X) = X^2/\Tr(X^2)$.
+Four standard mathematical objects attach to a self-modeler on
+$\hthree$: a \textbf{Kind} ($\Ffour$-orbit $[X] \in \Omega/\Ffour$), a
+\textbf{State} ($X \in \Omega$), a \textbf{Stream} (a $\phi$-iterate
+$(X_0, X_1, X_2, \ldots)$ with $X_{k+1} = \phi(X_k)$), and an
+\textbf{Observable} (an $\Ffour$-invariant polynomial on $\hthree$,
+equivalently a polynomial in the three Faraut-Kor\'anyi
+generators~\cite{faraut-koranyi1994} $\Tr X$, $\Tr(X^2)$, $\det X$).
+Under Bell's observable/beable binary~\cite{bell1984speakable}, Kind
+and Observable lie on the Observable side; State and Stream on the
+Beable side.
+
+Observable projection $X \mapsto [X]$ and Stream propagation $\phi$
+do not commute: Observable extraction destroys the $\Ffour$-gauge
+degrees of freedom the next $\phi$-step would have consumed. In the
+autonomous case ($\phi$ $\Ffour$-equivariant) the non-commutation
+reduces to a residual global gauge
+(Theorem~\ref{thm:autonomous-comp}). In the non-autonomous case the
+pairwise diagonal invariant $\Tr(X_k \cdot X_{k+1})$ belongs to a
+strict super-ring of the pointwise $\Ffour$-invariants, yielding
+strong-form complementarity (Proposition~\ref{prop:strong-comp}).
+The resulting Observable-Beable exhaustion
+(Corollary~\ref{cor:OB1}; the two information modes jointly span
+the $\Ffour$-invariant content of the Stream) realizes inside
+$\hthree$ by algebra the observable/beable split Bell described for
+quantum mechanics and Barandes~\cite{barandes2023stochquantum}
+reformulated stochastically.
+
+The $\Ffour$-invariant measure on Streams that carries the residual
+Beable content is
+\[
+  \Phiexp[\Stream] \;=\; \sum_k \rhoJ(X_k)\,\Jnorm{X_{k+1}-X_k}^2,
+\]
+where $\rhoJ(X) = \det(X)(\Tr(X^2) - \tfrac{1}{3})$ is the product
+of the lowest-degree $\Ffour$-invariants vanishing on the
+rank-deficient stratum $\partial\Omega$ and at the maximally mixed
+state $[I/3]$. A finite-dimensional enumeration on pair-invariants
+(Theorem~\ref{thm:phi-family}) followed by a path-space purity
+projection (Corollary~\ref{cor:phi-canonical}) selects $\Phiexp$
+at minimal polynomial degree on pairs, up to a positive scalar.
+The uniqueness inherits the factored-form hypothesis of
+Theorem~\ref{thm:rho-uniqueness} for $\rhoJ$; an unconditional
+(factorization-free, unbounded-degree) $\rhoJ$ uniqueness is
+flagged as open in Section~\ref{sec:gaps} (G4).
+\end{abstract}
+
+% ====================================================================
+% SECTION 1: INTRODUCTION
+% ====================================================================
+
+\section{Introduction}
+\label{sec:intro}
+
+Paper~5~\cite{ehrlich2026qm} derives the Euclidean Jordan structure on
+$\hthree$ from faithful self-modeling on a spectral order-unit space,
+and Paper~7~\cite{ehrlich2026h3o} identifies $\hthree$ as the
+non-composable case; together they leave $\hthree$ equipped with the
+normalized iteration $\phi(X) = X^2/\Tr(X^2)$, its automorphism group
+$\Ffour$, and the state space $\Omega$, but with no measure on
+$\phi$-trajectories and no named ontology for the trajectories.
+Faithful self-modeling, in Paper~5's precise sense, is a
+four-clause condition on a finite-dimensional spectral order-unit
+space: a faithful order-isomorphism body-to-model tracking map,
+minimal product composite, and simplicity
+(Appendix~\ref{app:self-modeling}, reproducing Paper~5's
+Definition~1). In this paper it is used only as the premise
+fixing $(\hthree, \Ffour, \Omega, \phi)$ as a package, with
+$\phi$'s specific form $X \mapsto X^2/\Tr(X^2)$ taken as Paper~5's
+output rather than re-derived here. This paper supplies the
+measure and the ontology.
+
+\begin{theorem}[Main, informal]\label{thm:main-informal}
+On $\hthree$-Streams, four standard mathematical objects
+(Kind, State, Stream, Observable; Section~\ref{sec:ontology}) split
+under Bell's observable/beable binary into two Observable-side
+objects (Kind, Observable) and two Beable-side objects (State,
+Stream). Observable projection and Stream propagation do not
+commute: in the autonomous case this reduces to a residual global
+gauge (Theorem~\ref{thm:autonomous-comp}); in the non-autonomous
+case, path-space carries content strictly beyond any pointwise
+Observable readout
+(Proposition~\ref{prop:strong-comp};
+Corollary~\ref{cor:OB1}, Observable-Beable exhaustion). The
+$\Ffour$-invariant functional on Streams that carries the residual
+Beable content is
+\begin{equation}\label{eq:phi-intro}
+  \Phiexp[\Stream] \;=\; \sum_k \rhoJ(X_k)\,\Jnorm{X_{k+1} - X_k}^2,
+\end{equation}
+with $\rhoJ(X) = \det(X)\,(\Tr(X^2) - \tfrac{1}{3})$. Among
+minimal-degree diagonal-$\Ffour$-invariant pair functionals
+satisfying five formal conditions (P1-P5) and a non-negativity
+constraint, $\Phiexp$ is singled out up to a positive scalar by a
+path-space purity projection
+(Theorem~\ref{thm:phi-family}, Corollary~\ref{cor:phi-canonical});
+the uniqueness inherits the factored-form hypothesis of
+Theorem~\ref{thm:rho-uniqueness} for $\rhoJ$.
+\end{theorem}
+
+\noindent
+The formal version reduces to a finite-dimensional enumeration of
+minimal-degree $\Ffour$-invariants on pairs of states, decomposed
+into non-negativity blocks. The paper develops the ontology
+(Section~\ref{sec:ontology}), constructs $\rhoJ$ as the
+Observable-side weight (Section~\ref{sec:rho-obs}), constructs
+$\Phiexp$ as the Beable-side functional and proves its uniqueness
+(Section~\ref{sec:phi-def}), states the complementarity results
+(Section~\ref{sec:complementarity}), records temporal additivity
+(Section~\ref{sec:consequences}), lists empirical signatures
+(Section~\ref{sec:signatures}), and closes with related work and
+open gaps (Sections~\ref{sec:related}-\ref{sec:gaps}).
+Appendix~\ref{app:self-modeling} reproduces the standalone
+self-modeling definition of Paper~5 for readers who prefer not to
+chase the pointer.
+
+\paragraph{Scope.}
+This paper is not a derivation of $\hthree$ (Paper~7) or of the
+self-modeling map $\phi$ (Paper~5); both are taken as given. Results
+are at $\Ffour$-orbit level, and no biological or computational
+encoding into $\hthree$ is committed to (open gap G1). Temporal
+additivity of $\Phiexp$ is proved; spatial aggregation is a
+conjecture flagged wherever used. The word ``measure'' is used in the
+physicist's sense of a weight on trajectories, not a $\sigma$-additive
+set function in the strict measure-theoretic sense.
+
+% ====================================================================
+% SECTION 2: THE FOUR-TYPE ONTOLOGY
+% ====================================================================
+
+\section{Kind, State, Stream, Observable}
+\label{sec:ontology}
+
+The ontology the rest of the paper uses is four standard mathematical
+objects attached to an $\hthree$-self-modeler, organized under Bell's
+observable/beable binary.
+
+\begin{definition}[The four types]\label{def:ontology}
+For a self-modeler in $\hthree$ with state $X \in \Omega$ evolving
+under the self-modeling map $\phi(X) = X^2/\Tr(X^2)$ of Paper~5:
+\begin{enumerate}[label=(\roman*)]
+  \item\label{type:kind} A \textbf{Kind} is an $\Ffour$-orbit
+    $[X] = \{g \cdot X : g \in \Ffour\} \in \Omega/\Ffour$.
+  \item\label{type:state} A \textbf{State} is a point $X \in \Omega$.
+  \item\label{type:stream} A \textbf{Stream} is a $\phi$-iteration
+    trajectory $\Stream = (X_0, X_1, X_2, \ldots)$ with
+    $X_{k+1} = \phi(X_k)$.
+  \item\label{type:observable} An \textbf{Observable} is an
+    $\Ffour$-invariant polynomial
+    $R \in \mathbb{R}[\hthree]^{\Ffour}$, equivalently a polynomial
+    in $(\Tr X, \Tr(X^2), \det X)$ by
+    Faraut-Kor\'anyi~\cite{faraut-koranyi1994}.
+\end{enumerate}
+The four types organize as a $2\times 2$ under Bell's
+\emph{observable}/\emph{beable}
+binary~\cite{bell1984speakable}: Kind and Observable lie on the
+observable side (quantities a third party can read; Kind is the
+Observable image of a State); State and Stream lie on the beable
+side (elements of physical reality intrinsic to the system). Our
+``beable'' is Bell's but with State and $\phi$-iterates in place of
+classical field or particle values; the trajectory-as-beable shape
+is shared with Barandes's~\cite{barandes2023stochquantum}
+indivisible-stochastic reformulation of quantum mechanics, from which
+we borrow the shape, not the stochastic machinery. ``Observable''
+is used in its gauge-theoretic sense throughout (a function constant
+along $\Ffour$-orbits), not as a synonym for a self-adjoint operator;
+``Kind'' avoids collision with type-theoretic vocabulary.
+\end{definition}
+
+\subsection{Kind: the orbit}
+\label{sec:kind}
+
+The \emph{Kind} of $X \in \Omega$ is its $\Ffour$-orbit
+\begin{equation}\label{eq:kind}
+  [X] \;=\; \{\,g \cdot X : g \in \Ffour\,\} \;\in\; \Omega / \Ffour.
+\end{equation}
+Every $\Ffour$-invariant property of $X$ factors through $[X]$; by
+Faraut-Kor\'anyi~\cite{faraut-koranyi1994} these properties are
+polynomials in $(\Tr X, \Tr(X^2), \det X)$. The Kind is the
+Observable-side universal: ``red'' as a type is a Kind.
+
+\paragraph{Prior work.} $\Ffour$-orbits on $\hthree$ have been
+catalogued since Jacobson 1968 and appear in Springer-Veldkamp
+\cite{springer-veldkamp2000}. The orbit space $\Omega / \Ffour$ is a
+semi-algebraic subset of $\mathbb{R}^3$ coordinatized by the three
+invariants.
+
+\subsection{State: the instance}
+\label{sec:state}
+
+A \emph{State} is a point $X \in \Omega$. It is a Kind plus a choice of
+$\Ffour$-frame: one Kind is realized by the continuum of States in its
+orbit, and the selection of representative is a gauge choice, not a
+physical one. $\Ffour$-invariant measurements see only the Kind, but the
+self-modeling map $\phi$ acts on States
+(\S\ref{sec:stream}).
+
+\paragraph{Prior work.} Normalized positive elements as states of a
+quantum system go back to von~Neumann 1932. For Jordan algebras, the
+state space is the base of the positive cone; the Koecher-Vinberg
+theorem (1957-1962) gives the bijection between Euclidean Jordan
+algebras and homogeneous self-dual cones. Treatments:
+Alfsen-Shultz~\cite{alfsen-shultz2001},
+Bengtsson-\.Zyczkowski~\cite{bengtsson-zyczkowski2006}; exceptional
+case in Barnum-Graydon-Wilce~\cite{barnum-graydon-wilce2015}.
+
+\subsection{Stream: the dynamics}
+\label{sec:stream}
+
+Paper~5's self-modeling is a one-step map $\phi$ on $\Omega$,
+\begin{equation}\label{eq:phi-iteration}
+  X_{k+1} \;=\; \phi(X_k), \qquad k = 0, 1, 2, \ldots
+\end{equation}
+$\Ffour$-equivariant in the autonomous case, drive-indexed
+$X_{k+1} = \phi_k(X_k)$ in the non-autonomous case. Iterating from
+$X_0 \in \Omega$ produces the \emph{Stream}
+\begin{equation}\label{eq:stream}
+  \Stream \;=\; (X_0, X_1, X_2, \ldots).
+\end{equation}
+The iteration index $k$ is \emph{$\phi$-time}, algebraic and internal;
+its encoding into wall-clock time for a particular physical
+realization is a framework task, not addressed here.
+
+\paragraph{Prior work.} Iteration sequences are the primordial object
+of dynamical systems; standard treatments
+in~\cite{devaney1989, katok-hasselblatt1995}. Hofstadter's ``strange
+loop''~\cite{hofstadter1979, hofstadter2007} names the same object
+from a cognitive direction; the present framework supplies the
+specific substrate $\hthree$ and the specific map $\phi$ from Paper~5.
+
+\subsection{Observable: the invariant}
+\label{sec:observable}
+
+An \emph{Observable} is an $\Ffour$-invariant polynomial on $\hthree$,
+\begin{equation}\label{eq:observable-space}
+  R \in \mathbb{R}[\hthree]^{\Ffour}.
+\end{equation}
+By Faraut-Kor\'anyi~\cite{faraut-koranyi1994} the ring of such
+polynomials is freely generated by the three algebraically independent
+scalars $\Tr X$, $\Tr(X^2)$, $\det X$. Under the normalization
+$\Tr X = 1$, every Observable on $\Omega$ factors through the
+two-dimensional plane coordinatized by $(\Tr(X^2), \det X)$. The name
+matches the gauge-theoretic usage: $\Ffour$ is the gauge group of
+$\hthree$ and an Observable is a gauge-invariant scalar. Any external
+measurement of $X$ returns values of such polynomials - at most three
+real numbers - while a State carries continuously many
+$\Ffour$-gauge degrees of freedom beyond the Kind and a Stream an
+open-ended sequence of them.
+
+\paragraph{Prior work.} Classical invariant theory (Cayley, Sylvester,
+Hilbert); Weyl~\cite{weyl1939}. The free-generator theorem for $\Ffour$
+on $\hthree$ is Faraut-Kor\'anyi Ch.~III.
+
+\subsection{A worked example}
+\label{sec:worked}
+
+To make the four types concrete, fix a state $X \in \Omega$ with
+eigenvalues $(\lambda_1, \lambda_2, \lambda_3)$, $\sum \lambda_i = 1$,
+$\lambda_i \geq 0$. Then:
+\begin{itemize}[leftmargin=2em]
+\item The \textbf{Kind} of $X$ is its $\Ffour$-orbit, fully determined by
+the unordered triple $(\lambda_1, \lambda_2, \lambda_3)$, equivalently by
+$(\Tr X, \Tr X^2, \det X) = (1,\,\sum \lambda_i^2,\,\prod \lambda_i)$.
+\item The \textbf{State} is $X$ itself: a specific element of the orbit.
+Two states with the same eigenvalues but in different $\Ffour$-frames are
+different States of the same Kind.
+\item The \textbf{Stream} starting from $X$ under $\phi$ is the sequence
+$(X, \phi(X), \phi^2(X), \ldots)$. For an autonomous $\Ffour$-equivariant
+$\phi$, the Stream's Kind sequence is fully determined by the three
+invariants at each step; the frame-level trajectory is not.
+\item An \textbf{Observable} reading of $X$ is a polynomial in $(\Tr X,
+\Tr X^2, \det X)$; for example, the self-reference density $\rhoJ$ of
+Section~\ref{sec:rho-obs} is one such polynomial.
+\end{itemize}
+
+% ====================================================================
+% SECTION 3: rho ON THE OBSERVABLE SIDE
+% ====================================================================
+
+\section{The self-reference density on the Observable side}
+\label{sec:rho-obs}
+
+The Observable-side weight on self-modeling is
+\begin{equation*}
+  \rhoJ(X) \;=\; \det(X)\,(\Tr(X^2) - \tfrac{1}{3}),
+\end{equation*}
+a polynomial in the three Faraut-Kor\'anyi
+generators~\cite{faraut-koranyi1994} and therefore an Observable by
+Definition~\ref{def:ontology}; it supplies the instantaneous weight
+that the Beable-side $\Phiexp$ of Section~\ref{sec:phi-def} will
+multiply into the running term. The specific form emerges from
+$\phi$'s fixed-point structure: the three $\phi$-fixed-point orbits
+$[I/3]$, $[(\tfrac{1}{2}, \tfrac{1}{2}, 0)]$, $[(1,0,0)]$ are the
+states on which self-modeling is not live, so an Observable-side
+weight must vanish on all three. The rank-deficient orbits
+$[(\tfrac{1}{2}, \tfrac{1}{2}, 0)]$ and $[(1,0,0)]$ sit in
+$\{\det = 0\}$, and $[I/3]$ sits at $\{\Tr(X^2) = \tfrac{1}{3}\}$;
+$\rhoJ$ is the product of the lowest-degree $\Ffour$-invariants
+cutting out these two conditions.
+Lemmas~\ref{lem:det-forced} and~\ref{lem:t2-forced} establish
+factor-level uniqueness; Theorem~\ref{thm:rho-uniqueness} combines
+them under the factorization hypothesis;
+Remark~\ref{rem:rho-alternatives} records the factorization-free Lean
+result and the remaining unconditional gap (G4).
+
+\paragraph{Degree conventions.} Throughout Section~\ref{sec:rho-obs},
+\emph{polynomial degree} means degree in the matrix entries of
+$\hthree$: $\Tr$ has degree $1$, $\Tr(X^2)$ degree $2$, $\det$ degree
+$3$. The Faraut-Kor\'anyi \emph{generator degree} counts each of
+$(\Tr, \Tr(X^2), \det)$ as a single generator; $\rhoJ = \det \cdot
+(\Tr(X^2) - \tfrac{1}{3})$ has generator degree $2$ and matrix-entry
+degree $5$. The Lean result (Remark~\ref{rem:rho-alternatives}) uses
+a third notion, \emph{eigenvalue degree}, which is matrix-entry
+degree restricted to symmetric functions of the three eigenvalues
+$(\lambda_1, \lambda_2, \lambda_3)$. All minimum-degree claims below
+are in matrix-entry degree unless noted.
+
+\subsection{The three invariants on the state slice}
+\label{sec:FK-slice}
+
+On $\Omega$ the trace invariant is fixed at $\Tr X = 1$, and the full
+$\Ffour$-invariant ring on the slice is generated by the two remaining
+scalars
+\begin{equation}\label{eq:slice-invariants}
+  t_2 \;=\; \Tr(X^2), \qquad t_3 \;=\; \det X,
+\end{equation}
+with $t_2 \in [\tfrac{1}{3}, 1]$ and $t_3 \in [0, \tfrac{1}{27}]$ on
+$\Omega$, by Cauchy-Schwarz applied to the three eigenvalues of $X$. The
+three fixed-point orbits are pinned in these coordinates:
+\begin{equation}\label{eq:fixed-points}
+  [I/3]: \ t_2 = \tfrac{1}{3},\ t_3 = \tfrac{1}{27}; \qquad
+  \bigl[(\tfrac{1}{2}, \tfrac{1}{2}, 0)\bigr]: \ t_2 = \tfrac{1}{2},\ t_3 = 0; \qquad
+  [(1, 0, 0)]: \ t_2 = 1,\ t_3 = 0.
+\end{equation}
+
+What is the lowest-degree $\Ffour$-invariant polynomial on
+$\hthree$ that vanishes on all three orbits and is not identically
+zero elsewhere on $\Omega$?
+
+\subsection{Uniqueness at degree three and degree two}
+\label{sec:rho-uniqueness}
+
+Two sub-uniqueness results combine.
+
+\begin{lemma}[Rank-deficiency detector]\label{lem:det-forced}
+The unique (up to real scalar) $\Ffour$-invariant polynomial on $\hthree$
+of minimum degree vanishing on $\{X \in \hthree : \det X = 0\}$ is
+$f = c \cdot \det$, at degree three.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Every $\Ffour$-invariant polynomial on $\hthree$ is a polynomial in
+$(t_1, t_2, t_3)$ \cite{faraut-koranyi1994}. The ideal of polynomials
+vanishing on $\{t_3 = 0\}$ is the principal ideal $(t_3)$, because $t_3$
+is irreducible in $\mathbb{R}[t_1, t_2, t_3]$ and generates a prime ideal.
+Any polynomial in this ideal is of the form $t_3 \cdot h$ for some
+$h$; minimum degree is achieved at $h = $ constant, giving $f = c t_3$.
+\end{proof}
+
+\begin{lemma}[$I/3$-deviation detector]\label{lem:t2-forced}
+Restricted to the slice $\{t_1 = 1\}$, the unique (up to real scalar)
+$\Ffour$-invariant polynomial of minimum degree that vanishes at $X = I/3$
+and is not identically zero on the rank-one orbit $[(1, 0, 0)]$ is
+$g = c \cdot (t_2 - \tfrac{1}{3})$, at degree two.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+The restriction of $\mathbb{R}[t_1, t_2, t_3]$ to $\{t_1 = 1\}$ is
+$\mathbb{R}[t_2, t_3]$. At degrees zero and one, the only restrictions are
+constants, which cannot vanish at $I/3$ without being identically zero. At
+degree two, the ambient basis is $(t_1^2, t_2)$, restricting to $(1, t_2)$;
+a general element is $a t_2 + b$. Vanishing at $X = I/3$ (where
+$t_2 = \tfrac{1}{3}$) forces $b = -a/3$, giving $g = a(t_2 - \tfrac{1}{3})$.
+Non-vanishing on $[(1,0,0)]$ (where $t_2 = 1$) forces $a \neq 0$. Hence
+$g = c (t_2 - \tfrac{1}{3})$ is unique up to scalar at minimum degree.
+\end{proof}
+
+\begin{theorem}[Structural selection of $\rhoJ$]\label{thm:rho-uniqueness}
+Up to a positive scalar, the unique $\Ffour$-invariant polynomial on
+$\hthree$ of the form $p \cdot q$, with $p$ as in
+Lemma~\ref{lem:det-forced} and $q$ as in Lemma~\ref{lem:t2-forced}, is
+\begin{equation}\label{eq:rho-J-definition}
+  \rhoJ(X) \;=\; \det(X)\,\bigl(\Tr(X^2) - \tfrac{1}{3}\bigr).
+\end{equation}
+$\rhoJ$ is a product of $\Ffour$-invariants of matrix-entry degrees
+$3$ and $2$, and has degree $2$ in the generator ring
+$\mathbb{R}[\Tr, \Tr(X^2), \det]$. Its vanishing locus on $\Omega$ is
+the rank-deficient stratum $\partial\Omega$ together with the
+maximally mixed state $[I/3]$; its positivity locus is the open
+interior $\Omega^{\circ} \setminus [I/3]$, on which self-modeling is
+live.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Combining Lemmas~\ref{lem:det-forced} and~\ref{lem:t2-forced},
+$p \cdot q = c_1 c_2 \cdot \det \cdot (t_2 - \tfrac{1}{3})$, which is
+$c \cdot \rhoJ$ for $c > 0$. The vanishing/positivity claims follow from
+eigenvalue positivity: on $\Omega$ the eigenvalues satisfy
+$\lambda_i \geq 0$ with $\sum \lambda_i = 1$, so $\det X = \prod \lambda_i$
+vanishes exactly when at least one eigenvalue is zero (the rank-deficient
+orbits), and $t_2 - \tfrac{1}{3} = \sum \lambda_i^2 - \tfrac{1}{3}$ vanishes
+exactly when all three are $\tfrac{1}{3}$ by Cauchy-Schwarz, i.e.\ at
+$[I/3]$. On the complement, both factors are strictly positive.
+\end{proof}
+
+\begin{remark}[Relation to Lean-verified uniqueness]\label{rem:rho-alternatives}
+Theorem~\ref{thm:rho-uniqueness} is unbounded in polynomial degree
+but assumes the factored shape $p \cdot q$ with $p, q$ the two
+minimal-degree factors of Lemmas~\ref{lem:det-forced}
+and~\ref{lem:t2-forced}. A related uniqueness statement has been
+machine-verified: the Lean theorem
+\texttt{rhoJ\_unique\_minimal}~\cite{lean-rhoj} shows that every
+$\Ffour$-invariant polynomial on $\hthree$ of eigenvalue degree
+$\leq 5$ that vanishes on $\partial\Omega$ and at $[I/3]$ equals
+$c \cdot \rhoJ$, without assuming factorization. Neither statement
+strictly dominates the other: the in-paper result drops the
+bounded-degree hypothesis but assumes factorization; the Lean result
+drops factorization but caps eigenvalue degree at $5$. The
+unconditional statement - drop factorization, keep unbounded degree -
+is open (Section~\ref{sec:gaps}, G4).
+\end{remark}
+
+% ====================================================================
+% SECTION 4: THE MEASURE PHI ON BEABLE-TRAJECTORIES
+% ====================================================================
+
+\section{The measure \texorpdfstring{$\Phiexp$}{Phi} on Beable-trajectories}
+\label{sec:phi-def}
+
+Section~\ref{sec:rho-obs} selected $\rhoJ$ as the Observable-side
+weight - a single-state scalar, computable from any outside
+party's pointwise $\Ffour$-invariant readout. The Beable-side
+object is the Stream itself, and the functional that captures the
+pair-level content an Observable-side readout cannot recover is
+$\Phiexp$.
+
+\subsection{Definition}
+\label{sec:phi-definition}
+
+\begin{definition}[the $\Phiexp$-measure]\label{def:phi}
+Given a Stream $\Stream = (X_0, X_1, \ldots, X_K)$ of a self-modeler in
+$\hthree$, define the $\Phiexp$-measure on $\Stream$ by
+\begin{equation}\label{eq:phi-definition}
+  \Phiexp[\Stream] \;=\; \sum_{k=0}^{K-1} \rhoJ(X_k)\,\Jnorm{X_{k+1} - X_k}^2,
+\end{equation}
+where $\Jnorm{Y}^2 = \Tr(Y^2)$ is the Jordan squared norm. The
+continuous-time (phi-time) limit is
+\begin{equation}\label{eq:phi-continuous}
+  \Phiexp[\Stream] \;=\; \int_0^{T_\phi} \rhoJ(X(t_\phi))\,
+    \Big\lVert \frac{\mathrm{d}X}{\mathrm{d}t_\phi} \Big\rVert_J^2 \,\mathrm{d}t_\phi.
+\end{equation}
+\end{definition}
+
+The integration is over \emph{phi-time} - the iteration index $k$,
+which is the self-modeler's own clock - not wall-clock time. An outside
+observer running an atomic clock while $S$ self-models sees wall-clock
+time; $S$ lives in phi-time. The two are not in general commensurate.
+The summand factors into a \emph{weight} $\rhoJ(X_k)$ (how densely
+self-referential the current State is) and a \emph{running} term
+$\Jnorm{X_{k+1} - X_k}^2$ (how vigorously the Stream is moving at
+step $k$).
+
+Expanding the running term in Jordan form,
+\begin{equation}\label{eq:running-expansion}
+  \Jnorm{X_{k+1} - X_k}^2 \;=\; \Tr(X_k^2) + \Tr(X_{k+1}^2) - 2\,\Tr(X_k \cdot X_{k+1}),
+\end{equation}
+reveals the pairwise invariant $\Tr(X_k \cdot X_{k+1})$, which is
+$\Ffour$-invariant under the diagonal action
+$(X_k, X_{k+1}) \mapsto (g X_k, g X_{k+1})$ but is not in general
+computable from the pointwise Kind sequence $([X_0], [X_1], \ldots)$.
+This pair-level invariant is the object that carries $\Phiexp$'s
+path-space content; we return to it in Section~\ref{sec:complementarity}.
+
+\subsection{Five formal properties}
+\label{sec:phi-properties}
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{(P1) Dead Streams vanish.} If $X_{k+1} = X_k$ for every
+$k$ (a frozen Stream), then $\Phiexp[\Stream] = 0$ term-by-term from
+$\Jnorm{X_{k+1} - X_k} = 0$.
+
+\item \textbf{(P2) Zero-weight Streams vanish.} If $\rhoJ(X_k) = 0$
+for every $k$ - Stream confined to the $\rhoJ$-vanishing locus of
+Section~\ref{sec:rho-uniqueness} - then $\Phiexp[\Stream] = 0$
+term-by-term. Example: an oscillation between two rank-one projectors
+runs, but carries no self-reference structure.
+
+\item \textbf{(P3) Diagonal $\Ffour$-invariance.} For any $g \in \Ffour$
+and any Stream $\Stream$,
+$\Phiexp[g \cdot \Stream] = \Phiexp[\Stream]$, where
+$g \cdot \Stream = (gX_0, gX_1, \ldots)$. The proof combines
+$\Ffour$-invariance of $\rhoJ$ with the isometry property of the Jordan
+norm under $\Ffour$-action.
+
+\item \textbf{(P4) Non-reducibility to pointwise Observables.} There exist
+pairs of Streams $\Stream_a, \Stream_b$ with identical pointwise Kind
+sequences ($[X_k^{(a)}] = [X_k^{(b)}]$ for all $k$) but
+$\Phiexp[\Stream_a] \neq \Phiexp[\Stream_b]$. $\Phiexp$ is not a
+function of the pointwise Kind sequence alone.
+
+\item \textbf{(P5) Internal to the algebra.} Every quantity in
+Definition~\ref{def:phi} is a polynomial in $\hthree$-data: $\rhoJ$ has
+degree $5$ in matrix entries (bilinear in the generators $\det$ and
+$\Tr(X^2)$), $\Jnorm{X_{k+1} - X_k}^2$ is degree $2$, so each per-tick
+contribution is a degree-$7$ polynomial in $\hthree$ entries. No
+wall-clock time, coordinate chart, or outside observer is invoked. The
+measure lives in $\hthree$ alone.
+\end{itemize}
+
+All five properties have been verified numerically in the companion
+script \cite{phi-numerics}. (P4) has a sharp numerical realization.
+Consider two Streams constructed with identical
+pointwise Kind sequences - one autonomous (gauge fixed by the dynamics),
+one non-autonomous with a cyclic gauge schedule
+$\sigma^{k \bmod 3} \in \Ffour$. Pointwise Kinds match to
+$10^{-16}$ (machine precision), while $\Phiexp$ differs by a factor of
+twenty-one: $\Phiexp_a = 1.51 \times 10^{-4}$ and
+$\Phiexp_b = 3.27 \times 10^{-3}$. The ratio lives in the pairwise
+invariant $\Tr(X_k \cdot X_{k+1})$; it is invisible to any outside
+party who measures only pointwise Kinds.
+
+\subsection{Uniqueness}
+\label{sec:uniqueness}
+
+The five properties above do not yet determine $\Phiexp$. One can ask:
+what is the complete family of functionals on pairs of $\hthree$-elements
+satisfying P1-P5 and a non-negativity condition, and what additional
+condition singles out Definition~\ref{def:phi} uniquely?
+
+\begin{theorem}[Minimal-degree family]\label{thm:phi-family}
+Let $f : \hthree \times \hthree \to \mathbb{R}$ be an $\Ffour$-invariant
+polynomial (under the diagonal $\Ffour$-action) of minimal total
+polynomial degree satisfying
+\begin{itemize}[leftmargin=2em]
+\item $f(X, X) = 0$ for all $X$, \hfill (reduction of P1)
+\item $f(X, Y) = 0$ whenever $\rhoJ(X) = 0$, \hfill (reduction of P2)
+\item $f$ depends non-trivially on $\Tr(X \cdot Y)$, \hfill (reduction of P4)
+\item $f \geq 0$ on the physical state cone,\hfill (non-negativity)
+\end{itemize}
+and polynomial in algebra components (P5). Then $f$ is a non-negative
+combination
+\begin{equation}\label{eq:phi-family}
+  f(X, Y) \;=\; \rhoJ(X)\Bigl[\,\beta\,(\Tr X - \Tr Y)^2 \;+\; \delta\,\Jnorm{X - Y}^2\,\Bigr]
+\end{equation}
+with $\beta \geq 0$ and $\delta > 0$. The minimal total polynomial degree
+is seven, and the family is two-parameter.
+\end{theorem}
+
+\begin{proof}
+The proof is in six steps. All invariants below are diagonal
+$\Ffour$-invariants on $\hthree \times \hthree$; ``degree''
+means total matrix-entry degree (Section~\ref{sec:rho-obs} degree
+conventions).
+
+\textbf{Step 1 (P2 factorization in the pair ring).} The claim is
+that (P2) forces $f(X, Y) = \rhoJ(X) \cdot g(X, Y)$ for some
+polynomial $g \in \mathbb{R}[\hthree \times \hthree]$. The
+argument has two parts: (1a) $(\rhoJ)$ is a radical ideal in the
+single-copy polynomial ring $\mathbb{R}[\hthree]$; (1b) vanishing
+of $f(X, Y)$ on $V(\rhoJ) \times \hthree$ (as a subset of
+$\hthree \times \hthree$) lifts to divisibility by $\rhoJ(X)$ in
+the pair ring.
+
+\emph{(1a) Radicality in the single-copy ring.} The polynomial
+$\det \in \mathbb{R}[\hthree]$ is irreducible (the standard cubic
+$\Ffour$-invariant; see Faraut-Kor\'anyi Ch.~V), and
+$\Tr(X^2) - \tfrac{1}{3}$ is irreducible (a degree-$2$ polynomial
+with nonvanishing gradient). They are coprime: their zero loci
+$V(\det)$ and $V(\Tr(X^2) - \tfrac{1}{3})$ are distinct irreducible
+hypersurfaces in $\hthree$ (different degrees; $\det$ vanishes on
+rank-deficient states, $\Tr(X^2) - \tfrac{1}{3}$ on the
+trace-$1$-shifted second-invariant level set). Hence $\rhoJ =
+\det \cdot (\Tr(X^2) - \tfrac{1}{3})$ is a product of two distinct
+irreducible factors, so $(\rhoJ)$ is a radical ideal in
+$\mathbb{R}[\hthree]$, and Hilbert's Nullstellensatz gives
+$I(V(\rhoJ)) = (\rhoJ)$.
+
+\emph{(1b) Lifting vanishing to divisibility in the pair ring.}
+Expand $f(X, Y)$ in monomials in the matrix entries of $Y$:
+\[
+  f(X, Y) \;=\; \sum_{\alpha} c_\alpha(X) \, m_\alpha(Y),
+\]
+where $\{m_\alpha(Y)\}$ is a linearly independent monomial basis
+and $c_\alpha \in \mathbb{R}[\hthree]$. Condition (P2) says
+$f(X, Y) = 0$ for all $Y \in \hthree$ whenever $\rhoJ(X) = 0$. Fix
+$X_0$ with $\rhoJ(X_0) = 0$: the polynomial
+$Y \mapsto f(X_0, Y) = \sum_\alpha c_\alpha(X_0) \, m_\alpha(Y)$
+is identically zero in $Y$, so linear independence of
+$\{m_\alpha\}$ forces $c_\alpha(X_0) = 0$ for every $\alpha$. This
+holds for every $X_0 \in V(\rhoJ)$, so each $c_\alpha$ vanishes on
+$V(\rhoJ)$, hence lies in $I(V(\rhoJ)) = (\rhoJ)$ by (1a). Write
+$c_\alpha(X) = \rhoJ(X) \cdot c_\alpha'(X)$ and resum:
+\[
+  f(X, Y) \;=\; \rhoJ(X) \cdot \sum_\alpha c_\alpha'(X) \, m_\alpha(Y)
+  \;=:\; \rhoJ(X) \cdot g(X, Y),
+\]
+with $g \in \mathbb{R}[\hthree \times \hthree]$.
+
+\emph{Inheriting invariance.} $\rhoJ$ is $\Ffour$-invariant on $X$
+and constant in $Y$, so it is diagonal-$\Ffour$-invariant on the
+pair. Combined with diagonal-$\Ffour$-invariance of $f$, the
+identity $f = \rhoJ \cdot g$ forces $g$ to be diagonal-$\Ffour$-
+invariant on $\{\rhoJ(X) \neq 0\} \times \hthree$, a Zariski-dense
+open, and hence everywhere.
+
+\emph{Degree bound.} $\rhoJ$ has matrix-entry degree $5$; if $f$
+has minimal total matrix-entry degree $7$, $g$ has matrix-entry
+degree $2$.
+
+\textbf{Step 2 (degree-2 pair-invariants).} Set
+\[
+  a := \Tr X, \quad b := \Tr Y, \quad c := \Tr(X^2), \quad
+  d := \Tr(X \cdot Y), \quad e := \Tr(Y^2).
+\]
+Under diagonal $\Ffour$, the degree-$2$ invariants on
+$\hthree \times \hthree$ form the $6$-dimensional space
+\[
+  \mathcal{V}_2 \;=\; \mathrm{span}_{\mathbb{R}}\{\,a^2,\ ab,\ b^2,\ c,\ d,\ e\,\}.
+\]
+The first three are degree $2$ as products of degree-$1$ traces;
+the last three are the degree-$2$ Faraut-Kor\'anyi pair-generators.
+Diagonal $\Ffour$-invariance of $d = \Tr(X \cdot Y)$ is immediate
+from $\Tr(gX \cdot gY) = \Tr(X \cdot Y)$ under the $\Ffour$-action
+preserving the Jordan product.
+
+\textbf{Step 3 (P1 kernel).} Setting $X = Y$ sends $(a, b, c, d, e)
+\mapsto (a, a, c, c, c)$. The restriction map
+$\mathcal{V}_2 \to \mathbb{R}[a, c]$ sends
+$\{a^2, ab, b^2\} \mapsto a^2$ (each) and $\{c, d, e\} \mapsto c$
+(each). The kernel of this restriction is $4$-dimensional, with
+basis
+\[
+  k_0 = ab - a^2,\quad k_1 = b^2 - a^2,\quad k_2 = d - c,\quad k_3 = e - c,
+\]
+and a general element reads
+\begin{equation}\label{eq:p1-kernel}
+  g = \alpha\,(ab - a^2) + \beta'\,(b^2 - a^2) + \gamma\,(d - c) + \delta'\,(e - c),
+\end{equation}
+four real parameters $(\alpha, \beta', \gamma, \delta')$.
+
+\textbf{Step 4 (non-negativity: block decomposition).} Every
+$X \in \hthree$ decomposes uniquely as $X = \lambda_X I +
+\mathring{d}_X + x_{\mathrm{off}}$, where
+$\lambda_X = \tfrac{\Tr X}{3}$ (scalar block),
+$\mathring{d}_X \in \mathbb{R}^3_0$ is the traceless diagonal
+($\sum_i (\mathring{d}_X)_{ii} = 0$), and
+$x_{\mathrm{off}} \in \mathbb{O}^3$ collects the three octonion
+off-diagonal entries $x_{12}, x_{13}, x_{23}$. These three
+summands are mutually orthogonal under the Jordan inner product
+$\langle A, B \rangle_J = \Tr(A \cdot B)$: the scalar block
+pairs with a traceless block to $\Tr(\lambda I \cdot
+\mathring{d}) = \lambda \cdot \Tr(\mathring{d}) = 0$; the scalar
+and off-diagonal pair to zero because the off-diagonal has zero
+diagonal in $X$; and the traceless-diagonal and off-diagonal
+pair to zero because $\mathring{d} \cdot x_{\mathrm{off}}$ has
+zero diagonal. The factor of $2$ in
+\[
+  \Tr(X^2) \;=\; 3\lambda_X^2 + \lVert \mathring{d}_X \rVert^2 +
+    2\lVert x_{\mathrm{off}} \rVert^2
+\]
+comes from the diagonal of $X^2$: entry
+$(X^2)_{ii} = X_{ii}^2 + \sum_{j \neq i} |X_{ij}|_{\mathbb{O}}^2$
+collects \emph{each} off-diagonal position $x_{ij}$ twice (once at
+$i$, once at $j$) via
+$X_{ij} \bar{X}_{ji} + X_{ji} \bar{X}_{ij} = 2|x_{ij}|^2$ (using
+$X_{ji} = \bar{X}_{ij}$ for self-adjoint $X$). The bilinear form
+$\Tr(X \cdot Y) = 3\lambda_X \lambda_Y +
+\langle \mathring{d}_X, \mathring{d}_Y \rangle_{\mathbb{R}^3} +
+2\,\mathrm{Re}\langle x_{\mathrm{off}}, y_{\mathrm{off}} \rangle_{\mathbb{O}^3}$
+splits identically, with $\mathrm{Re}\langle a, b \rangle_{\mathbb{O}} =
+\tfrac{1}{2}(a\bar{b} + b\bar{a})$ on each octonion slot.
+
+Because diagonal $\Ffour$-invariance acts within each block
+(scalar: trivially; traceless-diagonal: by the Weyl permutation
+$S_3$; off-diagonal: by the induced octonionic rotation), each
+block-level invariant of $(X, Y)$ is computed from its block
+coordinates alone. Substituting the block expressions into
+$g$ in~\eqref{eq:p1-kernel} and collecting by block, $g$ splits
+additively as $g = g_A + g_B + g_C$, one summand per block, with
+no cross-block interference. Each $g_*$ is a real quadratic form
+in the pair of variables built from that block.
+
+On Block~A (the scalar pair $(\lambda_X, \lambda_Y)$), the matrix
+of the quadratic form in the basis $(\lambda_X^2,\ \lambda_X
+\lambda_Y,\ \lambda_Y^2)$ — equivalently $(a^2, ab, b^2)$ up to
+the factor $9$ from $a = 3\lambda_X$ — reduces to the $2 \times 2$
+symmetric matrix
+\[
+  M_A \;=\; \begin{pmatrix} -(\alpha + \beta') & \alpha/2 \\ \alpha/2 & \beta' \end{pmatrix}
+\]
+in the coefficients of $(\lambda_X^2, \lambda_Y^2)$ with the
+off-diagonal entry read off from the $\lambda_X \lambda_Y$
+coefficient. Blocks B (traceless-diagonal pair
+$(\mathring{d}_X, \mathring{d}_Y)$) and C (octonion off-diagonal
+pair $(x_{\mathrm{off}}, y_{\mathrm{off}})$) each carry the same
+structural quadratic form, parametrized by $(\gamma, \delta')$:
+\[
+  M_{BC} \;=\; \begin{pmatrix} -(\gamma + \delta') & \gamma/2 \\ \gamma/2 & \delta' \end{pmatrix}.
+\]
+Blocks B and C therefore share a PSD constraint.
+
+\textbf{Step 5 (PSD constraints force $\alpha = -2\beta'$ and
+$\gamma = -2\delta'$).} For $g \geq 0$ on all of
+$\hthree \times \hthree$, each block matrix must be positive
+semidefinite. PSD of $M_A$ requires $\beta' \geq 0$,
+$-(\alpha + \beta') \geq 0$, and $\det M_A \geq 0$. A calculation
+gives
+\[
+  4\,\det M_A \;=\; -\,(\alpha + 2\beta')^2,
+\]
+so $\det M_A \leq 0$ always, with equality iff
+$\alpha = -2\beta'$. Combined with $\beta' \geq 0$, block~A forces
+$\alpha = -2\beta'$, $\beta' \geq 0$, and Block~A reduces to
+$\beta' \cdot (\Tr X - \Tr Y)^2$. Identically, $M_{BC}$ gives
+$\gamma = -2\delta'$, $\delta' \geq 0$, with Blocks~B+C summing
+to $\delta' \cdot \Jnorm{X - Y}^2$.
+
+\textbf{Step 6 (P4 forces $\delta' > 0$).} Substituting
+$\alpha = -2\beta'$, $\gamma = -2\delta'$ into~\eqref{eq:p1-kernel},
+\[
+  g(X, Y) \;=\; \beta'\,(\Tr X - \Tr Y)^2 \ +\ \delta'\,\Jnorm{X - Y}^2,
+\]
+a two-parameter non-negative cone with $\beta' \geq 0$ and
+$\delta' \geq 0$. The $\beta'$-term depends only on $(\Tr X, \Tr Y)$
+and is $\Tr(X \cdot Y)$-free; the $\delta'$-term, expanding
+$\Jnorm{X - Y}^2 = \Tr(X^2) - 2\Tr(X \cdot Y) + \Tr(Y^2)$, has
+$\Tr(X \cdot Y)$-coefficient $-2\delta'$. P4 (non-trivial
+dependence on $\Tr(X \cdot Y)$) thus forces $\delta' > 0$.
+Writing $\beta := \beta'$ and $\delta := \delta'$ gives the
+statement. The SymPy script~\cite{phi-uniqueness} reproduces the
+computation symbolically as an independent check.
+\end{proof}
+
+Theorem~\ref{thm:phi-family} leaves an Observable-reducible summand.
+The $\beta$-term $(\Tr X - \Tr Y)^2$ is a polynomial in pointwise
+invariants ($\Tr X$ and $\Tr Y$ are each in the single-copy invariant
+ring), so it contributes a quantity that is \emph{fully recoverable}
+from the Observable record of the Stream. The $\delta$-term, via the
+pairwise invariant $\Tr(X \cdot Y)$ in its expansion
+\eqref{eq:running-expansion}, is not.
+
+This residual degree of freedom is resolved by adding path-space purity
+as a sixth condition.
+
+\begin{corollary}[Path-pure selection of $\Phiexp$]\label{cor:phi-canonical}
+Under the additional requirement
+\begin{itemize}[leftmargin=2em]
+\item \textbf{(P6) Path-space purity.} $f$ carries no
+Observable-reducible content - equivalently, $f$ has no summand
+expressible as a polynomial in the pointwise $\Ffour$-invariants
+$(\Tr X, \Tr X^2, \det X)$ and
+$(\Tr Y, \Tr Y^2, \det Y)$ alone,
+\end{itemize}
+the family \eqref{eq:phi-family} collapses to $\beta = 0$, giving
+\begin{equation}\label{eq:phi-canonical}
+  \boxed{\;\Phiexp[\Stream] \;=\; \delta \sum_k \rhoJ(X_k)\,\Jnorm{X_{k+1} - X_k}^2\;}
+\end{equation}
+unique up to a positive scalar $\delta > 0$.
+\end{corollary}
+
+(P6) is not a further selection condition of the same type as
+(P1)-(P5); it is a projection onto the non-Observable-reducible
+summand of the minimal-degree family. Writing $\Phiexp$ without this
+projection would include a $\beta \geq 0$ coefficient on a
+polynomial in pointwise $\Ffour$-invariants that an outside party
+can recover by measuring Kinds alone - content already visible on
+the Observable side. The path-pure $\Phiexp$ above is the reduced
+representative of the family; we fix the remaining scalar freedom
+by setting $\delta = 1$.
+
+% ====================================================================
+% SECTION 5: STRONG-FORM COMPLEMENTARITY
+% ====================================================================
+
+\section{Strong-form complementarity: the Observable-Beable split}
+\label{sec:complementarity}
+
+Observable extraction and $\phi$-iteration on an $\hthree$-Stream do
+not commute. The claim splits by regime. In the autonomous case
+($\phi$ $\Ffour$-equivariant, gauge fixed by the dynamics) the
+non-commutation reduces to a single residual global gauge
+(Theorem~\ref{thm:autonomous-comp}); the autonomous setting is thus
+the weakest, and autonomous $\Phiexp$ is Observable-reducible. In
+the non-autonomous case - a self-modeler whose $\phi$-step is
+modulated by an external drive, so that the $\Ffour$-frame the
+dynamics uses at step $k$ is not predetermined by the state
+$X_k$ alone - the pairwise invariant $\Tr(X_k \cdot X_{k+1})$
+escapes the pointwise Kind sequence; strong-form complementarity
+follows unconditionally (Proposition~\ref{prop:strong-comp}). The
+\emph{non-autonomous} here is the analogue of a driven Hamiltonian
+in QM: the algebra supplies the state space and the step rule, an
+external source chooses the gauge-varying correction; no coupling
+to a named heat bath is assumed, only that $\phi$ fails to be
+$\Ffour$-equivariant. The resulting Observable-Beable exhaustion
+(Corollary~\ref{cor:OB1}) says the two information modes jointly
+span the diagonal $\Ffour$-invariant content of the Stream; it
+realizes, inside $\hthree$ by algebra, Bell's observable/beable
+split. We use ``complementarity'' in Bell's
+observable/beable sense (two modes exhaust the available
+information), not in Bohr's measurement-context sense (two
+mutually exclusive preparations).
+
+\subsection{The mechanism}
+\label{sec:complementarity-mechanism}
+
+Paper~5 selects, under van~de~Wetering's sequential-product
+axioms~\cite{vdw2019b,alfsen-shultz2001}, the Alfsen-Shultz
+sequential product $X * Y = \sqrt{X}\, Y\, \sqrt{X}$ as the update
+taking state-before-measurement to state-after-measurement on any
+Euclidean Jordan algebra the framework admits; $X * Y \neq Y * X$ in
+general. The non-commutation that drives the results below is a
+different one - between Observable projection and $\phi$-iteration,
+not between sequential products of a pair of measurements - but
+both live inside the same algebra.
+
+Two operations are available to a Stream segment $(X_k, X_{k+1})$.
+
+\begin{itemize}[leftmargin=2em]
+\item The \textbf{Observable projection}
+$P_\mathcal{O} : X \mapsto [X] \in \Omega / \Ffour$, which maps a
+27-dimensional State to its 3-dimensional Kind; equivalently, reads off
+the three invariants $(\Tr X, \Tr(X^2), \det X)$.
+\item The \textbf{Stream propagator} $\phi : X_k \mapsto X_{k+1}$, the
+self-modeling iteration of Section~\ref{sec:stream}.
+\end{itemize}
+
+These do not commute in a precise and testable sense. Applying $\phi$
+first and then $P_\mathcal{O}$ gives a well-defined composition:
+$P_\mathcal{O}(\phi(X_k)) = [X_{k+1}]$. Applying $P_\mathcal{O}$ first
+returns the orbit $[X_k]$; the next $\phi$ application requires a
+\emph{choice of gauge representative}, because $\phi$ operates on States
+and $[X_k]$ is not a State. Any such choice injects gauge information
+that was destroyed in the projection, and different choices produce
+different propagations. The commutator
+$[\phi, P_\mathcal{O}]$ is not a bounded operator; it is a statement
+about well-definedness. Observable extraction destroys the 24
+gauge-dimensional degrees of freedom that the next $\phi$ step would have
+consumed.\footnote{Generic $\Ffour$-orbits on $\hthree$ have dimension
+$24$: the spectrum of an element supplies $3$ independent
+$\Ffour$-invariants ($\Tr$, $\Tr(X^2)$, $\det$) on the $27$-dimensional
+ambient, so the complementary orbit direction is $27 - 3 = 24$. The
+dimension count agrees with $\dim \Ffour - \dim \mathrm{Spin}(8) =
+52 - 28 = 24$, with $\mathrm{Spin}(8)$ the generic stabilizer. See
+\cite{harvey1990} \S14.}
+
+\subsection{Autonomous case: the weakest setting}
+\label{sec:autonomous-complementarity}
+
+\begin{theorem}[Autonomous complementarity]\label{thm:autonomous-comp}
+Let $\Stream$ be a Stream of a self-modeler in $\hthree$ whose
+self-modeling operator $\phi$ is $\Ffour$-equivariant and whose dynamics
+are autonomous (gauge fixed throughout by $\phi$ itself). Then:
+\begin{itemize}[leftmargin=2em]
+\item \textbf{(i)} The pointwise Kind sequence $([X_0], [X_1], \ldots)$
+determines the Stream up to a single global $\Ffour$-gauge.
+\item \textbf{(ii)} Any polynomial Observable-side functional of the
+Kind sequence carries strictly less information than the Stream itself:
+the gauge orbit of $\Stream$ is the maximal Observable-reducible content.
+\item \textbf{(iii)} $\Phiexp[\Stream]$ is Observable-reducible in
+the autonomous case: its non-Observable content reduces to a single
+global $\Ffour$-gauge orbit, which is unphysical.
+\end{itemize}
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+For \textbf{(i)}, fix $X_0 \in \Omega$ as a representative of its
+Kind $[X_0]$. By Faraut-Kor\'anyi, every $\Ffour$-invariant of $X_0$
+factors through $[X_0]$, so any two representatives of $[X_0]$
+differ by an element of $\Ffour$. $\Ffour$-equivariance of $\phi$
+gives $\phi(g X_0) = g \phi(X_0)$; iterating, $\phi^k(g X_0) =
+g \phi^k(X_0)$ for all $k$. The whole Stream thus propagates with a
+single global gauge $g$ applied to the whole trajectory, and the
+Kind sequence determines the Stream up to that single global choice.
+
+For \textbf{(ii)}, a polynomial functional of the Kind sequence is a
+polynomial in $\{\Tr X_k, \Tr(X_k^2), \det X_k\}_k$. By (i) and
+Faraut-Kor\'anyi, this ring coincides with the diagonal-$\Ffour$-invariant
+ring on the Stream modulo the single global gauge. The Stream itself
+sits in $\Omega^{\mathbb{N}}$, one global-gauge orbit above the Kind
+sequence; the gauge orbit is the maximal Observable-recoverable
+content.
+
+For \textbf{(iii)}, $\Phiexp[\Stream]$ depends only on the data
+$(\rhoJ(X_k), \Jnorm{X_{k+1} - X_k}^2)$, both of which are
+$\Ffour$-invariant under the diagonal action. So
+$\Phiexp[g \cdot \Stream] = \Phiexp[\Stream]$ for any
+$g \in \Ffour$. Under (i), the Kind sequence plus a global gauge
+determines the Stream; since $\Phiexp$ does not see the global gauge,
+$\Phiexp$ is a functional of the Kind sequence alone and thus
+Observable-reducible.
+\end{proof}
+
+\subsection{Non-autonomous complementarity}
+\label{sec:non-autonomous-complementarity}
+
+In the non-autonomous case - drive variations across phi-time - the
+situation is sharper.
+
+Consider two Streams $\Stream_a$ and $\Stream_b$ constructed so that their
+pointwise Kind sequences match exactly,
+$[X_k^{(a)}] = [X_k^{(b)}]$ for all $k$, but whose gauge representatives
+are transformed by a time-varying element $g_k \in \Ffour$ between them.
+In the autonomous setting the two Streams differ by a global gauge and
+carry identical $\Ffour$-invariant content. In the non-autonomous setting
+- when $g_k$ is not constant across $k$ - the pairwise invariant
+$\Tr(X_k \cdot X_{k+1})$ can differ between the two Streams, because
+\[
+  \Tr(g_k X_k^{(a)} \cdot g_{k+1} X_{k+1}^{(a)})
+  \;\neq\; \Tr(X_k^{(a)} \cdot X_{k+1}^{(a)})
+  \quad \text{in general},
+\]
+whereas the pointwise Kinds are preserved. The pair-level invariant
+escapes the pointwise Kind sequence.
+
+The explicit $21\times$ demonstration of
+Section~\ref{sec:phi-properties} realizes this: the ratio is
+$\Phiexp$-content of the path-space residual, invisible to any
+outside party measuring only pointwise Kinds.
+
+\begin{proposition}[Strong-form complementarity, non-autonomous]\label{prop:strong-comp}
+For non-autonomous Streams in $\hthree$ with time-varying $\Ffour$-gauge,
+the pointwise Kind sequence does \emph{not} determine the diagonal
+$\Ffour$-invariant ring on path-space. In particular, the pairwise
+invariant $\Tr(X_k \cdot X_{k+1})$ belongs to a strict super-ring of
+the pointwise invariant ring on $\hthree^N$, and polynomial diagonal
+$\Ffour$-invariant functionals of the Stream that depend on
+path-space invariants are strictly richer than those that depend on
+pointwise Kinds alone.
+\end{proposition}
+
+\begin{proof}[Proof]
+At $N = 2$, take $X_0 = X_0' = \mathrm{diag}(1/2, 3/10, 1/5)$ and
+$X_1 = \mathrm{diag}(2/5, 7/20, 1/4)$,
+$X_1' = \sigma \cdot X_1 = \mathrm{diag}(7/20, 2/5, 1/4)$, where
+$\sigma$ is the transposition of the first two diagonal entries.
+$\sigma$ is a Jordan-algebra automorphism of $\hthree$ (permuting
+the three primitive idempotents preserves the Jordan product), and
+thus belongs to $\Ffour = \Aut\hthree$. All four states lie in the
+interior $\Omega^\circ$ and share pointwise $\Ffour$-invariants:
+$\Tr X_0 = \Tr X_1 = \Tr X_1' = 1$,
+$\Tr(X_0^2) = 19/50$, $\Tr(X_1^2) = \Tr(X_1'^2) = 69/200$,
+$\det X_0 = 3/100$, $\det X_1 = \det X_1' = 7/200$, so any
+polynomial in pointwise $\Ffour$-invariants takes equal values on
+the two pairs $(X_0, X_1)$ and $(X_0', X_1')$. The weights are
+strictly positive: $\rhoJ(X_0) = 7/5000$,
+$\rhoJ(X_1) = \rhoJ(X_1') = 49/120000$. But
+$\Tr(X_0 \cdot X_1) = 71/200$ while $\Tr(X_0' \cdot X_1') = 69/200$,
+and $\Tr(X \cdot Y)$ is invariant under the \emph{diagonal}
+$\Ffour$-action $(X, Y) \mapsto (gX, gY)$ with the \emph{same}
+$g$ applied to both entries. Hence $\Tr(X \cdot Y)$ is not in the
+pointwise ring; the super-ring is strict at $N = 2$. Since
+$\rhoJ > 0$ on both streams, the witness doubles as a $\Phiexp$
+discriminator:
+$\Phiexp[(X_0, X_1)] = \rhoJ(X_0) \cdot \Jnorm{X_0 - X_1}^2 =
+21/10^6$ while $\Phiexp[(X_0', X_1')] = 49/10^6$, a $7{:}3$ ratio
+between Streams with identical pointwise Kinds and all Observable
+weights positive. For any $N > 2$, apply the witness at any
+consecutive pair $(k, k+1)$ with the remaining indices held fixed:
+the pointwise Kind sequence matches while the pair-invariant at
+$(k, k+1)$ does not. The richness claim follows: $\Phiexp$ itself,
+by (P3) and (P4) of Section~\ref{sec:phi-properties}, is a
+polynomial diagonal $\Ffour$-invariant functional that
+distinguishes Streams with matched pointwise Kinds and nonzero
+$\rhoJ$-weight.
+\end{proof}
+
+\begin{remark}[Depth of the path-space residual]\label{rem:path-space-depth}
+Proposition~\ref{prop:strong-comp} witnesses the super-ring at the
+pair level. The $\Phiexp$ of
+Definition~\ref{def:phi} is built as a sum of pair-local terms
+$\rhoJ(X_k) \Jnorm{X_{k+1} - X_k}^2$, so only pair-level diagonal
+$\Ffour$-invariants enter its definition; triple and higher
+diagonal invariants are out of scope for the uniqueness result of
+Corollary~\ref{cor:phi-canonical}, which is explicitly a pair-level
+statement. An explicit finite generating set for the full diagonal
+$\Ffour$-invariant ring on $\hthree^N$ is open
+(Section~\ref{sec:gaps}, G2); Faraut-Kor\'anyi Chapter~V gives the
+invariant ring for a single copy, but the diagonal product case is
+not in the classical literature.
+\end{remark}
+
+\subsection{Observable-Beable exhaustion}
+\label{sec:OB1}
+
+\begin{corollary}[Observable-Beable exhaustion]\label{cor:OB1}
+Two modes of information about a Stream are available within the
+four-type ontology. The \emph{Observable mode} ($\mathcal{O}$):
+any $\Ffour$-invariant polynomial functional of the pointwise Kind
+sequence; by Proposition~\ref{prop:strong-comp} this mode is
+strictly weaker than the full diagonal $\Ffour$-invariant ring on
+path-space. The \emph{Beable mode} ($\mathcal{B}$): direct
+specification of the Stream as an element of
+$\Omega^{\mathbb{N}} / \Ffour$, recovering the pair-level invariants
+$\Tr(X_k \cdot X_{k+1})$ that $\mathcal{O}$ misses. Observable
+extraction consumes the $\Ffour$-gauge information that the next
+$\phi$-iteration would use, so no $\Ffour$-invariant refinement of
+$\mathcal{O}$ closes the gap in the non-autonomous regime; the two
+modes jointly span the diagonal $\Ffour$-invariant content of the
+Stream. This is Bell's~\cite{bell1984speakable} observable/beable
+split realized inside $\hthree$ by algebra.
+\end{corollary}
+
+% ====================================================================
+% SECTION 6: PROPERTIES OF PHI
+% ====================================================================
+
+\section{Properties of $\Phiexp$}
+\label{sec:consequences}
+
+Temporal additivity is a direct consequence of
+Definition~\ref{def:phi}'s sum form. Spatial aggregation sits
+outside the uniqueness result and is flagged as an open question
+(Section~\ref{sec:gaps}, G3); we do not state a conjectured form
+here.
+
+\subsection{Temporal compositionality (theorem)}
+\label{sec:temporal-composition}
+
+\begin{proposition}[Temporal additivity]\label{prop:temporal-add}
+For a Stream $\Stream = (X_0, \ldots, X_K)$ and any index $0 \leq k^* \leq K$,
+\begin{equation}\label{eq:temporal-add}
+  \Phiexp[(X_0, \ldots, X_K)]
+  \;=\; \Phiexp[(X_0, \ldots, X_{k^*})]
+  \;+\; \Phiexp[(X_{k^*}, \ldots, X_K)].
+\end{equation}
+\end{proposition}
+
+\noindent
+Immediate from the sum form.
+
+% ====================================================================
+% SECTION 7: EMPIRICAL SIGNATURES
+% ====================================================================
+
+\section{Empirical signatures}
+\label{sec:signatures}
+
+A measure that lives inside $\hthree$ and is by construction
+Observable-indistinguishable for pairs of Streams with matching
+pointwise Kinds can still be tested from outside. Three classes of
+signature do the work.
+
+\paragraph{(S1) Matched-pair discriminator at $21\times$.}
+The construction of Section~\ref{sec:phi-properties} provides a
+clean class-level discriminator: two Streams with pointwise Kinds
+matched to machine precision and $\Phiexp$ differing by a factor
+of $21$. Any \emph{theory} claiming that a Stream's $\Phiexp$ (or
+an analogous Beable-side functional) is recoverable from pointwise
+$\Ffour$-invariants alone must report the pair as $\Phiexp$-equal;
+the pair falsifies that theory class. Any apparatus accessing the
+pair-level invariant $\Tr(X_k \cdot X_{k+1})$ distinguishes them.
+The test runs unconditionally in $\hthree$-arithmetic; it does not
+require a biological or physical encoding. Application to a
+specific target system is a separate question of whether that
+system \emph{admits} matched-pair preparation at all.
+
+\paragraph{(S2) Depth-scaling (conjectural).}
+The per-tick contribution $\rhoJ(X_k)\Jnorm{X_{k+1} - X_k}^2$ is a
+degree-$7$ polynomial in the entries of $X_k$ and $X_{k+1}$;
+under a family of nested self-models indexed by a depth parameter,
+iterating at increasing depth should drive a polynomial-bounded
+amplification of $\Phiexp$ whose leading order is set by this
+degree structure. Converting this algebraic expectation into a
+measured profile requires an encoding (G1); without one, (S2) is
+conjectural motivation, not a measurement protocol. The prediction,
+conditional on any fixed encoding: \emph{some} polynomial-bounded
+amplification profile obtains with depth, and flat or exponential
+scaling would falsify the depth-scaling form.
+
+\paragraph{(S3) Algebraic zero class.}
+$\Phiexp = 0$ exactly on two algebraic classes of Stream: (i) static
+Streams ($X_{k+1} = X_k$, by P1), and (ii) Streams confined to the
+$\rhoJ$-vanishing locus (by P2). Within a fixed encoding, systems
+whose dynamical image lies in these classes - static configurations
+or configurations on the rank-deficient / maximally-mixed stratum -
+carry $\Phiexp = 0$ at the algebraic level. The identification of
+real-world exemplars with these classes (which real systems, if
+any, encode into the $\rhoJ = 0$ locus under a biological encoding)
+is an encoding question (G1), not an algebraic one.
+
+% ====================================================================
+% SECTION 8: RELATED WORK
+% ====================================================================
+
+\section{Related work}
+\label{sec:related}
+
+Three neighbours bear mention: IIT (as the other $\Phi$ with a
+consciousness-adjacent target), Barandes's indivisible-stochastic
+reformulation of QM (as the source of the trajectory-as-beable
+shape), and the Jordan-algebraic reconstruction programs (as the
+upstream machinery Paper~5 uses). Each is different from this
+paper in a specific way, and these differences - not the surface
+resemblance - are where the content is.
+
+\paragraph{IIT.} Integrated Information Theory
+\cite{oizumi2014,tononi2016,albantakis2023} shares an initial letter
+with $\Phiexp$ and a motivating target. The two differ in substrate
+(partitioned discrete physical system versus $\hthree$-valued iterates),
+in derivational grounding (IIT's five axioms versus the uniqueness
+theorem on Streams of Section~\ref{sec:uniqueness}), and in compositional
+predictions (IIT's integration and exclusion postulates make spatial
+decomposition destructive; $\Phiexp$ is temporally additive by
+Proposition~\ref{prop:temporal-add}, with spatial behaviour open).
+They are different objects with similar names. A fuller
+discriminator table is below.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{0.25\textwidth}p{0.32\textwidth}p{0.32\textwidth}@{}}
+\toprule
+\textbf{Dimension} & \textbf{IIT 4.0} & \textbf{This paper's $\Phiexp$} \\
+\midrule
+Substrate & Partitioned discrete physical system; cause-effect structure over state transitions & $\hthree$-valued iterates; algebraic self-modeling on a Euclidean Jordan algebra \\
+Selection & Five phenomenal axioms (existence, intrinsicality, information, integration, exclusion) + their physical postulates & Observable-Beable ontology (Def~\ref{def:ontology}); six conditions on pair-invariants (P1-P6), minimal matrix-entry degree, non-negativity \\
+Uniqueness & Measure form derived from the five phenomenal axioms applied to cause-effect structures; the minimum-information-partition argument then selects \emph{which} subsystem is the conscious complex & Finite-dimensional enumeration of diagonal $\Ffour$-invariants on pairs (Thm~\ref{thm:phi-family}) + path-space purity projection (Cor.~\ref{cor:phi-canonical}) \\
+Temporal composition & Transition-local evaluation; no closed additivity statement & Temporally additive (Prop.~\ref{prop:temporal-add}) \\
+Spatial composition & Exclusion postulate: one maximally integrated complex at each scale, others suppressed & Open (Section~\ref{sec:gaps}, G3); no conjectured form stated in this paper \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A direct empirical discriminator requires a matched protocol -
+varying metacognitive depth or a Stream-level gauge schedule - not
+yet implemented; Section~\ref{sec:signatures} (S2) records the
+depth-scaling prediction as the cleanest candidate.
+
+\paragraph{Barandes's indivisible-stochastic framework.}
+Barandes~\cite{barandes2023stochquantum} reformulates quantum
+mechanics as an indivisible stochastic process on an underlying
+sample-trajectory ontology, with the Hilbert-space wave function
+serving as bookkeeping. The trajectory-beable / Observable-record
+split in Section~\ref{sec:ontology} adopts this shape; the
+present framework uses $\hthree$-valued iterates where Barandes
+uses discrete sample paths, and does not import the stochastic
+machinery.
+
+\paragraph{Reconstruction programs for QM.}
+Van de Wetering's sequential-product axiomatization of Euclidean
+Jordan algebras~\cite{vdw2019a,vdw2019b}, Alfsen-Shultz state-space
+geometry~\cite{alfsen-shultz2001}, and the homogeneous-self-dual-cone
+approach to QM reconstruction give the upstream mathematical setting
+Paper~5~\cite{ehrlich2026qm} uses to obtain $\hthree$. The measure
+$\Phiexp$ is one step past the reconstruction: having obtained the
+algebra and its dynamics, it asks which $\Ffour$-invariant functional
+on trajectories is selected by non-reducibility and path-space
+purity.
+
+% ====================================================================
+% SECTION 9: OPEN GAPS
+% ====================================================================
+
+\section{Open gaps}
+\label{sec:gaps}
+
+We register the principal open items with their status and minimal
+next test.
+
+\paragraph{(G1) Biological encoding (framework task, not theorem gap).}
+The theorem and the measure are encoding-neutral at the $\Ffour$-orbit
+level. Which particular $\hthree$-encoding corresponds to the state
+variables of a biological nervous system is an independent empirical
+question. The paper's central claims do not depend on fixing an
+encoding; applying $\Phiexp$ numerically to a specific neuronal
+recording does. Cheapest test: pick a candidate encoding motivated by a
+Markov-blanket or free-energy-principle model and compute
+$\Phiexp$ on an existing recording.
+
+\paragraph{(G2) Explicit generators for the diagonal
+$\Ffour$-invariant ring on $\hthree^N$.}
+Proposition~\ref{prop:strong-comp} shows the diagonal
+$\Ffour$-invariant ring on $\hthree^N$ strictly contains the
+pointwise invariant ring, but an explicit finite generating set is
+not in the classical literature. Faraut-Kor\'anyi Chapter V gives
+the $N=1$ ring. Cheapest advance: compute a generating set at
+$N=2$.
+
+\paragraph{(G3) Spatial compositionality.}
+Temporal additivity is a theorem (Prop.~\ref{prop:temporal-add});
+spatial aggregation is open. The question has two sub-gaps: (a)
+what counts as a ``subsystem'' of a self-modeler in $\hthree$,
+given that $\hthree$ is simple and does not decompose as a Jordan
+direct sum; (b) how the $\Phiexp$ of a composite self-modeler -
+presumably living in a larger Jordan or C*-algebra - relates to
+the $\Phiexp$'s of its parts. Neither sub-gap has a natural
+conjectured form at this stage. Cheapest advance: fix a composite
+algebra (e.g., $\hthree \otimes \hthree$ as a Jordan algebra via
+the van~de~Wetering composite construction) and compute $\Phiexp$
+on a two-subsystem Stream with a shared input, comparing against
+$\Phiexp_1 + \Phiexp_2$.
+
+\paragraph{(G4) Unconditional $\rhoJ$ uniqueness
+(Remark~\ref{rem:rho-alternatives}).} Theorem~\ref{thm:rho-uniqueness}
+assumes the factored shape $p \cdot q$ at unbounded polynomial degree;
+the Lean theorem \texttt{rhoJ\_unique\_minimal}~\cite{lean-rhoj} drops
+factorization at eigenvalue degree $\leq 5$. The unconditional
+statement - every $\Ffour$-invariant polynomial on $\hthree$ vanishing
+on $\partial\Omega$ and at $[I/3]$ with $\rhoJ$-minimal degree is
+$c \cdot \rhoJ$ - remains open. Cheapest advance: extend the Lean
+proof to unbounded degree, or give a combined factorization-free
+argument at the ambient eigenvalue ring.
+
+\paragraph{(G5) Self-measurement inaccessibility (research direction).}
+Corollary~\ref{cor:OB1} (Observable-Beable exhaustion) is the \emph{weak}
+form: an outside party reading pointwise Kinds misses the path-space content
+$\Phiexp$ carries. The \emph{strong} form - that no self-modeler can recover
+$\Phiexp$ of its \emph{own} Stream from any Observable record it can persist -
+is a research target: the algebraic analogue of a G\"odel/Tarski/Lawvere
+self-reference limit, with a no-cloning argument supplying the
+``cannot persist a copy of the prior frame'' step. Stated, unproven; see the
+program note \texttt{research/phi-inaccessibility-program.md}. If closed, it
+would place the inaccessibility of $\Phiexp$ on the footing of Tarski's
+undefinability of truth: real in the algebra, unrecoverable from inside.
+
+\bigskip
+
+\noindent
+The paper's status is asymmetric. Autonomous and non-autonomous
+complementarity, the $\rhoJ$ selection (modulo G4), the $\Phiexp$
+pair-family at minimal matrix-entry degree, the path-pure
+projection, Observable-Beable exhaustion, and temporal additivity
+are theorems; what remains open is explicit generators for the
+diagonal $\Ffour$-invariant ring on $\hthree^N$ (G2), spatial
+aggregation (G3), the factorization-free $\rhoJ$ uniqueness (G4),
+and the biological encoding question deliberately not committed
+to (G1). The autonomous case is a theorem; the non-autonomous
+case is the falsifier program; the uniqueness half stands
+unconditionally modulo G4. The matched-pair $21\times$
+discriminator sits inside the algebra and requires none of G1-G4
+to run.
+
+% ====================================================================
+% BIBLIOGRAPHY
+% ====================================================================
+
+\begin{thebibliography}{99}
+
+\bibitem{alfsen-shultz2001}
+E.~M.~Alfsen and F.~W.~Shultz.
+\newblock \emph{State Spaces of Operator Algebras: Basic Theory, Orientations, and $C^*$-Products}.
+\newblock Birkh\"auser, 2001.
+
+\bibitem{barnum-graydon-wilce2015}
+H.~Barnum, M.~A.~Graydon, and A.~Wilce.
+\newblock Composites and categories of {E}uclidean {J}ordan algebras.
+\newblock arXiv:1606.09331, 2015.
+
+\bibitem{bell1984speakable}
+J.~S.~Bell.
+\newblock \emph{Speakable and Unspeakable in Quantum Mechanics}.
+\newblock Cambridge University Press, 2nd ed., 2004 (orig.\ 1987).
+
+\bibitem{barandes2023stochquantum}
+J.~A.~Barandes.
+\newblock The stochastic-quantum correspondence.
+\newblock \emph{Philosophy of Physics}, 3(1):8, 2025.
+\newblock arXiv:2302.10778.
+
+\bibitem{bengtsson-zyczkowski2006}
+I.~Bengtsson and K.~\.Zyczkowski.
+\newblock \emph{Geometry of Quantum States}.
+\newblock Cambridge University Press, 2006.
+
+\bibitem{ehrlich2026qm}
+B.~Ehrlich.
+\newblock Complex quantum mechanics from faithful self-modeling (Paper~5).
+\newblock Submitted to \emph{Journal of Mathematical Physics}, 2026.
+
+\bibitem{ehrlich2026h3o}
+B.~Ehrlich.
+\newblock The exceptional Jordan algebra as the unique non-composable ground for self-modeling (Paper~7).
+\newblock \emph{ehrlich.dev/papers/sm-from-self-modeling/main.pdf}, 2026.
+
+\bibitem{devaney1989}
+R.~L.~Devaney.
+\newblock \emph{An Introduction to Chaotic Dynamical Systems}.
+\newblock Addison-Wesley, 2nd ed., 1989.
+
+\bibitem{faraut-koranyi1994}
+J.~Faraut and A.~Kor\'anyi.
+\newblock \emph{Analysis on Symmetric Cones}.
+\newblock Oxford University Press, 1994.
+
+\bibitem{harvey1990}
+F.~R.~Harvey.
+\newblock \emph{Spinors and Calibrations}.
+\newblock Academic Press, 1990.
+
+\bibitem{hofstadter1979}
+D.~R.~Hofstadter.
+\newblock \emph{G\"odel, Escher, Bach: An Eternal Golden Braid}.
+\newblock Basic Books, 1979.
+
+\bibitem{hofstadter2007}
+D.~R.~Hofstadter.
+\newblock \emph{I Am a Strange Loop}.
+\newblock Basic Books, 2007.
+
+\bibitem{katok-hasselblatt1995}
+A.~Katok and B.~Hasselblatt.
+\newblock \emph{Introduction to the Modern Theory of Dynamical Systems}.
+\newblock Cambridge University Press, 1995.
+
+\bibitem{phi-numerics}
+B.~Ehrlich.
+\newblock Numerical verification of $\Phi$ properties P1-P5 on $h_3(\mathbb{O})$.
+\newblock \emph{research/qualia-fixed-point/phenomenological\_measure.py}, 2026.
+
+\bibitem{lean-rhoj}
+B.~Ehrlich.
+\newblock Machine-verified uniqueness of $\rho_J$ at eigenvalue degree $\leq 5$.
+\newblock \emph{Lean source: RadicalRelativity/RhoJ.lean, theorem \texttt{rhoJ\_unique\_minimal}}, 2026.
+
+\bibitem{phi-uniqueness}
+B.~Ehrlich.
+\newblock SymPy-verified enumeration of the minimal-degree $\Phi$-family on $h_3(\mathbb{O})$.
+\newblock \emph{research/qualia-fixed-point/phi\_uniqueness.py}, 2026.
+
+\bibitem{springer-veldkamp2000}
+T.~A.~Springer and F.~D.~Veldkamp.
+\newblock \emph{Octonions, Jordan Algebras and Exceptional Groups}.
+\newblock Springer, 2000.
+
+\bibitem{tononi2016}
+G.~Tononi et~al.
+\newblock Integrated information theory: from consciousness to its physical substrate.
+\newblock \emph{Nature Reviews Neuroscience}, 2016.
+
+\bibitem{oizumi2014}
+M.~Oizumi, L.~Albantakis, and G.~Tononi.
+\newblock From the phenomenology to the mechanisms of consciousness: Integrated Information Theory 3.0.
+\newblock \emph{PLOS Computational Biology}, 10(5):e1003588, 2014.
+
+\bibitem{albantakis2023}
+L.~Albantakis, W.~Barbosa, G.~Findlay, M.~Grasso, A.~M. Haun, W.~Marshall, W.~G.~P. Mayner, A.~Zaeemzadeh, M.~E. Boly, B.~E. Juel, S.~Sasai, K.~Fujii, I.~David, J.~Hendren, J.~P. Lang, and G.~Tononi.
+\newblock Integrated Information Theory (IIT) 4.0: Formulating the properties of phenomenal existence in physical terms.
+\newblock \emph{PLOS Computational Biology}, 19(10):e1011465, 2023.
+
+\bibitem{vdw2019a}
+J.~van de Wetering.
+\newblock An effect-theoretic reconstruction of quantum theory.
+\newblock \emph{Compositionality}, 1:1, 2019.
+
+\bibitem{vdw2019b}
+J.~van de Wetering.
+\newblock Sequential product spaces are {J}ordan algebras.
+\newblock \emph{J.~Math.\ Phys.}, 60(6):062201, 2019.
+
+\bibitem{weyl1939}
+H.~Weyl.
+\newblock \emph{The Classical Groups: Their Invariants and Representations}.
+\newblock Princeton University Press, 1939.
+
+\end{thebibliography}
+
+% ====================================================================
+% APPENDIX A: STANDALONE SELF-MODELING DEFINITION
+% ====================================================================
+
+\appendix
+
+\section{Self-modeling system (standalone)}
+\label{app:self-modeling}
+
+This appendix reproduces Paper~5~\cite{ehrlich2026qm}'s definition
+of a self-modeling system for readers who prefer not to follow the
+pointer. The definition is four-clause; the theorem of Paper~5
+(Thm.~6.3 there) shows that every finite-dimensional self-modeling
+system has state space $\mathbb{R}^n$- or $M_n(\mathbb{C})^{\mathrm{sa}}$-like
+structure, with the non-commutative case selected by local
+tomography. For the present paper, only the definition is used; it
+fixes $(\hthree, \Ffour, \Omega, \phi)$ as the algebra, group,
+state space, and normalized-square iteration of interest.
+
+\begin{definition}[Self-modeling system, Paper~5 Def.~2.6]
+\label{app-def:sms}
+A \emph{self-modeling system} is a tuple $(V, \varphi, V_{BM})$
+satisfying:
+\begin{enumerate}[label=(\roman*)]
+  \item $V$ is a nontrivial finite-dimensional spectral order-unit
+    space: $V$ has at least two orthogonal nontrivial projective
+    units.
+  \item $\varphi: V_B \to V_M$ is an order isomorphism between the
+    body component $V_B$ and the model component $V_M$
+    (\emph{faithful tracking}).
+  \item $V_{BM}$ is the minimal composite order-unit space carrying
+    product states, product effects, non-signaling constraints, and
+    a product-form sequential product (\emph{minimal internal
+    composite}).
+  \item $V$ has no nontrivial direct-sum decomposition
+    $V = V_1 \oplus V_2$ into nonzero order-unit subspaces
+    (\emph{simplicity}).
+\end{enumerate}
+\end{definition}
+
+The four clauses unpack the three words of the concept: (i) = a
+system, (ii) = modeling (faithful internal tracking), (iii) = self-
+(internal, minimal composite), (iv) = the whole (no hidden
+sectors). Paper~5 shows this implies, via van~de~Wetering's
+sequential-product theorem and Artin-Wedderburn, that $V$ is
+$M_n(\mathbb{C})^{\mathrm{sa}}$ in the complex case, with the
+normalized iteration $\phi(X) = X^2 / \Tr(X^2)$ emerging as the
+sequential-product self-application at the maximally coherent
+face. Paper~7~\cite{ehrlich2026h3o} then selects $\hthree$ as the
+unique non-composable instance, which is the setting of the
+present paper.
+
+\end{document}

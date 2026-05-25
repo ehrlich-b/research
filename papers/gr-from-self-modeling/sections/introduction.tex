@@ -1,0 +1,126 @@
+% sections/introduction.tex
+
+\section{Introduction}
+\label{sec:intro}
+
+A self-modeling system is one that contains a faithful model of itself.
+A companion paper~\cite{Paper5} argues that any finite-dimensional
+system satisfying this definition necessarily has state spaces of the
+form $M_n(\mathbb{C})^{\mathrm{sa}}$: self-modeling \emph{is} complex
+quantum mechanics. The derivation proceeds through a chain of algebraic
+forced moves: the sequential product structure of the model constrains
+the state space to be a Euclidean Jordan algebra, and faithfulness of
+the model then selects the complex matrix algebras.
+
+A second companion paper~\cite{Paper7} argues that the exceptional Jordan
+algebra $\hthree$ is the unique candidate for the ``basin'' in which
+self-modeling occurs. The argument is non-composability: $\hthree$ is
+the only simple Euclidean Jordan algebra that cannot be realized as a
+tensor factor of a larger system~\cite{BarnumGraydonWilce2020}. An
+observer (a C*-subalgebra of the form $M_n(\mathbb{C})^{\mathrm{sa}}$)
+probing $\hthree$ via a rank-1 idempotent induces a Peirce decomposition
+$27 = 1 \oplus 16 \oplus 10$. Paper~7 argues that the 16-dimensional
+Peirce half-space $\Vhalf$ carries one generation of Standard Model
+fermions, with chirality and the gauge group $\SMgauge$ emerging from
+the observer's complex structure and the $\Ffour$ automorphism group.
+
+The present paper is conditional on the results of Papers~5 and~7;
+if those identifications hold, the results here follow.
+
+This paper addresses the remaining sector: the 10-dimensional Peirce
+complement $\Vzero = \htwo{O}$. We show that the algebraic data of
+$\hthree$ uniquely match the exceptional entry in the
+Gunaydin-Sierra-Townsend (GST) classification of $N{=}2$
+Maxwell-Einstein supergravity theories~\cite{GST1983,GST1984}. The
+identification proceeds in the same spirit as Paper~5: just as
+the Jordan-von~Neumann-Wigner classification identifies the
+self-modeling state spaces with complex quantum mechanics, the GST
+classification identifies the algebraic data of $\hthree$ with the
+exceptional $N{=}2$ MESGT.
+
+\subsection{The problem}
+
+Every known route to Einstein's equations from algebraic or information-theoretic
+starting points requires substantial additional structure. Connes'
+spectral action~\cite{ChamseddineConnes1997} assumes a manifold and a
+Dirac operator. Jacobson's thermodynamic argument~\cite{Jacobson1995}
+assumes local Lorentz invariance and a Rindler horizon structure.
+Farnsworth's non-associative spectral geometry~\cite{Farnsworth2025}
+works within $\hthree$ but has not been extended to include gravity.
+All three approaches take a spacetime manifold as given.
+
+Our advance is that the algebraic identity of spacetime is not assumed.
+The Peirce complement $\Vzero$, projected through the C*-bottleneck to
+$\htwo{C} \cong \mathbb{R}^{3,1}$, provides a 4-dimensional space with
+Minkowski signature and the correct conformal algebra. We obtain the
+\emph{dimension}, \emph{signature}, and \emph{symmetry algebra} of
+spacetime from $\hthree$. The step from this algebraic Minkowski space
+to a smooth manifold carrying dynamical fields is a shared assumption
+with every quantum gravity program; we do not claim to derive it.
+Given this assumption, the algebraic data of $\hthree$ satisfy all
+three hypotheses of the GST classification theorem, and the GST
+bijection uniquely identifies these data with the bosonic sector of
+the exceptional $N{=}2$ MESGT, including the Einstein-Hilbert
+term $-R/2$.
+
+\subsection{Summary of results}
+
+The identification chain is:
+
+\begin{enumerate}[label=(\roman*)]
+\item $\hthree$ is the self-modeling basin (Paper~7, non-composability).
+
+\item An observer at a rank-1 idempotent $E$ induces the Peirce
+  decomposition $\Vone \oplus \Vhalf \oplus \Vzero$ with dimensions
+  $1 + 16 + 10$.
+
+\item The C*-bottleneck projects $\Vzero = \htwo{O}$ to
+  $\htwo{C}_u \cong \mathbb{R}^{3,1}$ with Minkowski signature
+  $(+,-,-,-)$. The Kantor-Koecher-Tits construction gives
+  $\KKT(\htwo{C}_u) = \mathfrak{so}(4,2)$, the 4-dimensional
+  conformal algebra.
+
+\item The unique $\Ffour$-invariant cubic form $\det(X)$ on $\hthree$
+  (Springer, 1962) serves as the gravitational prepotential.
+  Its role in $\rho_J$ and in gravity is forced by algebraic
+  uniqueness (double duty corollary).
+
+\item $\hthree$ satisfies all three GST hypotheses: degree~3, formally
+  real, positive-definite trace form
+  (Proposition~\ref{prop:gst-hypotheses}).
+
+\item The GST bijection uniquely identifies the algebraic data of
+  $\hthree$ with the exceptional 5-dimensional $N{=}2$ MESGT.
+
+\item The $r$-map (dimensional reduction on a circle) gives the
+  4-dimensional special K\"ahler theory with scalar manifold
+  $\Eseven / (E_{6(-78)} \times \UU{1})$.
+
+\item The $N{=}2$ label appears as the classification output: it is
+  not assumed in any algebraic step, but enters through the GST
+  theorem whose codomain is the class of $N{=}2$ MESGTs.
+\end{enumerate}
+
+The result is the complete bosonic Lagrangian
+\begin{align}
+\label{eq:lagrangian-preview}
+e^{-1}\mathcal{L}_{\mathrm{bos}} &= -\frac{R}{2}
+  + g_{i\bar{j}}\,\partial_\mu z^i \partial^\mu \bar{z}^{\bar{j}}
+  \nonumber\\
+  &\quad + \im(\mathcal{N}_{IJ})\, F^I_{\mu\nu} F^{J\mu\nu}
+  + \re(\mathcal{N}_{IJ})\, F^I_{\mu\nu} {*F}^{J\mu\nu},
+\end{align}
+with 28 vectors (27~matter plus graviphoton), scalar manifold
+$\Eseven / (E_{6(-78)} \times \UU{1})$, and all couplings determined
+by $\det(X)$.
+
+\subsection{Conventions}
+
+We work in natural units ($\hbar = c = 8\pi G_N = 1$). The metric
+signature is $(+,-,-,-)$. The Jordan product is
+$\jp{X}{Y} = \tfrac{1}{2}(XY + YX)$. The octonion basis follows the
+Fano plane convention $e_1 e_2 = e_4$, and the complex structure is
+$u = e_7$ throughout. The Peirce idempotent is $E_{11}$
+(the rank-1 projector onto the first diagonal entry of $\hthree$).
+The real form of the structure group is $\Esix$ (not $E_{6(-78)}$ or
+$E_{6(6)}$).

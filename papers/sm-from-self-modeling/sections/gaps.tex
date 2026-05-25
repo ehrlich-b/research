@@ -9,11 +9,15 @@ The derivation chain of Table~\ref{tab:chain} involves three
 symmetry-breaking steps beyond the self-modeling axioms.  Two of
 these (B1 and B2) are instances of \emph{necessary symmetry reduction}
 in which the reduction is algebraically required and the direction is
-physically irrelevant (all choices are conjugate).  The
-third (Gap~A) is a genuine conditioning input.  The complexification
-step (previously Gap~C) has been closed by
-Theorem~\ref{thm:complexification}.  This section presents a detailed
-analysis of each.
+physically irrelevant (all choices are conjugate).  The third
+(Gap~A) is the basin-identification step.  Two technical results
+move it out of prose into formal statements: Theorem~\ref{thm:basin}
+(Restricted Basin) packages the basin uniqueness as a
+Definition/Theorem pair, and Lemma~\ref{lem:bottleneck} (C*-bottleneck
+universality) packages the maximal C*-target structure that B2
+selects within.  The complexification step (previously Gap~C) has
+been reduced to a selection conditional on the observer's $T_a$-probing premise (Theorem~\ref{thm:complexification} supplies the mechanism; cf.~Sec.~\ref{sec:gap-register}).  This section
+presents a detailed analysis of each.
 
 %----------------------------------------------------------------------
 \subsection{Conditional structure of the main result}\label{sec:conditional}
@@ -38,9 +42,9 @@ according to their logical status.
 \end{itemize}
 
 \medskip
-\noindent\textbf{Derived (formerly Gap~C):}
+\noindent\textbf{Conditional on $T_a$-probing (formerly Gap~C):}
 \begin{itemize}
-  \item \textbf{L4:} The complexification step is now proved
+  \item \textbf{L4:} The complexification mechanism is supplied, conditional on $T_a$-probing
     (Theorem~\ref{thm:complexification}): the continuous functional calculus of the observer's
     C*-algebra, applied to the Peirce operators $T_a$ (which have
     eigenvalue $-\tfrac{1}{2} < 0$), produces complex output:
@@ -52,11 +56,16 @@ according to their logical status.
 \medskip
 \noindent\textbf{Conditioning input (Gap~A):}
 \begin{itemize}
-  \item \textbf{L2 (Gap~A):} Non-composability identifies $\hthree$
-    as the universe algebra.  Everything downstream (L3--L9) takes
-    place within $\hthree$.  This is the only genuine conditioning
-    input: it requires Level~IV mathematical realism
-    (Remark~\ref{rem:gap-A}).
+  \item \textbf{L2 (Gap~A):} Theorem~\ref{thm:basin} (Restricted
+    Basin) identifies $\hthree$ as the unique observer-grade JA
+    basin (Definition~\ref{def:basin}) up to isomorphism.  The proof
+    routes through JvNW~\cite{JvNW1934}, BGW~\cite{BGW2020}, and
+    Zelmanov~\cite{Zelmanov1979}.  The Level~IV realism step is
+    recorded in Remark~\ref{rem:basin-scope}(b) as upstream
+    motivation relating the anthropic ``observer-grade''
+    restriction to the program's foundational premise; it is
+    external to the proof.  Everything downstream (L3--L9) takes
+    place within $\hthree$.
 \end{itemize}
 
 \medskip
@@ -101,7 +110,7 @@ symmetry reductions (B1, B2) are required by the algebraic
 structure: the observer must occupy some idempotent (B1) and must
 complexify non-equivariantly (B2), but all choices produce identical
 physics ($\Ffour$-conjugacy for B1; $\Gfour$-conjugacy for B2).
-The complexification step (previously Gap~C) is derived from the
+The complexification step (previously Gap~C) is supplied---conditional on the observer's $T_a$-probing premise---by the
 observer's C*-algebra continuous functional calculus
 (Theorem~\ref{thm:complexification}).
 
@@ -147,14 +156,18 @@ B2
     direction physically irrelevant} \\[4pt]
 A
   & Non-composability $\to$ $\hthree$
-  & \makecell[l]{Standard math (JvNW~\cite{JvNW1934} + BGW~\cite{BGW2020})\\
-    + Level~IV realism (composable algebra $\Rightarrow$\\
-    composites exist $\Rightarrow$ not the universe).\\
-    The L4 step is the program's foundational premise,\\
-    not a new assumption, but it is doing real work here.}
+  & \makecell[l]{Theorem~\ref{thm:basin} (Restricted Basin):\\
+    $\hthree$ is the unique observer-grade JA basin\\
+    via JvNW~\cite{JvNW1934} + BGW~\cite{BGW2020}\\
+    + Zelmanov~\cite{Zelmanov1979}.\\
+    The Level~IV realism step is now external\\
+    to the proof, recorded in\\
+    Remark~\ref{rem:basin-scope}(b) as the\\
+    anthropic ``observer-grade'' restriction.}
   & HIGH
-  & \makecell[l]{Deriving non-composability from\\
-    self-modeling axioms directly,\\
+  & \makecell[l]{Deriving the ``observer-grade''\\
+    restriction (Def.~\ref{def:basin})\\
+    from self-modeling axioms,\\
     without invoking L4 realism} \\[4pt]
 Gen
   & Why 3 generations
@@ -167,7 +180,7 @@ Gen
     with mass hierarchy and mixing} \\[4pt]
 C
   & Complexification (L4)
-  & \makecell[l]{CLOSED (Theorem~\ref{thm:complexification}).\\
+  & \makecell[l]{Conditional on $T_a$-probing (Theorem~\ref{thm:complexification} supplies the mechanism).\\
     The observer's C*-algebra CFC, applied to $T_a$\\
     (eigenvalue $-1/2 < 0$), produces complex output:\\
     $\sqrt{T_a}\,T_b\,\sqrt{T_a}$\\
@@ -217,16 +230,30 @@ SA
     of the electroweak vacuum (cf.~\cite{FerraraEtAl2021} for an
     explicit $\Gfour\to\SU{3}$ model on $S^6$), though we do not
     invoke an effective potential here.
-  \item \textbf{A (HIGH):} The identification of $\hthree$ as the
-    universe algebra rests on the JvNW classification (standard
-    mathematics) combined with Level~IV mathematical realism: if an
-    algebra can form composites, then composites of it exist, making it
-    a subsystem rather than the universe.  By contrapositive, the
-    universe's algebra must be non-composable.  L4 realism is the
-    program's foundational premise (not a new assumption), but it is
-    doing substantive work here.  Without it, non-composability would
-    be merely \emph{permitted}, not \emph{required}.
-  \item \textbf{C (CLOSED):} The complexification step (L4) is proved
+  \item \textbf{A (HIGH):} Theorem~\ref{thm:basin} (Restricted
+    Basin) identifies $\hthree$ as the unique observer-grade JA
+    basin (Definition~\ref{def:basin}).  The proof
+    chains JvNW~\cite{JvNW1934} (classification of simple FRJAs),
+    BGW~\cite{BGW2020} (special FRJAs admit Jordan-tensor
+    composites), and Zelmanov~\cite{Zelmanov1979} ($\hthree$ is the
+    unique non-special simple FRJA).  The Level~IV mathematical
+    realism step is no longer embedded in the proof: it is recorded
+    in Remark~\ref{rem:basin-scope}(b) as the upstream motivation
+    for the anthropic ``observer-grade'' restriction in
+    Definition~\ref{def:basin}.  Without L4, the alternative
+    formally real simple JAs (spin factors, $h_n(\mathbb{R})$,
+    $h_n(\mathbb{C})$, $h_n(\mathbb{H})$) still exist as consistent
+    mathematical structures and could in principle host other
+    arenas; the program selects $\hthree$ as \emph{ours} by
+    anthropic restriction, not by uniqueness across all possible
+    worlds.  Closing Gap~A in the strong sense would mean deriving
+    the observer-grade conditions of Definition~\ref{def:basin}
+    directly from the self-modeling axioms, without anthropic input.
+    Lemma~\ref{lem:bottleneck} (C*-bottleneck universality) closes
+    one structural piece of this: condition~(ii) of
+    Definition~\ref{def:basin} is now a theorem about
+    h$_3(\mathbb{C}_u)$ as the maximal C*-target.
+  \item \textbf{C (reduced to a selection):} The complexification mechanism (L4) is supplied, conditional on the observer's $T_a$-probing premise,
     by Theorem~\ref{thm:complexification}.  The observer's C*-algebra continuous
     functional calculus, applied to Peirce operators with negative
     eigenvalues, necessarily produces imaginary

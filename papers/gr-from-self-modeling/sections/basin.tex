@@ -1,0 +1,118 @@
+% sections/basin.tex
+
+\section{The self-modeling basin}
+\label{sec:basin}
+
+This section establishes notation and recalls the results from
+Papers~5 and~7 that serve as inputs to the gravitational identification.
+
+\subsection{Self-modeling and quantum mechanics}
+
+Paper~5~\cite{Paper5} argues that a finite-dimensional system carrying a
+faithful self-model necessarily has state spaces $M_n(\mathbb{C})^{\mathrm{sa}}$.
+The key steps are: (i)~the sequential product structure of the model
+forces the state space to be a Euclidean Jordan algebra
+(Jordan-von~Neumann-Wigner classification~\cite{JordanVonNeumannWigner1934}),
+and (ii)~faithfulness of the model selects the complex matrix algebras
+over the real, quaternionic, and spin-factor alternatives. Observers are
+therefore C*-subsystems.
+
+\subsection{The exceptional Jordan algebra}
+
+Paper~7~\cite{Paper7} argues that $\hthree$ is the unique arena for
+self-modeling. The argument uses non-composability: every simple
+Euclidean Jordan algebra except $\hthree$ can be embedded as a tensor
+factor in a larger Jordan algebra~\cite{BarnumGraydonWilce2020}. For a
+self-modeling basin, this embedding would extend the system, contradicting
+the requirement that the model be \emph{of itself}. The exceptional
+algebra $\hthree$ has no such embedding and is therefore the unique
+candidate.
+
+The algebra $\hthree$ consists of $3 \times 3$ Hermitian matrices over
+the octonions $\mathbb{O}$:
+\begin{equation}
+\label{eq:h3o-element}
+X = \begin{pmatrix}
+\alpha & x_3 & \bar{x}_2 \\
+\bar{x}_3 & \beta & x_1 \\
+x_2 & \bar{x}_1 & \gamma
+\end{pmatrix}, \quad
+\alpha, \beta, \gamma \in \mathbb{R},\;
+x_1, x_2, x_3 \in \mathbb{O},
+\end{equation}
+with $\dim(\hthree) = 3 + 3 \times 8 = 27$. The Jordan product is
+$\jp{X}{Y} = \tfrac{1}{2}(XY + YX)$, which is well-defined and
+commutative despite the non-associativity of $\mathbb{O}$. The algebra is
+simple, formally real, and has degree~3 (the generic minimal polynomial
+has degree~3).
+
+The automorphism group is $\Aut(\hthree) = \Ffour$, the 52-dimensional
+exceptional Lie group. The structure group (the group preserving the
+cubic norm up to scale) is $\Esix$, a real form of $E_6$ with
+signature $(-26)$~\cite{Freudenthal1954}.
+
+\subsection{Peirce decomposition}
+\label{sec:peirce}
+
+An observer occupying a rank-1 idempotent $E = E_{11}$ (the projector
+onto the first diagonal entry, with $\alpha = 1$ and all other entries
+zero) induces the Peirce decomposition of $\hthree$ into eigenspaces of
+the multiplication operator $L_E(X) = \jp{E}{X}$:
+\begin{equation}
+\label{eq:peirce-decomposition}
+\hthree = \Vone(E) \oplus \Vhalf(E) \oplus \Vzero(E),
+\end{equation}
+with eigenvalues $1$, $\tfrac{1}{2}$, and $0$ respectively, and
+dimensions:
+\begin{equation}
+\label{eq:peirce-dims}
+27 = \underbrace{1}_{\Vone} \oplus \underbrace{16}_{\Vhalf}
+\oplus \underbrace{10}_{\Vzero}.
+\end{equation}
+
+The Peirce sectors have the following structure:
+\begin{itemize}
+\item $\Vone \cong \mathbb{R}$: the observer's degree of freedom
+  ($\alpha$).
+
+\item $\Vhalf \cong \mathbb{O}^2$: the 16-dimensional interface,
+  parametrized by $(x_2, x_3) \in \mathbb{O}^2$. Paper~7 proved that
+  $\Vhalf$ carries one generation of Standard Model fermions under
+  $\Spin{10} \to \SMgauge$.
+
+\item $\Vzero = \htwo{O}$: the 10-dimensional Peirce complement,
+  parametrized by $(\beta, x_1, \gamma)$. This is the observer's
+  ``external world'' and is the subject of this paper.
+\end{itemize}
+
+The Peirce multiplication rules are~\cite{McCrimmon2004}:
+\begin{equation}
+\label{eq:peirce-rules}
+\begin{aligned}
+\Vhalf \circ \Vhalf &\subset \Vone \oplus \Vzero, \\
+\Vzero \circ \Vzero &\subset \Vzero, \\
+\Vhalf \circ \Vzero &\subset \Vhalf.
+\end{aligned}
+\end{equation}
+The rule $\Vhalf \circ \Vhalf \subset \Vone \oplus \Vzero$ is
+physically significant: measurements of the matter sector ($\Vhalf$)
+produce outcomes correlated with both the observer ($\Vone$) and the
+external world ($\Vzero$). The rule $\Vzero \circ \Vzero \subset
+\Vzero$ means $\Vzero$ is a Jordan subalgebra.
+
+\subsection{Observer independence}
+
+Different rank-1 idempotents give different Peirce decompositions, but
+they are all $\Ffour$-conjugate. Freudenthal~\cite{Freudenthal1954}
+proved that $\Ffour$ acts transitively on the set of rank-1 idempotents
+in $\hthree$, with stabilizer $\Spin{9}$. The orbit is the octonionic
+projective plane $\mathbb{OP}^2 = \Ffour/\Spin{9}$, a 16-dimensional
+compact manifold. Every observer therefore sees the same algebraic
+structure, up to an $\Ffour$ automorphism: the Peirce dimensions, the
+multiplication rules, and the cubic norm are all observer-independent.
+
+We have verified this computationally for the idempotents $E_{11}$ and
+$E_{22}$: the permutation $P = (1,0,2)$ is a Jordan automorphism
+mapping $E_{11} \mapsto E_{22}$, and the induced Peirce decompositions
+are isomorphic (both have $\Vzero$ of dimension~10 with
+$\det_2$ signature $(+,-,-,-)$).

@@ -30,15 +30,26 @@ This motivates turning to a different algebraic structure: the exceptional
 Jordan algebra $\hthree$, the algebra of $3 \times 3$ Hermitian matrices
 over the octonions $\mathbb{O}$. The exceptional Jordan algebra occupies a
 singular position in the Jordan--von Neumann--Wigner
-classification~\cite{JvNW1934}: it is the unique \emph{simple} finite-dimensional
-formally real Jordan algebra that is \emph{non-composable}---it cannot participate
-in any composite with a nontrivial system~\cite{BGW2020}.  Under Level~IV
-mathematical realism, if an algebra can form composites then composites of
-it exist, making it a subsystem of a larger structure.  The universe, by
-definition, is not a subsystem; therefore its algebra must be
-non-composable.  This makes $\hthree$ the unique candidate for the
-``universe algebra'' whose internal structure should encode
-the particle content~\cite{Albert1934, Baez2002}.
+classification~\cite{JvNW1934}: by the classification of simple formally real
+Jordan algebras (JvNW + Zelmanov~\cite{Zelmanov1979}), $\hthree$ is the
+unique \emph{non-special} simple FRJA, and it is \emph{non-composable}
+in the Barnum--Graydon--Wilce~\cite{BGW2020} symmetric monoidal category
+of formally real JC-algebras.  Section~\ref{sec:h3O} packages this as
+Theorem~\ref{thm:basin} (Restricted Basin): under three structural
+conditions on a candidate basin (rank-3 Peirce structure over a
+composition algebra; admission of a complex sub-line for the
+C*-bottleneck; non-composability in BGW), $\hthree$ is unique up to
+isomorphism.  The selection of \emph{observer-grade} basins from among
+all simple FRJAs is an anthropic restriction
+(Remark~\ref{rem:basin-scope}(b)) under Tegmark's Level~IV
+realism~\cite{Tegmark2008}: other simple FRJAs (the spin factors and
+$h_n(\mathbb{K})$ for $\mathbb{K}\in\{\mathbb{R},\mathbb{C},\mathbb{H}\}$,
+$n\geq 3$) exist as consistent mathematical structures and are not
+claimed to fail to host any structure; the program selects $\hthree$
+as ``ours'' by anthropic restriction, not by uniqueness across all
+possible worlds.  The L4 step is thus made explicit and external to
+the proof of Theorem~\ref{thm:basin}, rather than embedded in a prose
+identification.~\cite{Albert1934, Baez2002}
 
 The connection between $\hthree$ and the Standard Model has been explored
 from several directions. Todorov and Drenska~\cite{TodorovDrenska2018}
@@ -92,19 +103,24 @@ nine links, each classified by source and status. One link is a genuine
 conditioning input (Gap~A: Level~IV realism $+$ non-composability). Two
 links are instances of \emph{necessary symmetry reduction} (B1 and
 B2) in which the reduction is algebraically required and the direction is
-physically irrelevant (all choices are conjugate). The remaining six links
+physically irrelevant (all choices are conjugate). The remaining links
 are \emph{proved} within this work and its companions, including the
-complexification step (Theorem~\ref{thm:complexification}).
+complexification step (L4)---which is \emph{conditional} on the observer's $T_a$-probing premise (Sec.~\ref{sec:gaps}), as are the chirality links L7--L9 built on it.
 
-The result is conditional on one input beyond the self-modeling axioms:
-the identification of $\hthree$ as the universe algebra via
-non-composability (Gap~A). Given this, the observer's existence forces
-the Peirce decomposition (B1: $\Ffour\to\Spin{9}$, all idempotents
-$\Ffour$-conjugate), the observer's C*-nature produces complexification
-(Theorem~\ref{thm:complexification}), and the impossibility of
-equivariant complexification (Schur's lemma) requires a choice of
-$u \in S^6$ (B2: $\Gfour\to\SU{3}_C$, all $u$ $\Gfour$-conjugate).
-Both symmetry reductions are algebraically necessary; both directions are gauge choices.
+The result is conditional on one input beyond the self-modeling
+axioms: the anthropic ``observer-grade'' restriction
+(Theorem~\ref{thm:basin} and Remark~\ref{rem:basin-scope}(b)) that
+identifies $\hthree$ as the basin we live in.  Given this, the
+observer's existence forces the Peirce decomposition (B1:
+$\Ffour\to\Spin{9}$, all idempotents $\Ffour$-conjugate), the
+maximal complex C*-target is $\Ffour$-conjugate to
+$h_3(\mathbb{C}_u)$ for some $u\in S^6$
+(Lemma~\ref{lem:bottleneck}), the observer's C*-nature produces
+complexification (Theorem~\ref{thm:complexification}), and the
+impossibility of equivariant complexification (Schur's lemma)
+requires a selection of $u$ (B2: $\Gfour\to\SU{3}_C$, all $u$
+$\Gfour$-conjugate).  Both symmetry reductions are algebraically
+necessary; both directions are gauge choices.
 
 \begin{table*}[t]
 \caption{The 9-link derivation chain from self-modeling to the chiral
@@ -133,7 +149,7 @@ L4 & C*-observer functional calculus yields complexification
      (Theorem~\ref{thm:complexification}):
      $\Vhalf \otimes_{\mathbb{R}} \mathbb{C} = \Stenplus$,
      $\Spin{9} \to \Spin{10}$
-   & Sec.~\ref{sec:complexification} & \textbf{Proved} \\[4pt]
+   & Sec.~\ref{sec:complexification} & \textsf{Cond.} (mechanism proved; $T_a$-probing) \\[4pt]
 L5 & Complexification upgrades $\Ffour \to \Esix$,
      $\rep{27} \to \rep{1} \oplus \rep{10} \oplus \rep{16}$ under $\Spin{10}$
    & \cite{Baez2002,Yokota2009,Boyle2020}; Sec.~\ref{sec:spin-upgrade} & \textbf{Proved} (standard, given L4) \\[4pt]

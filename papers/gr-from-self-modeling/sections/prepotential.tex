@@ -1,0 +1,136 @@
+% sections/prepotential.tex
+
+\section{The gravitational prepotential}
+\label{sec:prepotential}
+
+The cubic determinant $\det(X)$ on $\hthree$ plays a dual role in the
+self-modeling framework: it appears as a factor in the experiential
+density $\rho_J$ and as the gravitational prepotential determining all
+matter-gravity couplings. We prove that this double duty is forced by
+algebraic uniqueness.
+
+\subsection{The cubic norm}
+
+For $X \in \hthree$ as in Eq.~(\ref{eq:h3o-element}), the cubic norm
+(determinant) is
+\begin{equation}
+\label{eq:det3}
+\det(X) = \alpha\beta\gamma
+  - \alpha |x_1|^2 - \beta |x_2|^2 - \gamma |x_3|^2
+  + 2\,\re\bigl((x_1 x_2) x_3\bigr).
+\end{equation}
+This is the unique (up to scale) $\Ffour$-invariant cubic polynomial
+on $\hthree$.
+
+\begin{theorem}[Springer, 1962~\cite{Springer1962}]
+\label{thm:springer}
+$\dim \mathrm{Sym}^3(27^*)^{\Ffour} = 1$.
+That is, the space of $\Ffour$-invariant cubic forms on $\hthree$ is
+one-dimensional.
+\end{theorem}
+
+The $\Ffour$-invariance of $\det(X)$ is a classical consequence of
+Springer's theorem. As a consistency check, we have verified it
+computationally under three generating subgroups of $\Ffour$:
+\begin{itemize}
+\item $S_3$ (permutations of diagonal entries): 60 tests, maximum
+  error $7.1 \times 10^{-15}$.
+\item $G_2$ (octonion automorphisms): 210 tests using 14 Schafer
+  derivation generators~\cite{Schafer1966}, maximum error
+  $2.0 \times 10^{-13}$.
+\item $\Spin{9}$ (Peirce representation): 360 tests using 36 grade-2
+  generators, maximum error $2.2 \times 10^{-5}$ at $\epsilon = 10^{-6}$
+  (larger than the $S_3$ and $G_2$ residuals because the 36 grade-2
+  generators are only \emph{approximately} in $\mathfrak{spin}(9)
+  \subset\mathfrak{f}_4$; exact $\Ffour$-invariance of $\det$ is
+  guaranteed analytically by Theorem~\ref{thm:springer}, so this row
+  is a numerical sanity check, not the basis of the claim).
+\end{itemize}
+
+\subsection{The $d_{IJK}$ tensor}
+
+The cubic norm defines a totally symmetric tensor $d_{IJK}$ in the
+Peirce basis via
+\begin{equation}
+\label{eq:dijk}
+\det(X) = d_{IJK}\, h^I h^J h^K,
+\end{equation}
+where $h^I$ are coordinates in the 27-dimensional Peirce basis
+($I = 1$ for $\Vone$; $I = 2, \ldots, 17$ for $\Vhalf$;
+$I = 18, \ldots, 27$ for $\Vzero$). The index $I = 0$ is reserved
+for the graviphoton (from the gravity multiplet, not from the Jordan
+algebra); see Sec.~\ref{sec:identification}.
+
+The tensor $d_{IJK}$ has 106 nonzero entries out of 3654 distinct
+triples (97\% sparse), organized into exactly two nonzero Peirce
+blocks:
+\begin{equation}
+\label{eq:dijk-blocks}
+d_{IJK} \neq 0 \;\Longleftrightarrow\;
+\begin{cases}
+(I, J, K) \in (\Vone, \Vzero, \Vzero): & 10 \text{ entries}, \\
+(I, J, K) \in (\Vhalf, \Vhalf, \Vzero): & 96 \text{ entries}.
+\end{cases}
+\end{equation}
+All other Peirce block combinations are exactly zero (verified
+exhaustively, not sampled). The two nonzero blocks have clear physical
+interpretations:
+
+\begin{itemize}
+\item $(\Vone, \Vzero, \Vzero)$: the observer's coupling to the
+  spacetime metric. The 10 entries reproduce the $\det_2$ bilinear form
+  on $\Vzero$ exactly. This is the gravitational self-coupling.
+
+\item $(\Vhalf, \Vhalf, \Vzero)$: matter coupled to spacetime. The 96
+  entries split as 48 spacetime (coupling through the four $\htwo{C}_u$
+  directions) plus 48 internal (coupling through the six $W$-directions).
+  All 16 matter fields in $\Vhalf$ couple to all 4 spacetime directions:
+  the coupling is universal.
+\end{itemize}
+
+\subsection{The double duty corollary}
+
+The cubic norm $\det(X)$ appears in two contexts within the self-modeling
+framework:
+\begin{enumerate}
+\item As a factor in the experiential density
+  $\rho_J = \det(X) \cdot (\Tr(X^2) - \tfrac{1}{3})$, governing which
+  states support self-modeling.
+
+\item As the prepotential of the Gunaydin-Sierra-Townsend MESGT
+  (Sec.~\ref{sec:identification}), governing gravitational dynamics.
+\end{enumerate}
+
+\begin{corollary}[Double duty]
+\label{cor:double-duty}
+Both roles of $\det(X)$ are forced by the same algebraic uniqueness
+constraint. Specifically:
+\begin{enumerate}[label=(\alph*)]
+\item The GST framework requires a cubic prepotential $V$ on $\hthree$
+  that is invariant under $\Aut(\hthree) = \Ffour$.
+\item By Theorem~\ref{thm:springer}, $\dim\,\mathrm{Sym}^3(27^*)^{\Ffour}
+  = 1$, so $V = c \cdot \det(X)$ for some constant $c$.
+\item The experiential density $\rho_J$ also requires an
+  $\Ffour$-invariant cubic factor, which is again $\det(X)$.
+\end{enumerate}
+Therefore both roles use $\det(X)$ because it is the only cubic
+$\Ffour$-invariant available. The two roles enter with different physical
+interpretations (scalar function vs.\ prepotential) but share the same
+algebraic source. Neither is derived from the other.
+\end{corollary}
+
+The proof is non-circular: the GST framework appears only as a
+\emph{hypothesis} (``\emph{if} a cubic prepotential is needed, it must
+be $\det(X)$''), not as a derivation step. The existence of the GST
+Lagrangian provides the hypothesis; the uniqueness of $\det(X)$ provides
+the conclusion.
+
+\subsection{Quantum numbers}
+
+The 16-dimensional $\Vhalf$ subspace carries one generation of Standard
+Model fermions. The quantum number assignments (electric charge $Q$,
+hypercharge $Y$, isospin $J_{3L}$, $J_{3R}$, $B - L$) have been
+verified to match Paper~7 as a multiset, including color multiplicities
+(12 quarks + 4 leptons = 16 states). This confirms that the $d_{IJK}$
+coupling structure is compatible with the matter content derived
+independently from the Peirce decomposition and chirality chain.
