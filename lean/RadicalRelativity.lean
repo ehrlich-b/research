@@ -20,6 +20,19 @@ import RadicalRelativity.SpectralTheorem
 import RadicalRelativity.M2CInstance
 import RadicalRelativity.SpinFactor
 
+-- Paper 5 (redesign): twist normal form + selection landing sites (statement-level scaffold)
+import RadicalRelativity.TwistNormalForm
+
+-- Paper 5 (redesign), Part II selection: block-restricted equidistribution (lem:equidistribution)
+import RadicalRelativity.Selection.Equidistribution
+import RadicalRelativity.Selection.NormalFormExistence
+import RadicalRelativity.Selection.SelectorEquivalence
+import RadicalRelativity.Selection.Descent
+import RadicalRelativity.Selection.TwistIsotropy
+
+-- Paper 5 (redesign), Part I type exclusion: base-equality dichotomy (prop:diachronic)
+import RadicalRelativity.Selection.BaseEquality
+
 -- Paper 6: Self-Modeling Lattice → GR (SCAFFOLD)
 import RadicalRelativity.SelfModelingLattice
 import RadicalRelativity.AreaLaw
