@@ -7,7 +7,51 @@ export PATH="$HOME/.elan/bin:$PATH"
 cd ~/repos/research/lean && nice -n 15 lake build
 ```
 
-Lean 4 v4.28.0, Mathlib v4.28.0. 2818 jobs, builds clean.
+Lean 4 v4.28.0, Mathlib v4.28.0. 2861 jobs, builds clean.
+
+## MasterTheorem tree (twist paper "Sequential-Product Moduli on Simple EJAs", 2026-07-14): 0 sorry, 3 axioms (all cited classical theorems)
+
+`RadicalRelativity/MasterTheorem/` — machine-checked chain for `mthm:master`
+(paper: `blog/landing/papers/twist-normal-form/main.tex`). Ledger + honesty
+notes: `MasterTheorem/PLAN.md` §2 (the auditor reads that first).
+
+### Axioms (3, each declared in its consuming module)
+
+| Axiom | File | Source |
+|-------|------|--------|
+| `vanImhoffRoelands` | MasterTheorem/Interface | van Imhoff-Roelands arXiv:1904.09278 Cor 2.5/Prop 2.6 |
+| `lieHom_smooth` | MasterTheorem/DiagonalHom | Cartan/one-parameter-subgroup theorem |
+| `yokota_spin8_triality_faithful` | MasterTheorem/Branches/Albert | Yokota arXiv:0902.0431 Thm 2.7.1 + 1.16.2 |
+
+`#print axioms MasterTheorem.master_theorem` = exactly these 3 + core
+(propext, Classical.choice, Quot.sound). A3 (characters of ℝ) was PROVED
+(`real_character_unique`), not axiomatized. vdW Props 4.20/5.2/5.3/5.5/5.7 +
+the EJA compatibility bridge are `ComparisonSetup` FIELDS (auditable imports,
+not free axioms).
+
+### Chain
+
+```
+ComparisonSetup (vdW comparison-map face, 17 fields)
+  → jordanAuto (PROVED via A1) → frame_fixed/block_preserved (PROVED)
+  → Coalescence (D3, PROVED from Θ_fix + FK fields)
+  → DiagonalHom (χ extension + hyperplane factorization PROVED;
+      toStabilizerCoupling PRODUCES the coupling — A2 consumed here)
+  → Branches: Real (rank-free), Quaternionic (two-slot, pure proof),
+      Albert (A4), Complex per-frame (pure proof)
+  → Globalization (open-interval character uniqueness PROVED;
+      connectivity induction PROVED, geometric move = `hmove` hypothesis)
+  → Adapter → Master: master_theorem (6-conjunct assembly over PRODUCED couplings)
+RankTwo (separate, concrete M₂(ℂ)): 15 results, core axioms only,
+  incl. n2_exchange_selects_luders (paper Remark 6.2, Paper-B-facing).
+```
+
+### Disclosed located hypotheses (NOT axioms; PLAN §2 has the full list)
+
+`coalescence_diff` (DiagonalHomSetup field; group-level version proved),
+`hmove` (frame-connectivity geometric move), `overlap` (cross-coherence
+character equality), S2-continuity + invertible-density (prop_singular),
+RankTwo scoping (V5b/d + full S1-S7 bundling not formalized).
 
 ## Paper 5: 0 sorry, 3 axioms (all external). LOCKED FOR JOURNAL.
 

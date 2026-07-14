@@ -1,3 +1,22 @@
+# MasterTheorem Tree Self-Audit (2026-07-14)
+
+New tree `RadicalRelativity/MasterTheorem/` (twist paper). Verified by the
+orchestrator, not just lane reports: full `lake build` green (2861 jobs);
+`#print axioms MasterTheorem.master_theorem` = [propext, Classical.choice,
+Quot.sound, lieHom_smooth, yokota_spin8_triality_faithful,
+ComparisonSetup.vanImhoffRoelands] — exactly the 3-item cited ledger + core;
+no sorry in the tree. Anti-vacuity spot checks: `vanImhoffRoelands` is
+antecedent-gated (consumes Θ_unital/Θ_orderIso — not `∃ G, True`-style);
+`yokota_spin8_triality_faithful` is gated on `IsAlbertModel` (dims 8/28 +
+nontrivial blocks, unsatisfiable off H₃(𝕆)); the `coupling` field of the
+branch-facing `StabilizerCoupling` is PROVED in
+`DiagonalHomSetup.toStabilizerCoupling`, not assumed. Located non-axiom
+hypotheses are enumerated in `MasterTheorem/PLAN.md` §2 (coalescence_diff,
+hmove, overlap, S2-continuity/density, A1-entry-via-certificate, 5b abstract
+family, RankTwo scoping). External adversarial audit (Sol) runs 2026-07-14
+against paper + ledger; report banked in
+`blog/research/qm-genericity-review/`.
+
 # Adversarial Audit (2026-03-29)
 
 ## CRITICAL -- Lean claims to prove something it doesn't

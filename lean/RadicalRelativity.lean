@@ -33,6 +33,29 @@ import RadicalRelativity.Selection.TwistIsotropy
 -- Paper 5 (redesign), Part I type exclusion: base-equality dichotomy (prop:diachronic)
 import RadicalRelativity.Selection.BaseEquality
 
+-- Master theorem chain (twist-normal-form paper, mthm:master): de-ansatzed
+-- comparison-map route. Foundation module (abstract interface + axiom ledger).
+import RadicalRelativity.MasterTheorem.Interface
+-- D3 coalescence (lem:coalescence) from Θ_fix + FK simultaneous diagonalization.
+import RadicalRelativity.MasterTheorem.Coalescence
+-- Diagonal homomorphism (lem:homomorphism): χ extension, hyperplane
+-- factorization, toStabilizerCoupling (declares ledger axiom A2).
+import RadicalRelativity.MasterTheorem.DiagonalHom
+-- The four typewise branches (prop:real, thm:quaternionic, thm:albert declares
+-- ledger axiom A4, thm:complex per-frame).
+import RadicalRelativity.MasterTheorem.Branches.Real
+import RadicalRelativity.MasterTheorem.Branches.Quaternionic
+import RadicalRelativity.MasterTheorem.Branches.Albert
+import RadicalRelativity.MasterTheorem.Branches.Complex
+-- Complex-type globalization (thm:complex, global step): single global t.
+import RadicalRelativity.MasterTheorem.Globalization
+-- Complex-type adapter: binds Branches/Complex per-frame t_F to Globalization.
+import RadicalRelativity.MasterTheorem.Adapter
+-- Whole-chain assembly (mthm:master): #print axioms = exactly A1/A2/A4 + core.
+import RadicalRelativity.MasterTheorem.Master
+-- Rank-two boundary (prop:n2-necessity, thm:qubit-boundary core, rem:n2-selection).
+import RadicalRelativity.MasterTheorem.RankTwo
+
 -- Paper 6: Self-Modeling Lattice → GR (SCAFFOLD)
 import RadicalRelativity.SelfModelingLattice
 import RadicalRelativity.AreaLaw
