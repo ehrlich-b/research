@@ -54,9 +54,12 @@ The two concrete facts underpinning the model are proved here directly:
   (`prop:isotropy`), i.e. the abstract `ρ_skew` field is realized by the model, so
   the `hρ` hypothesis is not vacuous.
 
-**No new axioms** — the quaternionic branch is pure proof; `#print axioms
-quaternionic_luders` records only the interface/core axioms (`vanImhoffRoelands`
-does not enter this branch's proof term).
+**No new axioms** — the quaternionic branch is pure proof. It consumes only
+`StabilizerCoupling` (never `ComparisonSetup`), so `#print axioms
+quaternionic_luders` records only the three core Lean axioms (`propext`,
+`Classical.choice`, `Quot.sound`). In particular the van Imhoff–Roelands
+order-isomorphism input — now carried as the cited `ComparisonSetup` field
+`Θ_jordan` rather than a global axiom — does not enter this branch's proof term.
 
 ## References
 * Ehrlich 2026, *Sequential-Product Moduli on Simple Euclidean Jordan Algebras*,

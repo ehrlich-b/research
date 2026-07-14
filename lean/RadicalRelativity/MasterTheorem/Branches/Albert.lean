@@ -5,7 +5,6 @@ Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.MasterTheorem.Interface
 import Mathlib.LinearAlgebra.StdBasis
-import Mathlib.LinearAlgebra.Dimension.Finrank
 
 set_option linter.style.longLine false
 set_option linter.unusedSectionVars false
@@ -25,11 +24,12 @@ sequential product is Lüders, `a•b = Q_{√a}b`.
 
 The frame stabilizer of `H₃(𝕆)` is `Spin(8)`, acting on the three octonionic
 Peirce lines `(V₁₂, V₁₃, V₂₃)` by the *triality triple* `(8_v, 8_s, 8_c)`
-(Yokota; see the axiom below). In the differential face this means: the block
-representations `ρ_{ij} : 𝔰𝔭𝔦𝔫(8) → 𝔰𝔬(V_{ij})` are the three triality
-representations, each a **nontrivial** representation of the **simple** Lie
-algebra `𝔰𝔭𝔦𝔫(8)`, hence **faithful** — *unlike* the individual complex (torus)
-and quaternionic block representations, whose kernels are nonzero.
+(Yokota; see the `IsAlbertModel.block_injective` hypothesis below). In the
+differential face this means: the block representations `ρ_{ij} : 𝔰𝔭𝔦𝔫(8) →
+𝔰𝔬(V_{ij})` are the three triality representations, each a **nontrivial**
+representation of the **simple** Lie algebra `𝔰𝔭𝔦𝔫(8)`, hence **faithful**
+(*unlike* the individual complex (torus) and quaternionic block representations,
+whose kernels are nonzero).
 
 The rank of `H₃(𝕆)` is exactly `3`, so a single frame is directly a three-index
 configuration and no cross-frame globalization is needed. With `dχ(r) =
@@ -45,15 +45,22 @@ plus `StabilizerCoupling.coalescence` kills `dχ` on each standard basis vector 
 `ℝ³`, hence `dχ = 0` (`dchi_eq_zero_of_faithful`), and then
 `StabilizerCoupling.faithful_kill` reads off `T_{ij} = 0` (`albert_luders`).
 
-## The single import (ledger axiom A4)
+## No axioms — the `Spin(8)`-triality input is a cited hypothesis
 
-The only external input is the `Spin(8)`-triality identification of the frame
-stabilizer, ledgered as `yokota_spin8_triality_faithful`: for a coupling modelling
-`H₃(𝕆)` (marker `IsAlbertModel`), each off-diagonal block representation is
-injective. Everything downstream (coalescence + faithful-kill) is proved from the
-interface. `dchi_eq_zero_of_faithful` is the axiom-free heart (injective block
-representations ⟹ `dχ = 0`); the capstone `albert_luders` discharges injectivity
-via the axiom for the Albert model.
+This branch declares **no `axiom` and leaves no `sorry`**. The only external input
+is the `Spin(8)`-triality faithfulness of the frame-stabilizer block
+representations; it is carried as the **explicitly cited hypothesis field**
+`IsAlbertModel.block_injective` (the imported Yokota conclusion for the intended
+`H₃(𝕆)` instance), *not* as a free-standing axiom. Everything else — the
+coalescence kill of `dχ` and the faithful-kill of the twist — is proved from the
+interface. Hence `#print axioms albert_luders` is **core only**.
+
+An earlier revision declared a global `axiom` gated on the ambient dimensions
+`dim V = 8`, `dim 𝔰𝔭𝔦𝔫(8) = 28`. That gate does **not** identify the simple Lie
+structure or the triality representations — a nonzero linear map out of an
+arbitrary `28`-dimensional space need not be injective — so the global statement
+had counterexamples and was false. Injectivity is now imported as a hypothesis on
+the specific model instance, which is the honest form of Yokota's theorem.
 -/
 
 noncomputable section
@@ -65,59 +72,34 @@ namespace MasterTheorem
 variable {Stab : Type*} [AddCommGroup Stab] [Module ℝ Stab]
   {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
 
-/-! ## The Albert model marker
+/-! ## The Albert model marker -/
 
-`IsAlbertModel S` *names* the object `thm:albert` is about: the rank-`3`
-frame-stabilizer coupling of `H₃(𝕆)`, whose block space is the octonionic Peirce
-line (`dim_ℝ V_{ij} = 8`), whose stabilizer is `Spin(8)` (`dim_ℝ 𝔰𝔭𝔦𝔫(8) = 28`),
-and whose block representations are the nonzero triality representations. Among the
-four simple EJA block types these dimensions occur *only* for `H₃(𝕆)`
-(`blockDim` is `1, 2, 4, 8` for `ℝ, ℂ, ℍ, 𝕆`; `𝔰𝔱𝔞𝔟` is `0, 2, 9, 28`), so the
-marker is unsatisfiable off the exceptional type — this is what keeps the
-faithfulness axiom below from overclaiming on the other three types. The genuine
-representation-theoretic content (that these `28`-dimensional generators carry the
-*simple* Lie structure `𝔰𝔭𝔦𝔫(8)` and act by the *triality* representations) is the
-imported Yokota fact, recorded as `yokota_spin8_triality_faithful`. -/
+/-- `IsAlbertModel S` *names* the object `thm:albert` is about: the rank-`3`
+frame-stabilizer coupling of `H₃(𝕆)`, whose stabilizer is `Spin(8)` acting on the
+three octonionic Peirce lines by the triality triple `(8_v, 8_s, 8_c)`. Its single
+field carries the one imported fact the branch consumes. -/
 structure IsAlbertModel (S : StabilizerCoupling 3 Stab V) : Prop where
-  /-- Each Peirce block `V_{ij}` is an octonionic line: `dim_ℝ V = 8`. -/
-  block_rank : Module.finrank ℝ V = 8
-  /-- The frame stabilizer is `Spin(8)`: `dim_ℝ 𝔰𝔭𝔦𝔫(8) = 28`. -/
-  stab_rank : Module.finrank ℝ Stab = 28
-  /-- Each block representation is nontrivial (the triality representations are
-      nonzero). Combined with simplicity of `𝔰𝔭𝔦𝔫(8)` this is what forces
-      faithfulness; the simplicity is imported in the axiom below. -/
-  block_nontrivial : ∀ i j : Fin 3, i ≠ j → S.ρ i j ≠ 0
+  /-- **Yokota `Spin(8)`-triality faithfulness (cited hypothesis).** For `H₃(𝕆)`
+  with `F₄ = Aut(H₃(𝕆))`, the pointwise stabilizer of the three diagonal primitive
+  idempotents is `≅ Spin(8)` (Yokota, *Exceptional Lie Groups*, arXiv:0902.0431,
+  **Thm 2.7.1**, p. 51), realized as the triality triple `{(a₁,a₂,a₃) ∈ SO(8)³ :
+  (a₁x)(a₂y) = a₃(xy)}` (**Thm 1.16.2**, pp. 28–29), whose three `SO(8)` factors act
+  on `(V₁₂, V₁₃, V₂₃)` by the vector and the two half-spin representations — the
+  `8_v, 8_s, 8_c` of Baez, *The Octonions*, Bull. AMS **39** (2002), §2.4/4.2. Each is
+  a nontrivial representation of the simple Lie algebra `𝔰𝔭𝔦𝔫(8)`, hence faithful.
 
-/-! ## Ledger axiom A4 — Yokota `Spin(8)`-triality faithfulness -/
-
-/-- **Yokota, *Exceptional Lie Groups*, arXiv:0902.0431 — ledger axiom A4.**
-For `H₃(𝕆)` with `F₄ = Aut(H₃(𝕆))`, the pointwise stabilizer of the three
-diagonal primitive idempotents is `≅ Spin(8)` (**Thm 2.7.1**, p. 51), realized as
-the triality triple `{(a₁,a₂,a₃) ∈ SO(8)³ : (a₁x)(a₂y) = a₃(xy)}` (**Thm 1.16.2**,
-pp. 28–29), whose three `SO(8)` factors act on the three octonionic Peirce lines
-`(V₁₂, V₁₃, V₂₃)` by the vector and the two half-spin representations, the
-`8_v, 8_s, 8_c` of Baez, *The Octonions*, Bull. AMS **39** (2002), §2.4/4.2. Each is
-a **nontrivial** representation of the **simple** Lie algebra `𝔰𝔭𝔦𝔫(8)`, hence
-**faithful**.
-
-*Consumed form.* For a `StabilizerCoupling` modelling `H₃(𝕆)` (marker
-`IsAlbertModel`), each off-diagonal block representation `ρ_{ij}` (`i ≠ j`) is
-injective. This is exactly Yokota's faithfulness of the triality triple, not
-stronger: the marker restricts to the `Spin(8)`-triality data (`dim` `8`/`28`,
-blocks nonzero), and the injective conclusion is faithfulness of a nontrivial
-representation of the simple `𝔰𝔭𝔦𝔫(8)`. The step "nontrivial ⟹ faithful" is
-elementary Lie theory (a representation's kernel is an ideal; a simple algebra has
-only `0` and itself as ideals); it is axiomatized here rather than proved because
-`Stab` carries no Lie structure in the abstract interface. -/
-axiom yokota_spin8_triality_faithful (S : StabilizerCoupling 3 Stab V)
-    (hAlb : IsAlbertModel S) (i j : Fin 3) (hij : i ≠ j) :
-    Function.Injective (S.ρ i j)
+  Stated here as the **imported conclusion for the `H₃(𝕆)` instance**: each
+  off-diagonal block representation `ρ_{ij}` (`i ≠ j`) is injective. This is a cited
+  hypothesis (Yokota), not a fact derived in Lean — `Stab` carries no Lie structure
+  in the abstract interface, so simplicity of `𝔰𝔭𝔦𝔫(8)` is not available to prove it
+  internally. -/
+  block_injective : ∀ i j : Fin 3, i ≠ j → Function.Injective (S.ρ i j)
 
 /-! ## The exceptional branch -/
 
-/-- **`thm:albert`, axiom-free heart.** If every off-diagonal block representation
-`ρ_{ij}` (`i ≠ j`) of a rank-`3` frame-stabilizer coupling is injective, then the
-differential vanishes: `dχ = 0`.
+/-- **`thm:albert`, hypothesis-based heart.** If every off-diagonal block
+representation `ρ_{ij}` (`i ≠ j`) of a rank-`3` frame-stabilizer coupling is
+injective, then the differential vanishes: `dχ = 0`.
 
 The proof kills `dχ` on each standard basis vector `e_k = Pi.single k 1` of `ℝ³`.
 For `e_k`, pick the two other indices `i, j` (both `≠ k`, and `i ≠ j`; available
@@ -149,15 +131,12 @@ theorem dchi_eq_zero_of_faithful (S : StabilizerCoupling 3 Stab V)
 off-diagonal block twist vanishes: `T_{ij} = 0` for `i ≠ j`. Hence `Θ_r = id` on
 every block and the sequential product is Lüders, `a•b = Q_{√a}b`.
 
-The proof discharges injectivity of each `ρ_{ij}` via the Yokota axiom
-`yokota_spin8_triality_faithful`, obtains `dχ = 0` from `dchi_eq_zero_of_faithful`,
-and reads off `T_{ij} = 0` with `StabilizerCoupling.faithful_kill`. Only the single
-ledger axiom A4 enters. -/
+The proof takes the imported injectivity of each `ρ_{ij}` from
+`IsAlbertModel.block_injective`, obtains `dχ = 0` via `dchi_eq_zero_of_faithful`,
+and reads off `T_{ij} = 0` with `StabilizerCoupling.faithful_kill`. No `axiom`
+enters: `#print axioms albert_luders` is core only. -/
 theorem albert_luders (S : StabilizerCoupling 3 Stab V) (hAlb : IsAlbertModel S)
-    {i j : Fin 3} (hij : i ≠ j) : S.T i j = 0 := by
-  have hf : ∀ i j : Fin 3, i ≠ j → Function.Injective (S.ρ i j) :=
-    fun i j hij => yokota_spin8_triality_faithful S hAlb i j hij
-  have hdχ : S.dχ = 0 := dchi_eq_zero_of_faithful S hf
-  exact S.faithful_kill hdχ hij
+    {i j : Fin 3} (hij : i ≠ j) : S.T i j = 0 :=
+  S.faithful_kill (dchi_eq_zero_of_faithful S hAlb.block_injective) hij
 
 end MasterTheorem

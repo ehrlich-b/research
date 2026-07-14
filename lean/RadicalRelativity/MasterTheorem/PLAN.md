@@ -28,86 +28,130 @@ paper's §8 prior-art remark) and is **not modified**; it may be imported for re
 
 ---
 
-## 1. Proved-vs-imported, per paper section
+## 1. Dependency skeleton, per paper section
+
+> **REFRAME (post-adversarial audit, 2026-07-14 — `TWIST-NORMAL-FORM-MAXIMAL-ADVERSARIAL-2026-07-14.md`).**
+> The Lean development is an **abstract dependency skeleton**, NOT a formalization of the
+> paper theorem. It checks downstream algebraic implications from explicit interface
+> fields (hyperplane factorization, conditional typewise `T = 0` results, character
+> equality on an interval, connectivity induction, a generic dense-agreement lemma). It
+> does **not** formalize S1–S7, construct the comparison character or its differential,
+> connect the global frame family to one sequential product, or state the paper's master
+> theorem as an equality of products. **"PROVED" below means the Lean lemma of that name
+> is proved from the interface fields** — NOT that the paper statement is machine-checked.
+> `master_chain` is the *skeleton counterpart* of `mthm:master`, not the theorem itself
+> (§2, §5.7 of the report).
 
 | Paper section / label | Lean status | Module |
 |---|---|---|
-| `def:sp` (S1–S7 axioms) | interface data (`ComparisonSetup`, via `Θ`) | Interface |
-| `lem:span` (effects span) | not needed (chain consumes `Θ`, not raw `L_a`) | — |
-| `thm:vdw1` (SES ⟹ EJA structure thm) | **imported** context; not in the chain (we start from a simple EJA) | — |
-| `lem:simple-bridge` (every effect simple) | folded: `aOf_inv`, simple-effect clauses are the setup | Interface |
-| `lem:aone` (`a•1 = a`) | **SKIPPED** — inexpressible on the `Θ`-interface; `Θ_unital` covers the chain's need (see §2 disclosure) | — |
-| `prop:bridge` (compatibility ⟺ operator commutation) | **imported** (vdW EJA appendix / arXiv:1912.01903); enters as the `OpCommute` hypothesis of `Θ_fix` | Interface field |
-| `prop:theta` (Θ_a is a Jordan automorphism) | **PROVED** — `ComparisonSetup.jordanAuto` (via `vanImhoffRoelands` axiom) | Interface ✅ |
+| `def:sp` (S1–S7 axioms) | **NOT encoded** — the skeleton begins at the comparison map `Θ`, downstream of the S1–S7 order-unit-space axioms; S1–S7 have no Lean representation | — |
+| `lem:span` (effects span) | not needed (skeleton consumes `Θ`, not raw `L_a`) | — |
+| `thm:vdw1` (SES ⟹ EJA structure thm) | **imported** context; not in the skeleton (we start abstractly at `Θ`) | — |
+| `lem:simple-bridge` (every effect simple) | folded into the setup (`aOf_inv` carries invertibility as a hypothesis) | Interface |
+| `lem:aone` (`a•1 = a`) | **SKIPPED** — inexpressible on the `Θ`-interface; `Θ_unital` covers the skeleton's need (§2) | — |
+| `prop:bridge` (compatibility ⟺ operator commutation) | **imported field** (vdW EJA appendix / arXiv:1912.01903); enters as the `OpCommute` hypothesis of `Θ_fix` | Interface field |
+| `prop:theta` (Θ_a is a Jordan automorphism) | **PROVED from field** — `jordanAuto` projects the `Θ_jordan` field (vIR conclusion carried as a cited hypothesis; **no axiom**) | Interface ✅ |
 | `lem:frame-fix` (Θ fixes frame, preserves blocks, ∈ Stab(F)°) | **PROVED** — `frame_fixed` done; block-preservation + `Stab°` = target | Interface ✅ / DiagonalHom |
 | `lem:coalescence` (D3) | **PROVED** ✅ (from `Θ_fix` + FK simult.-diag.) | Coalescence ✅ |
-| `lem:homomorphism` (χ hom, `dχ` linear, ρ_{ij}(dχ r)=(r_i−r_j)T_{ij}) | **PROVED** ✅ (uses `lieHom_smooth` axiom A2) | DiagonalHom ✅ |
+| `lem:homomorphism` (χ hom, `dχ` linear, ρ_{ij}(dχ r)=(r_i−r_j)T_{ij}) | **PROVED** ✅ (`lieHom_smooth` now a proved `def`, A2 DONE; hyperplane factorization) | DiagonalHom ✅ |
 | `prop:real` | **PROVED** ✅ (trivial: 𝔰𝔬(1)=0) | Branches/Real ✅ |
 | `thm:quaternionic` | **PROVED** ✅ (concrete `Quaternion ℝ`) | Branches/Quaternionic ✅ |
-| `thm:albert` | **PROVED** ✅ (`yokota_spin8_triality_faithful` axiom A4 + `faithful_kill`) | Branches/Albert ✅ |
+| `thm:albert` | **PROVED** ✅ (`IsAlbertModel.block_injective` field, A4 DONE + `faithful_kill`) | Branches/Albert ✅ |
 | `thm:complex` (per-frame `t_F`) | **PROVED** ✅ (concrete ℝ-coefficient matching) | Branches/Complex ✅ |
 | `thm:complex` (global `t`) | **PROVED** ✅ — `Globalization.global_t` (`real_character_unique`, A3 proved not axiom; frame connectivity as hypothesis) | Globalization ✅ |
 | `lem:frame-connectivity` | **PROVED** in paper ⟹ Lean target (NOT an axiom); or explicit hypothesis of the globalization theorem | Globalization |
-| `prop:singular` (S2 extension) | **PROVED** ✅ — dense-agreement kernel (`Set.EqOn.closure`); S2-continuity + invertible-density as disclosed hypotheses; own lemma | Master ✅ |
-| `mthm:master` (assembly) | **PROVED** ✅ — `master_theorem`; `#print axioms` = A1+A2+A4+core | Master ✅ |
+| `prop:singular` (S2 extension) | **PROVED (generic lemma)** — dense-agreement kernel (`Set.EqOn.closure`); S2-continuity + invertible-density as disclosed hypotheses; a standalone lemma **not invoked by the capstone** | Master |
+| `mthm:master` (assembly) | **SKELETON COUNTERPART ONLY** — `master_chain` is a conjunction of the conditional interface lemmas (block-preservation; `T=0` for three abstract couplings; per-frame scalar; global constancy of a fourth abstract family). It does **not** state that `J` is a simple EJA of a type, that a product satisfies S1–S7, that `L_a=Q_{√a}Θ_a`, or `a·b = Q_{√a}b` / `a^{1/2+it}ba^{1/2−it}`. Not the paper theorem (§5.7). | Master |
 | `prop:n2-necessity`, `thm:qubit-boundary` | **PROVED** ✅ (concrete `M₂(ℂ)`, algebraic core; 3 upper-layer items scoped — see §2) | RankTwo ✅ |
 | `cor:selectors` | optional prior-art corollary | (skip / RankTwo) |
 
-**Never axiomatized:** `prop:theta`, `lem:frame-fix`, `lem:coalescence`,
-`lem:homomorphism`, every branch, globalization, `lem:frame-connectivity`,
-`prop:singular`, `mthm:master`. These are all things the paper proves; Lean proves
-them from the ledger + interface.
+**Never axiomatized (proved as skeleton lemmas from the interface fields):**
+`prop:theta`, `lem:frame-fix`, `lem:coalescence`, `lem:homomorphism`, every branch,
+globalization, `lem:frame-connectivity` (induction only — §2), `prop:singular` (generic
+lemma, not invoked by the capstone). **`mthm:master` is the exception:** its Lean form
+`master_chain` is the *skeleton counterpart* (a conjunction of the conditional lemmas),
+NOT the paper theorem as an equality of products — see the §1 reframe and §2 Master note.
 
 ---
 
-## 2. THE AXIOM LEDGER
+## 2. LEDGER — cited imports as fields, located hypotheses, residual axioms
 
-**Three** genuinely-universal classical theorems are `axiom`s (A1, A2, A4). A fourth
-(A3) was originally planned as an axiom but has been **reduced to a proved theorem**
-(`real_character_unique`, `Globalization.lean` — see A3 below). Each remaining axiom
-is declared in the module that first consumes it, so `#print axioms <thm>` enumerates
-exactly the classical inputs of any result. **Statements transcribed faithfully —
-never stronger than the source.**
+**Framing (post-adversarial audit, 2026-07-14): conditional dependency skeleton, target
+ZERO global custom axioms.** The audit (report §5) showed the three former global axioms
+quantified over interfaces too weak for their sources, so **as global statements they
+were FALSE** — a soundness risk, not merely "strong":
+- A1 asserted a unital order map preserves a Jordan product over structures encoding no
+  JB-algebra (counterexample: a coordinatewise product on `ℝ²` with a unital
+  non-multiplicative order map under a trivial `nonneg`);
+- A2 asserted every additive map `ℝⁿ → Stab` is `ℝ`-linear (false: discontinuous
+  Cauchy additive maps);
+- A4 asserted a nonzero linear map out of an abstract 28-dim space is injective (false).
 
-### A1 · `vanImhoffRoelands` — DECLARED in `Interface.lean` ✅
+The repair converts each to a **scoped interface field / hypothesis** so nothing is a
+false global axiom:
 
-- **Statement (as used).** For the Euclidean Jordan algebra carried by a
-  `ComparisonSetup C`, and invertible `a`: if `Θ_a` is unital (`Θ_a e = e`) and an
-  order isomorphism of the cone (`∀ x, nonneg x ↔ nonneg (Θ_a x)`), then `Θ_a`
-  preserves the Jordan product, `Θ_a(x∘y) = (Θ_a x)∘(Θ_a y)`.
-- **Source.** van Imhoff & Roelands, *Order isomorphisms between cones of
-  JB-algebras*, arXiv:1904.09278, **Corollary 2.5** (source label `orderisoms`,
-  src.tex l. 246) / **Proposition 2.6** (`p:order_isomorphism`, l. 259): a unital
-  linear order isomorphism between JB-algebras is a Jordan isomorphism (Prop 2.6:
-  any linear order iso is `U_y J`, `y=(Te)^{1/2}`; unital ⟹ `y=e`, `U_y=id`).
-  Classical corroboration: Alfsen–Shultz, *Geometry of State Spaces*, **Thm 2.80**.
-- **Where used.** `ComparisonSetup.jordanAuto` = the paper's `prop:theta`.
-- **Load-bearing check.** Its two antecedents are supplied from `Θ_unital` /
-  `Θ_orderIso`; `#print axioms jordanAuto` shows the dependency. Verified.
+| Former axiom | New form | Status |
+|---|---|---|
+| **A1 `vanImhoffRoelands`** | `ComparisonSetup.Θ_jordan` **field** (cited vIR conclusion, scoped to the caller's instance) | **DONE** ✅ (Interface) |
+| **A2 `lieHom_smooth`** | proved `def` (continuous-additive ⟹ ℝ-linear on `ℝⁿ`, `AddMonoidHom.toRealLinearMap`); Cartan smoothness = `DiagonalHomSetup.dχAdd_cont` continuity field | **DONE** ✅ (DiagonalHom) |
+| **A3 `character_of_Rn`** | proved theorem `real_character_unique` | **DONE** ✅ (Globalization) |
+| **A4 `yokota_spin8_triality_faithful`** | `IsAlbertModel.block_injective` **field** (`ρ_ij` injectivity as the cited Yokota hypothesis; false dimension gate + dims/nontriviality fields removed) | **DONE** ✅ (Albert) |
 
-### A2 · `lieHom_smooth` — declare in `DiagonalHom.lean`
+All four repaired: `#print axioms master_chain` (the capstone was renamed per report §5.7)
+= **Lean core only** (`propext`, `Classical.choice`, `Quot.sound`) — *zero global custom
+axioms over a conditional skeleton*. The `#print axioms` figure alone establishes only
+syntactic closure — it omits every structure field, so it is not a faithfulness certificate
+(report §5.9); the classical-import surface is the field lists of `ComparisonSetup` /
+`CoalescenceSetup` / `DiagonalHomSetup` / `IsAlbertModel`.
 
-- **Statement (faithful).** A continuous group homomorphism between
-  finite-dimensional real Lie groups is smooth; consequently the induced map on Lie
-  algebras (its differential at the identity) is real-linear. As consumed: the
-  continuous homomorphism `χ̃ : (ℝⁿ,+) → Stab(F)°` has a real-linear differential
-  `dχ : ℝⁿ → 𝔰𝔱𝔞𝔟(F)` with `χ̃(r) = exp(dχ(r))`.
-- **Source.** Cartan's theorem / the one-parameter-subgroup theorem (e.g. Bröcker–tom
-  Dieck, *Representations of Compact Lie Groups*; or Faraut–Korányi Lie-theoretic
-  apparatus, used in `main.tex` proof of `lem:homomorphism`, "a continuous
-  homomorphism between finite-dimensional Lie groups is smooth").
-- **Where used.** `DiagonalHom.dChi_linear` / `toStabilizerCoupling`.
-- **Note.** Mathlib's Lie-group smoothness for this exact statement is thin; axiomatize
-  the classical theorem rather than fight Mathlib. Keep the differential's
-  real-linearity (`→ₗ[ℝ]`) as the consumed content — that is all the branches need.
+### A1 · `vanImhoffRoelands` — **CONVERTED TO A FIELD** ✅ (`Interface.lean`, `Θ_jordan`)
+
+- **Status.** **No longer an axiom.** Now the `ComparisonSetup.Θ_jordan` field:
+  `∀ a, Inv a → ∀ x y, Θ a (jordan x y) = jordan (Θ a x) (Θ a y)`, projected by
+  `jordanAuto`. Carried as a *cited hypothesis* — the conclusion of applying vIR to `Θ_a`
+  on the intended EJA instance — because the interface does **not** encode the JB-algebra
+  premises (Jordan identity, formal reality, cone-of-squares `nonneg`), so a global axiom
+  form would be false. `#print axioms jordanAuto` = core only.
+- **Source (of the imported conclusion).** van Imhoff & Roelands, *Order isomorphisms
+  between cones of JB-algebras*, arXiv:1904.09278, **Corollary 2.5** (`orderisoms`,
+  src.tex l. 246) / **Proposition 2.6** (`p:order_isomorphism`, l. 259). Classical
+  corroboration: Alfsen–Shultz, *Geometry of State Spaces*, **Thm 2.80**.
+- **Where used.** `ComparisonSetup.jordanAuto` = the skeleton's `prop:theta` conjunct;
+  enters `master_chain` through the block-preservation certificate (§2 Master note).
+
+### A2 · `lieHom_smooth` — **REPAIRED ✅ (proved `def`, no axiom; DiagonalHom lane)**
+
+- **AUDIT FINDING (report §5.2), NOW FIXED.** The old axiom's *Lean type* took an
+  arbitrary additive `(Fin n → ℝ) →+ Stab` and returned an `ℝ`-linear map equal to it —
+  asserting **every additive map is real-linear**, false (discontinuous Cauchy maps).
+- **Repair shipped.** `lieHom_smooth` is now a proved `def`: a *continuous* additive map
+  `(Fin n → ℝ) →+ Stab` (into a normed ℝ-space `Stab`) is ℝ-linear, via Mathlib's
+  `AddMonoidHom.toRealLinearMap` (ℚ-linearity from additivity, then `ℚ`-density + continuity).
+  `#print axioms lieHom_smooth` = core only. `DiagonalHomSetup.Stab` is now
+  `NormedAddCommGroup + NormedSpace ℝ`.
+- **What carries the smoothness (Cartan).** Only the **continuity** of the differential —
+  the `DiagonalHomSetup.dχAdd_cont : Continuous dχAdd` **field** (a cited hypothesis, not a
+  global axiom). The differential `dχAdd`/`coalescence_diff` remain interface data.
+- **§5.5 honesty (docstring + here).** `DiagonalHomSetup` begins **after** the paper's
+  analytic comparison-to-differential step: nothing in Lean constructs `dχAdd` from the
+  proved comparison cocycle (`chi_extend`/`chi_comm`) or equates it with a derivative of
+  `Θ`. Lean checks only the downstream linear algebra — `lieHom_smooth` (continuity ⟹
+  linearity) and `hyperplane_factorization` (the vanishing shadow `coalescence_diff` ⟹ the
+  single-generator coupling, strictly stronger, hence a genuine conclusion). No "produced
+  from the cocycle" is claimed.
+- **Source (of the smoothness content carried as the continuity field).** Cartan's theorem
+  / the one-parameter-subgroup theorem (Bröcker–tom Dieck, *Representations of Compact Lie
+  Groups*), used in `main.tex` proof of `lem:homomorphism`.
+- **Where used.** `DiagonalHom.dChiLinear` / `toStabilizerCoupling` (both core-only now).
 
 ### A3 · `character_of_Rn` — **REDUCED TO A PROVED THEOREM** ✅ (`Globalization.lean`)
 
 - **Status.** **No longer an axiom.** Proved as `real_character_unique` in
   `Globalization.lean` from Mathlib's `Complex.exp` derivative machinery
   (`HasDerivAt.cexp` + eventual-constancy at an interior point + `HasDerivAt.unique`).
-  `#print axioms` on the Globalization capstone shows only core axioms. The ledger is
-  therefore **3 classical axioms (A1, A2, A4)**, not four.
+  `#print axioms` on the Globalization capstone shows only core axioms. With A1 a field
+  (`Θ_jordan`), A4 a field (`IsAlbertModel.block_injective`), and A2 a proved `def`
+  (`lieHom_smooth`), **no custom axioms remain** — `#print axioms master_chain` = core only.
 - **Statement (as proved).** Two continuous real characters of `ℝ` agreeing on an open
   interval are equal: if `exp(i α x) = exp(i β x)` for all `x ∈ (a,b)` with `a < b`,
   then `α = β` (no `2π` ambiguity). This is the consumed form of "every continuous
@@ -118,9 +162,19 @@ never stronger than the source.**
   constant.
 - **Where used.** `Globalization.ComplexGlobalizationData.adjacent_eq` → `global_t`.
 
-### A4 · `yokota_spin8_triality_faithful` — declare in `Branches/Albert.lean`
+### A4 · `yokota_spin8_triality_faithful` — **CONVERTED TO A FIELD** ✅ (`IsAlbertModel.block_injective`)
 
-- **Statement (faithful).** For `H₃(𝕆)` with `F₄ = Aut(H₃(𝕆))`, the pointwise
+- **Status.** **No longer an axiom** (Albert lane, done). The global axiom is deleted;
+  `IsAlbertModel` now carries `block_injective` — `ρ_{ij}` injectivity as the cited Yokota
+  hypothesis — and the false dimension gate (the old dims-8/28 + nontriviality fields) is
+  removed. `albert_luders` = core axioms only.
+- **AUDIT FINDING it resolves (report §5.3).** The former marker asserted only block dim 8,
+  stabilizer dim 28, nonzero maps, then concluded injectivity — which those do NOT imply
+  (a nonzero linear map out of an arbitrary 28-dim space need not be injective; no
+  `𝔰𝔭𝔦𝔫(8)`, no triality). **The "unsatisfiable off the exceptional type" claim was FALSE
+  and is deleted everywhere.** The repair carries injectivity as an explicit cited field
+  (`block_injective`), scoped honestly rather than falsely derived.
+- **Statement (intended, faithful).** For `H₃(𝕆)` with `F₄ = Aut(H₃(𝕆))`, the pointwise
   stabilizer of the three diagonal primitive idempotents is `≅ Spin(8)`, realized as
   the triality triple `{(a₁,a₂,a₃) ∈ SO(8)³ : (a₁x)(a₂y) = a₃(xy)}`, whose three
   `SO(8)` factors act on the three octonionic Peirce lines `(V₁₂,V₁₃,V₂₃)` by the
@@ -175,8 +229,9 @@ context, not chain inputs: we start *from* a simple EJA of a fixed type.
   unitary orbits + phase quotient), but the connectivity *reasoning* is no longer taken
   on faith — only the one located geometric move is.
 - **`DiagonalHom` seam (Packet A) — three located disclosures (auditor-visible).**
-  `Coalescence.lean` + `DiagonalHom.lean` shipped green; the only new axiom is `A2`
-  (`lieHom_smooth`), and the coupling `ρ_{ij}(dχ r) = (r_i − r_j)·T_{ij}` is **proved**
+  `Coalescence.lean` + `DiagonalHom.lean` shipped green with **no custom axioms** (`A2`
+  `lieHom_smooth` is a proved `def`; continuity is the cited `dχAdd_cont` field), and the
+  coupling `ρ_{ij}(dχ r) = (r_i − r_j)·T_{ij}` is **proved**
   in `toStabilizerCoupling` via `hyperplane_factorization` (the seam to `Branches`
   holds). What is assumed vs. proved, plainly:
   - **`coalescence_diff`** (`ρ_{ij}(dχ r) = 0` on `{r_i = r_j}`) is carried as a
@@ -193,13 +248,34 @@ context, not chain inputs: we start *from* a simple EJA of a fixed type.
   - **`chi_extend`** (the `ℝⁿ` extension of the `Θ`-cocycle) is stated in the paper's
     **cancellation form** `χ̃(s − t) := Θ_s Θ_t⁻¹` (well-defined by cancellation +
     abelian image), matching `main.tex` `lem:homomorphism`, not a stronger reformulation.
-- **Master assembly (`master_theorem`) — three located notes (auditor-visible).**
-  `Master.lean` shipped green; `#print axioms master_theorem` = **A1 + A2 + A4 + core**
-  (A3 stays the proved theorem `real_character_unique`). Three entry-point facts a
-  reviewer should see stated plainly:
-  1. **Where A1 enters.** `vanImhoffRoelands` (A1) reaches `master_theorem` through the
-     **frame-fixing certificate** conjunct (`block_preserved` / `lem:frame-fix`), *not*
-     through the differential typewise kills. This is faithful to the paper — `prop:theta`
+- **The differential object is disconnected from `Θ` (report §5.5) — auditor-visible.**
+  Beyond `coalescence_diff`: `chi_extend` proves only one cross-product equality; it does
+  **not** construct the homomorphism `χ : ℝⁿ → Stab(F)°`, its continuity, its
+  differential, or the relation of that differential to `Θ`. `DiagonalHomSetup` supplies an
+  **arbitrary additive `dχAdd`** and the assumed `coalescence_diff`; nothing equates
+  `dχAdd` with a derivative of the proved comparison cocycle. `hyperplane_factorization`
+  genuinely factors an *assumed* differential shadow; it does not derive the shadow from
+  group-level coalescence. Honest statement: **`DiagonalHomSetup` begins after the paper's
+  analytic comparison-to-differential step; Lean checks only the downstream linear
+  algebra.** (Full connection = report R4, a major formalization repair, not yet done.)
+- **Complex globalization is disconnected from the produced coupling (report §5.6) —
+  auditor-visible.** In `master_chain`, clause 5a concerns the produced coupling
+  `Dc.toStabilizerCoupling`; clause 5b concerns a **separate** frame family `Scfam`. There
+  is **no premise identifying any `Scfam F` with `Dc.toStabilizerCoupling`** or showing the
+  family comes from one sequential product — logical adjacency in the conjunction is not an
+  anchor. The `Adapter` correctly extracts per-frame `t_F` and globalizes it, but over an
+  abstract family unrelated to the produced coupling. (Tying them = report R4.)
+- **Master assembly (`master_chain`) — three located notes (auditor-visible).**
+  `Master.lean` shipped green; after the A1→field repair, `#print axioms master_chain` =
+  **Lean core only** (A1 = `Θ_jordan` field; A4 = `IsAlbertModel.block_injective` field;
+  A3 = proved theorem `real_character_unique`; A2 = proved `def` `lieHom_smooth`). Zero
+  global custom axioms. Three entry-point
+  facts a reviewer should see stated plainly:
+  1. **Where the vIR (former A1) content enters.** The `Θ_jordan` field reaches
+     `master_chain` through the **frame-fixing certificate** conjunct (`block_preserved`
+     / `lem:frame-fix`), *not* through the differential typewise kills. As a field it is
+     invisible to `#print axioms`, so the audit must read the interface. Faithful to the
+     paper — `prop:theta`
      (which A1 licenses via `jordanAuto`) is what makes `Θ_a` a Jordan automorphism, and
      the frame-fixing / block-preservation certificate is where that automorphism property
      is consumed; the differential face (`StabilizerCoupling`) is licensed by it. The
@@ -285,10 +361,11 @@ Add each to `RadicalRelativity.lean` root imports as it lands (house pattern).
 - `blockDim : EJAType → ℕ` (=1,2,4,8 for ℝ/ℂ/ℍ/𝕆) with `@[simp]` evaluators;
   `blockDim_complex_unique_dial`.
 - `mulOp jordan x`, `OpCommute jordan x y` (= `[T_x,T_y]=0`), `OpCommute.symm`.
-- **`ComparisonSetup J`** (comparison-map face). Fields = the audit ledger of §2.
-  - Derived: `ComparisonSetup.jordanAuto` (`prop:theta`, via `vanImhoffRoelands`);
+- **`ComparisonSetup J`** (comparison-map face). Fields = the audit ledger of §2,
+  including the `Θ_jordan` field (former A1, cited vIR conclusion — no axiom).
+  - Derived: `ComparisonSetup.jordanAuto` (`prop:theta`) projects the `Θ_jordan` field;
     `ComparisonSetup.frame_fixed` (`lem:frame-fix`, first half).
-  - `axiom vanImhoffRoelands` (A1) lives here.
+  - **Zero custom axioms** in Interface.lean (the former `axiom vanImhoffRoelands` is gone).
 - **`StabilizerCoupling n Stab V`** (differential face). Fields `ρ, ρ_skew, dχ, T,
   coupling, rank_ge`. Single inner-product space `V` models every block `V_{ij}`
   (blocks are isomorphic as inner-product spaces; the `ρ_{ij}` differ — that is the
@@ -297,8 +374,9 @@ Add each to `RadicalRelativity.lean` root imports as it lands (house pattern).
     `r_i=r_j ⟹ ρ_{ij}(dχ r)=0`); `StabilizerCoupling.T_eq` (`T_{ij}=ρ_{ij}(dχ r)` when
     `r_i−r_j=1`); `StabilizerCoupling.faithful_kill` (`dχ=0 ⟹ T_{ij}=0` for `i≠j`).
 
-Axiom-closure verified: `jordanAuto` rests on `vanImhoffRoelands` (+ core);
-`frame_fixed`, `coalescence`, `T_eq`, `faithful_kill` rest on core axioms only.
+Axiom-closure verified: **all Interface results rest on core axioms only** —
+`jordanAuto` (now projecting the `Θ_jordan` field), `frame_fixed`, `coalescence`,
+`T_eq`, `faithful_kill`. Interface.lean declares no custom axioms.
 
 ---
 
@@ -318,8 +396,8 @@ Axiom-closure verified: `jordanAuto` rests on `vanImhoffRoelands` (+ core);
 - `block_preserved` (`lem:frame-fix`, second half): `Θ_{a(r)}` preserves each `V_{ij}`
   (Jordan-auto fixing all `p_i`). From `jordanAuto` + the Peirce eigenrelation.
 
-### DiagonalHom.lean  ← Interface, Coalescence — **SHIPPED ✅ (new axiom A2 `lieHom_smooth`)**
-- `axiom lieHom_smooth` (A2).
+### DiagonalHom.lean  ← Interface, Coalescence — **SHIPPED ✅ (A2 = proved `def` `lieHom_smooth`, no axiom; `DiagonalHomSetup.Stab` normed, `dχAdd_cont` continuity field)**
+- `lieHom_smooth` (A2): a proved `def` (`AddMonoidHom.toRealLinearMap`, continuous-additive ⟹ ℝ-linear); `#print axioms lieHom_smooth` = core only.
 - `chi_hom` (`lem:homomorphism`): `r ↦ Θ_{a(r)}` is a homomorphism on the orthant
   (from `Θ_cocycle`); `chi_extend` : the `χ̃(s−t)=Θ_sΘ_t⁻¹` extension to `(ℝⁿ,+)`
   (well-defined by cancellation + abelian image).
@@ -342,8 +420,8 @@ Axiom-closure verified: `jordanAuto` rests on `vanImhoffRoelands` (+ core);
   gives `a_{ii}=a_{jj}=0`, so `T_{ij}=0`. Concrete `Quaternion ℝ` (Mathlib
   `Mathlib.Algebra.Quaternion`); `Z(ℍ)∩Im ℍ = {0}` is a finite computation.
 
-### Branches/Albert.lean  ← Interface — **SHIPPED ✅ (new axiom A4 `yokota_spin8_triality_faithful`)**
-- `axiom yokota_spin8_triality_faithful` (A4) ⟹ `∀ i j, Injective (ρ_{ij})`.
+### Branches/Albert.lean  ← Interface — **SHIPPED ✅ (A4 = `IsAlbertModel.block_injective` field, no axiom)**
+- `IsAlbertModel.block_injective` field (A4, cited Yokota hypothesis) gives `∀ i j, Injective (ρ_{ij})`.
 - `thm:albert`: `dχ = 0` from the third-index coalescence (`n = 3`, coefficient of
   `r_k`, `k ∉ {i,j}`: `ρ_{ij}(η_k) = 0`, injective ⟹ `η_k = 0`), then
   `StabilizerCoupling.faithful_kill`. **Nearly done via the interface** — this is the
@@ -379,7 +457,7 @@ Axiom-closure verified: `jordanAuto` rests on `vanImhoffRoelands` (+ core);
   skeleton; (iii) frame-dependence / non-conjugacy (`τ` takes both `0` and `1`).
   Concrete `M₂(ℂ)` computation; corroborated by `verify_n2.py` V1–V10 (not a substitute).
 
-### Master.lean  ← all Branches, Globalization, RankTwo — **SHIPPED ✅ (`#print axioms master_theorem` = A1+A2+A4+core)**
+### Master.lean  ← all Branches, Globalization, RankTwo — **SHIPPED (skeleton counterpart `master_chain`; `#print axioms master_chain` = core only — zero custom axioms)**
 Plus the complex adapter **`Adapter.lean`** (← Globalization, Branches/Complex) — **SHIPPED ✅**: `perFrameTwist` (per-frame `t_F` from `complex_perFrame_rho`) + `complex_global_twist` (the complex-case entry point Master consumes; `overlap`/`connected` located).
 - Add an S2-continuity hypothesis/field; prove `prop:singular` (invertible ⟹ all
   effects by `a_ε=(1−ε)a+εe → a`).
@@ -404,14 +482,13 @@ Common preamble for every packet:
 > `RadicalRelativity.lean` root import list. Report the exact `lake` output tail, your
 > `#print axioms <capstone>`, and any statement you had to weaken.
 
-**Packet C — Branches/Albert. ✅ SHIPPED (green).**
-> Create `RadicalRelativity/MasterTheorem/Branches/Albert.lean`. Declare `axiom
-> yokota_spin8_triality_faithful` (PLAN A4) in the faithful form "each `ρ_{ij}` of a
-> `StabilizerCoupling` modelling `H₃(𝕆)` is injective." Prove `thm:albert`: from
-> injectivity + the third-index coalescence coefficient (`n=3`; use
-> `StabilizerCoupling.coalescence` and coefficient extraction on the standard basis of
-> `ℝ³`) conclude `dχ = 0`, then apply `StabilizerCoupling.faithful_kill` to get every
-> off-diagonal `T_{ij}=0`. Capstone: `albert_luders`.
+**Packet C — Branches/Albert. ✅ SHIPPED (green, core axioms only).**
+> Done (as repaired): A4 is the `IsAlbertModel.block_injective` **field** (not an axiom) —
+> `ρ_{ij}` injectivity as the cited Yokota hypothesis, with the false dimension gate
+> removed. `thm:albert`: from injectivity + the third-index coalescence coefficient
+> (`n=3`; `StabilizerCoupling.coalescence` + coefficient extraction on the `ℝ³` basis)
+> conclude `dχ = 0`, then `StabilizerCoupling.faithful_kill` gives every off-diagonal
+> `T_{ij}=0`. Capstone: `albert_luders` (core axioms only).
 
 **Packet B — Branches/Quaternionic. ✅ SHIPPED (green, core axioms only).**
 > Create `Branches/Quaternionic.lean`. Model `V := Quaternion ℝ`, `Stab := Fin n →
@@ -424,10 +501,10 @@ Common preamble for every packet:
 > to one `t_F` per frame; may reuse `TwistNormalForm` scalar shadow). Capstones
 > `real_luders`, `complex_perFrame_tF`.
 
-**Packet A — Coalescence + DiagonalHom (the producer lane). ✅ SHIPPED (green; only new axiom A2 `lieHom_smooth`; coupling PROVED via `hyperplane_factorization`).**
+**Packet A — Coalescence + DiagonalHom (the producer lane). ✅ SHIPPED (green; A2 `lieHom_smooth` = proved `def`, no axiom; coupling PROVED via `hyperplane_factorization`).**
 > Create `Coalescence.lean` then `DiagonalHom.lean` (PLAN §5). Coalescence proves
 > `lem:coalescence` from `Θ_fix` + an FK simultaneous-diagonalization fact (ledger it as
-> `simDiag_opCommute`). DiagonalHom declares `axiom lieHom_smooth` (A2), proves
+> `simDiag_opCommute`). DiagonalHom proves `lieHom_smooth` (A2) as a `def`, and proves
 > `chi_extend`, `dChi_linear`, the **`hyperplane_factorization`** linear-algebra anchor,
 > and `toStabilizerCoupling`. Capstone: `toStabilizerCoupling`.
 
@@ -443,11 +520,13 @@ Common preamble for every packet:
 > Prove `prop:n2-necessity` and `thm:qubit-boundary` (i)–(iii) on concrete `M₂(ℂ)`.
 > Capstone: `qubit_boundary`.
 
-**Packet M — Master. ✅ SHIPPED (green; `#print axioms master_theorem` = A1+A2+A4+core).**
+**Packet M — Master. ✅ SHIPPED (green; capstone `master_chain` = skeleton counterpart of `mthm:master`, NOT the paper theorem — §1/§2). `#print axioms master_chain` = **core only** (`propext`, `Classical.choice`, `Quot.sound`); zero custom axioms.**
 > Create `Master.lean` (needs all branches + Globalization + RankTwo). Add the S2
 > field/hypothesis, prove `prop:singular`, assemble `mthm:master` by `EJAType` case.
-> Capstone: `master_theorem`. `#print axioms master_theorem` must equal the **three**
-> ledger axioms A1/A2/A4 (+ core; A3 is a proved theorem) — this is the whole-chain audit.
+> Capstone: `master_chain` (the **skeleton counterpart**, not the paper theorem).
+> `#print axioms master_chain` = **core only** (`propext`, `Classical.choice`,
+> `Quot.sound`) — zero custom axioms. Note: `#print axioms` omits every structure field,
+> so it is a syntactic-closure figure, not a faithfulness certificate.
 
 ---
 
@@ -462,20 +541,27 @@ Common preamble for every packet:
    representations `ρ_{ij}` differ. Faithful (blocks are isomorphic as inner-product
    spaces) and removes a `Type`-family instance-plumbing headache. Per-type lanes
    specialize `V := ℝ / ℂ / ℍ / ℝ⁸`.
-3. **vdW props are structure fields, not axioms.** They are cited (van de Wetering's,
-   not proved in this paper), so importing them as hypotheses of `ComparisonSetup` is
-   correct and keeps `#print axioms` limited to the (now **three**) genuinely-universal
-   classical theorems A1/A2/A4. The reviewer audits the field list.
-4. **`vanImhoffRoelands` is load-bearing.** Confirmed: `jordanAuto` consumes it with the
-   `Θ_unital`/`Θ_orderIso` antecedents — not a vacuous `True` placeholder (contrast the
-   `AUDIT.md` C1/C2 findings on the old Paper-7 formalization).
+3. **vdW props (and now the vIR conclusion) are structure fields, not axioms.** They are
+   cited (van de Wetering's / van Imhoff–Roelands', not proved in this paper), so carrying
+   them as `ComparisonSetup` hypotheses is correct AND avoids the false-global-axiom trap
+   the audit found. **Caveat the reviewer must hear:** `#print axioms` OMITS every
+   structure field, so a short axiom list is *not* a faithfulness certificate — the real
+   assumption ledger is the field list (§2), which must be read directly.
+4. **A1 (`vanImhoffRoelands`) is now the `Θ_jordan` field, not an axiom.** As a global
+   axiom over the weak `ComparisonSetup` it was FALSE (asserted the source theorem for
+   non-JB structures); scoping it to a per-instance field is the repair. A4 had the same
+   disease and is likewise fixed (`IsAlbertModel.block_injective` field). **A2** was the
+   last one — now a **proved `def`** (`lieHom_smooth` via `AddMonoidHom.toRealLinearMap`,
+   continuity carried as the `dχAdd_cont` field). **All three former axioms are gone; the
+   tree has zero global custom axioms.**
 5. **`Θ_cocycle` carries the `r ≤ 0` orthant riders** (Prop 5.7 is about effects); the
    `ℝⁿ` extension is DiagonalHom's proved step. Not stronger than the source.
 6. **Never axiomatize paper-proved facts** — in particular `lem:frame-connectivity`
    (`Globalization` machine-checks the induction skeleton `connected_of_reducing` and
    carries the residual geometric 2-plane-rotation move as an explicit hypothesis; see
-   §2 deferred notes) and every chain lemma. The only `axiom`s are **A1, A2, A4** —
-   A3 was reduced to the proved theorem `real_character_unique`.
+   §2 deferred notes) and every chain lemma. **Residual `axiom`s: NONE** — A1 → `Θ_jordan`
+   field, A2 → proved `def` `lieHom_smooth`, A3 → proved theorem `real_character_unique`,
+   A4 → `IsAlbertModel.block_injective` field. **ZERO global custom axioms tree-wide.**
 7. **Honest scope.** `mthm:master` is rank `≥ 3`; the rank-two boundary is a separate
    necessity-only statement. Simplicity/formal-reality/Jordan-identity are EJA data the
    chain does not consume; ledger frame conjugacy (FK IV.2.5) where the uniform-frame

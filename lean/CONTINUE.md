@@ -9,48 +9,55 @@ cd ~/repos/research/lean && nice -n 15 lake build
 
 Lean 4 v4.28.0, Mathlib v4.28.0. 2861 jobs, builds clean.
 
-## MasterTheorem tree (twist paper "Sequential-Product Moduli on Simple EJAs", 2026-07-14): 0 sorry, 3 axioms (all cited classical theorems)
+## MasterTheorem tree (twist paper "Sequential-Product Moduli on Simple EJAs", 2026-07-14): 0 sorry, 0 custom axioms — conditional dependency skeleton
 
-`RadicalRelativity/MasterTheorem/` — machine-checked chain for `mthm:master`
-(paper: `blog/landing/papers/twist-normal-form/main.tex`). Ledger + honesty
-notes: `MasterTheorem/PLAN.md` §2 (the auditor reads that first).
+`RadicalRelativity/MasterTheorem/` — the dependency-skeleton counterpart of
+the paper's `mthm:master` (paper:
+`blog/landing/papers/twist-normal-form/main.tex`). It is NOT a formalization
+of the paper theorem (no effects, no S1-S7, no product equalities); it
+machine-checks the downstream algebraic chain from auditable interface
+fields. Ledger + honesty notes: `MasterTheorem/PLAN.md` §2 (read first);
+audit history incl. the adversarial round: `AUDIT.md` top section.
 
-### Axioms (3, each declared in its consuming module)
+### Classical imports (ZERO axiom declarations tree-wide)
 
-| Axiom | File | Source |
-|-------|------|--------|
-| `vanImhoffRoelands` | MasterTheorem/Interface | van Imhoff-Roelands arXiv:1904.09278 Cor 2.5/Prop 2.6 |
-| `lieHom_smooth` | MasterTheorem/DiagonalHom | Cartan/one-parameter-subgroup theorem |
-| `yokota_spin8_triality_faithful` | MasterTheorem/Branches/Albert | Yokota arXiv:0902.0431 Thm 2.7.1 + 1.16.2 |
+| Former plan-ledger item | End state |
+|---|---|
+| vIR order-iso ⟹ Jordan-iso | `ComparisonSetup.Θ_jordan` FIELD (cited hypothesis, arXiv:1904.09278 Cor 2.5/Prop 2.6) |
+| Continuous-additive ⟹ ℝ-linear | PROVED `def lieHom_smooth` (Mathlib `AddMonoidHom.toRealLinearMap`); continuity = cited field `dχAdd_cont` |
+| Characters of ℝ | PROVED `real_character_unique` |
+| Yokota Spin(8) triality faithfulness | `IsAlbertModel.block_injective` FIELD (cited hypothesis, arXiv:0902.0431 Thm 2.7.1+1.16.2) |
 
-`#print axioms MasterTheorem.master_theorem` = exactly these 3 + core
-(propext, Classical.choice, Quot.sound). A3 (characters of ℝ) was PROVED
-(`real_character_unique`), not axiomatized. vdW Props 4.20/5.2/5.3/5.5/5.7 +
-the EJA compatibility bridge are `ComparisonSetup` FIELDS (auditable imports,
-not free axioms).
+`#print axioms MasterTheorem.master_chain` = [propext, Classical.choice,
+Quot.sound] — Lean core only. Caveat: that is syntactic closure, not a
+faithfulness certificate; the import surface is the interface field lists.
+vdW Props 4.20/5.2/5.3/5.5/5.7 + the EJA compatibility bridge are
+`ComparisonSetup` fields (Θ_fix carried in span-extended form, disclosed).
 
 ### Chain
 
 ```
-ComparisonSetup (vdW comparison-map face, 17 fields)
-  → jordanAuto (PROVED via A1) → frame_fixed/block_preserved (PROVED)
+ComparisonSetup (vdW comparison-map face; Θ_jordan field)
+  → jordanAuto (field projection) → frame_fixed/block_preserved (PROVED)
   → Coalescence (D3, PROVED from Θ_fix + FK fields)
-  → DiagonalHom (χ extension + hyperplane factorization PROVED;
-      toStabilizerCoupling PRODUCES the coupling — A2 consumed here)
+  → DiagonalHom (hyperplane factorization PROVED; toStabilizerCoupling
+      PROVES the coupling; differential face = interface data starting
+      AFTER the paper's analytic step — disclosed)
   → Branches: Real (rank-free), Quaternionic (two-slot, pure proof),
-      Albert (A4), Complex per-frame (pure proof)
-  → Globalization (open-interval character uniqueness PROVED;
-      connectivity induction PROVED, geometric move = `hmove` hypothesis)
-  → Adapter → Master: master_theorem (6-conjunct assembly over PRODUCED couplings)
-RankTwo (separate, concrete M₂(ℂ)): 15 results, core axioms only,
+      Albert (block_injective field), Complex per-frame (pure proof)
+  → Globalization (character uniqueness PROVED; connectivity induction
+      PROVED, geometric move = `hmove` hypothesis)
+  → Adapter → Master: master_chain (skeleton conjunction over PRODUCED
+      couplings; 5b anchored to 5a via Scfam F₀ = Dc.toStabilizerCoupling)
+RankTwo (separate, concrete M₂(ℂ)): 15 results, core only,
   incl. n2_exchange_selects_luders (paper Remark 6.2, Paper-B-facing).
 ```
 
-### Disclosed located hypotheses (NOT axioms; PLAN §2 has the full list)
+### Disclosed located hypotheses (PLAN §2 has the authoritative list)
 
-`coalescence_diff` (DiagonalHomSetup field; group-level version proved),
-`hmove` (frame-connectivity geometric move), `overlap` (cross-coherence
-character equality), S2-continuity + invertible-density (prop_singular),
+`Θ_jordan`, `block_injective`, `dχAdd_cont`, Θ_fix span-extension,
+`coalescence_diff` (group-level version proved), `hmove`, `overlap`,
+S2-continuity + invertible-density (prop_singular, standalone lemma),
 RankTwo scoping (V5b/d + full S1-S7 bundling not formalized).
 
 ## Paper 5: 0 sorry, 3 axioms (all external). LOCKED FOR JOURNAL.

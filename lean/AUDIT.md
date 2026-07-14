@@ -1,21 +1,46 @@
-# MasterTheorem Tree Self-Audit (2026-07-14)
+# MasterTheorem Tree Audit (2026-07-14, two rounds)
 
-New tree `RadicalRelativity/MasterTheorem/` (twist paper). Verified by the
-orchestrator, not just lane reports: full `lake build` green (2861 jobs);
-`#print axioms MasterTheorem.master_theorem` = [propext, Classical.choice,
-Quot.sound, lieHom_smooth, yokota_spin8_triality_faithful,
-ComparisonSetup.vanImhoffRoelands] — exactly the 3-item cited ledger + core;
-no sorry in the tree. Anti-vacuity spot checks: `vanImhoffRoelands` is
-antecedent-gated (consumes Θ_unital/Θ_orderIso — not `∃ G, True`-style);
-`yokota_spin8_triality_faithful` is gated on `IsAlbertModel` (dims 8/28 +
-nontrivial blocks, unsatisfiable off H₃(𝕆)); the `coupling` field of the
-branch-facing `StabilizerCoupling` is PROVED in
-`DiagonalHomSetup.toStabilizerCoupling`, not assumed. Located non-axiom
-hypotheses are enumerated in `MasterTheorem/PLAN.md` §2 (coalescence_diff,
-hmove, overlap, S2-continuity/density, A1-entry-via-certificate, 5b abstract
-family, RankTwo scoping). External adversarial audit (Sol) runs 2026-07-14
-against paper + ledger; report banked in
-`blog/research/qm-genericity-review/`.
+New tree `RadicalRelativity/MasterTheorem/` (twist paper).
+
+## Round 1 (self-audit) — and what it MISSED
+
+Initial state: 3 global axioms (vanImhoffRoelands, lieHom_smooth,
+yokota_spin8_triality_faithful); `#print axioms master_theorem` = those 3 +
+core; zero sorry; full build green (2861 jobs) — all orchestrator-verified.
+Anti-vacuity spot checks passed (antecedent-gated axioms, coupling PROVED in
+the constructor). **The self-audit missed the deeper failure**: all three
+axioms were quantified over interfaces too weak for their sources, making
+them FALSE as global statements (instantiable counterexamples ⟹ potential
+inconsistency) — the classic axiom-scope trap, one level below the vacuity
+trap this file's 2026-03-29 audit documents.
+
+## Round 2 (external adversarial audit, Sol) — findings + repairs
+
+Report: `blog/research/qm-genericity-review/TWIST-NORMAL-FORM-MAXIMAL-ADVERSARIAL-2026-07-14.md`.
+Findings (all orchestrator-re-verified against the code): A2 as typed asserted
+every additive map ℝⁿ→Stab is ℝ-linear (false, no topology); A1 quantified
+over `ComparisonSetup`, which encodes no Jordan identity/formal
+reality/cone; A4's dims-8/28+nonzero gate does not imply injectivity; the
+capstone was an abstract-coupling conjunction, not the paper theorem; the
+differential face was disconnected from Θ; the appendix oversold all of it.
+
+Repairs (loop 1, same day): **every custom axiom ELIMINATED** —
+A1 → `ComparisonSetup.Θ_jordan` field (cited vIR hypothesis);
+A2 → proved `def` via Mathlib `AddMonoidHom.toRealLinearMap` (continuity =
+cited field `dχAdd_cont`); A3 was already the proved
+`real_character_unique`; A4 → `IsAlbertModel.block_injective` field (cited
+Yokota hypothesis). Capstone renamed `master_chain`, docstringed as the
+dependency-SKELETON counterpart of `mthm:master` (NOT the paper theorem),
+with the 5b globalization anchored to the produced coupling by a
+deletion-verified hypothesis `Scfam F₀ = Dc.toStabilizerCoupling`.
+
+End state (orchestrator-verified): zero `axiom` declarations tree-wide;
+`#print axioms MasterTheorem.master_chain` = [propext, Classical.choice,
+Quot.sound]; full build green (2861 jobs); zero sorry. NOTE: core-only
+closure is a syntactic figure, not a faithfulness certificate — the
+classical-import surface is the interface FIELD lists (Θ_jordan,
+block_injective, dχAdd_cont, Θ_fix span-extension, coalescence_diff, hmove,
+overlap, S2-continuity/density), all catalogued in `MasterTheorem/PLAN.md` §2.
 
 # Adversarial Audit (2026-03-29)
 

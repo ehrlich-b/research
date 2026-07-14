@@ -24,27 +24,29 @@ Lüders product on the real, quaternionic, and exceptional types, and equals
 `a^{1/2+it} b a^{1/2-it}` for one global real `t` on the complex type `Hₙ(ℂ)`.
 
 The author's mandate: *Lean is to make sure everything passes machine analysis, not
-just LLM non-deterministic checking* — so the machine must certify the **logical
-chain** from an honest axiom ledger (cited classical theorems) to `mthm:master`.
-Chain-completeness beats per-lemma depth: this file carries an abstract interface,
-faithful to the paper's proved-vs-imported split, that lets the whole chain assemble
-`sorry`-free. The deep classical inputs are `axiom`s (so `#print axioms` enumerates
-them); everything the paper *proves* is a Lean theorem downstream.
+just LLM non-deterministic checking*. What this tree delivers is the **conditional
+dependency skeleton** of the paper's proof: an abstract interface whose fields carry
+the cited imports, with everything downstream machine-checked `sorry`-free and with
+**zero custom axiom declarations** (the capstone `master_chain` closes over Lean core
+only). It is NOT a formalization of the paper theorem itself — see the scope-honesty
+notes below and `PLAN.md` §1–§2.
 
 ## The two faces of the interface
 
 The proof has two seams, and this module supplies the object each downstream lane
 consumes:
 
-1. **`ComparisonSetup`** — the *comparison-map face*. An abstract simple EJA with its
-   Jordan product, Jordan frame, cone/order, the S1–S7 sequential product's diagonal
-   effect family `a(r)`, and van de Wetering's comparison map `Θ_a` carrying its cited
-   properties (`vdW` Prop 5.3 unital linear order iso; Prop 5.5 fixing of the
-   operator-commutant; Prop 5.7 cocycle). Consumed by `Coalescence`, `DiagonalHom`.
-   The van Imhoff–Roelands upgrade `order-iso ⟹ Jordan-auto` is the axiom
-   `vanImhoffRoelands`; `ComparisonSetup.jordanAuto` *derives* that the paper's
-   `prop:theta` conclusion (`Θ_a ∈ Aut(J)`) holds, matching the paper, which proves
-   the assembly rather than assuming it.
+1. **`ComparisonSetup`** — the *comparison-map face*. An abstract carrier `J` with a
+   commutative unital Jordan product, a frame, a `nonneg` predicate, and van de
+   Wetering's comparison map `Θ_a` together with its cited properties carried as
+   **structure fields** (`vdW` Prop 5.3 unital linear order iso; the van Imhoff–Roelands
+   Jordan-automorphism conclusion `Θ_jordan`; Prop 5.5 fixing `Θ_fix`; Prop 5.7 cocycle).
+   Consumed by `Coalescence`, `DiagonalHom`. **Scope honesty:** this interface does NOT
+   encode S1–S7, the Jordan identity, formal reality, or that `nonneg` is the cone of
+   squares — it begins *downstream* of the paper's order-unit-space axioms, at the
+   comparison map. So its fields are *cited imported hypotheses*, audited by reading the
+   structure; `ComparisonSetup.jordanAuto` simply projects `Θ_jordan` (the paper's
+   `prop:theta` conclusion). See `PLAN.md` §2 for the located-hypothesis ledger.
 
 2. **`StabilizerCoupling`** — the *differential face*. The output of the Lie
    differential reduction (`lem:homomorphism`): the frame-stabilizer Lie algebra
@@ -53,41 +55,39 @@ consumes:
    (`lem:homomorphism`). Consumed by the four typewise `Branches` lanes.
 
 `DiagonalHom` is the bridge: it produces a `StabilizerCoupling` from a
-`ComparisonSetup` using the smoothness axiom (`lieHom_smooth`).
+`ComparisonSetup`. Its differential `dχ` comes from `lieHom_smooth`, a **proved `def`**
+(continuous-additive ⟹ ℝ-linear, `AddMonoidHom.toRealLinearMap`; continuity carried as
+the cited `DiagonalHomSetup.dχAdd_cont` field) — not an axiom.
 
 ## The axiom ledger (full statement/citation table in `PLAN.md`)
 
-Each classical axiom is declared in the module that first consumes it, so
-`#print axioms` on any theorem enumerates exactly the classical inputs it rests on.
-This foundation module declares the one axiom it consumes directly:
+**This foundation module declares ZERO custom axioms.** The van Imhoff–Roelands
+content that was formerly the global `axiom vanImhoffRoelands` is now the
+`ComparisonSetup.Θ_jordan` **field** (a cited hypothesis scoped to the instances a
+caller builds), because as a global axiom over the weak `ComparisonSetup` interface it
+was *false* — it asserted the source theorem for structures encoding no JB-algebra. So
+`#print axioms` on this module's results shows only Lean core axioms — as it does on
+every result in the tree: **no module of `MasterTheorem/` declares any custom axiom.**
+The remaining genuinely-classical inputs live where a reviewer can enumerate them
+(full ledger in `PLAN.md` §2):
 
-* `vanImhoffRoelands`  — van Imhoff–Roelands, *Order isomorphisms between cones of
-  JB-algebras*, arXiv:1904.09278, **Cor. 2.5 / Prop. 2.6**: a unital linear order
-  isomorphism of a JB-algebra is a Jordan isomorphism. (Classical corroboration:
-  Alfsen–Shultz, *Geometry of State Spaces*, Thm 2.80.) Used to upgrade `Θ_a`
-  (`vdW` Prop 5.3) to a Jordan automorphism in `ComparisonSetup.jordanAuto`.
+* the continuous-additive-to-linear upgrade (`DiagonalHom.lieHom_smooth`) is a
+  **proved** `def` via Mathlib's `AddMonoidHom.toRealLinearMap`; the Cartan-smoothness
+  content survives only as the cited continuity field `DiagonalHomSetup.dχAdd_cont`;
+* uniqueness of continuous characters of `ℝ` is **proved**
+  (`Globalization.real_character_unique`);
+* the Yokota `Spin(8)`-triality faithfulness (Thm 2.7.1 + 1.16.2) enters as the cited
+  hypothesis field `IsAlbertModel.block_injective` in `Branches/Albert`.
 
-Declared downstream (ledgered in `PLAN.md`, consumed as noted):
-
-* `lieHom_smooth` (`DiagonalHom`) — classical Lie theory: a continuous homomorphism
-  between finite-dimensional Lie groups is smooth (one-parameter-subgroup / Cartan).
-  Produces the real-linear differential `dχ` from the `Θ`-cocycle.
-* `character_of_Rn` (`Globalization`) — classical: every continuous character
-  `ℝⁿ → U(1)` is `r ↦ e^{i c·r}`. Used in the complex globalization.
-* `yokota_spin8_triality_faithful` (`Branches`) — Yokota, *Exceptional Lie Groups*,
-  Thm 2.7.1 + 1.16.2: the `H₃(𝕆)` frame stabilizer is `Spin(8)` acting by the three
-  faithful triality representations. Feeds `StabilizerCoupling.faithful_kill`.
-
-Two further cited inputs are ledgered where they are consumed (not in this file):
-the **Yokota** `Spin(8)`-triality faithfulness (Yokota, *Exceptional Lie Groups*,
-Thm 2.7.1 + 1.16.2) in the exceptional branch, and the **Faraut–Korányi** Peirce /
-frame-conjugacy facts, several of which enter as `ComparisonSetup` fields
-(`frame_opCommute`, `simDiag_opCommute`) documented with their FK citation.
+The **Faraut–Korányi** Peirce / frame-conjugacy facts likewise enter as interface
+fields (`ComparisonSetup.frame_opCommute`, `CoalescenceSetup.simDiag_opCommute`),
+documented with their FK citation — never as free-standing axioms.
 
 The vdW comparison propositions (5.2/5.3/5.5/5.7, Prop 4.20, EJA-appendix
 compatibility bridge) are **not** free-standing axioms: they are `ComparisonSetup`
-fields, so a reviewer enumerates them by reading the structure, and `#print axioms`
-on any downstream theorem records the genuinely-universal classical axioms above.
+fields, so a reviewer enumerates them by reading the structure. `#print axioms` on
+any downstream theorem shows Lean core only — a syntactic-closure figure, not a
+faithfulness certificate; the field lists are the real import ledger.
 
 ## References
 
@@ -109,8 +109,8 @@ namespace MasterTheorem
 
 The off-diagonal Peirce multiplicity `d = dim V_{ij}` classifies the branch:
 `1, 2, 4, 8` for `Hₙ(ℝ), Hₙ(ℂ), Hₙ(ℍ), H₃(𝕆)` (Faraut–Korányi). Redefined locally
-(rather than imported from `TwistNormalForm`) to keep this module's axiom closure
-limited to the ledger above. -/
+(rather than imported from `TwistNormalForm`) to keep this module axiom-free — avoiding
+`TwistNormalForm`'s `bgw_canonical_composite` axiom in the closure. -/
 
 /-- Off-diagonal Peirce multiplicity `d = dim V_{ij}` of a simple EJA type
     (Faraut–Korányi). -/
@@ -158,8 +158,8 @@ theorem OpCommute.symm {jordan : J →ₗ[ℝ] J →ₗ[ℝ] J} {x y : J}
 
 `ComparisonSetup J` bundles the paper's hypotheses on `J` together with the outputs
 of the cited comparison machinery. Its **fields are the audit ledger** for the
-imported vdW/FK facts; the van Imhoff–Roelands upgrade is applied through the
-`vanImhoffRoelands` axiom in `jordanAuto` below. -/
+imported vdW/FK facts; the van Imhoff–Roelands Jordan-automorphism conclusion is the
+`Θ_jordan` field (a cited hypothesis, no global axiom), projected by `jordanAuto`. -/
 
 /-- **The comparison-map interface** (`sec:machinery`). An abstract simple Euclidean
 Jordan algebra `J` of rank `n ≥ 3` carrying a norm-continuous S1–S7 sequential
@@ -204,9 +204,14 @@ structure ComparisonSetup (J : Type*) [NormedAddCommGroup J] [InnerProductSpace 
   nonneg : J → Prop
   /-- The invertible-effect predicate. -/
   Inv : J → Prop
-  /-- The diagonal effect family `a(r) = Σ_i e^{r_i} p_i`, `r ∈ ℝⁿ`. -/
+  /-- The **invertible diagonal family** `a(r) = Σ_i e^{r_i} p_i`, `r ∈ ℝⁿ`. NOT a family
+      of effects in general: for a coordinate `r_i > 0`, `e^{r_i} > 1`, so `a(r)` exceeds
+      the unit; `a(r)` is an effect *exactly* on the negative orthant `r ≤ 0`. The
+      comparison-map fields apply to it as an *invertible element* (`Inv`) — the scope the
+      cited vdW propositions need — not as an effect. -/
   aOf : (Fin n → ℝ) → J
-  /-- Every diagonal effect is invertible (`vdW` Prop 4.20 / spectral). -/
+  /-- Each `a(r)` is invertible (`vdW` Prop 4.20 / spectral): carried as the imported
+      hypothesis `Inv (aOf r)`, *not* the (false) claim that every `a(r)` is an effect. -/
   aOf_inv : ∀ r, Inv (aOf r)
   /-- van de Wetering's comparison map `Θ_a` (defined on invertible effects). -/
   Θ : J → (J ≃ₗ[ℝ] J)
@@ -214,8 +219,23 @@ structure ComparisonSetup (J : Type*) [NormedAddCommGroup J] [InnerProductSpace 
   Θ_unital : ∀ a, Inv a → Θ a e = e
   /-- `vdW` Prop 5.3: `Θ_a` is an order isomorphism of the cone. -/
   Θ_orderIso : ∀ a, Inv a → ∀ x, nonneg x ↔ nonneg (Θ a x)
-  /-- `vdW` Prop 5.5 + compatibility bridge: `Θ_a` fixes every `b` operator-commuting
-      with `a`. -/
+  /-- **van Imhoff–Roelands, Cor. 2.5 / Prop. 2.6** (arXiv:1904.09278), carried as a
+      cited **hypothesis**: on the intended Euclidean/JB-algebra instance, applying vIR
+      to the unital linear order isomorphism `Θ_a` (`Θ_unital` + `Θ_orderIso`, `vdW`
+      Prop 5.3) yields that `Θ_a` preserves the Jordan product. **This interface does not
+      encode the JB-algebra premises** (the Jordan identity, formal reality, the
+      cone-of-squares reading of `nonneg`), so this field is the *imported conclusion* of
+      vIR on the intended EJA instances — NOT a Lean transcription of vIR that would hold
+      for an arbitrary `ComparisonSetup`. It replaces the former global `vanImhoffRoelands`
+      axiom (which was false off genuine JB-algebras). Classical corroboration:
+      Alfsen–Shultz, *Geometry of State Spaces*, Thm 2.80. -/
+  Θ_jordan : ∀ a, Inv a → ∀ x y, Θ a (jordan x y) = jordan (Θ a x) (Θ a y)
+  /-- `vdW` **Prop 5.5** + EJA-appendix compatibility bridge, in **span-extended** form:
+      `Θ_a` fixes every `b ∈ J` (all of `J`, not only effects) operator-commuting with
+      `a`. Prop 5.5 is stated at the effect level; the paper extends it to all of `J` by
+      linearity (effects span `J`). Lean does not reprove that extension here, so this
+      field carries the **span-extended strength as an imported hypothesis**, not the
+      bare effect-level Prop 5.5. -/
   Θ_fix : ∀ a, Inv a → ∀ b, OpCommute jordan a b → Θ a b = b
   /-- FK: each frame idempotent operator-commutes with every diagonal effect. -/
   frame_opCommute : ∀ (r : Fin n → ℝ) (i : Fin n), OpCommute jordan (aOf r) (p i)
@@ -232,26 +252,19 @@ namespace ComparisonSetup
 
 variable {J : Type*} [NormedAddCommGroup J] [InnerProductSpace ℝ J]
 
-/-- **van Imhoff–Roelands, Cor. 2.5 / Prop. 2.6** (arXiv:1904.09278) — *ledger axiom*.
-On the Euclidean Jordan algebra encoded by a `ComparisonSetup`, a unital linear order
-isomorphism `Θ_a` is a Jordan isomorphism: it preserves the Jordan product. The two
-antecedents (`Θ_a(e)=e`, order isomorphism) are supplied from `Θ_unital`/`Θ_orderIso`
-in `jordanAuto`, so this axiom is load-bearing, not vacuous. Classical corroboration:
-Alfsen–Shultz, *Geometry of State Spaces*, Thm 2.80. -/
-axiom vanImhoffRoelands (C : ComparisonSetup J) (a : J) :
-    C.Θ a C.e = C.e →
-    (∀ x, C.nonneg x ↔ C.nonneg (C.Θ a x)) →
-    ∀ x y, C.Θ a (C.jordan x y) = C.jordan (C.Θ a x) (C.Θ a y)
-
-/-- **`prop:theta` (assembly, PROVED).** For invertible `a`, the comparison map `Θ_a`
-is a Jordan automorphism of `J`. This is the paper's assembly step: `vdW` Prop 5.3
-gives a unital linear order isomorphism (`Θ_unital`, `Θ_orderIso`) and the van
-Imhoff–Roelands theorem upgrades it to a Jordan isomorphism — bypassing the
-Hilbert-space bicommutant step (`vdW` Lemma 5.8), which has no octonionic analogue.
-The paper *derives* this; Lean derives it too, so it is a theorem, not an axiom. -/
+/-- **`prop:theta` (assembly).** For invertible `a`, the comparison map `Θ_a` is a
+Jordan automorphism of `J` — it preserves the Jordan product. This **projects the
+`Θ_jordan` field**, which carries (as a cited hypothesis, *not* a global axiom) the
+conclusion of applying van Imhoff–Roelands Cor. 2.5 / Prop. 2.6 to `Θ_a` on the intended
+EJA instance — the paper's assembly step (`vdW` Prop 5.3 unital linear order iso,
+upgraded by vIR, bypassing the Hilbert-space bicommutant step `vdW` Lemma 5.8). **No
+custom axiom is used:** the vIR content is an interface field, so it is scoped to the
+instances a caller actually builds, rather than a global `axiom` that would (falsely)
+assert the source theorem for every `ComparisonSetup`, including ones encoding no
+JB-algebra structure. -/
 theorem jordanAuto (C : ComparisonSetup J) {a : J} (ha : C.Inv a) :
     ∀ x y, C.Θ a (C.jordan x y) = C.jordan (C.Θ a x) (C.Θ a y) :=
-  vanImhoffRoelands C a (C.Θ_unital a ha) (C.Θ_orderIso a ha)
+  C.Θ_jordan a ha
 
 /-- **`lem:frame-fix` (first half, PROVED).** The comparison map of a diagonal effect
 fixes each frame idempotent: `Θ_{a(r)}(p_i) = p_i`. Immediate from `Θ_fix` (`vdW`

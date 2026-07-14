@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.MasterTheorem.Coalescence
+import Mathlib.Topology.Instances.RealVectorSpace
 
 set_option linter.style.longLine false
 set_option linter.unusedSectionVars false
@@ -27,32 +28,32 @@ formalization: the `coupling` field of the produced `StabilizerCoupling`
   (`Θ_{r+r'} = Θ_r ∘ Θ_{r'}`); this is `Θ_cocycle` (`vdW` Prop 5.7), restated.
 * `chi_comm` — the diagonal comparison maps commute pairwise (abelian image), from the
   cocycle; this is the `well-defined by … abelian image` content of the `χ̃` extension.
+* `lieHom_smooth` (**PROVED theorem, no axiom**) — a *continuous* additive map is
+  ℝ-linear (`AddMonoidHom.toRealLinearMap`); this replaces the earlier unsound axiom.
 * `DiagonalHomSetup.dChiLinear` (`dChi_linear`) — the real-linear differential `dχ`,
-  obtained from the additive differential of `χ̃` via the smoothness axiom `lieHom_smooth`.
+  obtained from the additive differential of `χ̃` and its continuity via `lieHom_smooth`.
 * `DiagonalHomSetup.toStabilizerCoupling` (**capstone**) — bridges the comparison-map face
   to the differential face, proving `coupling`.
 
-## The axiom this module declares (PLAN ledger A2)
+## No global axioms in this module
 
-* `lieHom_smooth` — Cartan / the one-parameter-subgroup theorem: a continuous homomorphism
-  between finite-dimensional real Lie groups is smooth, so the differential of the smooth
-  comparison character `χ̃ : (ℝⁿ,+) → Stab(F)°` is **real-linear**. Consumed form: the
-  additive differential `f` of `χ̃` upgrades to a `(ℝⁿ) →ₗ[ℝ] Stab`. Faithful: asserted
-  about the differential of the specific smooth `χ̃` (whose smoothness licenses the
-  ℝ-scaling), not about arbitrary additive maps.
+This module declares **no `axiom`s** (the former A2 `lieHom_smooth` is now a proved
+theorem). Cartan's smoothness of the character `χ̃` enters only as the *continuity* of the
+differential, carried as the cited `DiagonalHomSetup.dχAdd_cont` **field** — a hypothesis a
+reviewer reads off the structure, not a global axiom.
 
-## Honesty note on the differential face (read with `PLAN.md` §7)
+## Honesty note on the differential face (adversarial review §5.5)
 
-`DiagonalHomSetup` carries the differential-face data produced by the frame-stabilizer Lie
-reduction — the block reps `ρ_{ij}` (with orthogonality `ρ_skew`, `prop:isotropy`), the
-additive differential `dχAdd` of `χ̃`, and `coalescence_diff` (the vanishing of
-`ρ_{ij} ∘ dχ` on the hyperplane `{r_i = r_j}`, i.e. the A2-differentiated form of the
-group-level `coalescence_block` proved in `Coalescence.lean`) — as **fields**, exactly as
-the interface already carries `StabilizerCoupling`'s `ρ`/`dχ` as fields. What is *proved*
-here and never assumed is the **coupling** itself: that `ρ_{ij}(dχ(r))` is a single
-generator scaled by the exact linear form `(r_i − r_j)`. That factorization
-(`hyperplane_factorization`) is strictly stronger than `coalescence_diff`, so `coupling`
-is a genuine conclusion — the `toStabilizerCoupling` constructor does not smuggle it in.
+`DiagonalHomSetup` is **interface data that begins after the paper's analytic
+comparison-to-differential step.** It carries the differential-face objects — the block
+reps `ρ_{ij}` (orthogonality `ρ_skew`, `prop:isotropy`), the additive differential `dχAdd`
+with its continuity `dχAdd_cont`, and `coalescence_diff` — as **fields**. Lean does **not**
+construct `dχAdd` from the proved comparison cocycle (`chi_extend`/`chi_comm`), nor equate
+it with a derivative of `Θ`: that analytic derivation is the paper's. What Lean **checks
+downstream** is only the linear algebra — `lieHom_smooth` (continuity ⟹ linearity) and
+`hyperplane_factorization` (the vanishing shadow `coalescence_diff` ⟹ the single-generator
+coupling `ρ_{ij}(dχ(r)) = (r_i − r_j)·T_{ij}`, strictly stronger, hence a genuine
+conclusion). No "produced from the cocycle" is claimed anywhere.
 
 ## References
 
@@ -91,21 +92,30 @@ theorem hyperplane_factorization {n : ℕ} {W : Type*} [AddCommGroup W] [Module 
   rw [map_sub, map_smul] at key
   exact sub_eq_zero.mp key
 
-/-! ## The smoothness axiom (PLAN ledger A2) -/
+/-! ## Smoothness of the character's differential — PROVED (no axiom)
 
-/-- **A2 · `lieHom_smooth`** — Cartan / the one-parameter-subgroup theorem, in its consumed
-form. A continuous homomorphism between finite-dimensional real Lie groups is smooth; in
-particular the differential at the identity of the smooth comparison character
-`χ̃ : (ℝⁿ,+) → Stab(F)°` (`lem:homomorphism`) is **real-linear**. We consume this as: the
-additive differential `f : (ℝⁿ,+) → 𝔰𝔱𝔞𝔟(F)` of `χ̃` upgrades to a real-linear map agreeing
-with it. Faithful to the source: the ℝ-scaling is licensed by the smoothness of the
-specific `χ̃`, not asserted of arbitrary additive maps (which would be false). Per PLAN A2,
-Mathlib's Lie-group smoothness for this exact statement is thin, so the classical theorem is
-axiomatized rather than reconstructed; the consumed content is the differential's
-real-linearity, which is all the branches need. -/
-axiom lieHom_smooth {n : ℕ} {Stab : Type*} [AddCommGroup Stab] [Module ℝ Stab]
-    (f : (Fin n → ℝ) →+ Stab) :
-    { d : (Fin n → ℝ) →ₗ[ℝ] Stab // ∀ r, d r = f r }
+Formerly the PLAN ledger axiom A2. The earlier axiom form was **unsound**: its type
+quantified over an arbitrary additive map `f : (ℝⁿ,+) →+ Stab` and asserted it is
+ℝ-linear, which is false (discontinuous Cauchy additive maps). It is now a **theorem**: a
+*continuous* additive map between topological ℝ-vector spaces is ℝ-linear
+(Mathlib `AddMonoidHom.toRealLinearMap`; ℚ-linearity from additivity, then density of `ℚ`
+in `ℝ` + continuity). The only honest content carried from Cartan's smoothness of `χ̃` is
+then the **continuity** of the differential, which enters as the `DiagonalHomSetup`
+field `dχAdd_cont` (a cited hypothesis, not a global axiom). -/
+
+/-- **`lieHom_smooth` (PROVED, no axiom).** A continuous additive map `f : (ℝⁿ,+) →+ Stab`
+into a topological ℝ-vector space upgrades to a real-linear map agreeing with it. This is
+the honest consumed form of "the differential of the smooth character `χ̃` is real-linear":
+Cartan's theorem supplies the *continuity* of the differential (the `dχAdd_cont` field),
+and this converts continuity + additivity into ℝ-linearity via Mathlib's
+`AddMonoidHom.toRealLinearMap`. No arbitrary additive map is claimed linear. (A `def`
+rather than a `theorem` only because it packages the linear map as data; it is axiom-free
+— `#print axioms` shows core only.) -/
+noncomputable def lieHom_smooth {n : ℕ} {Stab : Type*} [AddCommGroup Stab] [Module ℝ Stab]
+    [TopologicalSpace Stab] [ContinuousSMul ℝ Stab] [T2Space Stab]
+    (f : (Fin n → ℝ) →+ Stab) (hf : Continuous f) :
+    { d : (Fin n → ℝ) →ₗ[ℝ] Stab // ∀ r, d r = f r } :=
+  ⟨(f.toRealLinearMap hf).toLinearMap, fun _ => rfl⟩
 
 /-! ## `lem:homomorphism`: the diagonal character on the orthant -/
 
@@ -141,39 +151,54 @@ theorem chi_extend (C : ComparisonSetup J) {s t s' t' : Fin C.n → ℝ}
 /-! ## The differential face and the bridge to `StabilizerCoupling` -/
 
 variable (J)
-variable (Stab : Type*) [AddCommGroup Stab] [Module ℝ Stab]
+variable (Stab : Type*) [NormedAddCommGroup Stab] [NormedSpace ℝ Stab]
 variable (V : Type*) [NormedAddCommGroup V] [InnerProductSpace ℝ V]
 
-/-- **The differential-face setup.** A `CoalescenceSetup` together with the data the
-frame-stabilizer Lie reduction produces: the block representations `ρ_{ij}` (skew,
-`prop:isotropy`), the additive differential `dχAdd` of the character `χ̃`, and
-`coalescence_diff` — the vanishing of `ρ_{ij} ∘ dχ` on the hyperplane `{r_i = r_j}`, i.e.
-the A2-differentiated form of the group-level `coalescence_block`. These are the audit
-surface for the imported Lie/FK apparatus; the *coupling* is derived from them below. -/
+/-- **The differential-face setup — INTERFACE DATA, beginning after the analytic step.**
+
+Honesty scope (adversarial review §5.5): `DiagonalHomSetup` begins **after** the paper's
+analytic comparison-to-differential step. It carries the differential-face objects the
+paper obtains by differentiating the comparison character `χ̃` — the block reps `ρ_{ij}`
+(skew, `prop:isotropy`), the *additive* differential `dχAdd` with its Cartan-smoothness
+continuity `dχAdd_cont`, and `coalescence_diff` (the vanishing of `ρ_{ij} ∘ dχ` on the
+hyperplane `{r_i = r_j}`) — as **fields**. Nothing here constructs `dχAdd` from the proved
+comparison cocycle (`chi_extend`/`chi_comm`), and nothing equates it with a derivative of
+`Θ`: that analytic derivation is the paper's, not Lean's. What Lean **proves** downstream
+is only the linear algebra: `lieHom_smooth` turns `dχAdd`'s continuity into ℝ-linearity,
+and `hyperplane_factorization` turns `coalescence_diff` into the single-generator coupling
+`ρ_{ij}(dχ(r)) = (r_i − r_j)·T_{ij}` (strictly stronger than `coalescence_diff`, hence a
+genuine conclusion). The `ρ`/`dχAdd`/`coalescence_diff` fields are the audit surface for
+the imported Lie apparatus, exactly as `StabilizerCoupling` already carries `ρ`/`dχ`. -/
 structure DiagonalHomSetup extends CoalescenceSetup J where
   /-- Block representation `ρ_{ij} : 𝔰𝔱𝔞𝔟(F) → End(V_{ij})`. -/
   ρ : Fin n → Fin n → Stab →ₗ[ℝ] (V →ₗ[ℝ] V)
   /-- `ρ_{ij}(ξ)` is skew for the block inner product (`prop:isotropy`). -/
   ρ_skew : ∀ i j (ξ : Stab) (x : V), ⟪(ρ i j ξ) x, x⟫_ℝ = 0
-  /-- The additive differential of the smooth character `χ̃` (abelian image ⟹ additive). -/
+  /-- The additive differential of the character `χ̃` (interface data; the paper's analytic
+      differentiation of `χ̃`, not constructed here). -/
   dχAdd : (Fin n → ℝ) →+ Stab
+  /-- Continuity of the differential — the honest content of Cartan smoothness of `χ̃`
+      (cited hypothesis, not a global axiom); consumed by `lieHom_smooth` to get linearity. -/
+  dχAdd_cont : Continuous dχAdd
   /-- Differentiated coalescence: `ρ_{ij}(dχ(r)) = 0` on the hyperplane `{r_i = r_j}` — the
-      A2-differential shadow of the proved group-level `coalescence_block`. -/
+      differential shadow of the proved group-level `coalescence_block` (interface data;
+      the differentiation of the group-level statement is the paper's analytic step). -/
   coalescence_diff : ∀ (i j : Fin n) (r : Fin n → ℝ), r i = r j → ρ i j (dχAdd r) = 0
 
 namespace DiagonalHomSetup
 
 variable {J Stab V}
-variable [AddCommGroup Stab] [Module ℝ Stab] [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+variable [NormedAddCommGroup Stab] [NormedSpace ℝ Stab] [NormedAddCommGroup V] [InnerProductSpace ℝ V]
 
-/-- **`dChi_linear` (via `lieHom_smooth`).** The real-linear differential `dχ` of `χ̃`,
-obtained from the additive differential `dχAdd` by the smoothness axiom A2. -/
+/-- **`dChi_linear` (via the proved `lieHom_smooth`).** The real-linear differential `dχ`
+of `χ̃`, obtained from the additive differential `dχAdd` and its continuity `dχAdd_cont`
+by the (now proved, axiom-free) `lieHom_smooth`. -/
 def dChiLinear (D : DiagonalHomSetup J Stab V) : (Fin D.n → ℝ) →ₗ[ℝ] Stab :=
-  (lieHom_smooth D.dχAdd).1
+  (lieHom_smooth D.dχAdd D.dχAdd_cont).1
 
 @[simp] theorem dChiLinear_apply (D : DiagonalHomSetup J Stab V) (r : Fin D.n → ℝ) :
     D.dChiLinear r = D.dχAdd r :=
-  (lieHom_smooth D.dχAdd).2 r
+  (lieHom_smooth D.dχAdd D.dχAdd_cont).2 r
 
 /-- **The producer capstone (`toStabilizerCoupling`).** Bridges the comparison-map face to
 the differential face consumed by the branch lanes. The `coupling` field
