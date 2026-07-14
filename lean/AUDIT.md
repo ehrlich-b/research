@@ -4,9 +4,10 @@ New tree `RadicalRelativity/MasterTheorem/` (twist paper).
 
 ## Round 1 (self-audit) — and what it MISSED
 
-Initial state: 3 global axioms (vanImhoffRoelands, lieHom_smooth,
-yokota_spin8_triality_faithful); `#print axioms master_theorem` = those 3 +
-core; zero sorry; full build green (2861 jobs) — all orchestrator-verified.
+Initial state: 3 global axioms — the since-superseded declarations
+`vanImhoffRoelands`, `lieHom_smooth`, `yokota_spin8_triality_faithful`;
+`#print axioms` on the former capstone = those 3 + core; zero sorry; full
+build green (2861 jobs) — all orchestrator-verified.
 Anti-vacuity spot checks passed (antecedent-gated axioms, coupling PROVED in
 the constructor). **The self-audit missed the deeper failure**: all three
 axioms were quantified over interfaces too weak for their sources, making

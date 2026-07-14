@@ -258,13 +258,14 @@ context, not chain inputs: we start *from* a simple EJA of a fixed type.
   group-level coalescence. Honest statement: **`DiagonalHomSetup` begins after the paper's
   analytic comparison-to-differential step; Lean checks only the downstream linear
   algebra.** (Full connection = report R4, a major formalization repair, not yet done.)
-- **Complex globalization is disconnected from the produced coupling (report §5.6) —
+- **Complex globalization anchor (report §5.6) — REPAIRED, residual caveat
   auditor-visible.** In `master_chain`, clause 5a concerns the produced coupling
-  `Dc.toStabilizerCoupling`; clause 5b concerns a **separate** frame family `Scfam`. There
-  is **no premise identifying any `Scfam F` with `Dc.toStabilizerCoupling`** or showing the
-  family comes from one sequential product — logical adjacency in the conjunction is not an
-  anchor. The `Adapter` correctly extracts per-frame `t_F` and globalizes it, but over an
-  abstract family unrelated to the produced coupling. (Tying them = report R4.)
+  `Dc.toStabilizerCoupling`; clause 5b globalizes the frame family `Scfam`. The family's
+  reference member is now explicitly anchored by the hypothesis
+  `hanchor : Scfam F₀ = Dc.toStabilizerCoupling`, which the `master_chain` proof genuinely
+  consumes (clause 5a is proved by rewriting along `hanchor`). Residual caveat: Lean still
+  does **not** construct the entire family from one sequential product — the non-reference
+  members remain interface data.
 - **Master assembly (`master_chain`) — three located notes (auditor-visible).**
   `Master.lean` shipped green; after the A1→field repair, `#print axioms master_chain` =
   **Lean core only** (A1 = `Θ_jordan` field; A4 = `IsAlbertModel.block_injective` field;
@@ -280,11 +281,11 @@ context, not chain inputs: we start *from* a simple EJA of a fixed type.
      the frame-fixing / block-preservation certificate is where that automorphism property
      is consumed; the differential face (`StabilizerCoupling`) is licensed by it. The
      entry point is named so the audit is not misled into expecting A1 inside the kills.
-  2. **Complex clause is over an abstract coupling family.** The complex globalization
-     clause (master clause 5b) quantifies over an **abstract per-frame coupling family**
-     per the adapter interface (`Adapter.complex_global_twist`). The *produced-coupling*
-     anchor for the complex type — that a concrete coupling exists — is master clause 5a
-     on `DiagonalHom.toStabilizerCoupling`. 5a grounds existence; 5b consumes the family.
+  2. **Complex clause: anchored family.** Master clause 5a is obtained from the
+     anchored reference member (`hanchor : Scfam F₀ = Dc.toStabilizerCoupling`, consumed
+     by the proof); clause 5b globalizes that same family `Scfam` via the adapter
+     interface (`Adapter.complex_global_twist`). Non-reference members of the family
+     remain interface data (see the §5.6 caveat above).
   3. **`prop:singular` is a separate disclosed lemma.** `prop_singular` is proved as the
      **dense-agreement kernel** (`Set.EqOn.closure`), with **S2-continuity** and
      **invertible-density** carried as explicit disclosed hypotheses. It is kept as its
@@ -317,7 +318,7 @@ context, not chain inputs: we start *from* a simple EJA of a fixed type.
 ## 3. Module dependency DAG
 
 ```
-                      Interface  ✅ (DONE, green, 0 sorry, 1 axiom)
+                      Interface  ✅ (DONE, green, 0 sorry, 0 custom axioms)
                      /    |    \        \            \
                     /     |     \        \            \
             Coalescence   |   Branches/Real   Branches/Quaternionic   RankTwo
