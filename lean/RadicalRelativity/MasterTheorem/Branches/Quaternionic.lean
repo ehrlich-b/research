@@ -26,13 +26,13 @@ What is decisive is that the *two-slot* assignment `(ξ_i, ξ_j) ↦ ρ_{ij}(ξ)
 injective, together with the third-index coefficient kill supplied by coalescence
 (`ρ_{ij}(dχ(r)) = (r_i − r_j)·T_{ij}`, `StabilizerCoupling.coupling`).
 
-The kill (paper `thm:quaternionic`, faithfully transcribed): with
+The kill (run step-for-step along the paper's `thm:quaternionic`): with
 `ξ_i(r) = Σ_l r_l a_{il}`, matching the `r_l` coefficient for `l ≠ i, j` (which
 exists because `n ≥ 3`) gives `a_{il} x = x a_{jl}` for all `x`; setting `x = 1`
 gives `a_{il} = a_{jl}`, and then `a_{il}` commutes with every quaternion, so
 `a_{il} ∈ Z(ℍ) ∩ Im ℍ = {0}`. Matching the `r_i` and `r_j` coefficients gives
 `T_{ij}(x) = a_{ii} x = x a_{jj}`, forcing `a_{ii} = a_{jj} ∈ Z(ℍ) ∩ Im ℍ = {0}`,
-whence `T_{ij} = 0` — the update is Lüders.
+whence `T_{ij} = 0` — in the paper's normal-form reading, the update is Lüders.
 
 ## Design (how the concrete model binds to the abstract interface)
 
@@ -155,7 +155,8 @@ theorem exists_third {n : ℕ} (hn : 3 ≤ n) (p q : Fin n) :
 coupling on `V = Quaternion ℝ` of rank `n ≥ 3` whose block representation has the
 two-slot quaternionic form `S.ρ i j ξ x = (im ξ i) · x − x · (im ξ j)` with
 imaginary coordinates `im ξ k ∈ Im ℍ`. Then every off-diagonal twist generator
-vanishes, `T_{ij} = 0` (`i ≠ j`): the sequential product is the Lüders product.
+vanishes, `T_{ij} = 0` (`i ≠ j`) — the Lüders conclusion in the paper's normal-form
+reading; the Lean statement is exactly `T i j = 0`.
 
 The proof is the paper's `thm:quaternionic`, run against the abstract coupling
 identity `S.coupling` (`ρ_{ij}(dχ r) = (r_i − r_j)·T_{ij}`): the `n ≥ 3` spectator

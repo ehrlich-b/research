@@ -95,7 +95,9 @@ each carrying a torus-model coupling `S F` (with generator `J`, character matrix
 model `hmodel F`) so its per-frame twist is `perFrameTwist (S F) …`, a frame adjacency
 `Adj` that is `connected` (`lem:frame-connectivity`) and whose adjacent pairs satisfy the
 cross-coherence `overlap`, there is a single global `t_F` equal to every frame's
-parameter. This is `a•b = a^{1/2+it} b a^{1/2−it}` with one global `t`.
+parameter. In the paper's intended instance this is `a•b = a^{1/2+it} b a^{1/2−it}`
+with one global `t`; the Lean statement is exactly the constancy of the extracted
+per-frame parameters.
 
 Proof: `perFrameTwist` supplies each frame's parameter (via `complex_perFrame_rho`); the
 four data package a `ComplexGlobalizationData`; `global_t` collapses them (through the

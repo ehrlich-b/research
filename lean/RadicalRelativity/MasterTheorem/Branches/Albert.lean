@@ -128,8 +128,9 @@ theorem dchi_eq_zero_of_faithful (S : StabilizerCoupling 3 Stab V)
 
 /-- **`thm:albert` (capstone).** On the exceptional type — a rank-`3`
 `StabilizerCoupling` modelling `H₃(𝕆)` (marker `IsAlbertModel`) — every
-off-diagonal block twist vanishes: `T_{ij} = 0` for `i ≠ j`. Hence `Θ_r = id` on
-every block and the sequential product is Lüders, `a•b = Q_{√a}b`.
+off-diagonal block twist vanishes: `T_{ij} = 0` for `i ≠ j`. In the paper's
+normal-form reading this is `Θ_r = id` on every block, i.e. the Lüders product
+`a•b = Q_{√a}b`; the Lean statement is exactly `T i j = 0`.
 
 The proof takes the imported injectivity of each `ρ_{ij}` from
 `IsAlbertModel.block_injective`, obtains `dχ = 0` via `dchi_eq_zero_of_faithful`,

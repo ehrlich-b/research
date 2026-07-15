@@ -32,11 +32,12 @@ see `master_chain`'s own docstring (adversarial review §5.7) for the explicit "
 state" list. The paper's analytic content is carried through the interface fields and the
 prose, not re-proved here.
 
-## The whole-chain axiom audit — ZERO classical axioms
+## The whole-chain axiom audit — ZERO custom axioms
 
 After the repairs of adversarial review §5.2–§5.4, `#print axioms master_chain` is exactly
-Lean's three core axioms: `propext`, `Classical.choice`, `Quot.sound` — **no classical
-axiom remains.** Every classical import is now either a proved theorem or an auditable
+Lean's three core axioms: `propext`, `Classical.choice`, `Quot.sound` — **no custom
+axiom remains** (`Classical.choice` is itself a classical axiom of Lean's core; "zero"
+counts custom declarations). Every classical import is now either a proved theorem or an auditable
 structure field / hypothesis a reviewer reads off the signature:
 
 * **A2 (Cartan smoothness)** — a proved `def` `lieHom_smooth` (a *continuous* additive map
@@ -176,7 +177,11 @@ machine-checked *logical skeleton* of `mthm:master`, over the abstract interface
 per-frame/global-scalar conclusions — assembled so `#print axioms` audits the whole chain.
 
 It quantifies over one produced coupling per simple type
-(`D*.toStabilizerCoupling`), so no branch takes a free `StabilizerCoupling`; for the
+(`D*.toStabilizerCoupling`), so no branch takes a free `StabilizerCoupling`. The five
+conclusion lanes are **logically independent conditionals**: no conjunct's proof feeds
+another's, "chain" names the dependency chain *within* each lane, and the four lanes'
+model data are supplied simultaneously over one abstract `J` as a bookkeeping
+convenience of the audit (on a genuine simple EJA only one lane's model data exists); for the
 complex type the globalization family's reference member is pinned to the produced coupling
 (`hanchor : Scfam F₀ = Dc.toStabilizerCoupling`). The conjuncts: (1) frame-fixing / block
 preservation (`lem:frame-fix`; the A1 step); (2)–(4) `T_{ij} = 0` for real / quaternionic
@@ -198,7 +203,7 @@ theorem is the *composition audit* of that case split, not the case split itself
 invoked by this capstone.
 
 `#print axioms master_chain` is the whole-chain ledger: after the §5.2–§5.4 repairs it is
-**Lean core only** (`propext`, `Classical.choice`, `Quot.sound`) — no classical axiom. A2
+**Lean core only** (`propext`, `Classical.choice`, `Quot.sound`) — no custom axiom. A2
 is the proved `def` `lieHom_smooth`; A3 is `real_character_unique`; A1 is the
 `ComparisonSetup.Θ_jordan` field; A4 is the `IsAlbertModel.block_injective` field. -/
 theorem master_chain

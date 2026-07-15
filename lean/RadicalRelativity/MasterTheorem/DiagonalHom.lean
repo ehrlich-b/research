@@ -12,12 +12,18 @@ set_option linter.unusedSectionVars false
 /-!
 # DiagonalHom — `lem:homomorphism`: the diagonal character and the coupling
 
-The producer lane, part 2. This module carries out the Lie-differential reduction
-(`lem:homomorphism`) and **produces the `StabilizerCoupling`** consumed by the four
-typewise branch lanes. Its capstone, `toStabilizerCoupling`, is the honesty seam of the
-formalization: the `coupling` field of the produced `StabilizerCoupling`
-(`ρ_{ij}(dχ(r)) = (r_i − r_j)·T_{ij}`) is **PROVED** here — via the linear-algebra anchor
-`hyperplane_factorization` applied to the differentiated coalescence — not assumed.
+The producer lane, part 2. This module checks the two calc-1 halves of the
+Lie-differential reduction (`lem:homomorphism`) and **produces the `StabilizerCoupling`**
+consumed by the four typewise branch lanes. Its capstone, `toStabilizerCoupling`, is the
+honesty seam of the formalization: the `coupling` field of the produced
+`StabilizerCoupling` (`ρ_{ij}(dχ(r)) = (r_i − r_j)·T_{ij}`) is **PROVED** here — via the
+linear-algebra anchor `hyperplane_factorization` applied to the differentiated
+coalescence — not assumed. Precision (adversarial review 2026-07-15): the constructor
+consumes **only the differential-face fields** (`ρ`, `ρ_skew`, `dχAdd`, `dχAdd_cont`,
+`coalescence_diff`, `n`, `rank_ge`); the comparison face rides along as the parent
+structure but nothing here derives the differential data from `Θ` — so
+`toStabilizerCoupling` is the *packager of the post-differentiation assumption package*,
+not a comparison-to-differential bridge. The analytic differentiation is the paper's.
 
 ## What is proved here (Lean theorems)
 
@@ -32,8 +38,8 @@ formalization: the `coupling` field of the produced `StabilizerCoupling`
   ℝ-linear (`AddMonoidHom.toRealLinearMap`); this replaces the earlier unsound axiom.
 * `DiagonalHomSetup.dChiLinear` (`dChi_linear`) — the real-linear differential `dχ`,
   obtained from the additive differential of `χ̃` and its continuity via `lieHom_smooth`.
-* `DiagonalHomSetup.toStabilizerCoupling` (**capstone**) — bridges the comparison-map face
-  to the differential face, proving `coupling`.
+* `DiagonalHomSetup.toStabilizerCoupling` (**capstone**) — packages the differential-face
+  fields into the `StabilizerCoupling` the branches consume, proving `coupling`.
 
 ## No global axioms in this module
 
@@ -48,7 +54,7 @@ reviewer reads off the structure, not a global axiom.
 comparison-to-differential step.** It carries the differential-face objects — the block
 reps `ρ_{ij}` (orthogonality `ρ_skew`, `prop:isotropy`), the additive differential `dχAdd`
 with its continuity `dχAdd_cont`, and `coalescence_diff` — as **fields**. Lean does **not**
-construct `dχAdd` from the proved comparison cocycle (`chi_extend`/`chi_comm`), nor equate
+construct `dχAdd` from the proved comparison cocycle (`chi_extend_wellDefined`/`chi_comm`), nor equate
 it with a derivative of `Θ`: that analytic derivation is the paper's. What Lean **checks
 downstream** is only the linear algebra — `lieHom_smooth` (continuity ⟹ linearity) and
 `hyperplane_factorization` (the vanishing shadow `coalescence_diff` ⟹ the single-generator
@@ -137,12 +143,14 @@ theorem chi_comm (C : ComparisonSetup J) {r r' : Fin C.n → ℝ}
     (C.Θ (C.aOf r)).trans (C.Θ (C.aOf r')) = (C.Θ (C.aOf r')).trans (C.Θ (C.aOf r)) := by
   rw [← C.Θ_cocycle r r' hr hr', ← C.Θ_cocycle r' r hr' hr, add_comm]
 
-/-- **`lem:homomorphism` (extension well-definedness, PROVED).** The `χ̃(s − t) := Θ_s Θ_t⁻¹`
-extension of the character to `(ℝⁿ,+) = S − S` is well defined: if `s − t = s' − t'` (all in
-the orthant), equivalently `s + t' = s' + t`, then the cross-products agree,
-`Θ_s Θ_{t'} = Θ_{s'} Θ_t`. This is precisely the paper's well-definedness justification
-(cocycle + the additive cancellation), stated inverse-free. -/
-theorem chi_extend (C : ComparisonSetup J) {s t s' t' : Fin C.n → ℝ}
+/-- **`lem:homomorphism` (extension well-definedness identity, PROVED).** The
+cross-product identity that makes the paper's `χ̃(s − t) := Θ_s Θ_t⁻¹` extension
+well defined: if `s − t = s' − t'` (all in the orthant), equivalently `s + t' = s' + t`,
+then the cross-products agree, `Θ_s Θ_{t'} = Θ_{s'} Θ_t`. Stated inverse-free.
+**No extension map `χ̃` is constructed here** (adversarial review 2026-07-15: the former
+name `chi_extend_wellDefined` suggested one); this theorem is exactly the one equality the paper's
+well-definedness argument needs, and the extension itself is the paper's. -/
+theorem chi_extend_wellDefined (C : ComparisonSetup J) {s t s' t' : Fin C.n → ℝ}
     (hs : ∀ i, s i ≤ 0) (ht : ∀ i, t i ≤ 0) (hs' : ∀ i, s' i ≤ 0) (ht' : ∀ i, t' i ≤ 0)
     (hsum : s + t' = s' + t) :
     (C.Θ (C.aOf s)).trans (C.Θ (C.aOf t')) = (C.Θ (C.aOf s')).trans (C.Θ (C.aOf t)) := by
@@ -162,7 +170,7 @@ paper obtains by differentiating the comparison character `χ̃` — the block r
 (skew, `prop:isotropy`), the *additive* differential `dχAdd` with its Cartan-smoothness
 continuity `dχAdd_cont`, and `coalescence_diff` (the vanishing of `ρ_{ij} ∘ dχ` on the
 hyperplane `{r_i = r_j}`) — as **fields**. Nothing here constructs `dχAdd` from the proved
-comparison cocycle (`chi_extend`/`chi_comm`), and nothing equates it with a derivative of
+comparison cocycle (`chi_extend_wellDefined`/`chi_comm`), and nothing equates it with a derivative of
 `Θ`: that analytic derivation is the paper's, not Lean's. What Lean **proves** downstream
 is only the linear algebra: `lieHom_smooth` turns `dχAdd`'s continuity into ℝ-linearity,
 and `hyperplane_factorization` turns `coalescence_diff` into the single-generator coupling

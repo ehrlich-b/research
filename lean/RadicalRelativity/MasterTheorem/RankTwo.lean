@@ -60,9 +60,13 @@ arithmetic — no functional calculus, no continuity axiom, no new `axiom`s.
 
 Everything here is `necessity-only` in the paper's sense: no exhaustive rank-two
 classification is claimed. `n2_necessity` and `n2_exchange_selects_luders` are
-stated for an *arbitrary* block angle (the comparison map of any S1–S7 product),
-so they are genuine necessity statements; `sp_*` exhibit the one explicit
-family, establishing sharpness. The comparison-map inputs (`Θ_a` a Jordan
+stated for an *arbitrary* real-linear block angle vanishing on the coalescence
+line (the differential shadow the paper derives from the comparison map of an
+S1–S7 product; that derivation is the paper's), so they are necessity statements
+at the generator level; `sp_*` formalize the explicit family's block algebra.
+The seven-axiom verification and the non-conjugacy argument that establish
+*sharpness* are the paper's Section 6 (+ `verify_n2.py` corroboration) — they
+are **not** in this file. The comparison-map inputs (`Θ_a` a Jordan
 automorphism fixing the frame, its `SO(2)` block action, the cocycle) are the
 `Interface`/paper imports; here we consume only their differential shadow (a real
 linear angle vanishing on the coalescence line). No `axiom`s are introduced and
@@ -329,6 +333,31 @@ theorem tau_swap_invariant (P R : Matrix (Fin 2) (Fin 2) ℂ) (hR : (R.trace).re
     rw [Matrix.sub_mul, Matrix.one_mul, Matrix.trace_sub, Complex.sub_re]
   rw [tau, tau, h, hR]
   ring
+
+/-! ## The frame function wired into the family
+
+Adversarial-review addition (2026-07-15): the reviewers observed that `tau` was
+evaluated (V9) but never *fed into* `sp`, so the frame-dependence of the product
+itself was asserted only in prose. The two theorems below wire them: on the Hadamard
+frame the dial reads `0` and the product **is** the Lüders product; on the reference
+frame the dial reads `1` and the product is the unit-twist member of the family. -/
+
+/-- **`τ` wired into `sp`, equator witness.** In the Hadamard frame the dial reads
+`τ = 0`, so the frame-dependent product on that frame is exactly the Lüders product
+`√a · b · √a`. -/
+theorem sp_tau_had_is_luders (l1 l2 : ℝ) (b : Matrix (Fin 2) (Fin 2) ℂ) :
+    sp l1 l2 (tau Phad Rref) b
+      = Matrix.diagonal ![(Real.sqrt l1 : ℂ), (Real.sqrt l2 : ℂ)] * b
+          * Matrix.diagonal ![(Real.sqrt l1 : ℂ), (Real.sqrt l2 : ℂ)] := by
+  rw [tau_had_eq_zero, sp_luders_of_twist_zero]
+
+/-- **`τ` wired into `sp`, pole witness.** In the reference frame the dial reads
+`τ = 1`: the product is the unit-twist member of the family. Together with
+`sp_tau_had_is_luders` this is the frame-dependence pair (V9) acting on the product
+itself, not just on the dial. -/
+theorem sp_tau_std_is_unit_twist (l1 l2 : ℝ) (b : Matrix (Fin 2) (Fin 2) ℂ) :
+    sp l1 l2 (tau Pstd Rref) b = sp l1 l2 1 b := by
+  rw [tau_std_eq_one]
 
 /-! ## The phase cocycle (V5) and backward compatibility (V7) -/
 

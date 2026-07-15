@@ -54,10 +54,13 @@ consumes:
    `dχ : ℝⁿ → Stab`, and the coupling `ρ_{ij}(dχ(r)) = (r_i − r_j)·T_{ij}`
    (`lem:homomorphism`). Consumed by the four typewise `Branches` lanes.
 
-`DiagonalHom` is the bridge: it produces a `StabilizerCoupling` from a
-`ComparisonSetup`. Its differential `dχ` comes from `lieHom_smooth`, a **proved `def`**
+`DiagonalHom` produces a `StabilizerCoupling` from a `DiagonalHomSetup` — the
+comparison face plus the *differential-face fields* (`ρ`, `dχAdd`, `dχAdd_cont`,
+`coalescence_diff`; the analytic differentiation of `Θ` that yields them is the paper's,
+not Lean's). Its differential `dχ` comes from `lieHom_smooth`, a **proved `def`**
 (continuous-additive ⟹ ℝ-linear, `AddMonoidHom.toRealLinearMap`; continuity carried as
-the cited `DiagonalHomSetup.dχAdd_cont` field) — not an axiom.
+the cited `DiagonalHomSetup.dχAdd_cont` field) — not an axiom. What the constructor
+*proves* is the coupling normal form from those fields.
 
 ## The axiom ledger (full statement/citation table in `PLAN.md`)
 
@@ -88,6 +91,15 @@ compatibility bridge) are **not** free-standing axioms: they are `ComparisonSetu
 fields, so a reviewer enumerates them by reading the structure. `#print axioms` on
 any downstream theorem shows Lean core only — a syntactic-closure figure, not a
 faithfulness certificate; the field lists are the real import ledger.
+
+## Naming convention (read before quoting any theorem name)
+
+Theorem names in this tree are the **paper's lane labels** (`real_luders`,
+`albert_luders`, `master_chain`, …), kept aligned with the manuscript for
+cross-referencing. The Lean *content* of every declaration is exactly its **type** —
+e.g. `real_luders : S.T i j = 0` states the vanishing of a block generator, and the
+passage from `T = 0` to "the product is Lüders" is the paper's normal-form reading,
+not restated in Lean. When in doubt, quote the type, never the name.
 
 ## References
 
@@ -126,13 +138,25 @@ def blockDim : EJAType → ℕ
 @[simp] theorem blockDim_quatern (n : ℕ) : blockDim (.quatern n) = 4 := rfl
 @[simp] theorem blockDim_albert : blockDim .albert = 8 := rfl
 
-/-- The complex type is the unique simple matrix type whose off-diagonal block is
-    even-dimensional *and* carries a torus (`SO(2)`) stabilizer — the source of the
-    surviving dial. Recorded here as the arithmetic shadow of the dichotomy: only
-    `blockDim = 2` gives a one-dimensional `𝔰𝔬(V_{ij})`. -/
-theorem blockDim_complex_unique_dial (t : EJAType) :
-    (∃ n, t = .complex n) → blockDim t = 2 := by
-  rintro ⟨n, rfl⟩; rfl
+/-- **Among the matrix types (spin factors excluded), `blockDim = 2` characterizes the
+    complex type** — the arithmetic shadow of the dial dichotomy: only a two-dimensional
+    block carries a one-dimensional `𝔰𝔬(V_{ij})`, the room for exactly one rotation
+    generator. Both directions are proved (`1, 4, 8 ≠ 2` by computation). Spin factors
+    are excluded honestly: `blockDim (.spin 4) = 2` as well, and the paper handles the
+    rank-two spin family separately. (This strengthens the former one-directional
+    `blockDim_complex_unique_dial`, whose name promised a uniqueness its statement did
+    not contain — adversarial-review fix, 2026-07-15.) -/
+theorem blockDim_eq_two_iff_complex (t : EJAType) (hspin : ∀ n, t ≠ .spin n) :
+    blockDim t = 2 ↔ ∃ n, t = .complex n := by
+  constructor
+  · intro h2
+    cases t with
+    | real n => simp [blockDim] at h2
+    | complex n => exact ⟨n, rfl⟩
+    | quatern n => simp [blockDim] at h2
+    | albert => simp [blockDim] at h2
+    | spin n => exact absurd rfl (hspin n)
+  · rintro ⟨n, rfl⟩; rfl
 
 /-! ## Operator commutation on an abstract Jordan algebra
 
@@ -164,8 +188,18 @@ imported vdW/FK facts; the van Imhoff–Roelands Jordan-automorphism conclusion 
 /-- **The comparison-map interface** (`sec:machinery`). An abstract simple Euclidean
 Jordan algebra `J` of rank `n ≥ 3` carrying a norm-continuous S1–S7 sequential
 product, presented through van de Wetering's comparison map `Θ_a` and its cited
-properties. A concrete simple EJA with a sequential product furnishes one of these;
-the master-theorem chain consumes it.
+properties. A concrete simple EJA with a sequential product is *intended* to furnish
+one of these — that instantiation is the paper's analytic work; **no concrete instance
+is constructed in this tree** — and the master-theorem chain consumes it.
+
+**Vacuity honesty (adversarial review, 2026-07-15).** The field names carry the
+*intended* semantics (frame, cone, invertibles); the fields themselves impose no
+idempotency/orthogonality/simplicity conditions, and degenerate inhabitants exist
+(e.g. `J = ℝ`, `p = 0`, `nonneg = Inv = fun _ => True`, `Θ = fun _ => 1`). Nothing
+downstream claims otherwise: every theorem over this structure states exactly the
+implication from these fields, and the *physical* content of the chain is as large as
+the paper's analytic work that instantiates them on the intended EJAs — that is the
+"conditional" in *conditional dependency skeleton*.
 
 Field ledger (imported facts; cited inline):
 * `jordan`, `e`, `jordan_comm`, `jordan_unit` — the Euclidean Jordan product and unit

@@ -18,4 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
+      # Axiom gate (added 2026-07-15, adversarial-review finding): the MasterTheorem
+      # tree's zero-custom-axiom invariant is a headline claim of the paper's appendix;
+      # enforce it so a future `axiom` cannot land silently. The probe fails unless
+      # `#print axioms master_chain` reports exactly Lean's three core axioms.
+      - name: Axiom gate (MasterTheorem zero custom axioms)
+        run: |
+          cat > /tmp/axiom_probe.lean <<'EOF'
+          import RadicalRelativity.MasterTheorem.Master
+          #print axioms MasterTheorem.master_chain
+          EOF
+          lake env lean /tmp/axiom_probe.lean | tee /tmp/axiom_probe.out
+          grep -q "depends on axioms: \[propext, Classical.choice, Quot.sound\]" /tmp/axiom_probe.out
       - uses: leanprover-community/docgen-action@v1

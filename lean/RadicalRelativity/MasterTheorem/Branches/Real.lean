@@ -73,7 +73,10 @@ zero on the one-dimensional block (`skew_one_dim_eq_zero`), and reads off
 This lemma takes the `StabilizerCoupling` **fields directly** rather than the
 packaged structure, so it carries **no `rank_ge` hypothesis** — the real kill
 holds at every rank `n`, matching `prop:real`'s `n ≥ 2` (the rigid real qubit).
-`n ≥ 3` is never used. -/
+`n ≥ 3` is never used. **This field-level lemma is the sole carrier of the
+`n = 2` claim**: the packaged `real_luders` below quantifies over
+`StabilizerCoupling`, whose `rank_ge : 3 ≤ n` field makes it uninstantiable at
+`n = 2` (adversarial-review precision, 2026-07-15). -/
 theorem real_kill (ρ : Fin n → Fin n → Stab →ₗ[ℝ] (ℝ →ₗ[ℝ] ℝ))
     (dχ : (Fin n → ℝ) →ₗ[ℝ] Stab) (T : Fin n → Fin n → (ℝ →ₗ[ℝ] ℝ))
     (ρ_skew : ∀ i j (ξ : Stab) (x : ℝ), ⟪(ρ i j ξ) x, x⟫_ℝ = 0)
@@ -91,12 +94,15 @@ theorem real_kill (ρ : Fin n → Fin n → Stab →ₗ[ℝ] (ℝ →ₗ[ℝ] �
 /-- **`prop:real` (capstone).** On the real type — a `StabilizerCoupling` whose
 block space is `V := ℝ`, the one-dimensional real Peirce block
 (`blockDim (.real n) = 1`) — every off-diagonal block twist vanishes:
-`T_{ij} = 0` for `i ≠ j`. Hence `Θ_r = id` on every block and the sequential
-product is Lüders, `a•b = Q_{√a}b`.
+`T_{ij} = 0` for `i ≠ j`. In the paper's normal-form reading this is `Θ_r = id`
+on every block, i.e. the L\"uders product `a•b = Q_{√a}b`; the Lean statement is
+exactly `T i j = 0` (see the naming-convention note in `Interface.lean`).
 
-The proof is `real_kill` applied to the coupling's fields; it does **not** touch
-`S.rank_ge`, so the conclusion holds for the real type at every rank (the paper's
-`prop:real` for `n ≥ 2`, including the rigid real qubit). -/
+The proof is `real_kill` applied to the coupling's fields and never touches
+`S.rank_ge`; note however that `StabilizerCoupling` itself carries
+`rank_ge : 3 ≤ n`, so this packaged form is uninstantiable at `n = 2` — the
+paper's `n ≥ 2` claim (the rigid real qubit) is carried by the field-level
+`real_kill` above, which has no rank hypothesis at all. -/
 theorem real_luders (S : StabilizerCoupling n Stab ℝ) {i j : Fin n} (hij : i ≠ j) :
     S.T i j = 0 :=
   real_kill S.ρ S.dχ S.T S.ρ_skew S.coupling hij

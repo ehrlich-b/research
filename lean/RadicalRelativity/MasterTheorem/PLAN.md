@@ -134,7 +134,7 @@ syntactic closure — it omits every structure field, so it is not a faithfulnes
   global axiom). The differential `dχAdd`/`coalescence_diff` remain interface data.
 - **§5.5 honesty (docstring + here).** `DiagonalHomSetup` begins **after** the paper's
   analytic comparison-to-differential step: nothing in Lean constructs `dχAdd` from the
-  proved comparison cocycle (`chi_extend`/`chi_comm`) or equates it with a derivative of
+  proved comparison cocycle (`chi_extend_wellDefined`/`chi_comm`) or equates it with a derivative of
   `Θ`. Lean checks only the downstream linear algebra — `lieHom_smooth` (continuity ⟹
   linearity) and `hyperplane_factorization` (the vanishing shadow `coalescence_diff` ⟹ the
   single-generator coupling, strictly stronger, hence a genuine conclusion). No "produced
@@ -245,11 +245,11 @@ context, not chain inputs: we start *from* a simple EJA of a fixed type.
   - **`aone`** (`a•1 = a`, `lem:aone`) is **skipped**: it is not expressible on the
     `Θ`-interface (which exposes `Θ`, not the raw left action `L_a`), and `Θ_unital`
     already covers everything the chain needs from it. No loss to the chain.
-  - **`chi_extend`** (the `ℝⁿ` extension of the `Θ`-cocycle) is stated in the paper's
+  - **`chi_extend_wellDefined`** (the `ℝⁿ` extension of the `Θ`-cocycle) is stated in the paper's
     **cancellation form** `χ̃(s − t) := Θ_s Θ_t⁻¹` (well-defined by cancellation +
     abelian image), matching `main.tex` `lem:homomorphism`, not a stronger reformulation.
 - **The differential object is disconnected from `Θ` (report §5.5) — auditor-visible.**
-  Beyond `coalescence_diff`: `chi_extend` proves only one cross-product equality; it does
+  Beyond `coalescence_diff`: `chi_extend_wellDefined` proves only one cross-product equality; it does
   **not** construct the homomorphism `χ : ℝⁿ → Stab(F)°`, its continuity, its
   differential, or the relation of that differential to `Θ`. `DiagonalHomSetup` supplies an
   **arbitrary additive `dχAdd`** and the assumed `coalescence_diff`; nothing equates
@@ -400,15 +400,19 @@ Axiom-closure verified: **all Interface results rest on core axioms only** —
 ### DiagonalHom.lean  ← Interface, Coalescence — **SHIPPED ✅ (A2 = proved `def` `lieHom_smooth`, no axiom; `DiagonalHomSetup.Stab` normed, `dχAdd_cont` continuity field)**
 - `lieHom_smooth` (A2): a proved `def` (`AddMonoidHom.toRealLinearMap`, continuous-additive ⟹ ℝ-linear); `#print axioms lieHom_smooth` = core only.
 - `chi_hom` (`lem:homomorphism`): `r ↦ Θ_{a(r)}` is a homomorphism on the orthant
-  (from `Θ_cocycle`); `chi_extend` : the `χ̃(s−t)=Θ_sΘ_t⁻¹` extension to `(ℝⁿ,+)`
-  (well-defined by cancellation + abelian image).
+  (from `Θ_cocycle`); `chi_extend_wellDefined` : the cross-product identity making the paper's
+  `χ̃(s−t)=Θ_sΘ_t⁻¹` extension well defined (no extension map is constructed;
+  renamed from `chi_extend` 2026-07-15).
 - `dChi_linear` (`lem:homomorphism`): real-linear `dχ : ℝⁿ → 𝔰𝔱𝔞𝔟(F)` via
   `lieHom_smooth`.
 - `hyperplane_factorization` (`lem:homomorphism`): a real-linear `ℝⁿ → 𝔰𝔬(V_{ij})`
   vanishing on `{r_i=r_j}` equals `(r_i−r_j)·T_{ij}`. **Pure linear algebra — fully
   provable; anchor target.** Uses `Coalescence.coalescence_block`.
-- `toStabilizerCoupling : ComparisonSetup J → StabilizerCoupling n Stab V` — assembles
-  the differential face. This is the DiagonalHom → Branches bridge.
+- `toStabilizerCoupling : DiagonalHomSetup J Stab V → StabilizerCoupling D.n Stab V` —
+  packages the differential-face fields for the Branches, PROVING the `coupling`
+  normal form from `coalescence_diff` via `hyperplane_factorization`. (Corrected
+  2026-07-15: the input is `DiagonalHomSetup`, not `ComparisonSetup`, and nothing
+  derives the differential fields from `Θ` — see the module's honesty note.)
 
 ### Branches/Real.lean  ← Interface — **SHIPPED ✅**
 - `prop:real`: on `Hₙ(ℝ)`, `blockDim = 1 ⟹ 𝔰𝔬(V_{ij}) = 0 ⟹ T_{ij} = 0`. From
@@ -449,13 +453,17 @@ Axiom-closure verified: **all Interface results rest on core axioms only** —
   connectivity **induction is machine-checked**; the residual geometric 2-plane-rotation
   move is the isolated `hmove` hypothesis (never an axiom, never a `sorry`).
 - `ComplexGlobalizationData.global_t` / `t_eq_globalT` (`thm:complex`, capstone): one
-  global `t`; `Θ_a = Ad_{a^{it}}`, i.e. `a•b = a^{1/2+it} b a^{1/2−it}` on invertibles.
+  global `t` (the Lean type is exactly frame-independence of `t`; the
+  `Θ_a = Ad_{a^{it}}` / product reading is the paper's intended instance).
 
 ### RankTwo.lean  ← Interface (independent; reuse `SpinFactor`, `Selection.TwistIsotropy`) — **SHIPPED ✅ (green, core axioms only, 15 results; 3 upper-layer items scoped, §2)**
 - `prop:n2-necessity`: on `M₂(ℂ)`, one real parameter `t_F` per spectral frame; no
   cross-frame constancy (no third projection).
-- `thm:qubit-boundary` (i) block form of the `τ(F)` family; (ii) S1–S7 verification
-  skeleton; (iii) frame-dependence / non-conjugacy (`τ` takes both `0` and `1`).
+- `thm:qubit-boundary`, algebraic core only (2026-07-15 precision): (i) block form
+  of the `τ(F)` family + effect preservation; (ii) shared-frame cocycle and backward
+  compatibility (NOT the bundled S1–S7 verification, which is the paper's + SymPy);
+  (iii) the `τ` frame values `1`/`0` wired into `sp` (`sp_tau_had_is_luders`,
+  `sp_tau_std_is_unit_twist`) — the non-conjugacy argument itself is the paper's.
   Concrete `M₂(ℂ)` computation; corroborated by `verify_n2.py` V1–V10 (not a substitute).
 
 ### Master.lean  ← all Branches, Globalization, RankTwo — **SHIPPED (skeleton counterpart `master_chain`; `#print axioms master_chain` = core only — zero custom axioms)**
@@ -506,7 +514,7 @@ Common preamble for every packet:
 > Create `Coalescence.lean` then `DiagonalHom.lean` (PLAN §5). Coalescence proves
 > `lem:coalescence` from `Θ_fix` + an FK simultaneous-diagonalization fact (ledger it as
 > `simDiag_opCommute`). DiagonalHom proves `lieHom_smooth` (A2) as a `def`, and proves
-> `chi_extend`, `dChi_linear`, the **`hyperplane_factorization`** linear-algebra anchor,
+> `chi_extend_wellDefined`, `dChi_linear`, the **`hyperplane_factorization`** linear-algebra anchor,
 > and `toStabilizerCoupling`. Capstone: `toStabilizerCoupling`.
 
 **Packet G — Globalization. ✅ SHIPPED (green, 0 sorry, 0 custom axioms).**
@@ -520,6 +528,9 @@ Common preamble for every packet:
 > Create `RankTwo.lean` (independent; reuse `SpinFactor`, `Selection.TwistIsotropy`).
 > Prove `prop:n2-necessity` and `thm:qubit-boundary` (i)–(iii) on concrete `M₂(ℂ)`.
 > Capstone: `qubit_boundary`.
+> [2026-07-15 correction: no single `qubit_boundary` declaration was shipped; the
+> shipped capstones are `n2_necessity`, `n2_exchange_selects_luders`, and the `sp_*`
+> family. The packet text above is retained as the historical instruction.]
 
 **Packet M — Master. ✅ SHIPPED (green; capstone `master_chain` = skeleton counterpart of `mthm:master`, NOT the paper theorem — §1/§2). `#print axioms master_chain` = **core only** (`propext`, `Classical.choice`, `Quot.sound`); zero custom axioms.**
 > Create `Master.lean` (needs all branches + Globalization + RankTwo). Add the S2

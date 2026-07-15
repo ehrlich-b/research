@@ -89,9 +89,12 @@ namespace MasterTheorem.Globalization
 /-- **`thm:complex` character uniqueness (PROVED; ledger A3 → theorem).**
 Two continuous real characters of `ℝ` that agree on an open interval are equal:
 if `exp(i α x) = exp(i β x)` for every `x ∈ (a,b)` with `a < b`, then `α = β`. No `2π`
-ambiguity (the paper differentiates at a point of the interval). This is the consumed
-form of "every continuous character of `ℝⁿ` is `e^{i⟨c,r⟩}`" and eliminates the need
-for the classical axiom `character_of_Rn`. -/
+ambiguity (the paper differentiates at a point of the interval). Scope precision
+(adversarial review 2026-07-15): this is the **uniqueness/frequency-rigidity half**
+only — the exponential form is the statement's shape, not derived here; the structure
+theorem "every continuous character of `ℝⁿ` is `e^{i⟨c,r⟩}`" is not proved in this
+tree (its use enters through the branch model fields). It eliminates the need for the
+formerly planned custom axiom `character_of_Rn`. -/
 theorem real_character_unique {α β a b : ℝ} (hab : a < b)
     (h : ∀ x ∈ Set.Ioo a b, Complex.exp ((α : ℂ) * x * Complex.I) = Complex.exp ((β : ℂ) * x * Complex.I)) :
     α = β := by
@@ -219,9 +222,11 @@ theorem adjacent_eq (D : ComplexGlobalizationData Frame) {F G : Frame} (hFG : D.
   exact real_character_unique hab hx
 
 /-- **`thm:complex` (global step, capstone): one global `t`.** Every frame carries the
-same twist parameter as a fixed reference frame `F₀`; combined with the per-frame
-`Θ_{a(r)} = Ad_{a(r)^{it_F}}` of `Branches/Complex`, this is the single global `t` of
-`mthm:master`'s complex case: `a•b = a^{1/2+it} b a^{1/2−it}`. Rests on
+same twist parameter as a fixed reference frame `F₀`. In the paper's intended
+instance — combined with the per-frame `Θ_{a(r)} = Ad_{a(r)^{it_F}}` reading of
+`Branches/Complex` — this yields the single global `t` of `mthm:master`'s complex
+case, `a•b = a^{1/2+it} b a^{1/2−it}`; the Lean statement is exactly the
+frame-independence of `t`. Rests on
 `real_character_unique` (no `2π` ambiguity) and the paper-proved frame connectivity
 (the `connected` field), with **no custom axioms**. -/
 theorem global_t (D : ComplexGlobalizationData Frame) (F₀ : Frame) :
