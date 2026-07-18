@@ -20,16 +20,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build and independently recheck Lean declarations
+      # Gate 1 (required): full build in Lean's kernel, zero `sorry`.
+      # lean-action installs the pinned toolchain, fetches the Mathlib cache,
+      # and runs `lake build`.  nanoda is intentionally NOT used here: an
+      # external re-check would have to re-export RadicalRelativity's full
+      # transitive Mathlib closure, which is impractical on a runner, and the
+      # precise axiom policy is instead enforced in-kernel by Gate 2 below.
+      - name: Build in Lean kernel (zero sorry)
         uses: leanprover/lean-action@v1
         with:
           lake-package-directory: twist-normal-form-lean
           build: true
           test: false
-          nanoda: true
-          nanoda-allow-sorry: false
+          nanoda: false
 
+      # Gate 2 (required, independent): axiom-closure allowlist + statement
+      # fidelity.  `AxiomAudit.lean` fails elaboration unless every principal
+      # advertised theorem has exactly Lean's three core axioms and the two
+      # product-level target shapes match their definitions.  `!cancelled()`
+      # so a failure in another gate cannot silently skip this one.
       - name: Gate axiom closure and statement fidelity
+        if: ${{ !cancelled() }}
         working-directory: twist-normal-form-lean
         shell: bash
         run: |
@@ -43,14 +54,20 @@ jobs:
             > ci-artifacts/input-sha256.txt
 
       - uses: actions/setup-python@v5
+        if: ${{ !cancelled() }}
         with:
           python-version: '3.13'
 
+      # Gate 3 (required, independent of Lean): exact symbolic corroboration of
+      # the rank-two identities.  Runs even if a Lean gate failed, so a Lean
+      # error cannot mask a SymPy regression.
       - name: Run exact symbolic rank-two corroboration
+        if: ${{ !cancelled() }}
         working-directory: twist-normal-form-lean
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p ci-artifacts
           python -m pip install --disable-pip-version-check 'sympy==1.14.0'
           python -c 'import sympy; print(sympy.__version__)' \
             | tee ci-artifacts/sympy-version.txt
@@ -61,3 +78,4 @@ jobs:
         with:
           name: twist-normal-form-verification-${{ github.sha }}
           path: twist-normal-form-lean/ci-artifacts/
+          if-no-files-found: warn
