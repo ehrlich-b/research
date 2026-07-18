@@ -1,0 +1,63 @@
+name: Twist normal form verification
+
+on:
+  push:
+    paths:
+      - 'twist-normal-form-lean/**'
+      - '.github/workflows/twist-normal-form-lean.yml'
+  pull_request:
+    paths:
+      - 'twist-normal-form-lean/**'
+      - '.github/workflows/twist-normal-form-lean.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and independently recheck Lean declarations
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: twist-normal-form-lean
+          build: true
+          test: false
+          nanoda: true
+          nanoda-allow-sorry: false
+
+      - name: Gate axiom closure and statement fidelity
+        working-directory: twist-normal-form-lean
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-artifacts
+          lean --version | tee ci-artifacts/toolchain.txt
+          lake --version | tee -a ci-artifacts/toolchain.txt
+          lake env lean AxiomAudit.lean 2>&1 | tee ci-artifacts/axiom-audit.log
+          git rev-parse HEAD | tee ci-artifacts/git-commit.txt
+          sha256sum lean-toolchain lake-manifest.json AxiomAudit.lean verify_n2.py \
+            > ci-artifacts/input-sha256.txt
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Run exact symbolic rank-two corroboration
+        working-directory: twist-normal-form-lean
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check 'sympy==1.14.0'
+          python -c 'import sympy; print(sympy.__version__)' \
+            | tee ci-artifacts/sympy-version.txt
+          python verify_n2.py 2>&1 | tee ci-artifacts/verify-n2.log
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: twist-normal-form-verification-${{ github.sha }}
+          path: twist-normal-form-lean/ci-artifacts/
