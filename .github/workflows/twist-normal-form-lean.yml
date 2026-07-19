@@ -23,8 +23,10 @@ jobs:
       # Gate 1 (required): full build in Lean's kernel.  lean-action installs
       # the pinned toolchain, fetches the Mathlib cache, and runs `lake build`.
       # Note: `lake build` alone does NOT fail on a `sorry` (Lean only warns);
-      # the project-wide no-`sorry` guarantee is enforced by Gate 2's census,
-      # not here.  nanoda is intentionally NOT used: an external re-check would
+      # the no-`sorry` guarantee for tracked persisted `RadicalRelativity`
+      # declarations is enforced by Gate 2's census, not here (an anonymous
+      # `example := by sorry` persists no declaration and is a source-review
+      # item, not a census-caught one).  nanoda is intentionally NOT used: an external re-check would
       # have to re-export RadicalRelativity's full transitive Mathlib closure,
       # impractical on a runner, and the axiom policy is enforced in-kernel by
       # Gate 2.
@@ -37,13 +39,15 @@ jobs:
           nanoda: false
 
       # Gate 2 (required, non-skipping): four-layer audit.  `AxiomAudit.lean`
-      # fails elaboration if ANY tracked `RadicalRelativity` declaration depends
-      # on `sorryAx` or an axiom outside the three core axioms plus the two
-      # disclosed cited axioms; if the two cited axioms are not the only project
+      # fails elaboration if ANY tracked persisted `RadicalRelativity` declaration
+      # depends on `sorryAx` or an axiom outside the three core axioms plus the two
+      # disclosed cited axioms; if the two cited axioms are not the only tracked-tree
       # custom axioms; if the tracked module set does not equal the source tree
-      # on disk (a new unimported module or a removed import); if a principal
+      # on disk or the frozen 26-name manifest (a new unimported module, a removed
+      # import, or a coordinated module+import deletion); if a principal
       # advertised endpoint's closure is not exactly the three core axioms; or
-      # if a named fidelity pin's shape or a cited axiom's printed type drifts.
+      # if a named fidelity pin's or S1--S7 field's type, or a cited axiom's printed
+      # type, drifts.
       # `-DwarningAsError=true` so an audit-file `sorry` warning is fatal too.
       # `!cancelled()` so a failure in another gate cannot silently skip this one.
       - name: Census axioms, gate closure allowlist and fidelity
