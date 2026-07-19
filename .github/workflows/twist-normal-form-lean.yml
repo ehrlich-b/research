@@ -38,16 +38,18 @@ jobs:
           test: false
           nanoda: false
 
-      # Gate 2 (required, non-skipping): four-layer audit.  `AxiomAudit.lean`
+      # Gate 2 (required, non-skipping): five-layer audit.  `AxiomAudit.lean`
       # fails elaboration if ANY tracked persisted `RadicalRelativity` declaration
       # depends on `sorryAx` or an axiom outside the three core axioms plus the two
       # disclosed cited axioms; if the two cited axioms are not the only tracked-tree
       # custom axioms; if the tracked module set does not equal the source tree
       # on disk or the frozen 26-name manifest (a new unimported module, a removed
       # import, or a coordinated module+import deletion); if a principal
-      # advertised endpoint's closure is not exactly the three core axioms; or
-      # if a named fidelity pin's or S1--S7 field's type, or a cited axiom's printed
-      # type, drifts.
+      # advertised endpoint's closure is not exactly the three core axioms; if a
+      # named fidelity pin's or S1--S7 field's type, or a cited axiom's printed
+      # type, drifts; or if an effect-boundary body pin (S2, `IsEffect`, `Effect`,
+      # `EffectProduct`) or a class constructor (`SequentialProduct.mk`,
+      # `SequentialProductCore.mk`) drifts.
       # `-DwarningAsError=true` so an audit-file `sorry` warning is fatal too.
       # `!cancelled()` so a failure in another gate cannot silently skip this one.
       - name: Census axioms, gate closure allowlist and fidelity
