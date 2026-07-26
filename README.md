@@ -33,7 +33,7 @@ Website: [ehrlich.dev/papers](https://ehrlich.dev/papers/)
 
 | # | Title | Status | PDF |
 |---|-------|--------|-----|
-| A | Sequential Products on Euclidean Jordan Algebras | in review at J. Phys. A | [pdf](https://ehrlich.dev/papers/twist-normal-form/main.pdf) |
+| A | Sequential Products on Euclidean Jordan Algebras | in review at J. Phys. A | [pdf](https://ehrlich.dev/papers/twist-normal-form/sequential-products-2026.pdf) |
 | 5 | Quantum Mechanics from Self-Modeling | **withdrawn** | [pdf](papers/qm-from-self-modeling/main.pdf) |
 | 4 | Falsification of the Born-Fisher-Experiential Conjecture | negative result | [pdf](papers/born-fisher-2026.pdf) |
 | 3 | Lipschitz Stability of the Experiential Density Functional | stands alone | [pdf](papers/lipschitz-stability.pdf) |
