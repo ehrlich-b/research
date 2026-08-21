@@ -3,8 +3,9 @@
 A research program on self-modeling systems and the structure of quantum theory.
 
 **Current result:** *Sequential Products on Euclidean Jordan Algebras:
-Classification in Rank at Least Three and the Complex Qubit* (Paper A) — in
-review at J. Phys. A. On a finite-dimensional simple Euclidean Jordan algebra of
+Classification in Rank at Least Three and the Complex Qubit* (Paper A) — preprint;
+desk-rejected by J. Phys. A on 2026-08-03 without referee reports, so it carries no
+external correctness signal, and no venue is currently chosen. On a finite-dimensional simple Euclidean Jordan algebra of
 rank ≥ 3, the seven standard sequential-product axioms force the Lüders product
 `a·b = Q_√a b` on the real, quaternionic and exceptional types, and leave
 exactly a one-real-parameter family `a^(1/2+it) b a^(1/2−it)` on the complex
@@ -33,7 +34,7 @@ Website: [ehrlich.dev/papers](https://ehrlich.dev/papers/)
 
 | # | Title | Status | PDF |
 |---|-------|--------|-----|
-| A | Sequential Products on Euclidean Jordan Algebras | in review at J. Phys. A | [pdf](https://ehrlich.dev/papers/twist-normal-form/sequential-products-2026.pdf) |
+| A | Sequential Products on Euclidean Jordan Algebras | preprint, no venue | [pdf](https://ehrlich.dev/papers/twist-normal-form/sequential-products-2026.pdf) |
 | 5 | Quantum Mechanics from Self-Modeling | **withdrawn** | [pdf](papers/qm-from-self-modeling/main.pdf) |
 | 4 | Falsification of the Born-Fisher-Experiential Conjecture | negative result | [pdf](papers/born-fisher-2026.pdf) |
 | 3 | Lipschitz Stability of the Experiential Density Functional | stands alone | [pdf](papers/lipschitz-stability.pdf) |
