@@ -42,6 +42,14 @@ WHAT THE ARTICLE ASSERTS
   (30) For every continuous t : RP^2 -> R the operation  a . b := a^{1/2+i t_a} b a^{1/2-i t_a}
        (t_a = t(fr a), and 0 for scalar a) is a norm-continuous S1-S7 sequential product on H_2(C).
   (35) t |-> o_t is a BIJECTION from C(RP^2, R) onto the norm-continuous S1-S7 products on H_2(C).
+       *** A product here is an operation on EFFECTS.  def:sp (main.tex:367) types it
+       eff(V) x eff(V) -> eff(V), and rem:moduli (main.tex:1417) defines M_SP(J) as the
+       products on the fixed labelled EFFECT ALGEBRA.  So two products are equal exactly
+       when they agree on effect pairs.  This line omitted that until 2026-08-22, the same
+       omission STATEMENT-MANIFEST.md's row-35 summary column made, and read without it the
+       row appears to say the article is refuted by Necessity.badP.  It is not: badP's
+       separating witness is (2:R) * 1, proved a non-effect by not_isEffect_two_smul_one,
+       where the article defines nothing.  badP refutes THIS ENCODING, not the article. ***
 
 WHY THESE TWO SHARE A CERTIFICATE
   Row 35 is exactly rows 29/30/32/33/34 assembled: 30 gives the forward map is well defined,
