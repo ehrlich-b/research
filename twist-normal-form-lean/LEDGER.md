@@ -289,8 +289,9 @@ ambient `J`**, where `EJA/FormallyReal.lean` already lives. **No `Unitization`, 
 lesson.** The plan named its own weakest link: a multiplicity-`a` Bézout argument producing an
 idempotent `e ≡ e² (mod m)`, worked out by hand rather than taken from a textbook, flagged as "the
 step most likely to contain an error", and priced at 80–140 lines. It exists to avoid needing
-squarefreeness. Squarefreeness is **three lines** from radicality (`IsRadical.squarefree`), and with
-it in hand the kill needs **no idempotent at all**: the only facts consumed are `q·ẽ ≡ 0 (mod m)` and
+squarefreeness. Squarefreeness is **one line** from radicality (Mathlib's `IsRadical.squarefree`),
+and radicality is 11 lines (`isRadical_of_annihilator`) on an 8-line helper (`jpow_jeval`); with it
+in hand the kill needs **no idempotent at all**: the only facts consumed are `q·ẽ ≡ 0 (mod m)` and
 `ẽ ≢ 0 (mod m)`, and formal reality kills the *value* directly. The **other** flagged step — a
 `NonUnitalCommRing` instance on the subtype `↥(jspan x)`, the plan's lowest-confidence line item at
 40–90 lines, and the one it called "the cheapest falsifier of the whole estimate" — **does not appear

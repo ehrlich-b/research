@@ -61,9 +61,10 @@ bookkeeping.
 
 ★★ **The step that was flagged in advance as the likeliest to contain an error — a
 multiplicity-`a` Bézout argument producing an idempotent `e ≡ e² (mod m)` — is not in the proof
-at all.** It was designed to avoid needing squarefreeness. Squarefreeness turns out to be three
-lines from radicality (`IsRadical.squarefree`), and once you have it the kill needs **no
-idempotent**: with `q ∣ m` the real quadratic through a non-real root, `e := βu` from
+at all.** It was designed to avoid needing squarefreeness. Squarefreeness turns out to be **one
+line** from radicality — Mathlib's `IsRadical.squarefree` — and radicality is 11 lines
+(`isRadical_of_annihilator`) on an 8-line helper (`jpow_jeval`). Once you have it the kill needs
+**no idempotent**: with `q ∣ m` the real quadratic through a non-real root, `e := βu` from
 `αq + βu = 1`, and `ẽ` its zero-constant-term correction, the only facts used are
 `q·ẽ ≡ 0 (mod m)` and `ẽ ≢ 0 (mod m)`. Formal reality kills the *value* `jeval x g` directly,
 where `X * g = ẽ`. Multiplicities never enter.
