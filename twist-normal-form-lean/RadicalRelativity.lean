@@ -634,3 +634,4 @@ import RadicalRelativity.EJA.Bridge
 import RadicalRelativity.EJA.InterfaceInstance
 import RadicalRelativity.EJA.ConcreteInstance
 import RadicalRelativity.EJA.Witness
+import RadicalRelativity.EJA.Spectral
