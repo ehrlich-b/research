@@ -19,6 +19,163 @@ interface structure instantiated on the intended algebras.
 
 ---
 
+## TOOLCHAIN MIGRATION v4.28.0 → v4.33.0 (2026-08-22) — infrastructure record, not a campaign arc
+
+Not an arc and not campaign SSOT: ARC-9 below is still the SSOT. This section exists so that the
+next person who reads a v4.28-scoped sentence anywhere in this tree knows when it stopped being
+the pinned version, and so the migration's own failure modes are on the record.
+
+**What moved.** `lean-toolchain`, `lakefile.toml` (mathlib `rev`) and `lake-manifest.json` to
+`v4.33.0`; both vendored islands re-pulled from upstream at their v4.33 commits (physlib
+`ad1d812` → `a50684a191`, csd-lean4 `2287f45` → `818b770010ae`); 70 modules edited; 2 modules
+added. The whole v4.32 → v4.28 backport recorded in `RadicalRelativity/Vendor/VENDOR.md` is
+retired — **none of its edits survive**, and that file's re-vendor section, not this one, is the
+authority on the islands' current contents.
+
+**Method — ported by content from a tree that had already done it.** The public slice
+`ehrlich-b/sequential-products-lean` performed and verified this same migration on 2026-08-21.
+The two repositories have separate, non-shared histories (duplicate commit messages at different
+SHAs), so nothing was cherry-picked; files were copied and the slice's curated `docs/` paths were
+rewritten back to this tree's root paths. **The slice is curated, so it was first proved
+non-lossy before anything was overwritten:** `diff -rq` over the two `RadicalRelativity/` trees
+gave 80 differing files, 2 present only in the slice, **0 present only here**; a declaration
+extraction over all 80 found exactly **one** declaration here and not there, and a signature
+comparison over **1883** declarations found five more statements narrowed. Both are accounted for
+under "statement changes" below. After the port, no declaration present before is absent after,
+across all 72 changed `.lean` files, bar the same one.
+
+**What broke, by cause.**
+
+1. **`Lean.CollectAxioms.State` / `.collect` are no longer exposed** (`AxiomAudit.lean`). The
+   public entry point is `Lean.collectAxioms : Name → m (Array Name)`. Same census, same allowed
+   set, same offender reporting; only the plumbing changed. The memoised single pass became a
+   per-declaration call, so the offender list is now built in the same loop rather than in a
+   second sweep.
+2. **The `HermitianMat` topology diamond became visible.** v4.33 flipped
+   `backward.isDefEq.respectTransparency`: `isDefEq` at `.instances` transparency no longer
+   unfolds non-reducible instance definitions, so the subtype topology on `HermitianMat` is no
+   longer *seen* to be defeq to the metric topology. The diamond is old and harmless — `rfl`
+   still proves the two equal at default transparency — but every normed structure on
+   `HermitianMat n 𝕜 →L[ℝ] HermitianMat n 𝕜` became unsynthesizable. Fixed by the new
+   first-party `Hermitian/OperatorInstances.lean`, which declares `NormedRing`, `NormedAlgebra`,
+   `SequentialSpace` and `CompleteSpace` once each with their carrier arguments explicit and lets
+   the definitional unifier bridge. The compatibility knob
+   `set_option backward.isDefEq.respectTransparency false` was deliberately **not** used in
+   first-party code: it is slated for removal, so relying on it would just move this work to the
+   bump that drops it. Upstream physlib hit the same wall and does use it — the 40 such lines in
+   the vendored island are load-bearing and must not be dropped.
+3. **The re-vendor wiped five in-place RCLike generalizations.** Two order/eigenvalue bounds and
+   three functional-calculus norm bounds had been generalized from `ℂ` to `RCLike 𝕜` *inside* the
+   vendored files. Pulling upstream verbatim silently reverted all five to `ℂ`. They are restored
+   in the new first-party `Hermitian/RCLikeGeneral.lean` under primed names, at the same
+   generality, with the same proofs — so `RadicalRelativity/Vendor/` can stay byte-verbatim
+   across future bumps and a generalization can no longer disappear without a compile error.
+   ★ **The lesson is the detection, not the fix**: one of the two original generalization commits
+   carried no annotation of any kind, so nothing but a declaration-signature diff against the old
+   pin could have recovered it. A patch applied in place inside a vendored island is a patch you
+   will lose.
+4. **`AddMonoid.End` application stopped being bridged by `simp`** (`EJA/Peirce.lean`,
+   `EJA/PeirceMul.lean`, arrived at v4.30). Mathlib's lemmas are phrased for the `AddMonoidHom`
+   coercion and do not match the `AddMonoid.End` one; the four `rfl`s are now stated locally and
+   passed to `simpa` explicitly.
+5. **Derivative-plumbing drift** (`Necessity/ChiContinuity*.lean`, `CoalescenceDiff*.lean`,
+   `BlockInvariance*.lean`, `StabilizerInstance.lean`). `rw`/`simp only` no longer match
+   pre-formed `exp (0 • A)` slots, the `hasDerivAt_const … .clm_apply` route leaves a `0 (…)`
+   summand whose zero sits at a different instance path, and `convert` now splits into
+   instance-equality side goals on the `Real.instAddCommGroup` vs
+   `Real.normedAddCommGroup.toAddCommGroup` diamond. Each fixed by stating the value directly or
+   composing with `hasFDerivAt.comp_hasDerivAt`. All proof-side; no statement moved.
+6. **Quaternion literals no longer unfold under `simp`** (`MasterTheorem/Branches/Quaternionic.lean`).
+   `imK_mul`/`imJ_mul` are stated over `ℍ[ℝ] = Quaternion ℝ` while a raw literal `⟨0,0,1,0⟩`
+   carries the inferred type `ℍ[ℝ,-1,0,-1]`; unifying the two unfolds the semireducible
+   `Quaternion`, which `simp` no longer does. Fixed by expanding the commutation identity against
+   a variable quaternion first and instantiating at the literals afterwards.
+7. **`simpa … using!`** — 13 sites across the tree, `Solution.lean` included, needed the v4.33
+   bang form, and one `dif_pos` rewrite under a `.mat` coercion had to become a `simp` on the
+   hypothesis.
+
+**Statement changes forced by the migration — all three, stated loudly because a migration that
+silently weakens a statement is worse than one that fails to compile.**
+
+- `LocalTomography.IsLocallyTomographic` went from `(V : Type*)` to `(V : Type u)` with
+  `composite_exists : ∃ (C : Composite.{u,u} V), C.dimMatches`, because v4.30 will not infer the
+  composite's universe. This **is** a statement change: it pins the witness to `V`'s own universe
+  and so makes the class formally *stronger* as a hypothesis. It is inert in this tree — the class
+  has no instances and no consumers; `grep -rn IsLocallyTomographic` over the whole tree returns
+  three hits, all inside its own file — but it is a change, and if that skeleton ever acquires a
+  consumer the universe pin has to be re-argued.
+- The five `ℂ`-narrowings of item 3 above, each restored at full `RCLike 𝕜` generality under a
+  primed name. Net: nothing lost, but the general form now lives under
+  `le_smul_one_imp_eigenvalues_le'`, `eigenvalues_le_imp_le_smul_one'`,
+  `norm_cfc_le_sqrt_card_mul_bound'`, `norm_cfc_sub_cfc_le_sqrt_card'`,
+  `norm_cfc_sub_le_of_sup_le'` and the unprimed vendored names are `ℂ`-only again.
+- One declaration deleted: the private helper `Matrix.PosDef.submatrix_of_injective`, because
+  Mathlib v4.33 supplies `PosDef.submatrix`. Its only consumer, `PosDef.reindex`, keeps its exact
+  statement and gains a one-line proof.
+
+**Gates re-established.**
+
+| Gate | Before (v4.28.0) | After (v4.33.0) |
+| --- | --- | --- |
+| `lake build` | success, 3121 jobs | success, 3272 jobs, zero `error:` lines over the full log |
+| `AxiomAudit.lean` census | PASS, 164 modules | PASS, **166** modules |
+| custom axioms | exactly `[]` | exactly `[]` |
+| six Comparator libraries | (not built at baseline) | success, 4 `sorry`s, all of them the Challenge statements the Solutions discharge |
+| wall certificates | 2 / 0 / 2 / 0 / 1 / 3 / 2 / 0 / 1 | **identical**, zero errors, no source edit needed |
+
+166 is derived, not assumed: 165 `.lean` files under `RadicalRelativity/` plus the root module
+`RadicalRelativity.lean`, which `AxiomAudit.lean:140` prepends to the disk scan. The gate is
+three-way — disk == imported == frozen manifest — so all three agree at 166. The `+2` is exactly
+`Hermitian/RCLikeGeneral.lean` and `Hermitian/OperatorInstances.lean`.
+
+**Version-scoped claims that were re-checked at v4.33.0 rather than rewritten.** The wall
+certificates' "Mathlib lacks X" entries were verified against v4.28.0 and are dated and scoped to
+that version, so they were left as written. Four were re-run against the v4.33.0 checkout (8311
+Mathlib files) on 2026-08-22 and all four still hold: `givens` case-insensitive → **0** hits
+(`lem:frame-connectivity`); `Mathlib/Algebra/Jordan/` still exactly one file, `Basic.lean`, now
+244 lines rather than 237 (ARC-9's scouting paragraph); no `RCLike` instance for `Quaternion`
+(`thm-quaternionic.lean`); `iSup_iInf_eq_top_of_commute` still present
+(`prop-n2-sufficiency.lean`). The rest of the certificates' Mathlib-scope claims are now pinned to
+an older Mathlib than the tree is, and re-running them is a standing task, not a discharged one.
+
+**Also repaired in this migration, because the migration is what made it false.** The wall
+certificate isolation recipe (`WallCertificates/README.md`) rested on `lakefile.toml` declaring
+"exactly one `lean_lib`", which stopped being true when the Palomar Challenge/Solution libraries
+were added; it now declares seven. The substance is unchanged, but the argument has to be the
+import closure: `defaultTargets` is `RadicalRelativity`, no module under `RadicalRelativity/`
+imports the directory, and none of the six Comparator libraries does either. That recipe has now
+decayed twice — once in 2026-08-09 and once here — in a file whose own thesis is that prices decay.
+
+**Departure from the slice's version of this migration.** One, and it is a correction rather than
+a difference of approach: the slice left `upstream/README.md` asserting that the staged Mathlib PR
+file is "verified against the Mathlib revision pinned in this repo (`v4.28.0`)", which the bump
+falsified. `upstream/Wigner.lean` was re-elaborated here under the v4.33.0 pin on 2026-08-22 —
+`lake env lean upstream/Wigner.lean`, exit 0, zero errors, zero `sorry`s, one style-linter warning
+— and the sentence now says v4.33.0 and carries that date.
+
+**Where this migration is committed, and a warning about how it got there.** The 78-file source
+migration is inside commit **`14a9f5e`**, whose message describes only an unrelated row-35 prose
+fix. It was not committed under that message deliberately: two agents were working in this
+repository at the same time, git's index is shared per working tree, and the other agent's
+`git commit` picked up everything this migration had just staged. Nothing was lost and nothing was
+mixed in the working tree — the file sets are disjoint (`14a9f5e` = 78 migration files + their
+`STATEMENT-MANIFEST.md` and `WallCertificates/prop-n2-sufficiency.lean`) — but the commit message
+under-describes its own contents by two orders of magnitude, and this paragraph is the correction.
+The commit was left standing rather than split, because splitting it means rewriting another
+agent's commit and changing a SHA they may already have reported. ★ **Operational rule this
+earns:** with more than one agent live in a tree, `git add` followed by a separate `git commit` is
+a race. Stage and commit in one command, and check `git log -1` before assuming your commit is
+yours.
+
+**Noise introduced by v4.33, not a defect.** Mathlib's `linter.style.header` at v4.33 emits `info`
+diagnostics containing the word `error` (its own parser failing on this tree's module docstrings,
+which use `&` and other tokens it does not expect), 175 of them in a full build. They are `info`,
+not `error:` lines, and the build reports success. **Any error count taken over a build log here
+must be `grep -cE '^error:'` and not a bare `grep -c error`**, or it reads 175 errors on a green
+tree.
+
+---
+
 ## ★★★ ARC-9 ORDERS (2026-08-12, self-authored by the executing agent — the EJA axiomatization). READ THIS FIRST.
 
 ★ **Provenance, stated because it differs from every arc above:** ARC-4 through ARC-8 were designed

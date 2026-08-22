@@ -12,19 +12,20 @@ but see Provenance: some of the code is third-party, vendored in.
 
 ## Provenance — first-party vs vendored
 
-Of the tree's 50,504 lines, **12,409 are third-party code vendored verbatim**
-(pinned, Apache 2.0, per-file copyright headers retained). ★ Counts as of 2026-08-12;
+Of the tree's 50,965 lines, **12,499 are third-party code vendored verbatim**
+(pinned, Apache 2.0, per-file copyright headers retained). ★ Counts as of 2026-08-22;
 reproduce with `find RadicalRelativity RadicalRelativity.lean -name '*.lean' -exec cat {} + | wc -l`
 and the same over `RadicalRelativity/Vendor`. The first figure read 41,135 for three arcs after it
 stopped being true, and went stale again the same day it was corrected, which is why the command is
 printed here rather than the number alone. Full record,
-including the mathlib v4.32→v4.28 backport edit log and its zero-statement-change
-audit: `RadicalRelativity/Vendor/VENDOR.md`.
+including the 2026-08-21 re-vendor of both islands at v4.33.0 (which retired the whole
+mathlib v4.32→v4.28 backport edit log recorded there):
+`RadicalRelativity/Vendor/VENDOR.md`.
 
 | Vendored island | Upstream | Author(s) | Role here |
 | --- | --- | --- | --- |
-| `Vendor/*.lean`, `Vendor/HermitianMat/`, `Vendor/Tactic/` (17 modules) | `leanprover-community/physlib` @ `ad1d812` | Alex Meiburg (`HermitianMat/Proj.lean` also Leonardo A Lessa) | the M1 carrier substrate: Hermitian matrices with Loewner order, trace inner product, continuous functional calculus, Jordan product |
-| `Vendor/Wigner/` (8 modules) | `zblore/csd-lean4` @ `2287f45` | Zayn Blore | complex Wigner rigidity on `ℂP^{N-1}` — the M3 input for the ℂ row |
+| `Vendor/*.lean`, `Vendor/HermitianMat/`, `Vendor/Tactic/` (17 modules) | `leanprover-community/physlib` @ `a50684a191` | Alex Meiburg (`HermitianMat/Proj.lean` also Leonardo A Lessa) | the M1 carrier substrate: Hermitian matrices with Loewner order, trace inner product, continuous functional calculus, Jordan product |
+| `Vendor/Wigner/` (8 modules) | `zblore/csd-lean4` @ `818b770010ae` | Zayn Blore | complex Wigner rigidity on `ℂP^{N-1}` — the M3 input for the ℂ row |
 
 Everything outside `RadicalRelativity/Vendor/` is first-party. In particular
 `RadicalRelativity/Wigner/RealWigner.lean` — the finite-dimensional real, non-bijective
@@ -56,8 +57,8 @@ lake exe cache get   # download prebuilt Mathlib oleans (same pin as manifest)
 lake build           # builds the paper's modules (no-sorry / axiom-closure gate: AxiomAudit.lean, not this command)
 ```
 
-- Toolchain: `leanprover/lean4:v4.28.0` (see `lean-toolchain`).
-- Mathlib: `v4.28.0`, pinned in `lake-manifest.json` (identical revision to the
+- Toolchain: `leanprover/lean4:v4.33.0` (see `lean-toolchain`).
+- Mathlib: `v4.33.0`, pinned in `lake-manifest.json` (identical revision to the
   parent development).
 
 ## The two unconditional rows
@@ -183,8 +184,8 @@ implication quantified over the §2 interface fields. See "Axiom audit" above an
 - `RadicalRelativity/Selection/TwistIsotropy.lean`
 
 **The rest of the tree** — where the two unconditional rows actually live. The
-lists above are the abstract layer only; they are a small minority of the 163
-modules under `RadicalRelativity/` (164 tracked declaration-bearing modules, counting the
+lists above are the abstract layer only; they are a small minority of the 165
+modules under `RadicalRelativity/` (166 tracked declaration-bearing modules, counting the
 root aggregator), so the map is completed by directory rather than by file.
 ★ Reproduce every count in the table with
 `for d in EJA Hermitian Necessity RankTwo PaperA Wigner Vendor; do echo "$d $(find RadicalRelativity/$d -name '*.lean' | wc -l)"; done`
@@ -196,7 +197,7 @@ and this tree changes faster than the prose describing it:
 | Directory | Modules | Role |
 | --- | --- | --- |
 | `RadicalRelativity/EJA/` | 14 | **the EJA layer (ARC-9, 2026-08-12)** — Jordan-algebra theory whose only Jordan input is Mathlib's `IsCommJordan` (plus the real scalars, which are load-bearing: the Peirce layer divides by `2` and Albert's theorem needs every integer invertible): the Peirce decomposition at an idempotent with its Faraut–Korányi multiplication rules, orthogonal idempotent families and the three FK facts `CoalescenceSetup` carries as citations, **Albert's power-associativity theorem**, formal reality and the absence of nilpotents, and the one-generator subalgebra. ★ This is (E2) of `EJA-DIVIDEND.md` plus two of (E1)'s four steps; **no manifest row depends on it yet**, and none moved when it landed |
-| `RadicalRelativity/Hermitian/` | 11 | the concrete carrier `HermitianMat n 𝕜`: order-unit layer, extreme effects = projections, twist family, CFC continuity, sequential-product instances |
+| `RadicalRelativity/Hermitian/` | 13 | the concrete carrier `HermitianMat n 𝕜`: order-unit layer, extreme effects = projections, twist family, CFC continuity, sequential-product instances, and the two v4.33 migration modules (`RCLikeGeneral`, `OperatorInstances`) described in `RadicalRelativity/Vendor/VENDOR.md` |
 | `RadicalRelativity/Necessity/` | 76 | the two flagship rows end to end — comparison-map instances, the ℂ twist extraction and its globalization, the ℝ rigidity, the Kadison discharges, and the capstones `complex_classification_unconditional` / `real_classification` |
 | `RadicalRelativity/RankTwo/` | 8 | rank-two moduli space, complementation/descent to `ℝP²`, separation, and the frame-dependent twist product with the classification correspondence (`n2SequentialProduct`, `n2QubitModuli`, `qubit_classification_up_to_effects`). ★ This cell said "the classification *map* is absent" until 2026-08-12; it was built 2026-08-09. The correspondence is a bijection **up to agreement on effects** — the article's literal "onto the products" is refuted for this encoding (`not_exists_moduli_of_badP`), so read `THEOREM-MAP.md` §1 before reading this as the article's corollary |
 | `RadicalRelativity/PaperA/` | 3 | frozen statement shapes plus the certification that the two proved rows meet them |

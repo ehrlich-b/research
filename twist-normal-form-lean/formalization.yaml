@@ -174,15 +174,17 @@ related_formalizations:
     note: >-
       Seventeen modules (Hermitian matrices with the Loewner order, trace inner
       product, continuous functional calculus, Jordan product) by Alex Meiburg, with
-      HermitianMat/Proj.lean also by Leonardo A Lessa, vendored verbatim at commit
-      ad1d812 under RadicalRelativity/Vendor/ with per-file copyright headers retained.
-      They form the carrier substrate the classification is proved over. Backported
-      from Mathlib v4.32 to v4.28; the edit log and a zero-statement-change audit are
-      in RadicalRelativity/Vendor/VENDOR.md.
+      HermitianMat/Proj.lean also by Leonardo A Lessa, vendored at commit a50684a191
+      under RadicalRelativity/Vendor/ with per-file copyright headers retained. They
+      form the carrier substrate the classification is proved over. The modules match
+      that upstream pin except for two documented edits, an import-path rewrite and one
+      restored set_option; five lemmas upstream states only over the complex numbers are
+      restated at RCLike generality in first-party code rather than patched in place. The
+      edit log and a zero-statement-change audit are in RadicalRelativity/Vendor/VENDOR.md.
   - id: "zblore/csd-lean4"
     relationship: builds-on
     note: >-
       Eight modules by Zayn Blore giving complex Wigner rigidity on CP^(N-1), vendored
-      verbatim at commit 2287f45; this is an input to the complex row. The
+      at commit 818b770010ae; this is an input to the complex row. The
       corresponding real, non-bijective Wigner theorem is first-party
       (RadicalRelativity/Wigner/RealWigner.lean) and is not derived from this work.

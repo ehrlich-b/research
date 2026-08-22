@@ -72,6 +72,23 @@ namespace RadicalRelativity.EJA
 
 local notation "L" => AddMonoid.End.mulLeft
 
+/-! Applying an `AddMonoid.End` expression to an element is definitional in every constructor
+we use, but Mathlib's corresponding lemmas are phrased for the `AddMonoidHom` coercion and do not
+match the `AddMonoid.End` one.  Lean 4.28's simp set bridged this on its own; 4.30's does not, so
+the four `rfl`s are stated here and passed to `simpa` explicitly. -/
+
+private theorem L_apply {J : Type*} [NonUnitalNonAssocSemiring J] (a w : J) :
+    (AddMonoid.End.mulLeft a) w = a * w := rfl
+
+private theorem End_add_apply {J : Type*} [NonUnitalNonAssocCommRing J]
+    (f g : AddMonoid.End J) (w : J) : (f + g) w = f w + g w := rfl
+
+private theorem End_mul_apply {J : Type*} [NonUnitalNonAssocCommRing J]
+    (f g : AddMonoid.End J) (w : J) : (f * g) w = f (g w) := rfl
+
+private theorem End_neg_apply {J : Type*} [NonUnitalNonAssocCommRing J]
+    (f : AddMonoid.End J) (w : J) : (-f) w = -(f w) := rfl
+
 section Lin2
 
 variable {J : Type*} [NonUnitalNonAssocCommRing J] [IsCommJordan J]
@@ -86,6 +103,12 @@ The factor `4` is carried rather than cancelled so that this holds with no torsi
 hypothesis. -/
 theorem four_lin2_raw (p q b : J) :
     (4 : ℕ) • (⁅L b, L (p * q)⁆ + ⁅L p, L (q * b)⁆ + ⁅L q, L (p * b)⁆) = 0 := by
+  -- Same instance gap as in `two_lin1_raw`: `LieRing.ofAssociativeRing` is a `local instance`
+  -- of its own Mathlib file, so a ring's commutator carries `Ring.instBracket` but no `LieRing`,
+  -- and `lie_add`/`add_lie` cannot fire on `AddMonoid.End J`.  Reinstating it inside the proof —
+  -- never at section scope, which would elaborate this theorem's own `⁅·,·⁆` against a different
+  -- instance — is what makes the `simp only` below distribute the bracket.
+  let _ : LieRing (AddMonoid.End J) := LieRing.ofAssociativeRing
   have h1 := two_lin1_raw (p + q) b
   have hp := two_lin1_raw p b
   have hq := two_lin1_raw q b
@@ -103,7 +126,8 @@ theorem four_lin2_apply (p q b w : J) :
       + (p * (q * b * w) - q * b * (p * w))
       + (q * (p * b * w) - p * b * (q * w))) = 0 := by
   have h := congrArg (fun f : AddMonoid.End J => f w) (four_lin2_raw p q b)
-  simpa [Ring.lie_def, sub_eq_add_neg] using h
+  simpa [Ring.lie_def, sub_eq_add_neg, L_apply, End_add_apply, End_mul_apply,
+    End_neg_apply] using h
 
 end Lin2
 
