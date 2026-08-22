@@ -11,9 +11,10 @@ then by ARC-7, 2026-08-09).
 | | |
 | --- | --- |
 | Source | `landing/papers/twist-normal-form/main.tex`, blog repo `ehrlich-b/blog` |
-| Blob hash | **`205fdf5a548c70744cd38cccc25cb8a201cc9771`** |
-| Frozen tag | `paperA-jpa-submitted` @ blog commit `035c337` |
-| Working copy | 2026-08-08 — **byte-identical to the frozen tag** (same blob hash; the manuscript has not been touched since submission) |
+| Blob hash | **`4b0dba301f75f7e49936607692df1a2e9bac3b2a`** (re-pinned 2026-08-22; previously `205fdf5a548c70744cd38cccc25cb8a201cc9771`) |
+| Frozen tag | `paperA-jpa-submitted` @ blog commit `035c337` — the JPA submission, kept untouched as the historical record |
+| Working copy | 2026-08-22 — **no longer byte-identical to the frozen tag.** The manuscript freeze was lifted by Bryan on 2026-08-22 and `main.tex` was brought to AIP/JMP submission form (blog commits `f97cfe1`..`6db50eb`): footnotes inlined, abstract cut to 245 words, author-declaration sections added in AIP order, numeric bibliography, deposit re-pointed at the public `ehrlich-b/sequential-products-lean` mirror at `9c6d92f5`, and the supplementary rewritten around the current artifact. |
+| **Denominator impact** | ★★★ **NONE, and this is verified rather than assumed.** The extraction below was re-run at the new blob: still exactly **36** rows with the identical breakdown (2 maintheorem, 5 theorem, 17 lemma, 9 proposition, 2 corollary, 1 definition), and `diff` of the full `\label{...}` list between `205fdf5a` and `4b0dba30` is **empty** — the label set is byte-identical. So no row moved, no row was added or dropped, and **every existing "N of 36" claim carries over unchanged.** The re-pin is a pointer update, not a denominator change. |
 
 Because the two agree, this manifest pins one object, not two. If `main.tex` is ever edited,
 re-run the extraction (below) and record the new blob hash *plus a diff of this table*
