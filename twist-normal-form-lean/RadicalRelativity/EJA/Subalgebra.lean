@@ -36,6 +36,15 @@ idempotents that `EJA/Frame.lean` then consumes. **`jspan_assoc` is the first of
 steps.** The remaining three — finite-dimensionality of `jspan x`, reducedness in the form the
 classification wants, and the classification itself — are not built.
 
+★★★ **(E1) IS PROVED (2026-08-22, `EJA/Spectral.lean`), AND THE ROUTE ABOVE IS NOT THE ONE IT
+TOOK.** The paragraph is left as written because the mis-shaping is the record. `jspan x` is
+never made a ring, never reduced, never classified; the proof evaluates polynomials into the
+*ambient* `J` by a linear map and does its ideal theory in `ℝ[X]`. What this file actually
+supplies to that proof is `exists_jpow_relation` (the nonzero annihilator) and `mul_mem_jspan`
+/ `jspan_assoc` — the latter two only to place the resulting idempotents in `jspan x`, not to
+build any algebra structure on it. See `WallCertificates/eja-spectral.lean` for the full
+correction.
+
 ★ `jspan x` is a `Submodule`, not a `NonUnitalSubalgebra`: bundling it would need the ambient
 `NonUnitalNonAssocCommRing` to carry an algebra structure over `ℝ`, which this unit-free
 development deliberately does not assume. The two theorems below say exactly what a bundled

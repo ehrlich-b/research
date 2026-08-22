@@ -17,8 +17,14 @@ WHAT THIS FILE IS, AND WHAT IT IS NOT
   it is wrong in one place, and every row that leans on it moves together.
 
   ★ WHAT THIS FILE DOES NOT DO, stated first so it cannot be misread: it does NOT prove any of the
-  rows at the article's generality, and it does NOT prove the gates.  A reader who converts
-  "EJA-GATED" into "FORMALIZED" has made the error this file exists to prevent.
+  rows at the article's generality.  A reader who converts "EJA-GATED" into "FORMALIZED" has made the
+  error this file exists to prevent.
+  ★★★ **"and it does NOT prove the gates" DELETED FROM THE LINE ABOVE, 2026-08-22 — it was false for
+  (E2) from 2026-08-20 and is now false for (E1) as well.**  Two of the three gates below are proved
+  theorems: (E2) via `EJA/InterfaceInstance.lean`, (E1) via `EJA/Spectral.lean`.  (E3) alone is still
+  a `sorry`.  **No row moves on either discharge**, and the reason is the same in both cases: a gate
+  is an INGREDIENT, and the rows that cite it need something built ON the ingredient.  Row 13 needs
+  the spectral *inverse*, not the spectral *resolution* — see its line below.
   ★★ CORRECTED 2026-08-10: an earlier version of this paragraph said "discharging a gate below would
   make the corresponding `ComparisonSetup` FIELD derivable".  That is true only of (E3).  (E1) and
   (E2) correspond to **no field at all** — they are ingredients the fields are built from, and (E2)
@@ -108,7 +114,13 @@ lines are retained below with their defects marked, because the retraction is th
                            EJA generality.  GATE (E1).
   row 13 `prop:pseudo-transfer` — proved in-tree on the concrete carrier in NORMALIZED form
                            (`Necessity/PseudoInverse.lean`).  Residue = the spectral inverse at EJA
-                           generality.  GATE (E1).
+                           generality.  GATE (E1) — ★ **the RESOLUTION half of (E1) is now
+                           DISCHARGED (2026-08-22, see below); this row does NOT move, because its
+                           residue was never the resolution.**  A spectral inverse is a functional
+                           calculus on the resolution, and no functional calculus is built.  What
+                           has changed is that the residue is now a NAMED, SMALLER object — invert
+                           the eigenvalues of an existing resolution — rather than the whole
+                           spectral theorem.
   row 15 [WITHDRAWN — see above; the `Stab(F)°` clause is non-EJA and open] `lem:frame-fix` — the non-EJA content is closed in-tree.  Residue = the Peirce-block
                            statements (Θ_r preserves each block; L_{a(r)} is block-diagonal).
                            GATE (E2) — ★ now DISCHARGED, see below; the row stays WITHDRAWN on its
@@ -170,6 +182,7 @@ NOT imported from RadicalRelativity/.
 -/
 import RadicalRelativity.MasterTheorem.Coalescence
 import RadicalRelativity.EJA.InterfaceInstance
+import RadicalRelativity.EJA.Spectral
 
 set_option linter.style.longLine false
 
@@ -195,18 +208,47 @@ structure JBPremises (C : ComparisonSetup J) : Prop where
   nonneg_iff_squares : ∀ x : J,
     C.nonneg x ↔ ∃ (m : ℕ) (f : Fin m → J), x = ∑ i, C.jordan (f i) (f i)
 
-/-! ### GATE (E1) — the Jordan spectral theorem
+/-! ### GATE (E1) — the Jordan spectral theorem — ★ NO LONGER A GATE (2026-08-22)
 
 Gates row 13 (row 6 was WITHDRAWN above).  Stated as the existence of a spectral resolution in a Jordan frame with real
 eigenvalues, which is what a functional calculus (hence `aOf`'s inverse and the positive extension of
-`L_a`) is built from. -/
+`L_a`) is built from.
 
-/-- **GAP — GATE (E1), the Jordan spectral theorem.**  Gates: row 13 `prop:pseudo-transfer` at EJA
-generality.  (Row 6 was WITHDRAWN above; the header naming it survived the withdrawal until
-2026-08-20.)
+★★★ **It is now a theorem, proved below from `EJA/Spectral.lean`.**  Read the sentence above
+carefully before drawing a consequence from that: the gate statement is what a functional calculus is
+BUILT FROM, and the functional calculus is what row 13 needs.  The row's residue is unchanged in
+kind and smaller in size; it has not moved. -/
 
-★ This is the large piece and it has no Mathlib support.  Its natural home is upstream of this paper
-(a Mathlib-grade EJA layer), not inside `RadicalRelativity`.
+/-- **FORMERLY GATE (E1), the Jordan spectral theorem; NOW A THEOREM (2026-08-22).**  Gates: row 13
+`prop:pseudo-transfer` at EJA generality.  (Row 6 was WITHDRAWN above; the header naming it survived
+the withdrawal until 2026-08-20.)
+
+★★★ **PROVED, and the two claims below about its cost were both wrong.**  `EJA/Spectral.lean` proves
+the single-element spectral theorem at the EJA layer's typeclass generality and
+`RadicalRelativity.EJA.spectral_resolution_bilinear` carries it across to this vocabulary through
+`EJA/Bridge.lean`.  The crossing is the case `Bridge.lean`'s own docstring describes as possible —
+the statement below is expressible with `C.jordan` alone, so no ring instance has to exist before it
+elaborates.
+
+★ (formerly:) "This is the large piece and it has no Mathlib support.  Its natural home is upstream
+of this paper (a Mathlib-grade EJA layer), not inside `RadicalRelativity`."  The second half stands
+as an opinion about where the mathematics BELONGS.  The first half was a price, and it was wrong by
+roughly an order of magnitude in the same direction as ARC-9's earlier mispricings: the whole route
+is 528 lines of Lean in 24 declarations, and its largest single component is Lagrange
+interpolation bookkeeping.
+
+★★ **WHAT IS STILL NOT BUILT, and what a reader must not conclude.**  `EJA-DIVIDEND.md` scopes (E1)
+as "spectral resolution into a Jordan frame with real eigenvalues, AND the functional calculus on
+it".  Two parts of that phrase are NOT discharged by the theorem below and are not built anywhere:
+
+  * **the functional calculus** — nothing maps `f : ℝ → ℝ` to `∑ f(λᵢ) qᵢ` and proves it is a
+    homomorphism.  This is what row 13's spectral inverse needs.
+  * **primitivity** — a Jordan *frame* is a complete orthogonal family of PRIMITIVE idempotents.
+    The `qᵢ` below are orthogonal, complete and have real coefficients; they are NOT shown
+    primitive, and for a repeated eigenvalue they are not.
+
+  The statement below never claimed either, so nothing here is retracted.  But "GATE (E1) is
+  discharged" and "(E1) is done" are different sentences, and only the first is true.
 
 ★★★ **`[FiniteDimensional ℝ J]` ADDED 2026-08-10 after the certificate-refutation review, and without
 it this gate was FALSE.**  `ComparisonSetup` requires only `NormedAddCommGroup` +
@@ -216,15 +258,19 @@ it this gate was FALSE.**  `ComparisonSetup` requires only `NormedAddCommGroup` 
 and `x = X` has no spectral resolution.  So as first written the gate could never be discharged by
 anyone.  ★ The lesson is narrow and worth keeping: **an "at the article's generality" statement must
 carry the article's STANDING hypotheses too, not only its premises.**  f.d. is standing for EJAs and I
-transcribed only the three premises the interface docstring lists. -/
-theorem gate_E1_spectral [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H : JBPremises C)
+transcribed only the three premises the interface docstring lists.
+★ 2026-08-22: the discharge below **uses** that hypothesis — `EJA/Subalgebra.lean`'s
+`exists_jpow_relation` is where finite dimension enters, as the statement that the powers of `x`
+cannot be independent — so the counterexample above is excluded exactly where it should be. -/
+theorem gate_E1_spectral [FiniteDimensional ℝ J] (C : ComparisonSetup J) (H : JBPremises C)
     (x : J) :
     ∃ (m : ℕ) (q : Fin m → J) (lam : Fin m → ℝ),
       (∀ i, C.jordan (q i) (q i) = q i) ∧
       (∀ i j, i ≠ j → C.jordan (q i) (q j) = 0) ∧
       (∑ i, q i) = C.e ∧
-      x = ∑ i, lam i • q i := by
-  sorry
+      x = ∑ i, lam i • q i :=
+  RadicalRelativity.EJA.spectral_resolution_bilinear C.jordan C.jordan_comm H.jordan_identity
+    H.formally_real C.e C.jordan_unit x
 
 /-! ### GATE (E2) — the Peirce decomposition — ★ NO LONGER A GATE (2026-08-20)
 

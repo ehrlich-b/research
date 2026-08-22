@@ -12,6 +12,17 @@ table below:
   `opCommute_scalarOn_frame`, `mem_J2_of_half_half`, `diagFamily_scalarOn`. Only van de Wetering's
   Prop 5.5 stays cited. ★ Only one of the three uses the Jordan identity; the other two are
   bookkeeping that becomes available once the frame equations exist.
+* ★★★ **STATUS 2026-08-22: (E1)'s SPECTRAL RESOLUTION IS PROVED, and the bullet below is superseded.**
+  `RadicalRelativity/EJA/Spectral.lean` proves it unit-free (`spectral_resolution`), with completeness
+  under a unit hypothesis (`spectral_resolution_complete`), on `HermitianMat d 𝕜`, and in the
+  interface's bilinear-map vocabulary (`spectral_resolution_bilinear`) — which discharges
+  `WallCertificate.gate_E1_spectral`. **No row in the table below moves.** Two parts of (E1) as this
+  file scopes it are NOT built and are what the rows actually need:
+  **the functional calculus** (row 13's "spectral inverse" is `∑ μ⁻¹ P_μ`, a calculus ON the
+  resolution) and **primitivity** (the families produced are complete and orthogonal, but are not
+  shown to be Jordan *frames*, and at a repeated eigenvalue they are not). Read every "(E1)" below
+  with those two exclusions attached. The route this file predicted was also wrong in shape — see
+  `WallCertificates/eja-spectral.lean` F1–F5.
 * **(E1) is certificated, not done** — `WallCertificates/eja-spectral.lean`, two of four steps built,
   and the obstruction is structural (ring theory wants a unit; this layer is unit-free).
 * **No row in the table below has moved**, and the CLOSES/PARTIAL/NOTHING verdicts are unchanged. What
@@ -134,6 +145,13 @@ orders' pre-registered condition for skipping it does not fire.
 3. **Nothing in the rank-two lane depends on it.** Rows 29–36 — the whole qubit crown, including the
    two that closed today — are concrete-carrier work. The axiomatization and the rank-two lane are
    independent programs, and the rank-two lane is the one with a paper-facing headline.
+
+★★★ **THE ESTIMATE BELOW WAS WRONG ABOUT THE LARGE PIECE (2026-08-22).** (E1)'s spectral resolution
+came to 599 lines in `EJA/Spectral.lean` — 528 of Lean under a 71-line module docstring, 24
+declarations — whose largest component is Lagrange-interpolation
+bookkeeping; the Mathlib-absence claim was correct and did not translate into the cost it was cited
+to justify. The "natural home is upstream" opinion is untouched. What remains of (E1) is the
+functional calculus and primitivity, and neither has been priced.
 
 **Estimated shape of the work, for the record and not as a commitment:** (E1) a Jordan spectral
 theorem is the large piece and has no Mathlib support (`lean-formalization-landscape`: essentially

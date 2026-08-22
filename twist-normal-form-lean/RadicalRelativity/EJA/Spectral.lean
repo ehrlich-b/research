@@ -6,6 +6,7 @@ Authors: Bryan Ehrlich
 import RadicalRelativity.EJA.Subalgebra
 import RadicalRelativity.EJA.FormallyReal
 import RadicalRelativity.EJA.Witness
+import RadicalRelativity.EJA.Bridge
 import Mathlib.LinearAlgebra.Lagrange
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.RingTheory.PrincipalIdealDomain
@@ -540,5 +541,59 @@ theorem hermitian_spectral_resolution_complete (A : HermitianMat d 𝕜) :
     HermitianMat.symmMul_one]) A
 
 end Concrete
+
+
+section Interface
+
+variable {J : Type*} [NormedAddCommGroup J] [InnerProductSpace ℝ J]
+
+omit [InnerProductSpace ℝ J] in
+/-- Formal reality over an arbitrary `Finset`, from the `Fin k` form that
+`MasterTheorem/Interface.lean`'s premises carry. The two differ only by reindexing. -/
+theorem isFormallyReal_of_fin [Module ℝ J] (m : J →ₗ[ℝ] J →ₗ[ℝ] J) (hcomm : ∀ x y : J, m x y = m y x)
+    (hfr : ∀ (k : ℕ) (f : Fin k → J), (∑ i, m (f i) (f i)) = 0 → ∀ i, f i = 0) :
+    letI : NonUnitalNonAssocCommRing J := ringOfBilinear m hcomm
+    IsFormallyReal J := by
+  letI : NonUnitalNonAssocCommRing J := ringOfBilinear m hcomm
+  refine ⟨fun {ι} s f hsum i hi => ?_⟩
+  classical
+  have key : (∑ k : Fin s.card, m (f (s.equivFin.symm k)) (f (s.equivFin.symm k))) = 0 := by
+    rw [show (∑ k : Fin s.card, m (f (s.equivFin.symm k)) (f (s.equivFin.symm k)))
+        = ∑ a : {y // y ∈ s}, m (f a) (f a) from
+      Equiv.sum_comp s.equivFin.symm (fun a : {y // y ∈ s} => m (f a) (f a)),
+      Finset.sum_coe_sort s (fun a => m (f a) (f a))]
+    exact hsum
+  simpa using hfr s.card (fun k => f (s.equivFin.symm k)) key (s.equivFin ⟨i, hi⟩)
+
+/-- **(E1) in `MasterTheorem/Interface.lean`'s own vocabulary**: the Jordan product as a bundled
+bilinear map, the Jordan identity and formal reality as hypotheses in that vocabulary, and the
+conclusion stated without mentioning any ring instance.
+
+★ This is the crossing `EJA/Bridge.lean` was built for, and it works here for the reason that file
+gives: the *statement* is expressible with `m` alone, so no ring instance has to exist before it
+elaborates. Only the proof needs one, and `ringOfBilinear` supplies it on the ambient additive
+group.
+
+★ Finite-dimensionality is not decoration. Without it the statement is false: `ℝ[X]` with
+polynomial multiplication satisfies every hypothesis below and has no nonconstant spectral
+resolution, its only idempotents being `0` and `1`. -/
+theorem spectral_resolution_bilinear [FiniteDimensional ℝ J] (m : J →ₗ[ℝ] J →ₗ[ℝ] J)
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hjordan : ∀ a b : J, m (m a b) (m a a) = m a (m b (m a a)))
+    (hfr : ∀ (k : ℕ) (f : Fin k → J), (∑ i, m (f i) (f i)) = 0 → ∀ i, f i = 0)
+    (e : J) (he : ∀ y : J, m e y = y) (x : J) :
+    ∃ (n : ℕ) (q : Fin n → J) (lam : Fin n → ℝ),
+      (∀ i, m (q i) (q i) = q i) ∧
+      (∀ i j, i ≠ j → m (q i) (q j) = 0) ∧
+      (∑ i, q i) = e ∧
+      x = ∑ i, lam i • q i := by
+  letI : NonUnitalNonAssocCommRing J := ringOfBilinear m hcomm
+  letI : IsCommJordan J := ⟨hjordan⟩
+  letI : IsScalarTower ℝ J J := ⟨fun r x y => smul_bilinear m r x y⟩
+  letI : IsFormallyReal J := isFormallyReal_of_fin m hcomm hfr
+  obtain ⟨n, q, lam, hfam, hsum, hx⟩ := spectral_resolution_complete e he x
+  exact ⟨n, q, lam, hfam.idem, hfam.orth, hsum, hx⟩
+
+end Interface
 
 end RadicalRelativity.EJA

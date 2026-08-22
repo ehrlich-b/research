@@ -245,6 +245,92 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.28 — (E1) PROVED, gate (E1) discharged, and no row moves (2026-08-22)
+
+`RadicalRelativity/EJA/Spectral.lean` (new; 599 lines, of which 528 are Lean under a 71-line
+module docstring; 24 declarations; module 167 of the census) proves the
+single-element spectral theorem at the EJA layer's own generality:
+
+| declaration | statement |
+| --- | --- |
+| `spectral_resolution` | unit-free; idempotents in `jspan x` |
+| `spectral_resolution_complete` | `∑ cᵢ = e`, unit as an ordinary hypothesis `(e : J) (he : ∀ y, e * y = y)` |
+| `hermitian_spectral_resolution{,_complete}` | both on `HermitianMat d 𝕜`, every `RCLike 𝕜` |
+| `spectral_resolution_bilinear` | the same in `ComparisonSetup`'s bundled-bilinear-map vocabulary |
+
+`lake build` 3273 jobs, exit 0, zero `^error`; `AxiomAudit` census **PASS at 167**, custom axioms
+exactly `[]`; every declaration above prints `[propext, Classical.choice, Quot.sound]`.
+`WallCertificate.gate_E1_spectral` in `WallCertificates/eja-gated.lean` is **discharged** — that
+file goes from two `sorry` to one, and only (E3) remains a gate.
+
+★★★ **NO MANIFEST ROW MOVES, and the reason is worth stating because it is the same reason twice.**
+A gate is an *ingredient*. Row 13's residue is the spectral **inverse** — `∑ μ⁻¹ P_μ`, a functional
+calculus built ON a resolution — and no functional calculus exists at EJA generality. Primitivity is
+likewise absent, so these families are complete and orthogonal but are **not** shown to be Jordan
+*frames*. "GATE (E1) is discharged" and "(E1) is done" are different sentences and only the first is
+true. ★ A side effect worth flagging rather than hiding: row 13's **EJA-GATED evidence is now
+incomplete in form** — ARC-8's definition requires the article-generality residue stated in Lean with
+a `sorry` at the gap, and the statement that carried that for row 13 is now proved. Writing the
+narrower `sorry` (the spectral inverse from a resolution) is an open task, recorded in
+`STATEMENT-MANIFEST.md` rather than papered over.
+
+**The route, and why the certificate's four-step table has no counterpart in the proof.** The
+textbook route makes `ℝ[x]` a ring, shows it is reduced, and applies the structure theory of
+finite-dimensional reduced commutative `ℝ`-algebras — which is where the unit question came from.
+Instead: a linear map `jeval x : ℝ[X] →ₗ[ℝ] J`, `jeval x p = ∑ₙ p.coeff n • x^{n+1}`, i.e. "`x·p(x)`"
+— the only shape available without a unit, since every monomial carries a factor of `x`. Its entire
+content is `jeval x p * jeval x q = jeval x (X * p * q)`, which is `jpow_mul_jpow` transported along
+bilinearity. Then the annihilator is an ideal of `ℝ[X]`, its generator is radical because
+`jpow (jeval x f) n = jeval x (Xⁿ f^{n+1})`, and formal reality applies to those values **in the
+ambient `J`**, where `EJA/FormallyReal.lean` already lives. **No `Unitization`, no
+`NonUnitalCommRing ↥(jspan x)`, no `IsReduced`, no `IsArtinianRing`, no Mathlib `radical` API.**
+
+★★ **THE STEP BRACED FOR IN ADVANCE WAS DELETED, NOT PAID — the third form of this arc's standing
+lesson.** The plan named its own weakest link: a multiplicity-`a` Bézout argument producing an
+idempotent `e ≡ e² (mod m)`, worked out by hand rather than taken from a textbook, flagged as "the
+step most likely to contain an error", and priced at 80–140 lines. It exists to avoid needing
+squarefreeness. Squarefreeness is **three lines** from radicality (`IsRadical.squarefree`), and with
+it in hand the kill needs **no idempotent at all**: the only facts consumed are `q·ẽ ≡ 0 (mod m)` and
+`ẽ ≢ 0 (mod m)`, and formal reality kills the *value* directly. The **other** flagged step — a
+`NonUnitalCommRing` instance on the subtype `↥(jspan x)`, the plan's lowest-confidence line item at
+40–90 lines, and the one it called "the cheapest falsifier of the whole estimate" — **does not appear
+either**, because `jeval` lands in the ambient algebra and no subtype ever carries a ring structure.
+(The plan flagged these two in different senses: the subtype instance as the least predictable *Lean
+cost*, the quadratic kill as the likeliest *mathematical error*. Both were removed by the design
+rather than paid.) The two steps that actually cost were Lagrange reindexing and `Fin.snoc` casework,
+which nobody flagged.
+★ Read together with `eja-power-assoc.lean` (route price wrong by an order of magnitude, same
+directory, same arc) and block 9.9: **prices about route fail, prices about vocabulary hold** — and
+the corollary earned here is that *building the riskiest step first* only works if the step survives
+the design. Ask first whether the design still contains it.
+
+**Corrections landed with it.** `WallCertificates/eja-spectral.lean` is rewritten in
+`eja-power-assoc.lean`'s shape — statement verbatim, `sorry` replaced by the proof, original text
+kept — with five corrections F1–F5: the unit dilemma (FALSE), the completeness note (misleading, and
+its "x invertible" clause wrong), the `IsReduced` route claim (FALSE), an absence claim whose grep
+never reached `Hermitian/Resolution.lean` (scope defect), and a Mathlib file cited for structure
+theory it does not contain. ★ Two claims from the recon that prompted those corrections **did not
+survive contact and are marked as such in the file**: its "these three lemmas are exactly the three
+steps" for the completeness corollary (one holds, one needs an extra split, one runs the wrong
+direction), and its recommendation to instantiate on the concrete carrier via
+`Hermitian/Resolution.lean` at ~1 day — which was unnecessary, since `HermitianMat d 𝕜` satisfies the
+abstract hypotheses and the instantiation is one line. **An absence claim can be false and the plan
+built on refuting it still worse than the plan it replaced.**
+
+★★★ **AND THE CERTIFICATE'S OWN RULE WAS BROKEN WHILE WRITING ITS REPLACEMENT.** The first draft of
+the new absence claim asserted `grep -rn "[Pp]rimitive" RadicalRelativity/` → 0 hits. It returns
+**6**, all prose. That is the identical defect the 2026-08-12 text records itself committing on the
+word "spectral", together with the identical correction it wrote down at the time — grep the
+declaration list, not the file text. Caught by running the command before committing. **Recording a
+rule in a file does not stop the next author of that file from breaking it.**
+
+**Stale claims fixed in the same commit** (the "fix the row, not just the footnote" sweep, run by
+grepping the whole tree for `(E1)`): `EJA/Subalgebra.lean`'s "the remaining three … are not built",
+`README.md`'s EJA row (14 modules → 15, and "two of (E1)'s four steps"), `WallCertificates/README.md`
+for both certificates, `STATEMENT-MANIFEST.md`'s "`sorry` at each gap" and row 13's residue note,
+`EJA-DIVIDEND.md`'s status header and its "large piece" estimate, `THEOREM-MAP.md`. ★ Of these, four
+were **false as written** rather than merely dated.
+
 #### Block 9.27 — the row-17 packaging is assemblable and would move nothing (2026-08-13)
 
 Scoped the task block 9.26 named, before doing it. **The pieces are all there** — the concrete
