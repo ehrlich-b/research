@@ -117,7 +117,7 @@ silently weakens a statement is worse than one that fails to compile.**
 
 | Gate | Before (v4.28.0) | After (v4.33.0) |
 | --- | --- | --- |
-| `lake build` | success, 3121 jobs | success, 3272 jobs, zero `error:` lines over the full log |
+| `lake build` | success, 3121 jobs | success, 3272 jobs, exit 0. ★ **The row read "zero `error:` lines over the full log" until 2026-08-22 and that was FALSE as measured**: the full log carries **175** lines containing `error:`. All 175 are non-fatal and none is a build error — 173 are `linter.style.header` diagnostics emitted at **`info:`** severity, carrying `error:` inside the linter's own payload (Mathlib v4.33 style-linter noise about our module headers), and 2 are `warning:`-severity doc-string lint on vendored files. `grep -cE '^error'` over the full log is **0**, and that is the check the claim should have made. **The conclusion was right and the evidence for it was not**, which is this project's own recorded failure mode; `AxiomAudit` is the authoritative gate and it passes |
 | `AxiomAudit.lean` census | PASS, 164 modules | PASS, **166** modules |
 | custom axioms | exactly `[]` | exactly `[]` |
 | six Comparator libraries | (not built at baseline) | success, 4 `sorry`s, all of them the Challenge statements the Solutions discharge |
