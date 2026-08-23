@@ -62,10 +62,19 @@ rather than a derivation, so the algebra structure needs no dimension hypothesis
 
 **No manifest row moves.**  Substrate for the Jordan–von Neumann–Wigner campaign.
 
-★ **The isomorphism `J ≅ H_n(C)` is not proved here, and `H_n(C)` does not exist in this tree as
-a type.**  See `WallCertificates/jacobson-coordinatization.lean`, which states all three
-residues — the isomorphism, simplicity ⟹ connectedness, and `n ≥ 4` ⟹ the coordinate algebra is
-associative — in Lean with a `sorry` at each.
+★ **The isomorphism `J ≅ H_n(C)` is not proved here.**  See
+`WallCertificates/jacobson-coordinatization.lean`, which states all three residues — the
+isomorphism, simplicity ⟹ connectedness, and `n ≥ 4` ⟹ the coordinate algebra is associative —
+in Lean with a `sorry` at each.
+
+★★ **"`H_n(C)` does not exist in this tree as a type" is STRUCK 2026-08-23 — it was the last
+surviving copy of a claim the residue-1 discharge retracted everywhere else.**  `HermMat ι C`
+(`Composition/HermMat.lean:162`) is a type, `FiniteDimensional` over `ℝ`, and carries `jmul`,
+`hermBilin`, `hermOne`, `hermIdem`, `hermOff` and `hermCongr` with **zero sorries**.  What is
+genuinely absent is narrower and is the honest residue: there is **no
+`EuclideanJordanAlgebra (HermMat ι C)` instance anywhere in the tree** — measured by grep across
+`RadicalRelativity/`, 2026-08-23 — so the classification target exists as a Jordan-structured
+type but has not been shown to satisfy the EJA axioms.
 
 ★ `classification_coordAlg` says the block is isomorphic to *one of* the four; it does not say
 **which**, and nothing here computes the dimension of a particular block.  For `H_d(ℂ)` the block
