@@ -841,7 +841,9 @@ import RadicalRelativity.Composition.CayleyDickson
 -- search: this tree's `Octonion` comes from a hard-coded Fano table, not a doubling, so the
 -- doubled basis had to be matched against e_0..e_7 by enumerating the signed correspondences
 -- determined by the images of i, j and l -- 1344 of the 2744 candidates work, and none is
--- sign-free.  Substrate; it moves no row.
+-- sign-free.  ★ That count ranges over MONOMIAL correspondences only (each doubled basis element
+-- to a signed basis vector) and is complete for those; it says nothing about isomorphisms
+-- CD H = O in general, since Aut(O) = G_2 is 14-dimensional.  Substrate; it moves no row.
 import RadicalRelativity.Composition.Isomorphisms
 -- Hurwitz's theorem, dimension form: a finite-dimensional Euclidean composition algebra has real
 -- dimension 1, 2, 4 or 8 (`finrank_eq_one_or_two_or_four_or_eight`), and `Composition.Instances`

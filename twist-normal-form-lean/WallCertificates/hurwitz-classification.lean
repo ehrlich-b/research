@@ -39,11 +39,17 @@ left below with its wrong claims in place, each tagged `[D1]`…`[D6]` and answe
   — I did not compute either labelling." Now computed, and it does — necessarily.** Of the
   `14³ = 2744` signed correspondences determined by the images of `i`, `j` and `ℓ`, exactly
   **1344** are isomorphisms, and the minimum number of negated basis images over those 1344 is
-  **1** (attained by 147 of them). **No sign-free correspondence between this Fano table and a
-  Cayley–Dickson doubling of `ℍ` exists.** `1344 = 8 × 168` is the expected order.
+  **1** (attained by 147 of them), so **no sign-free correspondence exists** — the doubling
+  order does produce a different labelling, and necessarily so. ★ **Scope, exactly**: the
+  enumeration ranges over the *monomial* correspondences, those sending each doubled basis
+  element to a signed basis vector, and is complete for those. It says nothing about
+  isomorphisms `CD ℍ[ℝ] ≃ 𝕆` in general — `Aut(𝕆) = G₂` is 14-dimensional, so almost none of
+  them are monomial. ★ `1344 = 8 × 168`; `168` is the order of the Fano plane's collineation
+  group `PSL(3,2)`. That factorisation is arithmetic and is recorded as an observation, not as
+  a group-theoretic identification of the 1344 — none was checked against a source.
 * **[D4] "These three costs are a design estimate, not a measurement" — measured.** (1) the `CD`
   functor, `Composition/CayleyDickson.lean`, 221 lines; (3) the three base identifications,
-  `Composition/Isomorphisms.lean`, 231 lines; (2) the transport lemma and the chain,
+  `Composition/Isomorphisms.lean`, 232 lines; (2) the transport lemma and the chain,
   `Composition/Classification.lean`, 367 lines. ★ **The certificate's one correct prediction is
   its most useful line**: it named (3) as "the one to worry about", and (3) is the only step that
   needed a search outside Lean. The search was run in Python against the table transcribed from

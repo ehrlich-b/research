@@ -45,8 +45,14 @@ The correspondence used below is
 i.e. `1 ↦ e₀`, `i ↦ e₁`, `j ↦ e₂`, `k ↦ e₄`, `ℓ ↦ e₃`, `iℓ ↦ e₇`, `jℓ ↦ e₅`, `kℓ ↦ -e₆`.
 It was found by enumerating the signed correspondences determined by the images of `i`, `j`
 and `ℓ` and testing each against the table; **1344 of the 2744 candidates work**, and none of
-them is sign-free — every correspondence between this Fano table and a Cayley–Dickson doubling
-of `ℍ` flips at least one sign. The one above is among those flipping exactly one.
+them is sign-free. The one above is among the 147 that flip exactly one sign.
+
+★ **Read the scope of that count exactly.** The enumeration ranges over the *monomial*
+correspondences — those sending each of `1, i, j, k, ℓ, iℓ, jℓ, kℓ` to a signed basis vector —
+and it is complete for those, since multiplicativity determines the other five images from the
+images of `i`, `j` and `ℓ`, and each of those has 14 possibilities. It says nothing about
+isomorphisms `CD ℍ[ℝ] ≃ 𝕆` in general: `Aut(𝕆) = G₂` is 14-dimensional, so almost none of them
+are monomial. "No sign-free correspondence" means no sign-free *monomial* one.
 
 ★ Note what this does *not* say: the search establishes that the two products agree, not that
 the labelling is canonical. A different Fano convention would produce a different
@@ -108,11 +114,20 @@ theorem Quaternion.cstar_eq (q : ℍ[ℝ]) :
 what carries the `simp` normal form.
 
 ★ This is not a stylistic choice. Mathlib's `Quaternion.re_mul` and its three companions are
-`simp` lemmas keyed on `(a * b).re`, and they fail to fire when `a` is a structure literal:
-`example (a b : ℍ[ℝ]) : (cstar a * b).re = _ := by simp` leaves
-`({ re := a.re, imI := -a.imI, … } * b).re` untouched, while the same goal with `a` a variable
-closes. Rewriting `cstar` componentwise keeps the product's arguments atomic, so the four
-Mathlib lemmas fire and the octonion `map_mul` below reduces to coordinates. -/
+`simp` lemmas keyed on `(a * b).re`, and they fail to fire when the first factor is a structure
+literal. With `Quaternion.cstar_eq` marked `@[simp]`, these two behave differently —
+
+```
+example (a b : ℍ[ℝ]) : (a * b).re = a.re*b.re - a.imI*b.imI - a.imJ*b.imJ - a.imK*b.imK := by
+  simp
+example (a b : ℍ[ℝ]) : (cstar a * b).re = a.re*b.re + a.imI*b.imI + a.imJ*b.imJ + a.imK*b.imK := by
+  simp; ring
+```
+
+— the first closes, and the second leaves `({ re := a.re, imI := -a.imI, … } * b).re` for
+`ring`, which cannot touch it. Rewriting `cstar` componentwise keeps the product's arguments
+atomic, so the four Mathlib lemmas fire and the octonion `map_mul` below reduces to
+coordinates. -/
 
 @[simp] theorem Quaternion.cstar_re (q : ℍ[ℝ]) : (cstar q).re = q.re := by
   rw [Quaternion.cstar_eq]
