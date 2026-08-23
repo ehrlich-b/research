@@ -642,6 +642,13 @@ import RadicalRelativity.EJA.InterfaceInstance
 import RadicalRelativity.EJA.ConcreteInstance
 import RadicalRelativity.EJA.Witness
 import RadicalRelativity.EJA.Spectral
+-- The Jordan trace form.  `tau(x, y) = tr(L_{x . y})` is symmetric, ASSOCIATIVE and positive
+-- definite on a finite-dimensional formally real Jordan algebra, built from the algebra alone with
+-- no inner product supplied.  It is what `MasterTheorem.Interface`'s `ComparisonSetup` cannot
+-- supply: that structure carries an inner product unrelated to its Jordan product, so every result
+-- in `EJA.Order`'s Euclidean section, each of which takes associativity of the AMBIENT inner
+-- product as a hypothesis, is inapplicable inside it.  Substrate; it moves no row.
+import RadicalRelativity.EJA.TraceForm
 -- The order structure.  `EJA.Order` puts an `OrderUnitSpace` on a Euclidean Jordan algebra,
 -- with the cone of sums of squares as the positive cone; order-unit boundedness is read off
 -- `EJA.Spectral`'s resolution.  It is the enabling layer for rows 13 and 16 — before it,
