@@ -716,6 +716,16 @@ import RadicalRelativity.EJA.FramePeirceMul
 -- named frame is over `C` only, and its cardinality is NOT proved to be the rank.
 -- Substrate; it moves no row.
 import RadicalRelativity.EJA.HermitianCarrier
+-- Connections between frame blocks: the engine of Jacobson coordinatization.  For `x` in an
+-- off-diagonal block `V_ij`, `x * x = a * (p_i + p_j)` with a SINGLE coefficient -- the two
+-- coefficients `EJA.FramePeirceMul` produces are forced equal by power associativity, not by
+-- the trace form -- and then `x * (x * y) = (a/4) * y` for every `y` in `V_jk`.  That second
+-- identity is the fully LINEARISED Jordan identity at `(x, x, y)` evaluated at `p_j`; the plain
+-- Jordan identity gives nothing there, since both its sides reduce to the same thing by the
+-- eigenvalue rules alone.  A `Connector` -- a `c` in `V_ij` with `c * c = p_i + p_j` -- therefore
+-- makes `y = 2 (c * y)` an involutive linear isomorphism `V_jk = V_ik`, and the norms multiply.
+-- Substrate; it moves no row.
+import RadicalRelativity.EJA.Connection
 
 -- The octonion algebra and its trace form (infrastructure for the Albert branch).
 -- `Octonions` builds `𝕆` as `Fin 8 → ℝ` with the Fano-plane table and proves the
