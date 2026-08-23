@@ -817,6 +817,13 @@ import RadicalRelativity.Composition.Doubling
 -- the opposite direction.  This is what the classification consumes and the dimension bound does
 -- not.  Substrate; it moves no row.
 import RadicalRelativity.Composition.CayleyDickson
+-- The three base identifications `CD R = C`, `CD C = H`, `CD H = O`, each as an isomorphism of
+-- composition algebras carrying the unit, the product AND the norm form.  ★ The third needed a
+-- search: this tree's `Octonion` comes from a hard-coded Fano table, not a doubling, so the
+-- doubled basis had to be matched against e_0..e_7 by enumerating the signed correspondences
+-- determined by the images of i, j and l -- 1344 of the 2744 candidates work, and none is
+-- sign-free.  Substrate; it moves no row.
+import RadicalRelativity.Composition.Isomorphisms
 -- Hurwitz's theorem, dimension form: a finite-dimensional Euclidean composition algebra has real
 -- dimension 1, 2, 4 or 8 (`finrank_eq_one_or_two_or_four_or_eight`), and `Composition.Instances`
 -- attains all four.  The bound is a contrapositive, not a failure of closure: expanding the
