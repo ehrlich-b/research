@@ -651,6 +651,33 @@ theorem exists_mul_self_eq_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsO
 end Calculus
 
 
+/-- **The idempotents of a distinct-eigenvalue resolution are polynomials in `x`.**
+
+With the eigenvalues distinct, Lagrange interpolation produces a real polynomial that is
+`(λₖ)⁻¹` at `λₖ` and `0` at every other eigenvalue; `jeval_of_resolution` then evaluates it to
+`cₖ` exactly.  So `cₖ` is not an artefact of the choice of resolution — it is a *function of `x`*,
+recovered by a polynomial that depends only on the eigenvalue list.
+
+★ **This is the canonicity step, and it is why distinctness was needed.**  Without injective
+eigenvalues no such interpolant exists, and repeated-eigenvalue idempotents genuinely are not
+determined by `x` — only their sum is.
+
+★ The hypothesis `λₖ ≠ 0` is not removable and is not a defect: `jeval` is `x·p(x)`, so
+everything it produces is annihilated by the zero eigenvalue's idempotent.  That idempotent is
+still determined, as `e − ∑_{i ≠ k} cᵢ`, but not by this route. -/
+theorem idem_eq_jeval_lagrange {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hinj : Function.Injective lam) (k : Fin n) (hk : lam k ≠ 0) :
+    jeval (∑ i, lam i • c i) (C (lam k)⁻¹ * Lagrange.basis Finset.univ lam k) = c k := by
+  rw [jeval_of_resolution hfam, Finset.sum_eq_single k]
+  · rw [Polynomial.eval_mul, Polynomial.eval_C,
+      Lagrange.eval_basis_self hinj.injOn (Finset.mem_univ k), mul_one,
+      mul_inv_cancel₀ hk, one_smul]
+  · intro i _ hik
+    rw [Polynomial.eval_mul,
+      Lagrange.eval_basis_of_ne (Ne.symm hik) (Finset.mem_univ i), mul_zero, mul_zero, zero_smul]
+  · intro h
+    exact absurd (Finset.mem_univ k) h
+
 /-- **A resolution with distinct eigenvalues.**  Merging the idempotents that share an eigenvalue
 leaves an orthogonal idempotent family, still complete for `e`, whose coefficients are injective.
 

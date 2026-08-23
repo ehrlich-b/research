@@ -149,3 +149,55 @@ not finishing an unfinished row. That is a scientific-record decision, not a Lea
 Bryan has said he wants 36/36 and does not want that re-litigated — this is recorded so the
 next session knows the two rows are a different KIND of work, not so it re-opens the question.
 
+## Session 2 (2026-08-23 evening) — where the canonicity work stands
+
+Census went 16/18/2 -> **18/16/2**. Rows 3 and 5 CLOSED. Row 8's entire interior clause closed
+(status word deliberately NOT moved — see its cell). Rows 12, 18, 21 repriced against the tree.
+
+### The critical path, correctly identified at last
+
+Rows 13, 16 and 21 all wait on ONE object: an inhabitant of `SequentialProductOnEJA`, i.e.
+`a·b = Q_{√a}b`. ★ **The square root is NOT the blocker and never was** — `EJA/Order.lean`'s
+`isSoS_iff_exists_sq` has produced one since 2026-08-22, by the same `∑ √(max λ 0) • qᵢ`
+construction anyone would write. **CANONICITY is the blocker**: `√a` must be a *function of `a`*,
+and `spectral_resolution_complete` hands out an existential resolution.
+
+Progress on canonicity, all in `EJA/Spectral.lean`, all sorry-free:
+* `sum_smul_mul_sum_smul_of_orthIdem` — the workhorse; elements over one orthogonal idempotent
+  family multiply coefficientwise. Powers/inverses/roots are three-line corollaries of it.
+* `jeval_of_resolution` — `jeval x p = ∑ᵢ λᵢ·p(λᵢ) cᵢ`. Row 13 named this as absent.
+* `mul_jinvOfResolution` — an inverse. Row 13 named this as absent too.
+* `exists_resolution_distinct` — every element has a resolution with **injective** eigenvalues
+  (merge the idempotents sharing one).
+* `idem_eq_jeval_lagrange` — **the canonicity step**: with eigenvalues distinct, `cₖ = jeval x pₖ`
+  for a Lagrange interpolant `pₖ`, so `cₖ` IS a function of `x`. Needs `λₖ ≠ 0` (jeval is `x·p(x)`,
+  so the zero-eigenvalue idempotent is unreachable this way — it is still determined, as
+  `e − ∑_{i≠k} cᵢ`, just not by this route).
+
+**NEXT, and it is the honest remaining gap:** full uniqueness needs (a) that two resolutions of the
+same `x` have the same eigenvalue SET, and (b) that the Lagrange bases over two index types with
+equal value sets are equal. (a) should come from `jann`/`exists_annihilator_generator`; (b) is a
+reindexing argument on `Lagrange.basis = ∏_{j≠i} basisDivisor (v i) (v j)`. Then `√` becomes a
+function, then `Q_{√a}`, then S1–S7.
+
+### Two duplications, both caught, both recorded — read before building anything
+
+1. `jsqrtOfResolution` duplicates `isSoS_iff_exists_sq`. Docstrings now point at it.
+2. `isSharpOrderUnit_of_idem` nearly duplicated `EJA/OrderAuto.lean`'s `isSharp_of_idem` — which
+   proves BOTH directions, but against its own `EJA.IsSharp` (sums-of-squares spelling) that the
+   file itself says nothing relates to `OrderUnitSpace.IsSharp`. `isSharpOrderUnit_of_sosSharp`
+   is now that bridge. **Applying it at `mulLₗ` does not elaborate** — `Module ℝ J` comes from the
+   ring side there and from `InnerProductSpace` here; measured, recorded in the docstring, not
+   claimed cosmetic.
+
+★ **STANDING LESSON: grep for the residue item's STATEMENT SHAPE, not its name.** Both collisions
+were under names no one would guess.
+
+### Palomar — do not resubmit `structure`
+
+Editorial review failed TWICE with an identical 21-second signature (18:57:36->57, 21:22:22->43),
+same commit. Deterministic, not a stall. Mechanical verification PASSES both times. The only
+structural difference from koecher/spectral (both registered fine): those carry ONE theorem;
+`structure` carries SIX across TWO namespaces. `classification` (4 theorems, 4 namespaces) would
+likely hit the same wall. Full note in `~/scratch/palomar/queue.txt`. Bryan's call.
+
