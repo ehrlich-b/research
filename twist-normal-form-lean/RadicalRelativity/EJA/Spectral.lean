@@ -702,15 +702,30 @@ omit [IsCommJordan J] in
 `cₖ` isolates the `k`-th coefficient, so a vanishing combination has vanishing coefficients at
 every nonzero member.  (At a *zero* member the coefficient is genuinely free — `0 • 0 = 1 • 0` —
 which is why the nonvanishing hypothesis is there and cannot be dropped.) -/
+theorem sum_smul_mul_idem {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    (a : Fin n → ℝ) (k : Fin n) : (∑ i, a i • c i) * c k = a k • c k := by
+  rw [Finset.sum_mul, Finset.sum_eq_single k]
+  · rw [smul_mul_assoc, hfam.idem k]
+  · intro j _ hjk
+    rw [smul_mul_assoc, hfam.orth j k hjk, smul_zero]
+  · intro hcon
+    exact absurd (Finset.mem_univ k) hcon
+
+/-- **A spectral projection reads its own coefficient off a function of the element.**  Combined
+with `jeval_of_resolution` this is `(jeval x p) ∘ cₖ = λₖ·p(λₖ) cₖ` — the Jordan-generality form of
+"the functional calculus acts by the scalar `f(λ)` on the spectral projection at `λ`".
+
+`STATEMENT-MANIFEST.md` row 22 names exactly that shape as its residue, in the concrete
+`HermitianMat` vocabulary (`cfc f a` composed with `q` equal to `f(λ)·q`); this is the statement it
+needs, one layer up.  The bridge from `jeval` to the vendored `cfc` is **not** built here. -/
+theorem jeval_mul_idem {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    (lam : Fin n → ℝ) (p : Polynomial ℝ) (k : Fin n) :
+    jeval (∑ i, lam i • c i) p * c k = (lam k * p.eval (lam k)) • c k := by
+  rw [jeval_of_resolution hfam, sum_smul_mul_idem hfam]
+
 theorem coeff_eq_zero_of_sum_smul_eq_zero {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
     {a : Fin n → ℝ} (h : (∑ i, a i • c i) = 0) {k : Fin n} (hk : c k ≠ 0) : a k = 0 := by
-  have hmul : (∑ i, a i • c i) * c k = a k • c k := by
-    rw [Finset.sum_mul, Finset.sum_eq_single k]
-    · rw [smul_mul_assoc, hfam.idem k]
-    · intro j _ hjk
-      rw [smul_mul_assoc, hfam.orth j k hjk, smul_zero]
-    · intro hcon
-      exact absurd (Finset.mem_univ k) hcon
+  have hmul := sum_smul_mul_idem hfam a k
   rw [h, zero_mul] at hmul
   exact (smul_eq_zero.mp hmul.symm).resolve_right hk
 
