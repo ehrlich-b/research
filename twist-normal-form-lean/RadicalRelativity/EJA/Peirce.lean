@@ -19,6 +19,11 @@ set_option linter.style.longLine false
 spectral theorem, **(E2)** the Peirce decomposition with the Faraut–Korányi multiplication
 rules, and **(E3)** `Theta_jordan` derivable (van Imhoff–Roelands, pre-registered external).
 It records (E2) as *depending on* (E1), and (E1) as "the large piece".
+★★★ **Two corrections to that sentence, both dated after it was written.**  (E3) is the classical
+Koecher / Alfsen–Shultz theorem, not van Imhoff–Roelands' JB-generality version — `gate_E3`'s `Φ` is
+linear **by type**, settled 2026-08-22 — and it is **no longer external or a field**: `EJA/OrderAuto.lean`
+proves it in-tree on 2026-08-23.  All three gates are now proved theorems, and **no manifest row
+moved on any of them**; see `WallCertificates/eja-gated.lean`'s status block.
 
 **That dependency is false in the direction that matters, and this file is the evidence.**
 The Peirce decomposition at a *given* idempotent needs the Jordan identity and the

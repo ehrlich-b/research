@@ -97,6 +97,15 @@ carries as fields.** Concretely the deliverables would be
   the rules and the pairwise machinery exist, the assembled direct sum over a frame does not;
 * **(E3) `Theta_jordan` derivable** — van Imhoff–Roelands: an order isomorphism of the cone that is
   unital preserves the Jordan product. Currently a field, and pre-registered EXTERNAL as row 14.
+  ★★★ **PROVED IN-TREE 2026-08-23, and the attribution in this bullet is wrong.** `EJA/OrderAuto.lean`
+  proves `RadicalRelativity.EJA.orderIso_preservesJordan`: on a finite-dimensional formally real
+  Jordan algebra a unital **linear** order isomorphism preserves the Jordan product. That is Koecher /
+  Alfsen–Shultz, not vIR — the gate's `Φ : J ≃ₗ[ℝ] J` is linear **by type**, so there is no linearity
+  premise to drop, and vIR's genuine delta (order isomorphisms not assumed linear, at JB generality)
+  is strictly stronger than anything the gate asked for. `Theta_jordan` is therefore no longer a
+  citation and no longer only a field: it is derivable for any `ComparisonSetup` carrying
+  `JBPremises`. **Row 14's terminal state is untouched** — its externality is a pre-registered
+  campaign decision, and it has three clauses of which this is one.
 
 **★ Scope warning that governs every line below.** (E3) is *the content of a cited external theorem*
 (row 14, `prop:theta`, pre-registered external at vIR generality). Building the axiomatization does
@@ -104,6 +113,14 @@ NOT prove it; it makes it *statable* at the right generality so it can be cited 
 Rows whose only residue is (E3) therefore move from "carried as an unexaminable field" to
 "EJA-GATED behind a named external theorem" — a real gain in honesty, **not** a move to FORMALIZED.
 Any reading of this table that converts (E3)-dependence into FORMALIZED is wrong.
+
+★★★ **THE WARNING ABOVE IS NOW WRONG IN ITS PREMISE AS WELL AS EMPTY IN ITS MEMBERSHIP — 2026-08-23.**
+"Building the axiomatization does NOT prove it; it makes it *statable*" was the whole basis for the
+warning, and it is false: (E3) is proved in-tree by `EJA/OrderAuto.lean`, from `JBPremises` and
+nothing else. ★★ **And the warning's conclusion survives its premise's collapse, which is why the
+paragraph is left standing rather than deleted.** No row moves, because no row's residue was (E3) —
+see the 2026-08-22 block immediately below, which established that independently of whether (E3) was
+provable. A rule with no instances does not acquire instances by becoming false.
 
 ★★★ **THE WARNING ABOVE IS CORRECT AND ITS MEMBERSHIP LIST IS EMPTY — 2026-08-22. Read it as a rule
 with no instances, not as a description of any row.** "Rows whose only residue is (E3)" was written
@@ -238,8 +255,17 @@ functional calculus and primitivity, and neither has been priced.
 theorem is the large piece and has no Mathlib support (`lean-formalization-landscape`: essentially
 we are aware of no formalization of the Jordan/EJA stack in any prover, not having searched
 them systematically); ~~(E2) Peirce decomposition depends on
-(E1)~~; (E3) is a citation. So the axiomatization is one big theorem plus its corollaries, and its
+(E1)~~; ~~(E3) is a citation~~. So the axiomatization is one big theorem plus its corollaries, and its
 natural home is upstream of this paper — a Mathlib-grade EJA layer — not inside `RadicalRelativity`.
+
+★★★ **"(E3) is a citation" is STRUCK, 2026-08-23.** It is a theorem, `EJA/OrderAuto.lean`, and the
+cost was two modules: `EJA/TraceForm.lean` (the Jordan trace form — symmetric, associative, positive
+definite, built from the algebra so that no ambient inner product has to be assumed compatible with
+the Jordan product) and `EJA/OrderAuto.lean` (idempotents as the sharp elements of the cone, then
+Koecher / Alfsen–Shultz). ★ The estimate was wrong in the same direction as the (E1) estimate above,
+and about the same thing: what was priced as an external citation was in-tree work of ordinary size.
+The "natural home is upstream" opinion is again untouched, and is now better supported — the two
+modules mention no manuscript object.
 
 ★★★ **"(E2) depends on (E1)" is STRUCK, 2026-08-12 (ARC-9 blocks 9.2/9.3), and the order inverts.**
 The Peirce decomposition at a *given* idempotent is derivable from the Jordan identity alone and is

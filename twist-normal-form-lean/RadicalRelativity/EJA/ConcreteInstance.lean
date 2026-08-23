@@ -46,6 +46,12 @@ argument and is campaign milestone M3.
 content was an unexaminable field on an abstract structure; it is now a theorem about the
 paper's own carrier. The EJA-GATED terminal state stands, but its (E2) half is discharged here
 and only the (E3)/vIR half remains.
+★★★ **"only the (E3)/vIR half remains" IS FALSE FROM 2026-08-23, in both of its parts.**
+`EJA/OrderAuto.lean` proves (E3) in-tree — and it is Koecher / Alfsen–Shultz, not vIR, whose
+JB-generality version *concludes* linearity rather than assuming it (settled 2026-08-22). So no gate
+remains. ★★ **Row 16 still does not move, and not because a gate is open**: it never consumed
+`Theta_jordan` at all, and its residue is `Θ_fix` — vdW Prop 5.5 span-extended by `lem:span`, which
+is manifest row 5 and non-EJA. The sentence above named the wrong obstacle, not merely a stale one.
 -/
 
 namespace RadicalRelativity.EJA
