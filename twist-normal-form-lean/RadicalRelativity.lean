@@ -753,3 +753,17 @@ import RadicalRelativity.Albert.Jordan
 -- are stated over `HermitianMat`, so nothing transfers along this instance.
 -- Substrate; it moves no row, row 21 `thm:albert` included.
 import RadicalRelativity.EJA.AlbertCarrier
+
+-- Euclidean composition algebras.  `Composition.Defs` states the class -- a unital, not
+-- necessarily associative real algebra carrying a positive-definite bilinear form whose
+-- quadratic form is multiplicative -- and derives the identity toolkit: the three polarisations
+-- of the composition law, conjugation as the adjoint of multiplication,
+-- `x * x = 2<x,1> x - N x`, the anti-automorphism law, and both alternativity laws.
+-- `Composition.Instances` supplies the four witnesses R, C, H, O, of dimensions 1, 2, 4, 8; the
+-- octonion one discharges the composition field verbatim from `Octonions.norm_multiplicative`,
+-- which was proved there from the Fano multiplication table with no reference to composition
+-- algebras.  This is the coordinate-algebra substrate Jacobson coordinatization at rank >= 3
+-- consumes.  ★ Hurwitz's classification -- that these four are the ONLY ones -- is NOT proved
+-- here.  Substrate; it moves no row.
+import RadicalRelativity.Composition.Defs
+import RadicalRelativity.Composition.Instances
