@@ -41,9 +41,30 @@ PER-ROW STATUS AND GAP
     product-level identity `n2_sp_eq_twistSeq_frame`.  Their equivalence is the route rather than a
     proved statement.  Gap (a) — the U(2) -> S^2 fibre gap — was CLOSED in ARC-6.
 
-  row 31 `thm:qubit-boundary`.  Parts (i) and (iii) are proved, plus the cocycle and backward
-    compatibility.  Open: the bundled S1-S7 verification of the tau family, and the unimodular
-    cocycle subcases.  ★ The bundled S1-S7 clause is an INSTANTIATION of row 30
+  row 31 `thm:qubit-boundary`.  ★★★ CORRECTED 2026-08-22.  This line read "Parts (i) and (iii)
+    are proved, plus the cocycle and backward compatibility", and **that sentence is the one the
+    2026-08-22 promotion of this row inherited, and it is wrong about part (i)**.  It was written
+    before the row-30/31 ENCODING SPLIT was known, and the split was later closed for clause (iii)
+    ONLY.  Part (i) has two halves: effect preservation (proved), and the coherence action on W_n
+    at the ordered frame — `sqrt(l+ l-) * exp(l * tau(a) * J_n)`, with the Luders value 0 at
+    l- = 0 — which is part of the article's STATEMENT (main.tex:1720-1758) and is NOT in the tree.
+    What exists is the entry-level `MasterTheorem.RankTwo.sp_blockForm` about
+    `sp = Fdiag * b * Fdiag^H`, which no declaration identifies with `HermitianMat.twistSeq`;
+    `Necessity.blockHerm` (the coherence block) occurs 0 times in `RankTwo/Sufficiency.lean`; and
+    `Necessity.orientationJ` (the article's J_n) occurs in 1 of the 167 files of
+    `RadicalRelativity/`, which names neither `n2Sp` nor `tauModuliRP2`.
+    The manifest row is PARTIAL again on this finding, and the residue is ASSEMBLY of four
+    in-tree declarations (`n2Sp_eq_twistSeq_at_frame`, `twistSeq_adU_mat`,
+    `twistSeq_diagFamily_blockHerm`, `orientationJ`), not new mathematics.
+    ★ LESSON, and it is why this correction is written here rather than only in the manifest:
+    a certificate line that predates a defect is not evidence about that defect, and this file's
+    own header (line 7) never stopped saying "row 31, PARTIAL".
+    Open, restated, and it is now ONE item: part (i)'s coherence-action half in the `twistSeq`
+    encoding.  The other two items this line used to list are gone for unrelated reasons and must
+    not be re-added: the bundled S1-S7 clause CLOSED in ARC-8 (row 30 holds for an arbitrary
+    `t : C(RP2, R)`, and `tauModuliRP2` is one, S2 included), and the unimodular cocycle subcases
+    were REATTRIBUTED to row 30 — the zeta case verification is Step 6 of `prop:n2-sufficiency`'s
+    proof and closes before `thm:qubit-boundary` begins.  ★ The bundled S1-S7 clause is an INSTANTIATION of row 30
     (`prop:n2-sufficiency`) at t = tau, so it should not be attacked separately — see
     WallCertificates/prop-n2-sufficiency.lean, which prices the general case and identifies
     "compatible ==> same frame" as the load-bearing missing fact.

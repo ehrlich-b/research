@@ -3,7 +3,7 @@ WALL CERTIFICATE — the abstract / vdW-bridge tier:
   `def:sp`                (row 3,  PARTIAL)
   `lem:span`              (row 5,  PARTIAL)
   `lem:homog` clause (i)  (row 6,  PARTIAL)
-  `lem:simple-bridge`     (row 8,  ABSENT, ~3/4 cited)
+  `lem:simple-bridge`     (row 8,  PARTIAL as of 2026-08-22, ~3/4 cited — was ABSENT)
   `lem:normality`         (row 9,  ABSENT)
   `prop:central`          (row 12, PARTIAL)
   `prop:pseudo-transfer`  (row 13, PARTIAL)
@@ -50,6 +50,9 @@ PER-ROW STATUS AND GAP
     simple") is interior, and it is the Jordan spectral theorem.  Honest target = clause (ii) on the
     concrete carrier, where Mathlib's spectral theorem applies.  So this row should be READ AS ~3/4
     CITED, and the coverage arithmetic should not count it as a full interior row.
+    ★ SUPERSEDED IN ITS TARGET 2026-08-22 (the ~3/4-cited pricing stands): clause (ii) no longer has
+    to retreat to the concrete carrier, because the Jordan spectral theorem is now proved at EJA
+    generality in this tree (`EJA.spectral_resolution_bilinear`).  See the ARC-8 block below.
 
   row 9 `lem:normality`.  ★★ REFUTED SAME DAY — see below; the row is now PARTIAL.  Original text:
     ABSENT.  On a f.d. order-unit space, S1 + S2 imply vdW-normality
@@ -106,13 +109,28 @@ so the ARC-7 block below is provenance only.
     effect × effect.  Sending the next person after a bijection this directory proves does not exist
     would waste them.
 
-  row 8 `lem:simple-bridge` — attacked this arc and **BLOCKED ON THE ARTICLE, not on Lean.** The only
-    interior clause is (ii) "every effect is simple (E = E₀)", and `simple` here is vdW's SES notion.
-    I could not state clause (ii) faithfully without vdW's definition, and declined to guess it.
-    ★ That is a different kind of blocker from every other row in this file and it should be labelled
-    as such: the obstruction is a missing DEFINITION from a cited source, so the next action is a
-    reading task, not a proving task.  Clauses (i), (iii), (iv) remain assigned to vdW by the article's
-    own proof, so this row is ~3/4 external either way.
+  row 8 `lem:simple-bridge` — ★★★ THIS BLOCK IS RETRACTED 2026-08-22, on both of its claims.  It read:
+    "attacked this arc and **BLOCKED ON THE ARTICLE, not on Lean.**  The only interior clause is (ii)
+    'every effect is simple (E = E₀)', and `simple` here is vdW's SES notion.  I could not state clause
+    (ii) faithfully without vdW's definition, and declined to guess it.  ★ That is a different kind of
+    blocker from every other row in this file and it should be labelled as such: the obstruction is a
+    missing DEFINITION from a cited source, so the next action is a reading task, not a proving task."
+    (a) THE DEFINITION WAS ON THE PAGE THIS FILE IS PINNED TO.  `main.tex:507-515` gives it in the
+    lemma's own preamble: a simple effect is one in vdW's class E_0, i.e. with a finite spectral
+    decomposition into orthogonal SHARP effects, and sharp is the order-theoretic `p ^ (e - p) = 0`
+    (vdW Def. 3.14), which the article then identifies with idempotence (vdW Prop. 3.15).  Nothing had
+    to be guessed and no reading task was outstanding.
+    (b) THE MATHEMATICS IS NOW IN THE TREE.  The article's own proof of clause (ii) is "the Jordan
+    spectral theorem" (main.tex:549-550), and that is `EJA.spectral_resolution_bilinear`
+    (`EJA/Spectral.lean:580`) at EJA generality, with a unit and completeness.  The manifest row moved
+    ABSENT -> PARTIAL on this.
+    ★ What remains is genuinely small and is the honest next action: define E_0, prove
+    `idempotent -> IsSharp` for the effect order, and state "every effect is simple".
+    `OrderUnitSpace.IsSharp` (`OrderUnitSpace.lean:161`) exists and is used NOWHERE — 1 occurrence in
+    the whole checkout, its own definition — and the carrier link the bridge needs landed the same day
+    (`EJA.orderUnitSpaceOfBilinear`, `EJA/Order.lean:252`).
+    Clauses (i), (iii), (iv) remain assigned to vdW by the article's own proof, so this row is
+    ~3/4 external either way, and that part of the ARC-6 pricing is unaffected.
 
   row 9 `lem:normality` — attacked this arc and ADVANCED: `Necessity.compatible_of_tendsto` closes the
     compatibility clause (compatibility passes to limits of effect sequences).  ★★ And the finding is
