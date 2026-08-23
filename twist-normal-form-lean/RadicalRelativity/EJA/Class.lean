@@ -255,6 +255,17 @@ theorem peirce_add_add' (c y : J) : peirceOne c y + peirceHalf c y + peirceZero 
   peirce_add_add c y
 
 
+/-- **Orthogonality in the inner product is orthogonality in the Jordan product**, over the class.
+
+`EJA/Order.lean` proves this over a bundled bilinear map; this is that theorem with the `jmulₗ`
+tuple supplied by name, which is the crossing `EJA/Class.lean` exists to make.  Both hypotheses
+are cone membership in the sums-of-squares sense. -/
+theorem jmul_eq_zero_of_inner_eq_zero [FiniteDimensional ℝ J] {a b : J}
+    (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b) (h : (inner ℝ a b : ℝ) = 0) :
+    a * b = 0 :=
+  mul_eq_zero_of_inner_eq_zero_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    jmulₗ_inner_assoc 1 jmulₗ_one_mul ha hb h
+
 /-! ## The Jordan quadratic representation over the class
 
 `EJA/Spectral.lean` defines `quadJ a = 2·L_a² − L_{a²}` in the ring vocabulary.  The class supplies
