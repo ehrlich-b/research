@@ -666,6 +666,12 @@ import RadicalRelativity.EJA.Rank
 -- was in no earlier module.  The frame's cardinality is NOT claimed to be the rank.
 -- Substrate; it moves no row.
 import RadicalRelativity.EJA.FrameExists
+-- The frame Peirce decomposition.  Relative to a Jordan frame, `J` is the internal direct sum
+-- of the blocks `V_ii = J_2(p i)` and `V_ij = {x | p i * x = x/2 and p j * x = x/2}`, indexed by
+-- `Sym2 (Fin n)`.  Spanning is proved by a residual argument rather than by expanding a product
+-- of commuting projections, and `EJA.Pattern` is not used.  No proof uses primitivity, and
+-- `dim V_ii = 1` is NOT proved.  Substrate; it moves no row.
+import RadicalRelativity.EJA.FramePeirce
 
 -- The octonion algebra and its trace form (infrastructure for the Albert branch).
 -- `Octonions` builds `𝕆` as `Fin 8 → ℝ` with the Fano-plane table and proves the
