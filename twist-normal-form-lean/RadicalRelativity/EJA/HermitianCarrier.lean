@@ -71,8 +71,11 @@ and `EJA/Order.lean`'s two `open HermMul` proofs — `hermitian_jordan_id` and
 ★ Two things this does *not* claim.  It is not claimed that the collision is invisible: instance
 search does return a different term inside `open HermMul` once this module is imported, and a
 proof that pins the instance by name rather than by its product would notice.  And it is not
-claimed that anything currently pays that cost — **no module in the tree imports this one** (only
-the root aggregator does), so the four existing `open HermMul` sites see exactly what they saw
+claimed that anything currently pays that cost.  ★ **"No module in the tree imports this one" was
+true when written and stopped being true on 2026-08-23**: `EJA/CoordinatizeWitness.lean` imports
+this file, and navigates the collision rather than avoiding it — it opens `HermMul` and bridges
+with `hermitian_mul_eq_symmMul`.  The *conclusion* is unaffected, because imports are directional:
+none of the four `open HermMul` sites imports that module, so they still see exactly what they saw
 before.  ★ Three of them, `EJA/Order.lean`, `EJA/Spectral.lean` and `EJA/Witness.lean`, are
 strictly *upstream* — this file's import closure contains them.  The fourth,
 `EJA/ConcreteInstance.lean`, is not: it is a **sibling**, reached through

@@ -83,8 +83,11 @@ statement about one block of a frame carried as data, not about the rank of `J`.
 
 ★ **There is a carrier and a named frame**, so the theorems below are not statements about an
 empty class: `EJA/HermitianCarrier.lean` supplies `instEuclideanJordanAlgebraHermitianMat` and
-`diagJordanFrame : JordanFrame (HermitianMat n ℂ) (Fintype.card n)`.  **Nothing below has been
-instantiated on it** — that is a live, cheap follow-up, not a claim about what is possible.
+`diagJordanFrame : JordanFrame (HermitianMat n ℂ) (Fintype.card n)`.  ★ **"Nothing below has been
+instantiated on it" was true when written and stopped being true on 2026-08-23**: the follow-up it
+called live and cheap was taken, and `frameBlockRaw_mul_self_eq` is now consumed at
+`F = diagJordanFrame`, through `EJA/Connection.lean`'s `exists_sq_smul` and
+`EJA/CoordinatizeWitness.lean`'s `finrank_frameBlockRaw_diagJordanFrame`.
 
 ★ Do not quote this paragraph for the carrier's state; read `EJA/HermitianCarrier.lean`.  Three
 successive drafts of these two sentences were false within hours of being written — first "the

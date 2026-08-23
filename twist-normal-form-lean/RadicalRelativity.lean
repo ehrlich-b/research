@@ -700,16 +700,20 @@ import RadicalRelativity.EJA.FramePeirce
 -- product to its `p_i` and `p_j` components) and NOT to the trace form the plan expected to
 -- need.  `dim V_ii = 1` is proved here, by running the spectral theorem inside `J_2(p i)`; this
 -- is the first module that spends primitivity rather than transporting it.  The frame's
--- cardinality is still NOT claimed to be the rank, and nothing here is instantiated on
--- `H_n(K)`.  Substrate; it moves no row.
+-- cardinality is still NOT claimed to be the rank.  ★ This module instantiates nothing on
+-- `H_n(K)` itself, but its theorems ARE now consumed at the named diagonal frame, through
+-- `EJA.Coordinatize` and `EJA.CoordinatizeWitness`.  Substrate; it moves no row.
 import RadicalRelativity.EJA.FramePeirceMul
 -- A carrier for the class.  `H_n(K)` under the symmetrized product and the real trace form is a
 -- `EuclideanJordanAlgebra`, so `EJA.Class`'s class is inhabited and `exists_jordanFrame` and
 -- `frameBlock_isInternal` are statements about a live object rather than about a class nothing
 -- was known to satisfy -- the exposure ARC-6 shipped with `IsArchimedean` and had to repair.
 -- Every field obligation was already proved in the tree in `jordanBilinG`/`symmMul` vocabulary;
--- the `HermMul` collision `EJA.Class` warned about is definitional (`hermMul_toMul_eq`), and no
--- module imports this one, so the four existing `open HermMul` sites are unaffected.  The file
+-- the `HermMul` collision `EJA.Class` warned about is definitional (`hermMul_toMul_eq`).
+-- ★ `EJA.CoordinatizeWitness` DOES import this one (that sentence read "no module imports this
+-- one" until 2026-08-23), and it navigates the collision rather than avoiding it; the four
+-- existing `open HermMul` sites are still unaffected, because none of them imports that
+-- module.  The file
 -- also NAMES a frame: `diagFrame_isPrimitive` is the one `JordanFrame` obligation `EJA.Witness`
 -- leaves open, and `diagJordanFrame` is the diagonal matrix units as a frame on `H_n(C)`, so
 -- `diagJordanFrame_isInternal` is the frame Peirce decomposition with nothing quantified.  The
