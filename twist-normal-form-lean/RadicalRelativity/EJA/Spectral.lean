@@ -591,6 +591,39 @@ theorem jeval_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily
       ring
 
 
+/-! ### The Jordan quadratic representation
+
+`Q_a b = 2·a(ab) − (aa)b`.  ★ **Not a duplicate of `Necessity.quadRep`**, which is
+`x ↦ √a·x·√a` built from *matrix* conjugation and the vendored continuous functional calculus.
+That one is `HermitianMat`-specific and cannot transfer to `h₃(𝕆)` at all — matrix conjugation is
+not even well-defined over a non-associative coordinate algebra.  `EJA/AlbertCarrier.lean` records
+exactly this: both the square root and `Q_{√a}` "are stated over `HermitianMat`, not over the
+class, so neither transfers to `h₃(𝕆)`".  The Jordan form below is the one that does, and it is
+what `a·b = Q_{√a}b` must mean at EJA generality.
+
+Linear in the acted-on argument by construction; the dependence on `a` is quadratic, which is why
+it is not bundled as a bilinear map. -/
+
+/-- **The Jordan quadratic representation** `Q_a = 2·L_a² − L_{a²}`. -/
+noncomputable def quadJ (a : J) : J →ₗ[ℝ] J where
+  toFun b := (2 : ℝ) • (a * (a * b)) - (a * a) * b
+  map_add' b d := by
+    simp only [mul_add, smul_add]
+    abel
+  map_smul' r b := by
+    have hsm : ∀ (t : ℝ) (u v : J), u * (t • v) = t • (u * v) := by
+      intro t u v
+      rw [mul_comm u (t • v), smul_mul_assoc, mul_comm v u]
+    simp only [RingHom.id_apply, hsm, smul_sub, smul_comm (2 : ℝ) r]
+
+@[simp] theorem quadJ_apply (a b : J) : quadJ a b = (2 : ℝ) • (a * (a * b)) - (a * a) * b := rfl
+
+/-- **`Q_a` at the unit returns `a²`** — the normalisation that makes `a·b = Q_{√a}b` reduce to
+`a·e = a` at `b = e`, which is S3. -/
+theorem quadJ_unit {e : J} (he : ∀ y : J, e * y = y) (a : J) : quadJ a e = a * a := by
+  rw [quadJ_apply, mul_comm a e, he, mul_comm (a * a) e, he]
+  module
+
 /-! ### Inverses and square roots on a resolution
 
 `STATEMENT-MANIFEST.md` row 13 records that "no declaration produces an inverse".  These do, on a
