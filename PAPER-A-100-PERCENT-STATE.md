@@ -318,3 +318,49 @@ hypothesis is the natural one when both resolutions are already known reduced. B
 Remaining to a definition of `jsqrt`: `sqrt_sum_eq_of_resolutions` via `Finset.sum_bij'` (see the
 design note above), now with a usable uniqueness lemma to feed it.
 
+## Sequential product: clause status at end of 2026-08-23
+
+Candidate product: `a . b := quadJ (jsqrt a) b`, i.e. `Q_{sqrt a} b`, over `EJA/Class.lean`.
+
+| clause | status | name |
+|---|---|---|
+| S1 additivity | **PROVED** (free) | `quadJ_add` — `quadJ a` is a linear map |
+| S2 ou-norm continuity | OPEN | needs continuity of `jsqrt`; analysis, untouched |
+| S3 unitality | **PROVED** | `quadJ_unit_left`, `quadJ_jsqrt_one` |
+| S4 orthogonality symmetry | **PROVED** | `quadJ_jsqrt_zero_symm` |
+| S5 compatible associativity | OPEN — the wall | |
+| S6 compatibility/ortho + add | OPEN — the wall | |
+| S7 multiplicativity of compat | OPEN — the wall | |
+
+Also still needed for an actual `SequentialProductOnEJA` inhabitant: `sp_effect` (that
+`Q_{sqrt a} b` is an effect when `a`,`b` are), which needs `Q_s` to preserve the cone.
+
+**S5-S7 all turn on compatibility `a . b = b . a`.** The standard route is that compatible
+elements operator-commute (`L_a L_b = L_b L_a`) and generate an associative subalgebra; that
+characterisation is itself the hard theorem and is NOT in the tree. Do not price S5-S7 from how
+S4 went.
+
+### Why S4 went quickly, and what that predicts
+
+Nothing in S4 was new mathematics. Every ingredient was already present or one question away:
+
+* `mul_eq_zero_of_inner_mul_self_eq_zero` — the VANISHING case of `inner_mul_self_nonneg_of_idem`.
+  That proof already decomposed `<L_c y, y> = |P_1 y|^2 + (1/2)|P_half y|^2`; nobody had read it
+  at equality.
+* `smul_resolution_mul_eq_zero_of_inner_eq_zero` — the PER-IDEMPOTENT form of the orthogonality
+  proof, parameterised by any `g` with `g 0 = 0`. `g = sqrt` is what S4 needed.
+* `jsqrt_mul_self'` — the OBSERVABLE-NONNEGATIVITY form. ★ This one was load-bearing:
+  `forall i, 0 <= lam i` is UNSATISFIABLE from the order in general, because a coefficient at a
+  zero idempotent is unconstrained and `nonneg_coeff_of_isSoS` only speaks at `q i != 0`. Without
+  weakening it the assembly dead-ends at the last step.
+
+★★ **The `ringOfBilinear` crossing is one-way in practice.** Going UP from a bilinear-map theorem
+into `EJA/Class.lean` works — the class supplies the `jmulL` tuple by name, which is what that file
+exists for (`jmul_eq_zero_of_inner_eq_zero` is the template). Going DOWN from the class's `mulLL`
+into `orderUnitSpaceOfBilinear` does NOT: the two `Module R J` paths do not unify, measured twice
+on 2026-08-23. Route new work upward.
+
+★ **Ordering trap, hit twice:** `EJA/Order.lean` and `EJA/Spectral.lean` do not order their
+declarations the way their section headers suggest. Two theorems had to be relocated after being
+written above their dependencies. Grep for the dependency's line number before choosing an anchor.
+
