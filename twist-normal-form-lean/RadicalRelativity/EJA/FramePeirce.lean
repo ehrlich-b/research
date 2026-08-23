@@ -46,10 +46,12 @@ docstring.
 
     z := x − ∑ᵢ P₁(pᵢ) x − ½ • ∑ᵢ P½(pᵢ) x.
 
-The eight composition rules of the `Compose` section below kill `P₁(p k) z` and `P½(p k) z` for
-every `k`; so `peirce_add_add` at `p k` collapses to `z = P₀(p k) z`, whence `p k ∘ z = 0` for
-every `k`, whence `z = 1 ∘ z = (∑ₖ p k) ∘ z = 0`.  Nothing is expanded, because the *identity*
-is never expanded — only its residual is tested, one idempotent at a time.
+The eight composition rules of the `Compose` section below, together with
+`sum_peirceHalf_erase` in the one place where `P½(p k) P½(p k) x` has to be matched against the
+rest of the half-component, kill `P₁(p k) z` and `P½(p k) z` for every `k`; so `peirce_add_add`
+at `p k` collapses to `z = P₀(p k) z`, whence `p k ∘ z = 0` for every `k`, whence
+`z = 1 ∘ z = (∑ₖ p k) ∘ z = 0`.  Nothing is expanded, because the *identity* is never expanded —
+only its residual is tested, one idempotent at a time.
 
 ★ The `½` in that identity is not a normalisation choice.  `P½(pᵢ) x` is the whole
 `i`-th half-eigencomponent, which is the sum of the `V_{ij}` parts over all `j ≠ i`; so an

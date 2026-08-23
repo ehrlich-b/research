@@ -15,8 +15,8 @@ primitive idempotents — and carries it as *data*, because the article's rank h
 supplies one.  This file proves such data always exists: `exists_jordanFrame`, by strong
 induction on `Module.finrank ℝ J` down the Peirce decomposition of a nontrivial idempotent.
 
-The induction itself is the expected one.  If `1` is primitive the singleton family `![1]` is a
-frame.  Otherwise primitivity fails at its third clause, which hands over an idempotent `c` with
+The induction itself is the expected one.  If `1` is primitive the one-element family
+`fun _ : Fin 1 => (1 : J)` is a frame.  Otherwise primitivity fails at its third clause, which hands over an idempotent `c` with
 `c ≠ 0` and `c ≠ 1`; `EJA/PeirceSubalgebra.lean` makes `J₂(c)` and `J₀(c)` Euclidean Jordan
 algebras with units `c` and `1 - c` and drops the dimension at both; and the two frames obtained
 from the induction hypothesis concatenate along `Fin.append`.
@@ -40,20 +40,22 @@ which is `eigen_one_of_eigen_one` below, and which is in neither
 ★ **What makes it work is changing which idempotent one decomposes at.**  Attacking it at `c` —
 rewriting `c ∘ x` as `c ∘ (d ∘ x)` and trying to move `c` inwards — is circular, because moving
 `c` past `d` is what needs the conclusion; `EJA/PeirceMul.lean`'s `mul_comm_of_eigen_one` only
-relocates that difficulty.  Decomposing at **`d`** instead makes it immediate: `c - d` is an
-idempotent orthogonal to `d` (`mul_sub_eq_zero_of_eigen_one`, one line), so it lies in `J₀(d)` while `x` lies
-in `J₂(d)`, and `EJA/PeirceMul.lean`'s `eigen_one_mul_zero` — the rule that the two *extreme*
+relocates that difficulty: `mul_comm_of_eigen_one` at `(c, d, x)` yields
+`c ∘ x = d ∘ (c ∘ x)`, which puts `c ∘ x` back inside `J₂(d)` rather than identifying it with
+`x`.  Decomposing at **`d`** instead makes it immediate: `d` annihilates `c - d`
+(`mul_sub_eq_zero_of_eigen_one`, one line), so `c - d` lies in `J₀(d)` while `x` lies in
+`J₂(d)`, and `EJA/PeirceMul.lean`'s `eigen_one_mul_zero` — the rule that the two *extreme*
 Peirce components of a single idempotent annihilate each other — kills `(c - d) ∘ x` outright.
-Then `c ∘ x = d ∘ x + (c - d) ∘ x = x`.
+Then `c ∘ x = d ∘ x + (c - d) ∘ x = x`.  (`c - d` is also idempotent, but that is neither
+proved nor used here.)
 
 ★ `eigen_one_of_eigen_one` does **not** need `c` to be idempotent.  The hypothesis was written
 into the first draft, the unused-variable linter flagged it, and it was deleted rather than
-underscored.  (No claim is made about the *other* three hypotheses: `hd`, `hcd` and `hx` are all
-used by the proof, and `hcd` and `hx` are easily seen to be necessary — `J = ℝ²` with
-`d = x = (1,0)`, `c = (0,1)` breaks the first and `x = 1` the second — but whether `hd` can be
-dropped was not tested.)  `peirceOneSub_le` restates the lemma as the submodule inequality, and
-*there* `hc` reappears — not because the mathematics needs it but because `peirceOneSub` is
-indexed by an idempotency proof, so the ambient carrier cannot be named without one.
+underscored.  Nothing is claimed about the remaining three: `hd`, `hcd` and `hx` are each used
+by the proof, but whether any of them could be dropped was not tested.  `peirceOneSub_le`
+restates the lemma as the submodule inequality, and *there* `hc` reappears — not because the
+mathematics needs it but because `peirceOneSub` is indexed by an idempotency proof, so the
+ambient carrier cannot be named without one.
 
 ## Scope
 
