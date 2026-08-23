@@ -207,7 +207,7 @@ likely hit the same wall. Full note in `~/scratch/palomar/queue.txt`. Bryan's ca
 coeff_eq_zero_of_sum_smul_eq_zero      coefficients pinned by their idempotents
 jeval_eq_zero_iff_of_resolution        annihilator readable from a resolution
 exists_idem_iff_forall_jann_eval       nonzero spectrum = common roots of jann  => function of x
-nonzero_spectrum_eq_of_resolutions     two resolutions share that spectrum  (hypothesis DISCHARGED)
+nonzero_spectrum_eq_of_resolutions     two resolutions share the NONZERO spectrum  (see caveat)
 exists_resolution_distinct             distinct-eigenvalue resolutions exist
 idem_eq_jeval_lagrange                 idempotents are Lagrange polynomials in x
 lagrange_basis_congr                   interpolants agree across indexings
@@ -268,4 +268,34 @@ After it: `jsqrt` becomes definable, then `a . b := quadJ (jsqrt a) b`, then S1-
 an earlier note in this file called the whole assembly "ordinary", which was too broad for five of
 the seven clauses. Orthogonality symmetry, compatible associativity and the two multiplicativity
 clauses are substantive Jordan identities and nothing built tonight makes them fall out.
+
+## CORRECTION 2026-08-23 — the canonicity chain is NOT closed; I claimed it was
+
+An earlier section of this file said the chain was "COMPLETE, nothing carried" and that
+`nonzero_spectrum_eq_of_resolutions` discharged `idem_unique_of_resolutions`'s hypothesis.
+**That is false.** Found while attempting `sqrt_sum_eq_of_resolutions`, which needs exactly that
+link and could not get it.
+
+* `idem_unique_of_resolutions` asks for `image lc univ = image ld univ` — the **full** eigenvalue
+  sets — because it routes through `lagrange_basis_congr`, which needs the two interpolants equal
+  **as polynomials**, and `Lagrange.basis Finset.univ` is built over the whole index type.
+* `nonzero_spectrum_eq_of_resolutions` delivers equality of the **filtered** images only.
+* These genuinely differ: a resolution may carry `c i = 0` with `lc i = 7` — a phantom eigenvalue
+  contributing nothing to `x` — where another does not. Nothing forces the full images to agree.
+
+**The repair, and it makes the result stronger:** polynomial equality is more than is needed. The
+two interpolants only have to agree *modulo* `jann x`. They do — both are `lam_k^-1` at `lam_k` and
+`0` at every other nonzero eigenvalue, so their difference vanishes on the nonzero spectrum, and
+`jeval_eq_zero_iff_of_resolution` gives `jeval x (P1 - P2) = 0` (at a zero eigenvalue the `lam_i`
+factor kills the term regardless). Reroute `idem_unique_of_resolutions` through that and it takes
+`nonzero_spectrum_eq_of_resolutions` directly.
+
+**Status: `idem_unique_of_resolutions` is TRUE and PROVED, but under a hypothesis nothing in the
+tree supplies.** It is not wrong, it is unusable as it stands. The reroute is the next task, before
+`sqrt_sum_eq_of_resolutions`.
+
+★ **How this got past me:** I read "the hypothesis is an equal-spectrum statement" and matched it
+against "I proved an equal-spectrum statement" without comparing the two Finsets. Same failure
+shape as the biggest-residue error this manifest records four times — matching on the *description*
+of a residue instead of on the residue.
 

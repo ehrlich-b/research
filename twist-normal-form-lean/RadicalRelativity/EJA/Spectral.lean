@@ -845,7 +845,20 @@ Immediate from `exists_idem_iff_forall_jann_eval`: membership on each side is th
 `jann x`, and `x` is the same element.  Zero belongs to neither side by construction, so the
 excluded case costs nothing.
 
-This is the input `idem_unique_of_resolutions` takes as a hypothesis, now discharged. -/
+★★ **This is NOT the hypothesis `idem_unique_of_resolutions` takes, and an earlier note here
+wrongly said it discharged it.**  That theorem asks for `image lc univ = image ld univ` — the
+*full* eigenvalue sets — because it routes through `lagrange_basis_congr`, which needs the two
+interpolants to be equal *as polynomials*, and `Lagrange.basis Finset.univ` is built over the
+whole index type.  This theorem gives equality of the **filtered** images only, and the two
+genuinely differ: a resolution may carry `c i = 0` with `lc i = 7`, a phantom eigenvalue
+contributing nothing to `x`, where another does not.
+
+★ **The repair, recorded because the current route is stronger than it needs to be.**  Polynomial
+equality is not required — only that the two interpolants agree *modulo* `jann x`.  They do: both
+are `λₖ⁻¹` at `λₖ` and `0` at every other nonzero eigenvalue, so their difference vanishes on the
+nonzero spectrum, and `jeval_eq_zero_iff_of_resolution` then gives `jeval x (P₁ − P₂) = 0` — at a
+zero eigenvalue the `λᵢ` factor kills the term regardless.  Rerouting `idem_unique_of_resolutions`
+through that argument would let it take *this* theorem as its hypothesis.  Not done. -/
 theorem nonzero_spectrum_eq_of_resolutions {n m : ℕ} {c : Fin n → J} {d : Fin m → J}
     (hc : IsOrthIdemFamily c) (hd : IsOrthIdemFamily d)
     (lc : Fin n → ℝ) (ld : Fin m → ℝ)
