@@ -163,3 +163,221 @@ theorem complex_classification_unconditional_ouNorm {N : ℕ} (hN : 3 ≤ N)
   exact complex_classification_unconditional hN P ((firstArgContinuousOu_iff P).mp hS2)
 
 end Necessity
+
+/-! ## `lem:homog`(i) at order-unit generality (row 6)
+
+The article's `lem:homog`(i): for each effect `a`, `L_a : b ↦ a·b` is additive by S1 and order
+bounded, hence **extends uniquely to a positive linear map** `L_a : J → J`.  The tree already
+had this on the matrix carrier (`Necessity.seqLeftMul`), where the difference representation is
+`x = x⁺ − x⁻`; the article's is at order-unit generality, and the concrete route's `posPart` /
+`negPart` are not available there.
+
+They are not needed.  `SequentialProductOn.spConeRight` — the second-slot cone extension, already
+in the tree and needing `IsArchimedean` but **no S2** — supplies the value on the cone, and the
+splitting the article's own proof uses is available from the class's `archimedean` field alone:
+for any `x` there is `r ≥ 0` with `−x ≤ r·𝟙`, so `x = (x + r·𝟙) − r·𝟙` is a difference of cone
+elements.  `spConeRight_sub_congr` makes the value independent of that choice, and the rest is
+the article's "extension by differences on `J = span eff(J)`".
+
+`IsArchimedean` is the only ambient hypothesis.  This file's `OrderUnitSpace` class carries
+order-unit *boundedness* in its `archimedean` field and the genuine Archimedean squeeze as the
+separate `IsArchimedean` predicate, which `OrderUnitSpace.lean` records as part of the article's
+own definition of an order unit space rather than a located stand-in — so a row proved under it
+is at the article's generality.  Nothing about matrices enters, so this covers the article's
+statement, whose ambient `J` is an EJA and hence an order unit space; that is exactly the
+argument the manifest already accepts for clause (ii).
+-/
+
+namespace SequentialProductOn
+
+variable {V : Type*} [OrderUnitSpace V] (P : SequentialProductOn V)
+
+/-- A cone normalization is exactly an order-unit bound. -/
+theorem le_smul_of_isConeNorm {v : V} {μ : ℝ} (h : IsConeNorm v μ) : v ≤ μ • (𝟙 : V) := by
+  have h2 := h.2.2
+  have := smul_nonneg_mono μ (le_of_lt h.1) h2
+  rwa [smul_smul, mul_inv_cancel₀ (ne_of_gt h.1), one_smul] at this
+
+/-- Conversely, an order-unit bound is a cone normalization. -/
+theorem isConeNorm_of_le {v : V} (hv : (0 : V) ≤ v) {μ : ℝ} (hμ : 0 < μ)
+    (h : v ≤ μ • (𝟙 : V)) : IsConeNorm v μ := by
+  refine ⟨hμ, smul_nonneg' (le_of_lt (inv_pos.mpr hμ)) hv, ?_⟩
+  have := smul_nonneg_mono μ⁻¹ (le_of_lt (inv_pos.mpr hμ)) h
+  rwa [smul_smul, inv_mul_cancel₀ (ne_of_gt hμ), one_smul] at this
+
+theorem spConeRight_zero (harch : IsArchimedean V) {a : V} (ha : IsEffect a) :
+    P.spConeRight a 0 = 0 := by
+  rw [spConeRight_eq P harch ha le_rfl (isConeNorm_one isEffect_zero), smul_zero,
+    P.sp_zero_right ha, smul_zero]
+
+theorem spConeRight_nonneg (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {v : V} (hv : (0 : V) ≤ v) : (0 : V) ≤ P.spConeRight a v := by
+  obtain ⟨μ, hμ⟩ := exists_isConeNorm hv
+  rw [spConeRight_eq P harch ha hv hμ]
+  exact smul_nonneg' (le_of_lt hμ.1) (P.sp_nonneg ha hμ.2)
+
+/-- **Positive homogeneity** of the second-slot cone extension. -/
+theorem spConeRight_smul (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {v : V} (hv : (0 : V) ≤ v) {lam : ℝ} (hlam : 0 < lam) :
+    P.spConeRight a (lam • v) = lam • P.spConeRight a v := by
+  obtain ⟨μ, hμ⟩ := exists_isConeNorm hv
+  have hlamv : (0 : V) ≤ lam • v := smul_nonneg' (le_of_lt hlam) hv
+  rw [spConeRight_eq P harch ha hlamv (isConeNorm_smul hμ hlam),
+    spConeRight_eq P harch ha hv hμ]
+  rw [show (lam * μ)⁻¹ • lam • v = μ⁻¹ • v from by
+    rw [smul_smul]; congr 1; field_simp]
+  rw [smul_smul]
+
+/-- **Additivity** of the second-slot cone extension: a common normalization dominating both
+summands and their sum is supplied by adding the two individual ones. -/
+theorem spConeRight_add (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {x y : V} (hx : (0 : V) ≤ x) (hy : (0 : V) ≤ y) :
+    P.spConeRight a (x + y) = P.spConeRight a x + P.spConeRight a y := by
+  obtain ⟨μx, hμx⟩ := exists_isConeNorm hx
+  obtain ⟨μy, hμy⟩ := exists_isConeNorm hy
+  set μ : ℝ := μx + μy with hμdef
+  have hμ0 : 0 < μ := by simp only [hμdef]; linarith [hμx.1, hμy.1]
+  have hxμ : x ≤ μ • (𝟙 : V) := by
+    refine le_trans (le_smul_of_isConeNorm hμx) ?_
+    exact smul_le_smul_of_le_of_nonneg (by simp only [hμdef]; linarith [hμy.1]) ousUnit_nonneg
+  have hyμ : y ≤ μ • (𝟙 : V) := by
+    refine le_trans (le_smul_of_isConeNorm hμy) ?_
+    exact smul_le_smul_of_le_of_nonneg (by simp only [hμdef]; linarith [hμx.1]) ousUnit_nonneg
+  have hxyμ : x + y ≤ μ • (𝟙 : V) := by
+    calc x + y ≤ μx • (𝟙 : V) + μy • (𝟙 : V) := by
+          refine le_trans (add_le_add_right' (le_smul_of_isConeNorm hμx) y) ?_
+          exact add_le_add_left _ _ (le_smul_of_isConeNorm hμy) _
+      _ = μ • (𝟙 : V) := by rw [← add_smul]
+  have hcx : IsConeNorm x μ := isConeNorm_of_le hx hμ0 hxμ
+  have hcy : IsConeNorm y μ := isConeNorm_of_le hy hμ0 hyμ
+  have hcxy : IsConeNorm (x + y) μ :=
+    isConeNorm_of_le (add_nonneg hx hy) hμ0 hxyμ
+  have hsum_le : μ⁻¹ • x + μ⁻¹ • y ≤ (𝟙 : V) := by
+    rw [← smul_add]
+    exact hcxy.2.2
+  rw [spConeRight_eq P harch ha (add_nonneg hx hy) hcxy, spConeRight_eq P harch ha hx hcx,
+    spConeRight_eq P harch ha hy hcy, smul_add, P.sp_add_right ha hcx.2 hcy.2 hsum_le, smul_add]
+
+/-- **Well-definedness over difference representations.** -/
+theorem spConeRight_sub_congr (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {u v u' v' : V} (hu : (0 : V) ≤ u) (hv : (0 : V) ≤ v) (hu' : (0 : V) ≤ u')
+    (hv' : (0 : V) ≤ v') (h : u - v = u' - v') :
+    P.spConeRight a u - P.spConeRight a v = P.spConeRight a u' - P.spConeRight a v' := by
+  have hsum : u + v' = u' + v := sub_eq_sub_iff_add_eq_add.mp h
+  have h3 := congrArg (P.spConeRight a) hsum
+  rw [spConeRight_add P harch ha hu hv', spConeRight_add P harch ha hu' hv] at h3
+  exact sub_eq_sub_iff_add_eq_add.mpr h3
+
+/-! ### The linear extension at order-unit generality (`lem:homog`(i)) -/
+
+/-- An order-unit bound for `-x`, from the class's own `archimedean` field. -/
+def negBound (x : V) : ℝ := Classical.choose (OrderUnitSpace.archimedean (-x))
+
+theorem negBound_spec (x : V) : 0 ≤ negBound x ∧ -x ≤ negBound x • (𝟙 : V) :=
+  Classical.choose_spec (OrderUnitSpace.archimedean (-x))
+
+theorem add_negBound_nonneg (x : V) : (0 : V) ≤ x + negBound x • (𝟙 : V) := by
+  have h := (negBound_spec x).2
+  have h2 := OrderUnitSpace.add_le_add_left (-x) (negBound x • (𝟙 : V)) h x
+  simpa using h2
+
+theorem negBound_smul_nonneg (x : V) : (0 : V) ≤ negBound x • (𝟙 : V) :=
+  OrderUnitSpace.smul_nonneg' (negBound_spec x).1 ousUnit_nonneg
+
+/-- **`lem:homog`(i) at the article's own generality.**  The left multiplication of an unknown
+product by an effect, extended from the effect interval to the whole order unit space, as a
+real-linear map.  Only `IsArchimedean` is used; S2 is not. -/
+def seqLeftMulAbs (harch : IsArchimedean V) {a : V} (ha : IsEffect a) : V →ₗ[ℝ] V where
+  toFun x := P.spConeRight a (x + negBound x • 𝟙) - P.spConeRight a (negBound x • 𝟙)
+  map_add' x y := by
+    show P.spConeRight a ((x + y) + negBound (x + y) • 𝟙)
+          - P.spConeRight a (negBound (x + y) • 𝟙)
+        = (P.spConeRight a (x + negBound x • 𝟙) - P.spConeRight a (negBound x • 𝟙))
+          + (P.spConeRight a (y + negBound y • 𝟙) - P.spConeRight a (negBound y • 𝟙))
+    have hcomb := spConeRight_sub_congr P harch ha
+      (add_nonneg (add_negBound_nonneg x) (add_negBound_nonneg y))
+      (add_nonneg (negBound_smul_nonneg x) (negBound_smul_nonneg y))
+      (add_negBound_nonneg (x + y)) (negBound_smul_nonneg (x + y)) (by abel)
+    rw [← hcomb, spConeRight_add P harch ha (add_negBound_nonneg x) (add_negBound_nonneg y),
+      spConeRight_add P harch ha (negBound_smul_nonneg x) (negBound_smul_nonneg y)]
+    abel
+  map_smul' t x := by
+    show P.spConeRight a _ - P.spConeRight a _ = t • (P.spConeRight a _ - P.spConeRight a _)
+    rcases lt_trichotomy t 0 with htneg | htzero | htpos
+    · have hrep : (t • x) + negBound (t • x) • (𝟙 : V) - negBound (t • x) • 𝟙
+          = (-t) • (negBound x • (𝟙 : V)) - (-t) • (x + negBound x • 𝟙) := by
+        module
+      rw [spConeRight_sub_congr P harch ha (add_negBound_nonneg (t • x))
+        (negBound_smul_nonneg (t • x))
+        (OrderUnitSpace.smul_nonneg' (by linarith) (negBound_smul_nonneg x))
+        (OrderUnitSpace.smul_nonneg' (by linarith) (add_negBound_nonneg x)) hrep,
+        spConeRight_smul P harch ha (negBound_smul_nonneg x) (by linarith : (0:ℝ) < -t),
+        spConeRight_smul P harch ha (add_negBound_nonneg x) (by linarith : (0:ℝ) < -t)]
+      simp only [RingHom.id_apply, neg_smul, smul_sub]
+      abel
+    · subst htzero
+      have hrep : (0 : ℝ) • x + negBound ((0 : ℝ) • x) • (𝟙 : V)
+            - negBound ((0 : ℝ) • x) • 𝟙
+          = (0 : V) - 0 := by
+        module
+      rw [spConeRight_sub_congr P harch ha (add_negBound_nonneg ((0:ℝ) • x))
+        (negBound_smul_nonneg ((0:ℝ) • x)) le_rfl le_rfl hrep,
+        spConeRight_zero P harch ha]
+      simp
+    · have hrep : t • x + negBound (t • x) • (𝟙 : V) - negBound (t • x) • 𝟙
+          = t • (x + negBound x • (𝟙 : V)) - t • (negBound x • 𝟙) := by
+        module
+      rw [spConeRight_sub_congr P harch ha (add_negBound_nonneg (t • x))
+        (negBound_smul_nonneg (t • x))
+        (OrderUnitSpace.smul_nonneg' (le_of_lt htpos) (add_negBound_nonneg x))
+        (OrderUnitSpace.smul_nonneg' (le_of_lt htpos) (negBound_smul_nonneg x)) hrep,
+        spConeRight_smul P harch ha (add_negBound_nonneg x) htpos,
+        spConeRight_smul P harch ha (negBound_smul_nonneg x) htpos]
+      simp only [RingHom.id_apply, smul_sub]
+
+/-- The extension is computed by **any** difference representation in the cone. -/
+theorem seqLeftMulAbs_eq (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {x u v : V} (hu : (0 : V) ≤ u) (hv : (0 : V) ≤ v) (h : x = u - v) :
+    seqLeftMulAbs P harch ha x = P.spConeRight a u - P.spConeRight a v :=
+  spConeRight_sub_congr P harch ha (add_negBound_nonneg x) (negBound_smul_nonneg x) hu hv
+    (by rw [← h]; abel)
+
+/-- On the cone it is the cone extension. -/
+theorem seqLeftMulAbs_apply_nonneg (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {x : V} (hx : (0 : V) ≤ x) : seqLeftMulAbs P harch ha x = P.spConeRight a x := by
+  rw [seqLeftMulAbs_eq P harch ha hx le_rfl (by abel), spConeRight_zero P harch ha, sub_zero]
+
+/-- **Agreement on effects**: the extension restricts to `b ↦ P.sp a b`. -/
+theorem seqLeftMulAbs_apply_effect (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {b : V} (hb : IsEffect b) : seqLeftMulAbs P harch ha b = P.sp a b := by
+  rw [seqLeftMulAbs_apply_nonneg P harch ha hb.1, spConeRight_of_isEffect P harch ha hb]
+
+/-- **Positivity** of the extension. -/
+theorem seqLeftMulAbs_nonneg (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {x : V} (hx : (0 : V) ≤ x) : (0 : V) ≤ seqLeftMulAbs P harch ha x := by
+  rw [seqLeftMulAbs_apply_nonneg P harch ha hx]
+  exact spConeRight_nonneg P harch ha hx
+
+/-- **Monotonicity** of the extension. -/
+theorem seqLeftMulAbs_mono (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {x y : V} (h : x ≤ y) : seqLeftMulAbs P harch ha x ≤ seqLeftMulAbs P harch ha y := by
+  have h2 := seqLeftMulAbs_nonneg P harch ha (sub_nonneg_of_le h)
+  rw [map_sub] at h2
+  exact le_of_sub_nonneg h2
+
+/-- **The unit law**: the extension sends `𝟙` to `a`. -/
+theorem seqLeftMulAbs_one (harch : IsArchimedean V) {a : V} (ha : IsEffect a) :
+    seqLeftMulAbs P harch ha 𝟙 = a := by
+  rw [seqLeftMulAbs_apply_effect P harch ha isEffect_unit]
+  exact P.sp_unit_right ha
+
+/-- **Uniqueness**: it is the *only* real-linear extension of `b ↦ P.sp a b`, because the
+effects span (`lem:span`'s extensionality clause). -/
+theorem seqLeftMulAbs_unique (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    (L : V →ₗ[ℝ] V) (hL : ∀ b : V, IsEffect b → L b = P.sp a b) :
+    L = seqLeftMulAbs P harch ha :=
+  linearMap_eq_of_eq_on_effects _ _
+    (fun b hb => by rw [hL b hb, seqLeftMulAbs_apply_effect P harch ha hb])
+
+
+end SequentialProductOn
