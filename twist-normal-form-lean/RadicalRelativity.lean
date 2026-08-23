@@ -672,6 +672,16 @@ import RadicalRelativity.EJA.FrameExists
 -- of commuting projections, and `EJA.Pattern` is not used.  No proof uses primitivity, and
 -- `dim V_ii = 1` is NOT proved.  Substrate; it moves no row.
 import RadicalRelativity.EJA.FramePeirce
+-- A carrier for the class.  `H_n(K)` under the symmetrized product and the real trace form is a
+-- `EuclideanJordanAlgebra`, so `EJA.Class`'s class is inhabited and `exists_jordanFrame` and
+-- `frameBlock_isInternal` are statements about a live object rather than about a class nothing
+-- was known to satisfy -- the exposure ARC-6 shipped with `IsArchimedean` and had to repair.
+-- Every field obligation was already proved in the tree in `jordanBilinG`/`symmMul` vocabulary;
+-- the `HermMul` collision `EJA.Class` warned about is definitional (`hermMul_toMul_eq`), and no
+-- module imports this one, so the four existing `open HermMul` sites are unaffected.  A frame on
+-- `H_n(K)` is NOT exhibited -- primitivity of the diagonal matrix units is not proved.
+-- Substrate; it moves no row.
+import RadicalRelativity.EJA.HermitianCarrier
 
 -- The octonion algebra and its trace form (infrastructure for the Albert branch).
 -- `Octonions` builds `𝕆` as `Fin 8 → ℝ` with the Fano-plane table and proves the
