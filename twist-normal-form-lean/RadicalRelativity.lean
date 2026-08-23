@@ -731,3 +731,18 @@ import RadicalRelativity.Albert.Carrier
 import RadicalRelativity.Albert.Mul
 import RadicalRelativity.Albert.Inner
 import RadicalRelativity.Albert.Jordan
+
+-- The exceptional carrier for `EJA.Class`'s class.  `h₃(𝕆)` under the Jordan product and the
+-- trace form is a `EuclideanJordanAlgebra`, so the class now has a witness that is NOT an
+-- algebra of matrices over an associative ring, and `exists_jordanFrame`,
+-- `frameBlock_isInternal` and `spectral_resolution_complete'` read on the Albert algebra.  The
+-- file also builds `EJA.Order`'s order unit space on `h₃(𝕆)`, discharges
+-- `OrderUnitSpace.IsArchimedean` for it -- the first exceptional discharge, retiring no caveat
+-- that was still open -- and identifies its cone with the cone of single squares.  The `Mul`
+-- collision with `Albert.Jordan`'s `instCommMagma` is definitional
+-- (`albert_commMagma_toMul_eq`), no `AddCommGroup` diamond appears, and no module imports this
+-- one.  ★ Jordan square roots and `Q_{√a}` do NOT become available: they are absent from the
+-- `EJA/` layer, and the tree's versions (`Necessity.quadRep`, the vendored cfc square root)
+-- are stated over `HermitianMat`, so nothing transfers along this instance.
+-- Substrate; it moves no row, row 21 `thm:albert` included.
+import RadicalRelativity.EJA.AlbertCarrier
