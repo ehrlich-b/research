@@ -647,3 +647,15 @@ import RadicalRelativity.EJA.Spectral
 -- `EJA.Spectral`'s resolution.  It is the enabling layer for rows 13 and 16 — before it,
 -- `SequentialProductOn` could not be *stated* at EJA generality — and it moves no row.
 import RadicalRelativity.EJA.Order
+-- The class.  `EJA.Class` names the hypothesis the previous modules carry as a tuple, with the
+-- product placed on top of the inner-product space so only one `AddCommGroup` is ever in play.
+-- Substrate for the Jordan-von Neumann-Wigner campaign; it moves no row.
+import RadicalRelativity.EJA.Class
+-- Peirce subalgebras.  `J2(c)` and `J0(c)` carry Euclidean Jordan structures of their own,
+-- with units `c` and `1 - c`; the vehicle is `Submodule` rather than `NonUnitalSubalgebra`, so
+-- no instance transfer is needed.  Substrate; it moves no row.
+import RadicalRelativity.EJA.PeirceSubalgebra
+-- Primitivity, Jordan frames and rank.  Orthogonal nonzero idempotents are linearly
+-- independent, so a frame's cardinality is bounded by the dimension.  Frame conjugacy is NOT
+-- proved and is not needed -- see the module docstring.  Substrate; it moves no row.
+import RadicalRelativity.EJA.Rank
