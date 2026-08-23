@@ -107,10 +107,17 @@ All run 2026-08-23 against Mathlib at the pinned v4.33.0 checkout
 
 ## The gap, stated
 
-Below, `IsCompIso f` says the linear equivalence `f` preserves the unit and the product; that is
-the full notion of isomorphism for these algebras, since the norm form is determined by the
-product (`N x • 1 = x * x*`, `CompositionAlgebra.mul_cstar_self`) and so is transported
-automatically.
+Below, `IsCompIso f` says the linear equivalence `f` preserves the unit and the product, and
+says nothing about the norm form.
+
+★ **That is deliberately the weaker of the two available notions, and the certificate does not
+claim they coincide.** The standard notion also requires `N (f x) = N x`. The two do coincide,
+because `sq_eq` shows `x * x = 2⟪x,1⟫ • x - N x • 1`, so for `x` outside `ℝ ∙ 1` the pair
+`(2⟪x,1⟫, N x)` is pinned by the product alone and `N` is algebra-determined — but *that
+argument is not formalized anywhere in this tree*, so quoting it here would be exactly the kind
+of prose price this directory exists to replace. Consequence for reading the gap: the statement
+below is **implied by** the standard classification, so discharging it is a lower bound on the
+missing work, not an equivalent of it. Anyone who closes it should also add the norm clause.
 
 The `sorry` is on `hurwitz_classification` and nowhere else.
 -/

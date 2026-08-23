@@ -34,8 +34,12 @@ the class non-vacuous, and they are also the *targets* of the classification: th
 
 ★ The octonion instance is the sharpest cross-check available on `Composition/Defs.lean`:
 `norm_multiplicative` was proved in `Octonions.lean` from the hard-coded Fano multiplication
-table, with no reference to composition algebras at all, and it discharges `B_comp` verbatim.
-So the class field really is the composition property and not a mis-transcription of it.
+table, with no reference to composition algebras at all, and it discharges `B_comp` after one
+rewrite — `octIp_self_eq_norm_sq`, which is `∑ xᵢxᵢ = ∑ xᵢ²` and nothing more. So the class
+field really is the composition property and not a mis-transcription of it.
+★ An earlier draft of this paragraph said "discharges `B_comp` **verbatim**". It does not: the
+`simp only [ipBilin_apply, octIp_self_eq_norm_sq]` in front of it is load-bearing, because the
+class is stated on the bilinear form and `Octonions.lean` states the identity on `norm_sq`.
 
 ★ `𝕆` needs `NonAssocRing Octonion`, `One Octonion`, `IsScalarTower` and `SMulCommClass`,
 none of which were in the tree — `Octonions.lean` has a bare `Mul` instance and a `def one`.
@@ -188,8 +192,9 @@ theorem octIp_self_eq_norm_sq (x : Octonion) : Octonion.octIp x x = Octonion.nor
   simp only [Octonion.octIp, Octonion.norm_sq, sq]
 
 /-- `𝕆` is a Euclidean composition algebra. The composition law is Degen's eight-square
-identity, discharged verbatim by `Octonion.norm_multiplicative`, which was proved from the
-Fano multiplication table with no reference to composition algebras. -/
+identity, supplied by `Octonion.norm_multiplicative` — proved from the Fano multiplication table
+with no reference to composition algebras — after `octIp_self_eq_norm_sq` matches the bilinear
+form against `norm_sq`. -/
 instance instCompositionAlgebra : CompositionAlgebra Octonion where
   B := ipBilin
   B_symm x y := Octonion.octIp_comm x y

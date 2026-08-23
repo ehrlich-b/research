@@ -27,8 +27,8 @@ identity toolkit that every later argument runs on.
 
 * The form is carried as a **symmetric bilinear map** `B : C →ₗ[ℝ] C →ₗ[ℝ] ℝ` rather than as
   a `Mathlib` `QuadraticForm`. Over `ℝ` the two are interchangeable (`2` is invertible), and
-  every argument below is a polarisation argument, i.e. is *about* the bilinear form. Carrying
-  `B` directly removes an API layer from the middle of every proof.
+  the substantive arguments below are polarisation arguments, i.e. are *about* the bilinear
+  form. Carrying `B` directly removes an API layer from the middle of those proofs.
 * The ambient algebra is `[NonAssocRing C] [Module ℝ C] [IsScalarTower ℝ C C]
   [SMulCommClass ℝ C C]`: unital, distributive, `ℝ`-bilinear multiplication, **no
   associativity and no commutativity**. `Algebra ℝ C` is not usable here — it presupposes

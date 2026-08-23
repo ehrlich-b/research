@@ -36,9 +36,14 @@ matters:
   is associative**. That is `forced_assoc`, and it is a *hypothesis* on `A` extracted from the
   mere existence of `u`, not a property of a separately constructed `CD A`.
 
-★ Finite-dimensionality is used in exactly one place, `exists_unit_orthogonal`. The three
+★ Finite-dimensionality enters twice, and both times as *counting*: in
+`exists_unit_orthogonal`, to produce the normal at all, and in `finrank_double` and the chain of
+the main theorem, for the dimension bookkeeping. It does **not** enter the algebra: the three
 structural lemmas `forced_assoc`, `comm_of_assoc_double` and `le_span_one_of_comm_double` are
-proved without it, as the `omit` lines above them record.
+proved without it, as the `omit [FiniteDimensional ℝ C]` lines above them record.
+★ An earlier draft of this paragraph said finite-dimensionality was used "in exactly one place".
+That was false — `finrank_double` uses `Submodule.finrank_sup_add_finrank_inf_eq` and
+`Submodule.equivMapOfInjective`, and its own `omit` line omits only `[Nontrivial C]`.
 
 So the bound is a contrapositive: a composition subalgebra that is not associative has no unit
 vector orthogonal to it, hence is everything. Two more steps localise the failure:
