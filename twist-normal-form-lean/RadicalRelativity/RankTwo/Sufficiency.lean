@@ -1710,3 +1710,273 @@ theorem exists_jordanAuto_const_twist_of_twistSeq (s : ℝ) :
   ⟨LinearMap.id, s, fun _ _ => rfl, Function.surjective_id, fun _ _ _ _ => rfl⟩
 
 end RankTwo
+
+/-! ## `def:sp` as a structure over the effect interval (rows 3 and 35)
+
+`main.tex` defines a sequential product space as an order unit space with a binary operation
+`(·) : eff(V) × eff(V) → eff(V)` satisfying S1–S7.  This development's `SequentialProductOn`
+carries a **total** `sp : V → V → V` with every axiom `IsEffect`-guarded, plus `sp_effect` for
+closure.  Nothing had said how the two are related, and two manifest rows turn on that:
+
+* **row 3** asks for the article's definition, clause for clause;
+* **row 35** asks for `cor:qubit-classification`'s bijection, whose "onto the products" half is
+  **false** against total operations — `Necessity.badP t` is a genuine S1–S7 product with S2
+  that agrees with the constant-twist product on effects and is `0` off them, so `product ↦
+  moduli` cannot be injective on total `sp` functions.
+
+Both are the same task, and it is done here in one pass.  `EffectSequentialProduct` is `def:sp`
+transcribed over `PaperA.Effect V` — the effect subtype that was already in the library and
+audit-pinned.  `restrictSp` and `extendSp` are inverse in the strong sense on one side
+(`restrictSp_extendSp` is an equality of structures) and on the effects on the other
+(`extendSp_restrictSp_on_effects`), which is the most that can be true: the axioms cannot see
+off the effects.
+
+So the tree's totality is a **convention**, not a strengthening of the article's definition, and
+row 35's obstruction dissolves: `restrictSp_badP` shows `badP t` and the constant-twist product
+are the *same* article-level product, and `restrictSp_n2_bijective` is the article's bijection,
+proved, against `def:sp`'s own objects.
+-/
+
+namespace PaperA
+
+variable {V : Type*} [OrderUnitSpace V]
+
+/-- The unit, as an effect. -/
+def unitEffect (V : Type*) [OrderUnitSpace V] : Effect V := ⟨ousUnit, isEffect_unit⟩
+
+@[simp] theorem unitEffect_val : (unitEffect V : V) = ousUnit := rfl
+
+/-- **`def:sp` — the article's sequential product space, clause for clause, over the effect
+interval.**  The operation is `Effect V → Effect V → Effect V`, which is the article's
+`(·) : eff(V) × eff(V) → eff(V)`; effect-closure is therefore the *codomain*, not an axiom.
+`S2` is not a field: the article states it as continuity in the order-unit norm, which is a
+topological condition on the ambient space and is carried separately (`FirstArgContinuous`).
+
+Each clause's domain rider is carried the way the article carries it.  Where the article writes
+`b + c` under `b + c ≤ 𝟙`, the structure takes a third effect `bc` together with the equation
+`bc = b + c` in `V`: an effect whose value is `b + c` exists exactly when `b + c ≤ 𝟙`, so this
+is the rider and not a strengthening. -/
+structure EffectSequentialProduct (V : Type*) [OrderUnitSpace V] where
+  /-- The article's `(·) : eff(V) × eff(V) → eff(V)`. -/
+  op : Effect V → Effect V → Effect V
+  /-- **S1** Additivity: `a·(b+c) = a·b + a·c` whenever `b + c ≤ 𝟙`. -/
+  add_right : ∀ a b c bc : Effect V, (bc : V) = (b : V) + (c : V) →
+    (op a bc : V) = (op a b : V) + (op a c : V)
+  /-- **S3** Unitality: `𝟙·a = a`. -/
+  unit_left : ∀ a : Effect V, op (unitEffect V) a = a
+  /-- **S4** Symmetry of orthogonality: `a·b = 0 ⟹ b·a = 0`. -/
+  zero_symm : ∀ a b : Effect V, (op a b : V) = 0 → (op b a : V) = 0
+  /-- **S5** Associativity of compatible effects. -/
+  assoc_of_compatible : ∀ a b c : Effect V, op a b = op b a →
+    op a (op b c) = op (op a b) c
+  /-- **S6**, first half: `a ⌣ b ⟹ a ⌣ (𝟙 − b)`. -/
+  compatible_ortho : ∀ a b nb : Effect V, (nb : V) = ousUnit - (b : V) →
+    op a b = op b a → op a nb = op nb a
+  /-- **S6**, second half: `a ⌣ b` and `a ⌣ c` give `a ⌣ (b+c)` when `b + c ≤ 𝟙`. -/
+  compatible_add : ∀ a b c bc : Effect V, (bc : V) = (b : V) + (c : V) →
+    op a b = op b a → op a c = op c a → op a bc = op bc a
+  /-- **S7** Multiplicativity of compatibility: `a ⌣ b` and `a ⌣ c` give `a ⌣ (b·c)`. -/
+  compatible_op : ∀ a b c : Effect V, op a b = op b a → op a c = op c a →
+    op a (op b c) = op (op b c) a
+
+namespace EffectSequentialProduct
+
+/-- Two article-level products with the same operation are equal. -/
+theorem ext {E F : EffectSequentialProduct V} (h : E.op = F.op) : E = F := by
+  cases E; cases F; simp_all
+
+end EffectSequentialProduct
+
+/-! ### Restriction: the tree's total product is an article-level product -/
+
+/-- **Restriction.**  A pinned `SequentialProductOn` restricts to the article's effect-domain
+product; `sp_effect` discharges the codomain and every guard. -/
+def restrictSp (P : SequentialProductOn V) : EffectSequentialProduct V where
+  op a b := ⟨P.sp a.1 b.1, P.sp_effect a.2 b.2⟩
+  add_right a b c bc hbc := by
+    show P.sp a.1 bc.1 = P.sp a.1 b.1 + P.sp a.1 c.1
+    rw [hbc]
+    exact P.sp_add_right a.2 b.2 c.2 (by rw [← hbc]; exact bc.2.2)
+  unit_left a := by
+    ext1
+    exact P.sp_unit_left a.2
+  zero_symm a b h := P.sp_zero_symm a.2 b.2 h
+  assoc_of_compatible a b c h := by
+    ext1
+    exact P.sp_assoc_of_compatible a.2 b.2 c.2 (congrArg Subtype.val h)
+  compatible_ortho a b nb hnb h := by
+    ext1
+    show P.sp a.1 nb.1 = P.sp nb.1 a.1
+    rw [hnb]
+    exact P.compatible_ortho a.2 b.2 (congrArg Subtype.val h)
+  compatible_add a b c bc hbc h1 h2 := by
+    ext1
+    show P.sp a.1 bc.1 = P.sp bc.1 a.1
+    rw [hbc]
+    exact P.compatible_add a.2 b.2 c.2 (by rw [← hbc]; exact bc.2.2)
+      (congrArg Subtype.val h1) (congrArg Subtype.val h2)
+  compatible_op a b c h1 h2 := by
+    ext1
+    exact P.compatible_sp a.2 b.2 c.2 (congrArg Subtype.val h1) (congrArg Subtype.val h2)
+
+@[simp] theorem restrictSp_op (P : SequentialProductOn V) (a b : Effect V) :
+    ((restrictSp P).op a b : V) = P.sp a.1 b.1 := rfl
+
+/-! ### Extension by zero: every article-level product is a pinned product -/
+
+/-- The extension by zero of an effect-domain operation. -/
+def extendByZero (op : Effect V → Effect V → Effect V) : V → V → V :=
+  fun a b =>
+    letI := Classical.dec (IsEffect a ∧ IsEffect b)
+    if h : IsEffect a ∧ IsEffect b then ((op ⟨a, h.1⟩ ⟨b, h.2⟩ : Effect V) : V) else 0
+
+theorem extendByZero_apply (op : Effect V → Effect V → Effect V)
+    {a b : V} (ha : IsEffect a) (hb : IsEffect b) :
+    extendByZero op a b = ((op ⟨a, ha⟩ ⟨b, hb⟩ : Effect V) : V) := by
+  rw [extendByZero, dif_pos ⟨ha, hb⟩]
+
+/-- Turning a compatibility hypothesis about the extension into one about `op`. -/
+theorem op_comm_of_extend {E : EffectSequentialProduct V} {a b : V}
+    (ha : IsEffect a) (hb : IsEffect b)
+    (h : extendByZero E.op a b = extendByZero E.op b a) :
+    E.op ⟨a, ha⟩ ⟨b, hb⟩ = E.op ⟨b, hb⟩ ⟨a, ha⟩ := by
+  apply Subtype.ext
+  rw [← extendByZero_apply E.op ha hb, ← extendByZero_apply E.op hb ha]
+  exact h
+
+/-- **Extension.**  Every article-level product extends by zero to a pinned
+`SequentialProductOn` with the same values on effects.  So the totality of the tree's `sp` is a
+convention, not a strengthening of `def:sp`. -/
+def extendSp (E : EffectSequentialProduct V) : SequentialProductOn V where
+  sp := extendByZero E.op
+  sp_effect ha hb := by
+    rw [extendByZero_apply E.op ha hb]
+    exact (E.op _ _).2
+  sp_add_right {a b c} ha hb hc hbc := by
+    have hbce : IsEffect (b + c) := hb.add_of_le_unit hc hbc
+    rw [extendByZero_apply E.op ha hbce, extendByZero_apply E.op ha hb,
+      extendByZero_apply E.op ha hc]
+    exact E.add_right ⟨a, ha⟩ ⟨b, hb⟩ ⟨c, hc⟩ ⟨b + c, hbce⟩ rfl
+  sp_unit_left {a} ha := by
+    rw [extendByZero_apply E.op isEffect_unit ha]
+    exact congrArg Subtype.val (E.unit_left ⟨a, ha⟩)
+  sp_zero_symm {a b} ha hb h := by
+    rw [extendByZero_apply E.op ha hb] at h
+    rw [extendByZero_apply E.op hb ha]
+    exact E.zero_symm ⟨a, ha⟩ ⟨b, hb⟩ h
+  sp_assoc_of_compatible {a b c} ha hb hc h := by
+    have hcomm := op_comm_of_extend (E := E) ha hb h
+    rw [extendByZero_apply E.op hb hc, extendByZero_apply E.op ha hb,
+      extendByZero_apply E.op ha (E.op ⟨b, hb⟩ ⟨c, hc⟩).2,
+      extendByZero_apply E.op (E.op ⟨a, ha⟩ ⟨b, hb⟩).2 hc]
+    simp only [Subtype.coe_eta]
+    exact congrArg Subtype.val (E.assoc_of_compatible ⟨a, ha⟩ ⟨b, hb⟩ ⟨c, hc⟩ hcomm)
+  compatible_ortho {a b} ha hb h := by
+    have hnb : IsEffect (𝟙 - b) := hb.ortho
+    have hcomm := op_comm_of_extend (E := E) ha hb h
+    rw [extendByZero_apply E.op ha hnb, extendByZero_apply E.op hnb ha]
+    exact congrArg Subtype.val (E.compatible_ortho ⟨a, ha⟩ ⟨b, hb⟩ ⟨𝟙 - b, hnb⟩ rfl hcomm)
+  compatible_add {a b c} ha hb hc hbc h1 h2 := by
+    have hbce : IsEffect (b + c) := hb.add_of_le_unit hc hbc
+    have hc1 := op_comm_of_extend (E := E) ha hb h1
+    have hc2 := op_comm_of_extend (E := E) ha hc h2
+    rw [extendByZero_apply E.op ha hbce, extendByZero_apply E.op hbce ha]
+    exact congrArg Subtype.val
+      (E.compatible_add ⟨a, ha⟩ ⟨b, hb⟩ ⟨c, hc⟩ ⟨b + c, hbce⟩ rfl hc1 hc2)
+  compatible_sp {a b c} ha hb hc h1 h2 := by
+    have hc1 := op_comm_of_extend (E := E) ha hb h1
+    have hc2 := op_comm_of_extend (E := E) ha hc h2
+    rw [extendByZero_apply E.op hb hc,
+      extendByZero_apply E.op ha (E.op ⟨b, hb⟩ ⟨c, hc⟩).2,
+      extendByZero_apply E.op (E.op ⟨b, hb⟩ ⟨c, hc⟩).2 ha]
+    simp only [Subtype.coe_eta]
+    exact congrArg Subtype.val (E.compatible_op ⟨a, ha⟩ ⟨b, hb⟩ ⟨c, hc⟩ hc1 hc2)
+
+@[simp] theorem extendSp_sp_effect (E : EffectSequentialProduct V) {a b : V}
+    (ha : IsEffect a) (hb : IsEffect b) :
+    (extendSp E).sp a b = ((E.op ⟨a, ha⟩ ⟨b, hb⟩ : Effect V) : V) :=
+  extendByZero_apply E.op ha hb
+
+/-- **The round trip is the identity.**  `def:sp`'s effect-domain products and the tree's pinned
+products agree exactly: restriction is a left inverse of extension. -/
+theorem restrictSp_extendSp (E : EffectSequentialProduct V) : restrictSp (extendSp E) = E := by
+  refine EffectSequentialProduct.ext ?_
+  funext a b
+  ext1
+  show (extendSp E).sp a.1 b.1 = _
+  rw [extendSp_sp_effect E a.2 b.2]
+
+/-- The other side, at the level the axioms can see: `extendSp (restrictSp P)` agrees with `P`
+on every pair of effects.  It does **not** agree off the effects, and it cannot: the axioms are
+`IsEffect`-guarded, so nothing they say constrains the values there. -/
+theorem extendSp_restrictSp_on_effects (P : SequentialProductOn V) {a b : V}
+    (ha : IsEffect a) (hb : IsEffect b) :
+    (extendSp (restrictSp P)).sp a b = P.sp a b := by
+  rw [extendSp_sp_effect _ ha hb]
+  rfl
+
+
+/-- `restrictSp` is injective exactly at the resolution the axioms have: two pinned products
+restrict to the same article-level product iff they agree on every pair of effects. -/
+theorem restrictSp_eq_iff (P Q : SequentialProductOn V) :
+    restrictSp P = restrictSp Q ↔ ∀ a b : V, IsEffect a → IsEffect b → P.sp a b = Q.sp a b := by
+  constructor
+  · intro h a b ha hb
+    have := congrArg (fun E : EffectSequentialProduct V => ((E.op ⟨a, ha⟩ ⟨b, hb⟩ : Effect V) : V)) h
+    exact this
+  · intro h
+    refine EffectSequentialProduct.ext ?_
+    funext a b
+    exact Subtype.ext (h a.1 b.1 a.2 b.2)
+
+end PaperA
+
+namespace RankTwo
+
+open PaperA
+
+/-- **`cor:qubit-classification` as a genuine bijection**, at the article's own encoding.
+`t ↦ ∘_t` is injective on `C(ℝP², ℝ)` and hits the article-level product of every
+norm-continuous S1–S7 product on `H_2(ℂ)`.
+
+★ This is what row 35's `badP` obstruction was about, and the obstruction **dissolves here**:
+`Necessity.badP t` and the constant-parameter product have different total `sp` functions but
+the *same* `EffectSequentialProduct`, because every axiom is `IsEffect`-guarded.  Against the
+total functions the article's "onto the products" is false; against `def:sp`'s own effect-domain
+products it is true, and it is proved. -/
+theorem restrictSp_n2_bijective :
+    Function.Injective (fun t : C(RP2, ℝ) => restrictSp (n2SequentialProduct t))
+      ∧ ∀ P : SequentialProductOn (HermitianMat (Fin 2) ℂ), P.FirstArgContinuous →
+          ∃! t : C(RP2, ℝ), restrictSp P = restrictSp (n2SequentialProduct t) := by
+  constructor
+  · intro t₁ t₂ h
+    refine n2Sp_inj_on_effects (fun a b ha hb => ?_)
+    exact (restrictSp_eq_iff _ _).mp h a b ha hb
+  · intro P hS2
+    refine ⟨n2QubitModuli P hS2, (restrictSp_eq_iff _ _).mpr
+      (fun a b ha hb => sp_eq_n2Sp_on_effects P hS2 hb a ha), ?_⟩
+    intro t ht
+    refine n2Sp_inj_on_effects (fun a b ha hb => ?_)
+    have h1 : P.sp a b = n2Sp t a b := (restrictSp_eq_iff _ _).mp ht a b ha hb
+    have h2 : P.sp a b = n2Sp (n2QubitModuli P hS2) a b := sp_eq_n2Sp_on_effects P hS2 hb a ha
+    rw [← h1, h2]
+
+/-- **The `badP` obstruction dissolves under the article's encoding.**  `badP t` and the
+constant-parameter twist product differ as total operations and are the same article-level
+product. -/
+theorem restrictSp_badP (t : ℝ) :
+    restrictSp (Necessity.badP t) = restrictSp (Necessity.twistProductOn t) :=
+  (restrictSp_eq_iff _ _).mpr (fun a b ha hb => Necessity.badSp_eq ha hb)
+
+end RankTwo
+
+namespace PaperA
+
+variable {V : Type*} [OrderUnitSpace V]
+
+/-- **`def:sp` is inhabited in this development**: every pinned product of the tree is one, and
+every one of them comes from a pinned product. -/
+theorem restrictSp_surjective : Function.Surjective (restrictSp (V := V)) :=
+  fun E => ⟨extendSp E, restrictSp_extendSp E⟩
+
+end PaperA
