@@ -596,6 +596,45 @@ theorem eq_zero_of_isSoS_of_inner_unit_eq_zero
   exact Finset.sum_eq_zero fun i _ => by simp [hzero i]
 
 variable (m) in
+/-- **The bridge between the tree's two spellings of sharpness.**
+
+`EJA/OrderAuto.lean` defines its own `EJA.IsSharp e c` in sums-of-squares vocabulary — `0 ≤ z`
+spelled `IsSoS m z`, `a ≤ b` spelled `IsSoS m (b - a)` — and proves both directions of
+`sharp ⟺ idempotent` against it.  Its docstring records that **no lemma relates that predicate to
+`OrderUnitSpace.IsSharp`**, the article's order-theoretic sharpness.  This is that lemma, stated
+at bilinear-map generality so that both spellings are in scope.
+
+The two are not equivalent and the asymmetry is the whole content: the sums-of-squares form
+quantifies over every `x` in the cone, while the order-theoretic form quantifies only over
+*effects*.  So the sums-of-squares form is **strictly stronger**, and the implication runs in this
+direction only.  A converse would need every cone element below `c` to be an effect, which is true
+here but is a separate fact about the interval.
+
+★ **Measured, not predicted: applying this at `mulLₗ` does not go through today.**  The obvious
+corollary — `EJA.IsSharp e c → OrderUnitSpace.IsSharp c` stated in `EJA/OrderAuto.lean` — fails to
+elaborate, because `mulLₗ` takes its `Module ℝ J` from the ring side while
+`orderUnitSpaceOfBilinear` takes its from `InnerProductSpace ℝ J`, and no binder order tried on
+2026-08-23 makes the two paths agree; the failure is `synthInstance` on `Module ℝ J`, not on the
+mathematics.  This is the same *kind* of elaboration-path artifact `EJA/PeirceSubalgebra.lean`
+records for `IsFormallyReal`, and like that one it is presumably cosmetic — but it has **not** been
+shown to be, so the transport is stated here and not yet used there. -/
+theorem isSharpOrderUnit_of_sosSharp
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hjordan : ∀ a b : J, m (m a b) (m a a) = m a (m b (m a a)))
+    (hfr : ∀ (k : ℕ) (f : Fin k → J), (∑ i, m (f i) (f i)) = 0 → ∀ i, f i = 0)
+    (e : J) (he : ∀ y : J, m e y = y) {c : J}
+    (hc : IsSoS m c) (hec : IsSoS m (e - c))
+    (hsharp : ∀ x : J, IsSoS m x → IsSoS m (c - x) → IsSoS m (e - c - x) → x = 0) :
+    letI := orderUnitSpaceOfBilinear m hcomm hjordan hfr e he
+    OrderUnitSpace.IsSharp c := by
+  letI := orderUnitSpaceOfBilinear m hcomm hjordan hfr e he
+  refine ⟨(isEffect_ofBilinear (m := m) hcomm hjordan hfr e he c).mpr ⟨hc, hec⟩, ?_⟩
+  intro a ha hac hanc
+  refine hsharp a ((isEffect_ofBilinear (m := m) hcomm hjordan hfr e he a).mp ha).1 hac ?_
+  have h : IsSoS m (OrderUnitSpace.ousUnit - c - a) := hanc
+  rwa [ousUnit_ofBilinear (m := m) hcomm hjordan hfr e he] at h
+
+variable (m) in
 /-- **Every idempotent effect is sharp** — the interior half of `lem:simple-bridge`'s clause (ii).
 
 `p` and `e - p` are orthogonal idempotents, so each pairs to zero with the other.  An effect `a`
