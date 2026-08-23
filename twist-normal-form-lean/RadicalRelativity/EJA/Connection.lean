@@ -382,4 +382,36 @@ theorem IsConnector.transfer {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ 
 
 end Connector
 
+/-! ## The square coefficient as a quadratic form
+
+The coefficient of `x ∘ x` on `V_{ij}` is pinned by the inner product, so it is a genuine
+quadratic form on the block rather than a choice.  This is the form the coordinate algebra
+carries. -/
+
+section QuadForm
+
+/-- The coefficient of a multiple of `pᵢ + pⱼ` is unique — pair against `pᵢ`. -/
+theorem smul_pair_inj (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {a b : ℝ}
+    (h : a • (F.p i + F.p j) = b • (F.p i + F.p j)) : a = b := by
+  have := congrArg (fun z : J => (inner ℝ z (F.p i) : ℝ)) h
+  simp only [real_inner_smul_left, inner_add_left, inner_p_p_of_ne F (Ne.symm hij),
+    add_zero] at this
+  exact mul_right_cancel₀ (ne_of_gt (inner_p_self_pos F i)) this
+
+variable [FiniteDimensional ℝ J]
+
+/-- **`x ∘ x = (‖x‖² / 2τᵢ) • (pᵢ + pⱼ)`** for `x ∈ V_{ij}`, where `τᵢ = ⟪pᵢ, pᵢ⟫`.  The
+coefficient supplied by `exists_sq_smul` is exactly this ratio. -/
+theorem sq_eq_inner_smul (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {x : J}
+    (hx : x ∈ frameBlockRaw F i j) :
+    x * x = ((inner ℝ x x : ℝ) / (2 * (inner ℝ (F.p i) (F.p i) : ℝ))) • (F.p i + F.p j) := by
+  obtain ⟨a, ha, haspec⟩ := exists_sq_smul F hij hx
+  have hτ : (0 : ℝ) < inner ℝ (F.p i) (F.p i) := inner_p_self_pos F i
+  have : a = (inner ℝ x x : ℝ) / (2 * (inner ℝ (F.p i) (F.p i) : ℝ)) := by
+    field_simp
+    linarith [haspec]
+  rw [ha, this]
+
+end QuadForm
+
 end RadicalRelativity.EJA

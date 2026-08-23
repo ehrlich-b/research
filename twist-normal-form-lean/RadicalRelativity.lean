@@ -734,7 +734,11 @@ import RadicalRelativity.EJA.Connection
 -- two-sided unit, and its norm form is MULTIPLICATIVE: `x * x = a (p_i + p_j)` and
 -- `y * y = b (p_i + p_j)` give `(x (*) y)^2 = (ab) (p_i + p_j)`.  That is the composition-algebra
 -- law, three applications of `EJA.Connection`'s `block_mul_sq`.  ★ This is where rank >= 3 is
--- spent, and it is why nothing here says anything at rank 2.  ★ The full Jacobson isomorphism
+-- spent, and it is why nothing here says anything at rank 2.  The block, bundled with the
+-- connectors it needs, is then a TYPE (`CoordAlg`) carrying `NonAssocRing` and
+-- `CompositionAlgebra` instances, so `Composition.Hurwitz` applies to it and gives
+-- `finrank_coordAlg`: an off-diagonal block of a Jordan frame with three distinct indices and
+-- connectors between them has real dimension 1, 2, 4 or 8.  ★ The full Jacobson isomorphism
 -- `J = H_n(C)` is NOT proved here.  Substrate; it moves no row.
 import RadicalRelativity.EJA.Coordinatize
 
