@@ -674,6 +674,7 @@ import RadicalRelativity.EJA.Class
 -- with units `c` and `1 - c`; the vehicle is `Submodule` rather than `NonUnitalSubalgebra`, so
 -- no instance transfer is needed.  Substrate; it moves no row.
 import RadicalRelativity.EJA.PeirceSubalgebra
+import RadicalRelativity.EJA.Fundamental
 -- Primitivity, Jordan frames and rank.  Orthogonal nonzero idempotents are linearly
 -- independent, so a frame's cardinality is bounded by the dimension.  Frame conjugacy is NOT
 -- proved and is not needed -- see the module docstring.  Substrate; it moves no row.
