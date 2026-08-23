@@ -669,8 +669,9 @@ import RadicalRelativity.EJA.FrameExists
 -- The frame Peirce decomposition.  Relative to a Jordan frame, `J` is the internal direct sum
 -- of the blocks `V_ii = J_2(p i)` and `V_ij = {x | p i * x = x/2 and p j * x = x/2}`, indexed by
 -- `Sym2 (Fin n)`.  Spanning is proved by a residual argument rather than by expanding a product
--- of commuting projections, and `EJA.Pattern` is not used.  No proof uses primitivity, and
--- `dim V_ii = 1` is not proved IN THIS MODULE -- it is proved in the next one.
+-- of commuting projections, and `EJA.Pattern` is not used.  No proof IN THIS MODULE uses
+-- primitivity -- the string does not occur in the file -- and `dim V_ii = 1` is not proved
+-- here either; both belong to the next module.
 -- Substrate; it moves no row.
 import RadicalRelativity.EJA.FramePeirce
 -- The Faraut-Koranyi multiplication table relative to a frame.  `V_ii * V_ii` and `V_ii * V_ij`
