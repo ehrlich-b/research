@@ -28,7 +28,9 @@ an `ℝ`-linear combination -- with coefficients built from the diagonal entries
   together with `octIp_mul_conj_left`, `octIp_mul_conj_right`, `octIp_conj_mul_assoc_left` and
   `octIp_conj_mul_assoc_right` below;
 * the off-diagonal components use `polar_left_alt`, `polar_right_alt`, `polar_moufang`,
-  `mixed_moufang_left` and `mixed_moufang_right` below.
+  `mixed_moufang_left` and `mixed_moufang_right` below -- the last three being the three
+  polarisations, one per slot, of the single reflection identity
+  `(p r)(q p) = 2⟪p, q̄ r̄⟫ p - N(p)(q̄ r̄)`.
 
 Those nine, plus the two cyclic-rotation lemmas of `Albert/Carrier.lean`, are the only
 octonionic identities the assembly consumes; the normalisation ahead of it additionally uses
@@ -92,7 +94,9 @@ theorem octIp_conj_mul_assoc_right (a b c : Octonion) :
   simp [mul, conj, octIp, Fin.sum_univ_eight, Fin.isValue]; ring
 
 set_option maxHeartbeats 1600000 in
-/-- Polarised middle Moufang. -/
+/-- The **reflection identity** `(p r)(q p) = 2⟪p, q̄ r̄⟫ p - N(p)(q̄ r̄)` -- middle Moufang
+`(p r)(q p) = p((r q) p)` followed by `u v u = 2⟪u, v̄⟫ u - N(u) v̄` -- polarised in its
+repeated slot `p`.  Setting `s := p` below returns twice that identity. -/
 theorem polar_moufang (p q r s : Octonion) :
     mul (mul p r) (mul q s) + mul (mul s r) (mul q p)
         + (4 * octIp p s) • mul (conj q) (conj r)
@@ -102,7 +106,7 @@ theorem polar_moufang (p q r s : Octonion) :
   ext i; fin_cases i <;> simp [mul, conj, octIp, Fin.sum_univ_eight, Fin.isValue] <;> ring
 
 set_option maxHeartbeats 1600000 in
-/-- Mixed Moufang, left form. -/
+/-- The same reflection identity, polarised in `q` instead: setting `s := q` below returns it. -/
 theorem mixed_moufang_left (p q r s : Octonion) :
     mul (mul p r) (mul s p) + (2 * octIp q s) • mul (conj q) (conj r)
         + (octIp p p - octIp q q) • mul (conj s) (conj r)
@@ -111,7 +115,7 @@ theorem mixed_moufang_left (p q r s : Octonion) :
   ext i; fin_cases i <;> simp [mul, conj, octIp, Fin.sum_univ_eight, Fin.isValue] <;> ring
 
 set_option maxHeartbeats 1600000 in
-/-- Mixed Moufang, right form. -/
+/-- The same reflection identity, polarised in `r`: setting `s := r` below returns it. -/
 theorem mixed_moufang_right (p q r s : Octonion) :
     mul (mul p s) (mul q p) + (2 * octIp r s) • mul (conj q) (conj r)
         + (octIp p p - octIp r r) • mul (conj q) (conj s)
@@ -303,6 +307,27 @@ theorem eq_zero_of_sum_sq_eq_zero {ι : Type*} {s : Finset ι} {v : ι → h3O}
 /-- The single-square form, `a ∘ a = 0 → a = 0`. -/
 theorem eq_zero_of_sq_eq_zero {a : h3O} (h : jordanMul a a = 0) : a = 0 :=
   traceForm_self_eq_zero (by rw [traceForm_eq_trace_jordanMul, h, trace_zero])
+
+/-! ## The two hypotheses in their consumable shapes
+
+`Albert/Mul.lean` already states `hcomm` and `jordan_unit` in the shapes the Euclidean-Jordan
+entry point takes, and `Albert/Inner.lean` states `hassoc`.  These two complete the list, so
+that nothing downstream has to reshape `jordanMul_jordan` or `eq_zero_of_sum_sq_eq_zero` by
+hand.
+-/
+
+/-- The Jordan identity on the bundled bilinear map: the `hjordan` argument shape. -/
+theorem hjordan (a b : h3O) :
+    jordanBilinO (jordanBilinO a b) (jordanBilinO a a)
+      = jordanBilinO a (jordanBilinO b (jordanBilinO a a)) := by
+  simp only [jordanBilinO_apply]
+  exact jordanMul_jordan a b
+
+/-- Formal reality on the bundled bilinear map: the `hfr` argument shape. -/
+theorem hfr (k : ℕ) (f : Fin k → h3O) (h : (∑ i, jordanBilinO (f i) (f i)) = 0) (i : Fin k) :
+    f i = 0 := by
+  simp only [jordanBilinO_apply] at h
+  exact eq_zero_of_sum_sq_eq_zero h (Finset.mem_univ i)
 
 end h3O
 
