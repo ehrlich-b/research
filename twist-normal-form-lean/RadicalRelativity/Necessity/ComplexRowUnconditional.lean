@@ -1215,4 +1215,156 @@ theorem adU_torusU_eq_rotation {i j k : n} (hij : i ≠ j) (hki : k ≠ i) (hkj 
 
 end Orientation
 
+/-! ## `prop:n2-necessity` in the article's own `𝒥_n` (row 29, the encoding half)
+
+`n2_theta_block_rotation` above states the rank-two conclusion in the **block-coordinate**
+encoding: `Θ_a` multiplies the coordinate `z` by `e^{iφ}`.  The article states it as
+`Θ_a|_{W_n} = exp(ℓ·t̃(n)·𝒥_n)`.  Those are the same fact only once `𝒥_n` is in the statement,
+and this development has a standing record of two rows being "about two unlinked objects"
+because an encoding was left unbridged.  So it is bridged.
+
+`main.tex` **defines** `𝒥_n(x) := i·P_n x P_{-n} − i·P_{-n} x P_n` (`eq:J-ordered`), and defines
+`W_n := {x : P_n ∘ x = ½x = P_{-n} ∘ x}`.  Those are exactly `orientationJ` and
+`IsCrossCoherent` — the objects built above for `lem:orientation`, instantiated at the two atoms
+of a qubit frame rather than at a rank-two block and an orthogonal atom.  `orientationJ_mat_eq`
+puts the article's formula on the page.
+
+`n2_theta_eq_rotation` is then the article's proposition verbatim, with `exp(θ·𝒥_n)` written in
+its `cos θ + sin θ·𝒥_n` form — which is the article's own step, and is licensed here by
+`orientationJ_sq` (`𝒥_n² = −id` on `W_n`).  `adU_blockHerm_isCrossCoherent` certifies `W_n` is
+inhabited, so the conclusion is not about the zero space. -/
+
+section ArticleJ
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+/-- **`orientationJ` is the article's `𝒥_n` verbatim** (`eq:J-ordered`):
+`𝒥(x) = i·q x p − i·p x q`. -/
+theorem orientationJ_mat_eq (q p x : HermitianMat n ℂ) :
+    (orientationJ q p x).mat
+      = Complex.I • (q.mat * x.mat * p.mat) - Complex.I • (p.mat * x.mat * q.mat) := by
+  rw [orientationJ_apply, orientationJFun_mat, corner_conjTranspose, coherenceCorner]
+
+theorem frameProj_mul_frameProj {i j : n} (hij : i ≠ j) :
+    (frameProj i).mat * (frameProj j).mat = 0 := by
+  rw [frameProj_mat, frameProj_mat, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_zero]
+  congr 1
+  funext l
+  by_cases hli : l = i <;> simp [hli, hij]
+
+theorem torusU_mul_frameProj (t : ℝ) (r : n → ℝ) (k : n) :
+    torusU t r * (frameProj k).mat
+      = Complex.exp ((↑(t * r k) : ℂ) * Complex.I) • (frameProj k).mat := by
+  rw [frameProj_mat]
+  refine torusU_mul_diagonal t r _ _ (fun l hl => ?_)
+  by_cases hlk : l = k
+  · rw [hlk]
+  · simp [hlk] at hl
+
+theorem adU_mul_mat {U : Matrix n n ℂ} (hU : Uᴴ * U = 1) (x y : HermitianMat n ℂ) :
+    (adU U x).mat * (adU U y).mat = U * (x.mat * y.mat) * Uᴴ := by
+  simp only [adU_apply, HermitianMat.conj_apply_mat]
+  calc U * x.mat * Uᴴ * (U * y.mat * Uᴴ)
+      = U * x.mat * (Uᴴ * U) * y.mat * Uᴴ := by noncomm_ring
+    _ = U * (x.mat * y.mat) * Uᴴ := by rw [hU]; noncomm_ring
+
+/-- The conjugated frame atoms are still orthogonal idempotents. -/
+theorem adU_frameProj_idem {U : Matrix n n ℂ} (hU : Uᴴ * U = 1) (k : n) :
+    (adU U (frameProj k)).mat * (adU U (frameProj k)).mat = (adU U (frameProj k)).mat := by
+  rw [adU_mul_mat hU, frameProj_idem]
+  rfl
+
+theorem adU_frameProj_mul {U : Matrix n n ℂ} (hU : Uᴴ * U = 1) {i j : n} (hij : i ≠ j) :
+    (adU U (frameProj i)).mat * (adU U (frameProj j)).mat = 0 := by
+  rw [adU_mul_mat hU, frameProj_mul_frameProj hij, Matrix.mul_zero, Matrix.zero_mul]
+
+/-- The comparison map's torus unitary acts on a conjugated frame atom by the atom's phase. -/
+theorem torusConj_mul_adU_frameProj {U : Matrix n n ℂ} (hU : Uᴴ * U = 1) (t : ℝ) (r : n → ℝ)
+    (k : n) :
+    (U * torusU t r * Uᴴ) * (adU U (frameProj k)).mat
+      = Complex.exp ((↑(t * r k) : ℂ) * Complex.I) • (adU U (frameProj k)).mat := by
+  simp only [adU_apply, HermitianMat.conj_apply_mat]
+  calc U * torusU t r * Uᴴ * (U * (frameProj k).mat * Uᴴ)
+      = U * torusU t r * (Uᴴ * U) * (frameProj k).mat * Uᴴ := by noncomm_ring
+    _ = U * (torusU t r * (frameProj k).mat) * Uᴴ := by rw [hU]; noncomm_ring
+    _ = Complex.exp ((↑(t * r k) : ℂ) * Complex.I) • (U * (frameProj k).mat * Uᴴ) := by
+        rw [torusU_mul_frameProj]
+        simp only [Matrix.mul_smul, Matrix.smul_mul]
+
+theorem adU_smul (U : Matrix n n ℂ) (c : ℝ) (x : HermitianMat n ℂ) :
+    adU U (c • x) = c • adU U x := by
+  ext1
+  simp only [adU_apply, HermitianMat.conj_apply_mat, HermitianMat.mat_smul, Matrix.mul_smul,
+    Matrix.smul_mul]
+
+/-- `Ad_U` is a Jordan homomorphism. -/
+theorem adU_symmMul {U : Matrix n n ℂ} (hU : Uᴴ * U = 1) (x y : HermitianMat n ℂ) :
+    adU U (x.symmMul y) = (adU U x).symmMul (adU U y) := by
+  ext1
+  rw [adU_apply, HermitianMat.conj_apply_mat, HermitianMat.symmMul_toMat,
+    HermitianMat.symmMul_toMat, adU_mul_mat hU, adU_mul_mat hU]
+  simp only [Matrix.mul_smul, Matrix.smul_mul]
+  congr 1
+  noncomm_ring
+
+/-- **`W_n` is inhabited**: the conjugated block elements lie in the conjugated frame's
+coherence space, so `n2_theta_eq_rotation` is not a statement about the zero space. -/
+theorem adU_blockHerm_isCrossCoherent {U : Matrix n n ℂ} (hU : Uᴴ * U = 1)
+    {i j : n} (hij : i ≠ j) (z : ℂ) :
+    IsCrossCoherent (adU U (frameProj i)) (adU U (frameProj j)) (adU U (blockHerm i j z)) := by
+  constructor
+  · rw [← adU_symmMul hU, frameProj_symmMul_blockHerm_left hij, adU_smul]
+  · rw [← adU_symmMul hU, frameProj_symmMul_blockHerm_right hij, adU_smul]
+
+
+end ArticleJ
+
+section N2Rotation
+
+/-- **`prop:n2-necessity` verbatim.**  For an invertible effect `a = Ad_U(diag(e^{r_0},e^{r_1}))`
+with ordered frame `(P_n, P_{-n}) = (Ad_U p_0, Ad_U p_1)`, the comparison map restricted to that
+frame's coherence block `W_n` is `exp(ℓ·t̃(n)·𝒥_n)` with `ℓ = r_0 − r_1 = log(λ₊/λ₋)`, written in
+its `cos + sin·𝒥` form (valid because `𝒥_n² = −id` on `W_n`, `orientationJ_sq`).
+
+`W_n` is `IsCrossCoherent (Ad_U p_0) (Ad_U p_1)`, which is the article's
+`{x : P_n ∘ x = ½x = P_{-n} ∘ x}`; `𝒥_n` is `orientationJ`, which `orientationJ_mat_eq` shows is
+the article's `i P_n x P_{-n} − i P_{-n} x P_n`. -/
+theorem n2_theta_eq_rotation
+    (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) {r : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0)
+    {a : HermitianMat (Fin 2) ℂ}
+    (hUa : a = adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r))
+    (ha : IsEffect a) (hbd : a.mat.PosDef)
+    {x : HermitianMat (Fin 2) ℂ}
+    (hx : IsCrossCoherent (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (frameProj 0))
+      (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (frameProj 1)) x) :
+    theta P ha hbd x
+      = Real.cos (n2FrameTwist P hS2 U * (r 0 - r 1)) • x
+        + Real.sin (n2FrameTwist P hS2 U * (r 0 - r 1))
+            • orientationJ (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (frameProj 0))
+                (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (frameProj 1)) x := by
+  have hU : (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * (U : Matrix (Fin 2) (Fin 2) ℂ) = 1 :=
+    unitaryGroup_conjTranspose_mul U
+  set t : ℝ := n2FrameTwist P hS2 U with ht
+  have hthe : theta P ha hbd
+      = HermitianMat.conjLinear ℝ
+          ((U : Matrix (Fin 2) (Fin 2) ℂ) * torusU t r * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) :=
+    theta_eq_conjLinear_torus P U hUa ha hbd
+      (fun b hb => n2_sp_eq_twistSeq_frame P hS2 U hr hUa hb)
+  have hphase : Complex.exp ((↑(t * r 0) : ℂ) * Complex.I)
+      * (starRingEnd ℂ) (Complex.exp ((↑(t * r 1) : ℂ) * Complex.I))
+      = Complex.exp ((↑(t * (r 0 - r 1)) : ℝ) * Complex.I) := by
+    rw [← Complex.exp_conj, ← Complex.exp_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+    congr 1
+    push_cast
+    ring
+  have hrot := adU_eq_rotation_on_crossCoherent (adU_frameProj_mul hU (by decide))
+    (adU_frameProj_idem hU 0) (adU_frameProj_idem hU 1)
+    (torusConj_mul_adU_frameProj hU t r 0) (torusConj_mul_adU_frameProj hU t r 1)
+    hphase hx
+  rw [hthe, HermitianMat.conjLinear_apply]
+  exact hrot
+
+end N2Rotation
+
 end Necessity
