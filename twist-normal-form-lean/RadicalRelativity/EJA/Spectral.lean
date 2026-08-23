@@ -884,6 +884,54 @@ theorem nonzero_spectrum_eq_of_resolutions {n m : ℕ} {c : Fin n → J} {d : Fi
     rw [hL, hR, exists_idem_iff_forall_jann_eval hc lc ht,
       exists_idem_iff_forall_jann_eval hd ld ht, hx]
 
+open scoped Classical in
+/-- **Uniqueness of a resolution's idempotents, under the hypothesis the tree can actually
+supply.**
+
+`idem_unique_of_resolutions` above wants the *full* eigenvalue images to agree, which nothing
+proves and which can genuinely fail — a phantom eigenvalue at a zero idempotent sits in the image
+and contributes nothing to `x`.  This version takes the **filtered** images, which is exactly
+`nonzero_spectrum_eq_of_resolutions`.
+
+The route is weaker and therefore works: the two interpolants need not be equal as polynomials,
+only congruent modulo `jann x`.  They are — each is `λ⁻¹` at its own eigenvalue and `0` at every
+other *nonzero* one — and `jeval_eq_zero_iff_of_resolution` converts that into
+`jeval x (P₁ − P₂) = 0`, the zero eigenvalue being killed by `jeval`'s own `λᵢ` factor. -/
+theorem idem_unique_of_nonzero_spectrum {n m : ℕ} {c : Fin n → J} {d : Fin m → J}
+    (hc : IsOrthIdemFamily c) (hd : IsOrthIdemFamily d)
+    {lc : Fin n → ℝ} {ld : Fin m → ℝ}
+    (hinjc : Function.Injective lc) (hinjd : Function.Injective ld)
+    (hspec : (Finset.univ.filter (fun i => c i ≠ 0 ∧ lc i ≠ 0)).image lc
+      = (Finset.univ.filter (fun j => d j ≠ 0 ∧ ld j ≠ 0)).image ld)
+    (hx : (∑ i, lc i • c i) = ∑ j, ld j • d j)
+    {k : Fin n} {l : Fin m} (hkl : lc k = ld l) (hk : lc k ≠ 0) :
+    c k = d l := by
+  classical
+  have hk' : ld l ≠ 0 := hkl ▸ hk
+  have h1 : jeval (∑ i, lc i • c i) (C (lc k)⁻¹ * Lagrange.basis Finset.univ lc k) = c k :=
+    idem_eq_jeval_lagrange hc hinjc k hk
+  have h2 : jeval (∑ j, ld j • d j) (C (ld l)⁻¹ * Lagrange.basis Finset.univ ld l) = d l :=
+    idem_eq_jeval_lagrange hd hinjd l hk'
+  rw [← h1, ← h2, ← hx, ← sub_eq_zero, ← map_sub]
+  refine (jeval_eq_zero_iff_of_resolution hc lc _).mpr fun i hci => ?_
+  by_cases hli : lc i = 0
+  · rw [hli, zero_mul]
+  · have hmem : lc i ∈ (Finset.univ.filter (fun j => d j ≠ 0 ∧ ld j ≠ 0)).image ld := by
+      rw [← hspec]
+      exact Finset.mem_image_of_mem lc (Finset.mem_filter.mpr ⟨Finset.mem_univ i, hci, hli⟩)
+    obtain ⟨j, hj, hjl⟩ := Finset.mem_image.mp hmem
+    have hev : (C (lc k)⁻¹ * Lagrange.basis Finset.univ lc k).eval (lc i)
+        = (C (ld l)⁻¹ * Lagrange.basis Finset.univ ld l).eval (lc i) := by
+      by_cases hik : i = k
+      · rw [Polynomial.eval_mul, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_C,
+          hik, Lagrange.eval_basis_self hinjc.injOn (Finset.mem_univ k), hkl,
+          Lagrange.eval_basis_self hinjd.injOn (Finset.mem_univ l)]
+      · have hjne : j ≠ l := fun h => hik (hinjc (by rw [hkl, ← hjl, h]))
+        rw [Polynomial.eval_mul, Polynomial.eval_mul,
+          Lagrange.eval_basis_of_ne (Ne.symm hik) (Finset.mem_univ i), ← hjl,
+          Lagrange.eval_basis_of_ne (Ne.symm hjne) (Finset.mem_univ j), mul_zero, mul_zero]
+    rw [Polynomial.eval_sub, hev, sub_self, mul_zero]
+
 /-- **The square root of a resolved element is `jeval` of a polynomial.**
 
 Every idempotent carrying a nonzero eigenvalue is `jeval x` of a Lagrange interpolant

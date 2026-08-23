@@ -299,3 +299,22 @@ against "I proved an equal-spectrum statement" without comparing the two Finsets
 shape as the biggest-residue error this manifest records four times — matching on the *description*
 of a residue instead of on the residue.
 
+## The gap is closed — `idem_unique_of_nonzero_spectrum` (2026-08-23, same session)
+
+The reroute described in the correction above is DONE and sorry-free. It takes the **filtered**
+image equality, which is exactly what `nonzero_spectrum_eq_of_resolutions` delivers, so the chain
+now composes with nothing carried — this time verified by actually applying it, not by matching
+descriptions.
+
+Proof route, as predicted: the interpolants are NOT equal as polynomials; they are congruent mod
+`jann x`. Each is `lam^-1` at its own eigenvalue and `0` at every other nonzero one, and
+`jeval_eq_zero_iff_of_resolution` turns that into `jeval x (P1 - P2) = 0`, the zero eigenvalue
+being killed by `jeval`'s own `lam_i` factor.
+
+`idem_unique_of_resolutions` (the univ-image version) is KEPT, not deleted: it is true, and its
+hypothesis is the natural one when both resolutions are already known reduced. But
+**`idem_unique_of_nonzero_spectrum` is the one to use** — the other's hypothesis has no supplier.
+
+Remaining to a definition of `jsqrt`: `sqrt_sum_eq_of_resolutions` via `Finset.sum_bij'` (see the
+design note above), now with a usable uniqueness lemma to feed it.
+
