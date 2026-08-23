@@ -21,8 +21,10 @@ such an algebra Euclidean without any inner product having been supplied.
 
 `EJA/Order.lean`'s Euclidean section — `inner_mul_self_nonneg_of_idem`, `inner_left_coeff`,
 `nonneg_coeff_of_isSoS`, `isArchimedean_ofBilinear`, `isSoS_iff_exists_sq` — takes the associativity
-of the **ambient** inner product as a hypothesis, `hassoc : ∀ x y z, ⟪m x y, z⟫ = ⟪y, m x z⟫`.  Every
-carrier in the tree discharges it by hand.  `MasterTheorem/Interface.lean`'s `ComparisonSetup`
+of the **ambient** inner product as a hypothesis, `hassoc : ∀ x y z, ⟪m x y, z⟫ = ⟪y, m x z⟫`.  The
+tree's two EJA carriers discharge it by hand — `H_n(𝕜)` through `hermitian_jordan_assoc`
+(`EJA/HermitianCarrier.lean`) and `h₃(𝕆)` through `albert_inner_jordanMul_assoc`
+(`EJA/AlbertCarrier.lean`).  `MasterTheorem/Interface.lean`'s `ComparisonSetup`
 cannot: it carries a `NormedAddCommGroup`/`InnerProductSpace` pair on `J` and a Jordan product
 `jordan` as an unrelated field, with **no** compatibility between them, and
 `WallCertificates/eja-gated.lean`'s `JBPremises` adds the Jordan identity, formal reality and the
@@ -63,7 +65,9 @@ coefficient whose idempotent is nonzero.
 
 ★ **What this file does NOT claim.**  `τ` is not shown to be *the* Jordan trace form in the sense of
 Faraut–Korányi (the trace of the quadratic representation, or the sum of the eigenvalues of `x`);
-`tr(L_e)` is `finrank ℝ J`, not the rank of `J`.  Nothing downstream needs the normalisation, and
+for a unit `e` one has `L_e = id` and so `tr(L_e) = finrank ℝ J` rather than the rank of `J` — **a
+remark, not a lemma; it is not proved below and nothing uses it.**  Nothing downstream needs the
+normalisation, and
 `EJA/Class.lean`'s `EuclideanJordanAlgebra` deliberately takes an *arbitrary* associative positive
 definite form rather than a normalised one, so `traceForm` is admissible there as it stands.
 -/
@@ -151,7 +155,10 @@ theorem mulL_quad_op (a c y : J) :
 
 /-- **The Jordan trace functional** `x ↦ tr(L_x)`, as an `ℝ`-linear form.
 
-It is not normalised: `jtr 1 = finrank ℝ J`, not the rank.  See the module docstring. -/
+It is not normalised — see the module docstring.  ★ The carrier here has no `1`
+(`NonUnitalNonAssocCommRing`), so the normalisation cannot even be *stated* at this generality;
+where a unit `e` is available it is `L_e = id`, so `jtr e` would be `finrank ℝ J` rather than the
+rank.  That is a remark, not a lemma: nothing below proves it and nothing needs it. -/
 def jtr : J →ₗ[ℝ] ℝ := (LinearMap.trace ℝ J).comp mulLₗ
 
 omit [IsCommJordan J] in

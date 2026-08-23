@@ -657,8 +657,9 @@ import RadicalRelativity.EJA.TraceForm
 -- inside `MasterTheorem.Interface`'s `ComparisonSetup`, whose ambient inner product is unrelated to
 -- its Jordan product.  This is the CLASSICAL theorem, not van Imhoff-Roelands' JB-generality
 -- version, which concludes linearity instead of assuming it.  It discharges
--- `WallCertificates/eja-gated.lean`'s gate (E3) and it moves no row -- rows 16 and 17 do not consume
--- `Theta_jordan` at all, and row 14 has three clauses of which this closes one.
+-- `WallCertificates/eja-gated.lean`'s gate (E3) and it moves no row -- row 16 does not consume
+-- `Theta_jordan` at all, row 17 is WALL-CERTIFIED rather than EJA-GATED (its residue is analytic,
+-- group-theoretic and order-theoretic), and row 14 has three clauses of which this closes one.
 import RadicalRelativity.EJA.OrderAuto
 -- The order structure.  `EJA.Order` puts an `OrderUnitSpace` on a Euclidean Jordan algebra,
 -- with the cone of sums of squares as the positive cone; order-unit boundedness is read off

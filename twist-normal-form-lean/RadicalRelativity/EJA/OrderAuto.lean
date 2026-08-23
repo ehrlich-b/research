@@ -56,16 +56,25 @@ be assumed about an ambient one.  Both facts are proved here from scratch in tha
 
 The natural-looking characterisation — `c` is idempotent iff it is an extreme point of `[0, e]`,
 mirroring `Hermitian/ExtremeEffects.lean`'s `mem_extremePoints_iff_isProjection` — is **avoided
-deliberately**.  Both of its directions bottom out in the same face lemma, and it additionally drags
-in Mathlib's `Set.extremePoints` and convexity API and forces `[0, e]` to be stated as a `Set`.
-Sharpness needs neither.  The concrete `HermitianMat` result is not reusable here in any case: its
-proof is matrix-level.
+deliberately**.  ★ The reason is a price judgment and is recorded as one, not as a theorem: on the
+classical proof both of its directions run through the same face lemma that sharpness needs, and it
+additionally drags in Mathlib's `Set.extremePoints` and convexity API and forces `[0, e]` to be
+stated as a `Set`.  Nothing below establishes that, because the extreme-points route was never
+built.  What *is* checkable is that the concrete result is not reusable here: it is stated over
+`HermitianMat n 𝕜` (`ExtremeEffects.lean:265`), and nothing in that file is stated at EJA
+generality.
 
 ★ `RadicalRelativity/OrderUnitSpace.lean` carries an `IsSharp` of its own, and this file does
 **not** use it or bridge to it.  That one is stated over an `OrderUnitSpace` instance, and getting
 one here would mean instantiating `EJA/Order.lean`'s `orderUnitSpaceOfBilinear` — a `def`, whose
-own docstring warns that instantiating it puts a second `PartialOrder J` in scope.  The two are the
-same condition written in different vocabularies; no lemma below asserts that, and none needs to.
+own docstring warns that instantiating it puts a second `PartialOrder J` in scope.
+★★ **The two are not literally the same formula, and the difference is worth stating rather than
+glossing.**  `OrderUnitSpace.IsSharp` quantifies its witness over the *effects* (`IsEffect a`, i.e.
+`0 ≤ a ≤ 𝟙`); `IsSharp` below quantifies over the whole cone (`IsSoS mulLₗ x`, with no upper bound
+on `x`).  The extra clause is redundant — `x ≤ c` and `c ≤ e` give `x ≤ e` by transitivity of the
+cone order — so the two conditions are equivalent; but **that equivalence is proved nowhere below
+and nothing needs it**, and the version used here is the one whose witness hypothesis is weaker,
+hence the harder condition to satisfy and the safer one to transport.
 
 ## What this closes, and what it does not
 
