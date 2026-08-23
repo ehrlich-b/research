@@ -90,6 +90,8 @@ correction, and neither correction moved a decision.
 ## Two things about this table that are easy to get wrong
 
 **`thm:albert` is not blocked on octonions, and the claim that it was got retracted.** The
+★★ **LANDED IN THIS TREE 2026-08-23** (commit `c5c6b9d`): `RadicalRelativity/Octonions.lean`, `OctonionNucleus.lean` and `OctonionTrace.lean` are now tracked modules here, census **175**, custom axioms exactly `[]`. The three custom `axiom` declarations `Octonions.lean` used to carry (`hurwitz_classification` and two `True` placeholders) were **stripped** — verified zero consumers first — so they are NOT available and must not be cited. `Albert.lean` and `F4.lean` did **not** land (3 sorries + 1 axiom, and 7 axioms of which 6 are `True` placeholders). The sibling path below is the historical origin, not the current home. **Row 21 has not moved.** 
+
 octonions are absent from *Mathlib* but they are **built** in this project, at
 `~/repos/research/lean/RadicalRelativity/Octonions.lean`: 0 sorries, and its one computational input
 `nucleus(𝕆) = ℝ` is **proved** — `Octonion.nucleus_real` (`OctonionNucleus.lean:61`), which prints

@@ -497,6 +497,8 @@ Wigner rigidity, and `H₃(𝕆)` is ABSENT.
 FALSE and is retracted.** Verified at source this session. It is true of *Mathlib* (the four
 `octonion` hits are prose comments; Mathlib does however have `IsJordan`/`IsCommJordan` in
 `Algebra/Jordan/Basic.lean`, so the archive's "no Jordan-algebra files at all" is also
+★★ **LANDED IN THIS TREE 2026-08-23** (commit `c5c6b9d`): `RadicalRelativity/Octonions.lean`, `OctonionNucleus.lean` and `OctonionTrace.lean` are now tracked modules here, census **175**, custom axioms exactly `[]`. The three custom `axiom` declarations `Octonions.lean` used to carry (`hurwitz_classification` and two `True` placeholders) were **stripped** — verified zero consumers first — so they are NOT available and must not be cited. `Albert.lean` and `F4.lean` did **not** land (3 sorries + 1 axiom, and 7 axioms of which 6 are `True` placeholders). The sibling path below is the historical origin, not the current home. **Row 21 has not moved.** 
+
 retracted). It is **false of our own work**: `~/repos/research/lean/RadicalRelativity/`
 `Octonions.lean` is 310 lines, 37 declarations, **zero sorries**, on the toolchain this tree
 used until 2026-08-22 (★ corrected that day: `lean/` is `v4.28.0` and this tree is now
