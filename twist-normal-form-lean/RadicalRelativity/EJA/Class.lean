@@ -291,4 +291,61 @@ theorem quadJ_jsqrt_one [FiniteDimensional ℝ J] {a : J} {n : ℕ} {c : Fin n �
   rw [quadJ_unit EuclideanJordanAlgebra.one_mul]
   exact jsqrt_mul_self 1 EuclideanJordanAlgebra.one_mul a hfam hinj ha hnn
 
+
+/-! ## S4 for the candidate sequential product
+
+`a · b := Q_{√a} b`.  This section proves **S4, symmetry of orthogonality**: `a · b = 0` implies
+`b · a = 0`, for `a` and `b` in the cone.
+
+The asymmetric-looking hypothesis routes through a symmetric one.  `Q_{√a}` is self-adjoint and
+sends `1` to `a`, so `a · b = 0` gives `⟪b, a⟫ = 0`; that is symmetric on its face; and on the cone
+inner-product orthogonality is Jordan orthogonality, which returns `√b ∘ a = 0` — the one term
+`Q_{√b} a = 2·√b(√b·a) − b·a` needs. -/
+
+/-- **The square root of a cone element annihilates whatever the element annihilates.** -/
+theorem jsqrt_mul_eq_zero_of_inner_eq_zero [FiniteDimensional ℝ J] {a b : J}
+    (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b) (h : (inner ℝ b a : ℝ) = 0) :
+    jsqrt 1 EuclideanJordanAlgebra.one_mul b * a = 0 := by
+  obtain ⟨n, d, mu, hfam, -, hb', hinj⟩ :=
+    exists_resolution_distinct 1 EuclideanJordanAlgebra.one_mul b
+  have hkey := smul_resolution_mul_eq_zero_of_inner_eq_zero jmulₗ_comm jmulₗ_jordan
+    jmulₗ_inner_assoc (fun i => hfam.idem i) (fun i j hij => hfam.orth i j hij) hb' hb ha h
+    Real.sqrt Real.sqrt_zero
+  rw [jsqrt_eq_of_resolution 1 EuclideanJordanAlgebra.one_mul b hfam hinj hb']
+  exact hkey
+
+/-- **S4 — symmetry of orthogonality — for `a · b = Q_{√a} b`.** -/
+theorem quadJ_jsqrt_zero_symm [FiniteDimensional ℝ J] {a b : J}
+    (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (h : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b = 0) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a = 0 := by
+  classical
+  -- `Q_{√a} 1 = a`, so pairing the hypothesis against `1` reads off `⟪b, a⟫`.
+  obtain ⟨n, c, lam, hfamA, -, ha', hinjA⟩ :=
+    exists_resolution_distinct 1 EuclideanJordanAlgebra.one_mul a
+  have hnnA : ∀ i, c i ≠ 0 → 0 ≤ lam i := fun i hci =>
+    nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+      (fun k => hfamA.idem k) (fun k l hkl => hfamA.orth k l hkl) ha' ha hci
+  have hQ1 : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) (1 : J) = a := by
+    rw [quadJ_unit EuclideanJordanAlgebra.one_mul]
+    exact jsqrt_mul_self' 1 EuclideanJordanAlgebra.one_mul a hfamA hinjA ha' hnnA
+  have hba : (inner ℝ b a : ℝ) = 0 := by
+    have hsa := quadJ_inner_self_adjoint (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b (1 : J)
+    rw [h, inner_zero_left, hQ1] at hsa
+    exact hsa.symm
+  -- both terms of `Q_{√b} a` vanish
+  have hsq : jsqrt 1 EuclideanJordanAlgebra.one_mul b * a = 0 :=
+    jsqrt_mul_eq_zero_of_inner_eq_zero ha hb hba
+  have hb0 : b * a = 0 :=
+    jmul_eq_zero_of_inner_eq_zero hb ha hba
+  have hbb : jsqrt 1 EuclideanJordanAlgebra.one_mul b
+      * jsqrt 1 EuclideanJordanAlgebra.one_mul b = b := by
+    obtain ⟨n', d, mu, hfamB, -, hb', hinjB⟩ :=
+      exists_resolution_distinct 1 EuclideanJordanAlgebra.one_mul b
+    have hnnB : ∀ i, d i ≠ 0 → 0 ≤ mu i := fun i hdi =>
+      nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+        (fun k => hfamB.idem k) (fun k l hkl => hfamB.orth k l hkl) hb' hb hdi
+    exact jsqrt_mul_self' 1 EuclideanJordanAlgebra.one_mul b hfamB hinjB hb' hnnB
+  rw [quadJ_apply, hsq, mul_zero, smul_zero, hbb, hb0, sub_zero]
+
 end RadicalRelativity.EJA
