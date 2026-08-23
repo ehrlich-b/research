@@ -31,7 +31,9 @@ discharged by a machine-checked theorem of the necessity development.
   `Θ_a := Θ_{(‖a‖+1)⁻¹ • a}`; the 2.3 law `theta_smul` makes the normalization
   invisible on effects, which is exactly why vdW 5.4 exists.
 * `comparisonSetup` — the instance. Inputs: rank `3 ≤ N`, S2
-  (`FirstArgContinuous`), and `ThetaPreservesJordan` (the M3 import).
+  (`FirstArgContinuous`), and `ThetaPreservesJordan` — ★ a *parameter* of this def, but no
+  longer an import: `Necessity.thetaPreservesJordan_of_S2` (`Necessity/KadisonDischarge.lean`)
+  proves it from S2 alone, rank-free (milestone M3, discharged 2026-08-06).
 -/
 
 noncomputable section
@@ -354,9 +356,14 @@ theorem one_symmMul (x : HermitianMat n ℂ) :
   rw [HermitianMat.symmMul_comm, HermitianMat.symmMul_one]
 
 /-- **The concrete `ComparisonSetup` on `H_N(ℂ)`.** Every field is discharged by a
-machine-checked theorem of this development, except the single cited import
-`Θ_jordan`, taken as the hypothesis `hjord : ThetaPreservesJordan P` (van
-Imhoff–Roelands / Kadison rigidity — campaign milestone M3). In particular the
+machine-checked theorem of this development. `Θ_jordan` is taken as the hypothesis
+`hjord : ThetaPreservesJordan P` (campaign milestone M3) — ★ **a parameter, not an import:
+corrected 2026-08-22.** This docstring called it "the single cited import"; it has been a
+theorem of this tree since 2026-08-06, `Necessity.thetaPreservesJordan_of_S2`
+(`Necessity/KadisonDischarge.lean`), which takes `P` and S2 alone, is rank-free, and routes
+through the vendored `Projectivization.wigner_rigidity` — a vendored *proof*, so nothing is
+imported in the axiom sense either. Callers that want the unconditional form supply it there
+rather than carrying `hjord`. In particular the
 FK/vdW facts the interface documents as imports (`frame_opCommute`, the
 compatibility bridge inside `Θ_fix`, the span extension of vdW 5.5) are *proved*
 here, not imported. -/

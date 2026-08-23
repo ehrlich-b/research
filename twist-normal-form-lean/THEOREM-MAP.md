@@ -14,8 +14,19 @@ development instead; they are listed in §3, not here.
 
 ## 1. Machine-checked, closure = Lean core only
 
-Each of these is pinned in `AxiomAudit.lean` Layer 2 to *exactly* `propext`,
-`Classical.choice`, `Quot.sound` — not even the cited axiom enters.
+Every declaration below is covered by `AxiomAudit.lean` **Layer 1**, the tracked-tree census:
+it visits every persisted declaration of every tracked module, bounds each closure by the
+allowlist `propext, Classical.choice, Quot.sound`, and enforces custom axioms exactly `[]` — so
+not even a cited axiom enters. **Twelve** declarations are *additionally* exact-closure pinned
+by Layer-2 `#guard_msgs` sentinels: `master_chain`, the four produced branches,
+`central_decomposition`, the two globalization results (`t_eq_globalT`,
+`real_character_unique`), `global_twist_of_perFrame`, `n2_necessity`, and the two `τ`-family
+`M₂(ℂ)` computations (`sp_tau_had_is_luders`, `sp_tau_std_is_unit_twist`).
+★ **"Pinned by `#guard_msgs`" applies to those twelve and to nothing else in this table** —
+corrected 2026-08-22; the sentence here used to assert it of every row, which was false for the
+great majority of them. Layer 2's own section docstring in `AxiomAudit.lean` says so ("one
+principal advertised result per module family"), and the `lem:aone` row below already drew the
+distinction. Note that `sp_blockForm` is in this table but is *not* a sentinel.
 
 **Read §2 before reading this table as a verification claim.** The rows fall into
 three kinds, and only the first is conditional on §2:
@@ -67,7 +78,7 @@ three kinds, and only the first is conditional on §2:
 | `thm:qubit-boundary`(iii) **at the EFFECTS** — the article's `τ` family agrees with no constant twist product on the effects. ★ CITE THIS ONE; the entry-probe siblings separate the total extensions, because their witness is not an effect when the parameter difference has the other sign | `RankTwo.not_forall_effects_tau_eq_twistSeq`, `RankTwo.not_forall_effects_eq_twistSeq` | `RankTwo/Sufficiency.lean` |
 | **the Faraut–Korányi fields of `CoalescenceSetup`, DERIVED** (ARC-9) — an interface told its frame is a frame produces a `CoalescenceSetup` in which `simDiag_opCommute`, `aOf_scalarOn` and `block_mem_J2` are proved; and the paper's own `Necessity.comparisonSetup` is such an interface. ★ This does **not** close row 16: `Θ_fix` and `Θ_jordan` remain cited, so the row rests on them as before | `RadicalRelativity.EJA.EJAComparison.toCoalescenceSetup`, `RadicalRelativity.EJA.ejaComparison` | `EJA/InterfaceInstance.lean`, `EJA/ConcreteInstance.lean` |
 | **Albert's power-associativity theorem** (ARC-9) — `x^{m+1} ∘ x^{n+1} = x^{m+n+2}` in any real commutative Jordan algebra, and the one-generator subalgebra is associative. ★ Not a paper statement: (E1) infrastructure, carried here because `THEOREM-MAP.md` is the tree's honesty ledger and this is the tree's largest new theorem | `RadicalRelativity.EJA.jpow_mul_jpow`, `RadicalRelativity.EJA.jspan_assoc` | `EJA/PowerAssoc.lean`, `EJA/Subalgebra.lean` |
-| **(E1), the single-element spectral theorem** (ARC-9, 2026-08-22) — every element of a finite-dimensional formally real Jordan algebra is a real combination of pairwise-orthogonal idempotents drawn from the subalgebra it generates, with no unit assumed; and, with a unit carried as an ordinary hypothesis, of a family summing to it. Both are instantiated on the paper's own carrier `HermitianMat d 𝕜`, and carried into `ComparisonSetup`'s bundled-bilinear-map vocabulary through `EJA/Bridge.lean`, which **discharges `WallCertificates/eja-gated.lean`'s `gate_E1_spectral`** (that file's `sorry` count 2 → 1; only (E3) remains). ★ **No manifest row moves.** Row 13's residue is the spectral *inverse* — a functional calculus built ON the resolution — and no functional calculus exists at EJA generality; primitivity is likewise not proved, so these families are not shown to be Jordan *frames* | `RadicalRelativity.EJA.spectral_resolution`, `RadicalRelativity.EJA.spectral_resolution_complete`, `RadicalRelativity.EJA.spectral_resolution_bilinear`, `RadicalRelativity.EJA.hermitian_spectral_resolution_complete` | `EJA/Spectral.lean` |
+| **(E1), the single-element spectral theorem** (ARC-9, 2026-08-22) — every element of a finite-dimensional formally real Jordan algebra is a real combination of pairwise-orthogonal idempotents drawn from the subalgebra it generates, with no unit assumed; and, with a unit carried as an ordinary hypothesis, of a family summing to it. Both are instantiated on the paper's own carrier `HermitianMat d 𝕜`, and carried into `ComparisonSetup`'s bundled-bilinear-map vocabulary through `EJA/Bridge.lean`, which **discharges `WallCertificates/eja-gated.lean`'s `gate_E1_spectral`** (that file's `sorry` count 2 → 1; only (E3) remains). ★ **No manifest row moves.** Row 13's residue is the spectral *inverse* — a functional calculus built ON the resolution — and no **continuous** functional calculus exists at EJA generality (a polynomial one does: `EJA.jeval x p = ∑ₙ p.coeff n • x^{n+1}`, `EJA/Spectral.lean`:97, and `x ↦ x⁻¹` is not polynomial; `Spectral.lean`'s own scope note says "nothing here is a functional calculus"); primitivity is likewise not proved, so these families are not shown to be Jordan *frames* | `RadicalRelativity.EJA.spectral_resolution`, `RadicalRelativity.EJA.spectral_resolution_complete`, `RadicalRelativity.EJA.spectral_resolution_bilinear`, `RadicalRelativity.EJA.hermitian_spectral_resolution_complete` | `EJA/Spectral.lean` |
 | `prop:n2-sufficiency`'s S2 **in the article's order-unit norm** | `RankTwo.n2SequentialProduct_firstArgContinuousOu` | `RankTwo/Sufficiency.lean` |
 | `thm:qubit-boundary`(iii) in the `twistSeq` encoding, entry-probe form — separates the total extensions; see the effect-level statement above | `RankTwo.exists_n2Sp_tau_ne_twistSeq`, `RankTwo.exists_n2Sp_ne_twistSeq_of_nonconstant`, `RankTwo.exists_twistSeq_diagFamily_ne`, `RankTwo.surjective_colFrame` | `RankTwo/Sufficiency.lean` |
 | `prop:stabilizers` ℂ row — the frame stabilizer in `U(n)` is exactly the diagonal torus `T^n` (diagonality plus unimodular diagonal entries). ★ The article's *identity component* `T^{n-1}` — the quotient by the globally-acting phase — is NOT stated; its content is `torusU_block` | `Necessity.offdiag_eq_zero_of_fixes_frameProj`, `Necessity.normSq_diag_eq_one_of_fixes_frameProj` | `Necessity/FrameConstancy.lean` |
@@ -98,10 +109,19 @@ two-element block cannot exhaust `Fin N`, so an article-adjacent pair shares a w
 axis) is a true and mildly useful bridge. But they add no provable content.
 
 ★ **The fidelity note that was here — "`AdjBlock` is therefore a *superset* of the article's
-relation, which makes the theorem stronger, not weaker" — is FALSE, and was refuted by a
-compiled counterexample.** The reviewer exhibited the 3-cycle permutation of the standard basis
-of `ℂ³`: its Jordan frame is *literally the standard frame* (`cyc_frame_is_standard`: every atom
-maps to an atom of the same frame), yet `¬ AdjBlock 1 ⟨cyc, _⟩`. `AdjBlock` requires the
+relation, which makes the theorem stronger, not weaker" — is FALSE.** The counterexample is the
+3-cycle permutation `cyc` of the standard basis of `ℂ³`. Its Jordan frame is *literally the
+standard frame* — `cyc` carries every standard atom to a standard atom, and the article's frames
+are unordered sets of atoms — yet `¬ AdjBlock 1 ⟨cyc, _⟩`, directly from the definition
+(`Necessity/FrameConstancy.lean`:2592): `AdjBlock F G` asks for one pair `{i, j}` such that
+`(FᴴG) k l = 0` at every `k ≠ l` with either index outside that pair, while `cyc` has three
+nonzero off-diagonal entries — at `(1,0)`, `(2,1)`, `(0,2)` — lying in three *different* pairs,
+so no single pair exempts even two of them. ★ **Provenance corrected 2026-08-22:** this note
+used to attribute the refutation to a *compiled* counterexample and cite a declaration
+`cyc_frame_is_standard`, which occurs nowhere in this repository except in that citation, and
+nothing named `cyc` is in the tree either. The conclusion is unaffected and is checkable in two
+lines from `AdjBlock`'s definition, as above; the declaration name and the "compiled" provenance
+are retracted. `AdjBlock` requires the
 connecting unitary to be diagonal outside one index pair, which forbids **relabelling** the
 shared atoms — while the article's frames are *unordered* sets of atoms (verified at source,
 `main.tex`:1269–1273: "frames differing by a rotation inside a rank-two block … and **sharing
@@ -118,7 +138,10 @@ pair them.** `AdjBlock` is *strictly finer* than `AdjAxis`: the former fixes all
 the latter merely some axis. Connectivity for a finer relation is a *stronger* statement, so
 `adjAxis_connected` cannot supply it. The article's graph needs every unitary to factor into
 rank-two block rotations — a Givens/Jacobi decomposition — where the tree currently has
-`exists_axisFixing_factor`, three axis-fixing Householder factors. That row stays PARTIAL and
+`exists_axisFixing_factor`, a factorization into three axis-fixing unitaries (★ corrected
+2026-08-22: *two* of the three are Householder reflections, which clear the `i₀` column; the
+third is the residual unitary that fixes that axis — its own docstring at
+`Necessity/UnitaryGeneration.lean`:365–369 says so). That row stays PARTIAL and
 the remainder is exactly the Givens decomposition.
 
 ### `lem:homog`(ii) — at abstract order-unit-space generality (2026-08-08, ARC-6 rung 6.3)
@@ -150,14 +173,37 @@ topologies agree — so the hypothesis Lean carries is the article's own hypothe
 Abstractly the two notions are incomparable, which is harmless for covering the article but
 must not be smoothed over.
 
-★★ **Second refutation, same review: "covers every EJA" is not machine-checked.** There is **no
-Jordan or EJA class anywhere in this tree** (`grep -rl "EuclideanJordan\|JordanAlgebra"
-RadicalRelativity/` → zero files). The EJA ⟹ order-unit-space bridge is standard mathematics,
-but it is *not* verified here, so "covers every EJA" is a mathematical claim resting on
-unformalized background, not a Lean fact. The in-tree instances are `HermitianMat`,
-`SpinFactor`, `QuatCarrier`, and the direct-sum construction. Say: "at the generality of this
-tree's order-unit interface; every EJA instantiates it by standard mathematics that this tree
-does not itself formalize." Never "at full order-unit-space generality". The one
+★★ **Second refutation, same review: "covers every EJA" is not machine-checked.** ★★ **The
+sentence that stood here — "there is **no Jordan or EJA class anywhere in this tree**
+(`grep -rl "EuclideanJordan\|JordanAlgebra" RadicalRelativity/` → zero files)" — is retracted
+2026-08-22: an accurate grep for the wrong identifier.** That grep still returns zero files, and
+`grep -rl "IsCommJordan\|IsFormallyReal" RadicalRelativity/` returns 16 files (15 of the 16
+modules of `RadicalRelativity/EJA/`, plus `Vendor/HermitianMat/Jordan.lean`) — the tree carries
+a Jordan layer, built over Mathlib's `IsCommJordan` plus this tree's own `IsFormallyReal`
+(`EJA/FormallyReal.lean`:62). This file names that identifier correctly further down, in the
+`H₃(𝕆)` correction. **The paragraph's operative conclusion
+was nonetheless right when written:** what was missing was a *proved bridge* from that layer to
+`OrderUnitSpace`, so "covers every EJA" rested on unformalized background rather than on a Lean
+fact.
+
+★★★ **That bridge landed 2026-08-22 (ARC-9), and this paragraph's prescription now needs
+reading with care.** `RadicalRelativity.EJA.orderUnitSpaceOfBilinear` (`EJA/Order.lean`:248)
+produces an `OrderUnitSpace J` for `J` finite-dimensional, formally real, with a Jordan unit,
+in `ComparisonSetup`'s bilinear-map vocabulary; all six of its fields are unconditional and
+custom axioms are exactly `[]`. It is a `def`, not an `instance`, so nothing acquires it
+silently. **But the abstract `lem:homog`(ii)/`lem:cone-ext` ladder consumes
+`OrderUnitSpace.IsArchimedean` on top of the instance, and *that* is
+`isArchimedean_ofBilinear`, one of the six declarations in `EJA/Order.lean` carrying the
+Euclidean-form hypothesis `hassoc` (`⟪x ∘ y, z⟫ = ⟪y, x ∘ z⟫`), which the tree does not derive
+from formal reality** — the equivalence is Faraut–Korányi Prop. VIII.4.2 and is the residue
+certificated in `WallCertificates/eja-order.lean`. So the honest wording is now: "at the
+generality of this tree's order-unit interface, which every finite-dimensional formally real
+Jordan algebra instantiates in-tree; the Archimedean strengthening the ladder also consumes is
+proved only under the Euclidean-form hypothesis, which this tree carries rather than derives."
+Still never "covers every EJA" flat, and never "at full order-unit-space generality". **No
+manifest row moves on the bridge** — `EJA/Order.lean`'s own scope note says so, and rows 13 and
+16 each need it *and* more. Other in-tree `OrderUnitSpace` instances are `HermitianMat`,
+`SpinFactor`, `QuatCarrier`, and the direct-sum construction. The one
 hypothesis added, `IsArchimedean`, is part of the *definition* of the article's order unit
 space (the class's `archimedean` field is order-unit boundedness only — the long-standing
 caveat 1), not a located stand-in for a cited result. Note also that the article merely
@@ -169,8 +215,12 @@ infimum passage — whereas Lean proves it from S1–S7 + S2.
 `sp_smul_right_of_unitInterval` (this is where Archimedean is consumed, as the ε-squeeze);
 first argument — `sp_comm_natSmul`, `sp_comm_ratSmul_self`, `sp_comm_ratOneSmul`,
 `sp_ratOneSmul_left`, `sp_smulOne_left` (the single S2 use, by rational approximation),
-`sp_smul_left`. Closure `[propext, Classical.choice, Quot.sound]` throughout; census still
-149 modules, custom axioms exactly `[]`. Three small order lemmas were added to
+`sp_smul_left`. Closure `[propext, Classical.choice, Quot.sound]` throughout; census clean,
+custom axioms exactly `[]`. ★ **The module count that used to be quoted here ("still 149
+modules") had decayed by nineteen and is deleted rather than re-frozen** (2026-08-22): the
+count's source of truth is the frozen manifest in `AxiomAudit.lean`, it moves whenever a module
+lands, and it was 168 when this line was last touched — read it there, never from this file.
+Three small order lemmas were added to
 `OrderUnitSpace.lean` for the port (`sub_le_sub_right'`, `sub_le_sub_left'`,
 `le_of_sub_nonpos`) because Mathlib's versions need ordered-group instances this class does
 not provide.
@@ -217,7 +267,7 @@ then it should not be described as machine-checked." It now is one, and the stag
 supplementary text (blog `research/paperA-supplementary-rewrite-draft.md`, caveat 2) has been
 rewritten rather than annotated.
 
-### `cor:selectors` clause (ii) — machine-checked at article generality (2026-08-08)
+### `cor:selectors` — all three clauses machine-checked ((ii) 2026-08-08, (iii) 2026-08-09, (i) 2026-08-22)
 
 `Necessity.selector_traceSymm` (`Necessity/ComplexRowUnconditional.lean`): for an S1–S7
 product with S2 on `H_N(ℂ)`, `N ≥ 3`, trace-form symmetry `⟪a·b, c⟫ = ⟪b, a·c⟫` on
@@ -229,22 +279,36 @@ adjoint flips `t`, by trace cyclicity plus `twistFactor_conjTranspose`) and
 definiteness). The proof is a corollary of the classification's `∃!`: trace symmetry makes
 `-t` a second representing parameter, so `-t = t`.
 
-**Clauses (i) and (iii) are not proved, and the row stays PARTIAL.** Banked with the
-remainder measured rather than guessed: clause (iii) — covariance under every unital order
-automorphism, for which the article notes the transpose suffices — is blocked on exactly one
-absent lemma, `(cfc f a)ᵀ = cfc f (aᵀ)`, i.e. that transposition commutes with the real
-functional calculus. Nothing in this tree has it, and the route is written out in the
-module docstring (`StarAlgHomClass.map_cfc` applied to entrywise complex conjugation, which
-is an ℝ-star-algebra hom of `Matrix n n ℂ` since conjugation does not reverse products;
-build it from `AlgHom.mapMatrix Complex.conjAe.toAlgHom` with a `map_star'` field, and use
-`aᵀ = conj a` for Hermitian `a`). With that lemma, `transposeMap (twistSeq t a b) =
-twistSeq (-t) (transposeMap a) (transposeMap b)` and clause (iii) closes by the same
-uniqueness step. Clause (i) additionally needs the coherence-block action on `H_N(ℂ)`.
+★★★ **CORRECTED 2026-08-22. This paragraph read "Clauses (i) and (iii) are not proved", said
+clause (iii) was "blocked on exactly one absent lemma", `(cfc f a)ᵀ = cfc f (aᵀ)`, that
+"nothing in this tree has it", and then wrote out the route to build it. All of that is false,
+and had been for two weeks — the lemma was built by literally the prescribed route, and this
+file's own §3c already treats it as existing.**
+
+**All three clauses are proved, all in `Necessity/ComplexRowUnconditional.lean` (zero
+`sorry`).** Clause (ii) is `selector_traceSymm` (:203), above. Clause (iii) is
+`selector_transpose` (:418) / `selector_transpose_luders` (:442), landed 2026-08-09: the
+hypothesis carried is transpose covariance on effects, which is the article's *own* stated
+sufficient condition on `H_N(ℂ)` and not a weakening of "every unital order automorphism".
+Its one-time missing ingredient landed 2026-08-08 as `Necessity.cfc_transpose` (:279), with
+`cfc_transpose_unconditional` (:323) — built exactly as the route above prescribed, from
+`conjMatStarAlg` (:249, entrywise conjugation as an ℝ-star-algebra hom) through
+`StarAlgHomClass.map_cfc`. The mechanism is `transposeMap_twistSeq` (:381): transposition
+flips the twist, so covariance forces `t = −t`. Clause (i) is `selector_peirceExchange`
+(:607) / `selector_peirceExchange_luders` (:656), landed 2026-08-22, against
+`PeirceExchangeCovariant` (:593) — whose hypothesis is imposed on the standard frame's blocks
+only and is therefore *weaker* than the article's every-frame condition, so it covers the
+article's statement. Non-vacuity is pinned from both sides:
+`luders_peirceExchangeCovariant` (the class is inhabited) and
+`peirceExchangeCovariant_forces_zero` (no other twist product satisfies it).
+
+**Whether the row promotes past PARTIAL is a generality question for the manifest, not an
+unbuilt-lemma question.** Do not restate any of the three clauses as open.
 
 ### `lem:aone` — machine-checked at full abstract generality (recorded 2026-08-08)
 
 ★ **This row was carried as "no Lean counterpart" and that was wrong.**
-`SequentialProduct.sp_unit_right` (`SequentialProduct.lean`:163) states
+`SequentialProduct.sp_unit_right` (`SequentialProduct.lean`:164) states
 `IsEffect a → a & 𝟙 = a` over an arbitrary `[SequentialProductCore V]` — i.e. over any
 order-unit space with an S1, S3–S7 product — and proves it by the article's own route:
 `a·0 = 0` from S1, `0·a = 0` from S4, hence `a |' 0`, then S6a to `a |' 𝟙`, then S3.
@@ -371,7 +435,7 @@ tree, a theorem.
 | real Wigner rigidity: a transition-probability preserving ray map is induced by an isometry | `Projectivization.exists_isometry_of_transProbPreservingR` | `Wigner/RealWigner.lean` (first-party) |
 | the same, invertible effects only | `Necessity.sp_eq_luders_of_posDef` | `Necessity/RealRigidity.lean` |
 | the comparison character is the identity (`Θ_a = id`) | `Necessity.chiTilde_eq_id` | `Necessity/RealRigidity.lean` |
-| `prop:singular` applied over ℝ | `Necessity.dense_posDef_effectsR` + `MasterTheorem.prop_singular` | `Necessity/RealRigidity.lean` |
+| `prop:singular` applied over ℝ | `Necessity.dense_posDef_effectsR` + `MasterTheorem.prop_singular` | `Necessity/RealRigidity.lean` (the application, :420); `MasterTheorem/Master.lean` (:101, where `prop_singular` is declared — ★ corrected 2026-08-22, this cell put it in `RealRigidity.lean`) |
 
 **Exact hypothesis accounting for `real_classification` (2026-08-07)**: the
 `SequentialProductOn` fields (S1, S3–S7); S2; and `0 < N`. That is the paper's own list —
@@ -401,8 +465,11 @@ FALSE and is retracted.** Verified at source this session. It is true of *Mathli
 `octonion` hits are prose comments; Mathlib does however have `IsJordan`/`IsCommJordan` in
 `Algebra/Jordan/Basic.lean`, so the archive's "no Jordan-algebra files at all" is also
 retracted). It is **false of our own work**: `~/repos/research/lean/RadicalRelativity/`
-`Octonions.lean` is 310 lines, 37 declarations, **zero sorries**, on the **same toolchain**
-(`v4.28.0`) — explicit Cayley-table `mul`, `conj` proved an anti-automorphism (`conj_mul`),
+`Octonions.lean` is 310 lines, 37 declarations, **zero sorries**, on the toolchain this tree
+used until 2026-08-22 (★ corrected that day: `lean/` is `v4.28.0` and this tree is now
+`v4.33.0` — commit `ca2a5d1` migrated it — so "the **same** toolchain" is false and a port now
+carries a migration) — explicit Cayley-table `mul`, `conj` proved an anti-automorphism
+(`conj_mul`),
 `norm_multiplicative`, `mul_conj`, both alternativity laws, all three Moufang identities, and
 full bilinearity. That is precisely the input list `ALBERT-KERNEL-MEMO.md` §2 says the row
 consumes. The memo (2026-08-04) already re-scoped this row to "weeks of equational algebra";
@@ -503,7 +570,9 @@ rows live on that concrete carrier, no row depends on the abstract gap.
 
 ### M1 carrier layer (supporting infrastructure, no paper labels)
 
-Census-tracked (49-module manifest), closure = Lean core only:
+Census-tracked, closure = Lean core only (★ the "49-module manifest" that stood here is deleted
+2026-08-22, stale by more than a hundred: the manifest's size lives in `AxiomAudit.lean` — 168
+at this edit — and is not restated here):
 
 - `RadicalRelativity/Hermitian/OrderUnit.lean` — `OrderUnitSpace (HermitianMat n 𝕜)`
   instance over the vendored carrier (parents = the existing vendored instances; the
@@ -576,9 +645,16 @@ intended instances is `LEDGER.md`. **As of 2026-08-05 a concrete instance
 exists**: `Necessity.comparisonSetup : ComparisonSetup (HermitianMat (Fin N) ℂ)`
 (`Necessity/ComparisonInstance.lean`), with every field discharged by a proved
 theorem of the necessity development except `Θ_jordan`, which enters as the
-isolated hypothesis `ThetaPreservesJordan` (= campaign milestone M3). The rows
-below describe the *interface*; the instance column of truth for what is still
-imported on `H_N(ℂ)` is that single hypothesis plus the S2 continuity field.
+isolated hypothesis `ThetaPreservesJordan` (= campaign milestone M3). ★★ **The sentence that
+followed — "the instance column of truth for what is still *imported* on `H_N(ℂ)` is that
+single hypothesis plus the S2 continuity field" — is corrected 2026-08-22.** The rows below
+describe the *interface*. On the concrete carrier **nothing is imported**: `hjord` is indeed
+still a parameter of `comparisonSetup` (`Necessity/ComparisonInstance.lean`:370), but it is
+supplied by a theorem of this tree — `Necessity.thetaPreservesJordan_of_S2`
+(`Necessity/KadisonDischarge.lean`:529), which takes `P` and S2 alone and is rank-free — so M3
+is discharged and the only carried condition on `H_N(ℂ)` is S2 itself. Being a *parameter* and
+being *imported* are different things, and this file's own complex-row block (§ "The complex row
+of `mthm:master`") has said so since 2026-08-06.
 
 | Structure | File |
 | --- | --- |
@@ -589,7 +665,7 @@ imported on `H_N(ℂ)` is that single hypothesis plus the S2 continuity field.
 
 | Field | Cited source | Paper location |
 | --- | --- | --- |
-| `ComparisonSetup.Θ_jordan` | van de Wetering Prop. 5.3 + van Imhoff–Roelands Cor. 2.5 / Prop. 2.6, taken as the imported *conclusion*: the Lean structure does not encode the JB-algebra premises | `prop:theta` |
+| `ComparisonSetup.Θ_jordan` | van de Wetering Prop. 5.3 + van Imhoff–Roelands Cor. 2.5 / Prop. 2.6, taken as the imported *conclusion*: the Lean structure does not encode the JB-algebra premises. ★ **This row describes the abstract field only.** On both concrete carriers it is a theorem of this tree, not an import — `Necessity.thetaPreservesJordan_of_S2` (ℂ) and `thetaPreservesJordanR_of_S2` (ℝ), each from S2 alone | `prop:theta` |
 | `ComparisonSetup.Θ_fix` | van de Wetering Prop. 5.5. **Stronger than the source as stated**: the field quantifies over all of `J`, the source is effect-level. On the concrete carrier the span extension IS now Lean's (`Necessity.theta_fix_general`, 2026-08-05, via `b = b⁺ − b⁻` + normalization), and so is the compatibility bridge it rides on (`Necessity.opCommute_iff_commute`: Jordan-operator commutation = matrix commutation, quarter identity `[L_a,L_b]y = ¼[[a,b],y]`) | `prop:theta` |
 | `ComparisonSetup`'s use of `aOf r` outside the negative orthant | van de Wetering's normalization extension `Θ_{λq} = Θ_q`, which defines `Θ_q` for arbitrary positive order-preserving `q` after rescaling. On the concrete carrier this is proved: `Necessity.thetaNorm` (total on PosDef points) + the 2.3 law `theta_smul` | `lem:cone-ext` |
 | comparison cocycle | van de Wetering Prop. 5.7, specialized to the commuting diagonal family — **weaker** than the source, not stronger | `prop:theta` |
@@ -659,7 +735,7 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   as of the arc-5 cold review `lem:n2-descent`'s **frame-reversal clause is proved for an
   arbitrary product** (`Necessity.n2FrameTwist_reverse`). Leaving them here made this file —
   the one the manifest designates as governing — imply a count of 7/17/12 against the
-  manifest's 7/19/10 *as those stood during arc-5* (the count was **8/19/9** at that time; **9/19/8** as of 2026-08-09). The manifest's rating is the correct one. (The lifting step of `prop:n2-necessity` was on
+  manifest's 7/19/10 *as those stood during arc-5* (the count was **8/19/9** at that time; ★ **10/19/7** at the end of ARC-7, 2026-08-09 — corrected 2026-08-22 from **9/19/8**, which was one row short; `STATEMENT-MANIFEST.md`:123 is the count of record). The manifest's rating is the correct one. (The lifting step of `prop:n2-necessity` was on
   this list and has come off it — see the correction below.)
 
   ★★ **SUPERSEDED IN PART, 2026-08-08 (ARC-5 rung 5.3).** The entry below read: "the
@@ -702,7 +778,10 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   `H₂(ℂ)` there is an `M > 0` with `|n2FrameTwist P hS2 U| ≤ M` at every frame. The row moved
   ABSENT → **FORMALIZED**; and `lem:n2-continuity` followed the same day
   (`Necessity.continuous_n2FrameTwist`, block 7.1b), PARTIAL → **FORMALIZED**: count
-  `8/19/9` → **`10/18/8`**. Read both rows with the indexing caveat
+  `8/19/9` → **`10/19/7`** (★ corrected 2026-08-22 from `10/18/8`, which dropped ARC-7's third
+  move — `lem:normality` ABSENT → PARTIAL, block 7.5, carried in §1's table above.
+  `STATEMENT-MANIFEST.md`:123 is the count of record and it reads `10 FORMALIZED / 19 PARTIAL /
+  7 ABSENT`). Read both rows with the indexing caveat
   stated in `STATEMENT-MANIFEST.md` row 32 (Lean indexes by `U ∈ U(2)`, the article by `n ∈ S²`;
   fibre-constancy plus surjectivity make these the same content, but the `S²`-indexed *object*
   for an arbitrary product is still row 33/34's work). **Every sentence below that says the frame
@@ -807,8 +886,8 @@ had no row anywhere, now stated:
 
 | Paper statement | Status | Where it stands |
 | --- | --- | --- |
-| `lem:homog` — positive linear extension of `L_a` (i), and first-variable homogeneity `(λa)·b = λ(a·b)` (ii) | **PARTIAL** | ★ **Clause (ii) is now proved at ABSTRACT generality — row corrected 2026-08-08 (ARC-6 rung 6.3); the previous wording "on the concrete carrier only" is superseded.** `SequentialProductOn.sp_smul_left` (`SequentialProduct.lean`) carries S1–S7 + the article's S2 + `OrderUnitSpace.IsArchimedean`, at the generality of this tree's order-unit interface, which covers every EJA; see §1. The concrete `Necessity.sp_smul_left` (`Necessity/FirstArgument.lean`) remains, following vdW Prop. 3.9 with the σ-SEA normality passage replaced by exactly one use of S2. ★ **Clause (i) IS in the tree on the concrete carrier — corrected 2026-08-08 (ARC-6). The previous wording here, "not in the tree in any form", was FALSE.** `Necessity.seqLeftMul` (`Necessity/LeftMultiplication.lean`) *is* the positive linear extension: it is an honest `HermitianMat n 𝕜 →ₗ[ℝ] HermitianMat n 𝕜`, built through `spPos` on the cone and the `x = x⁺ − x⁻` splitting, with `seqLeftMul_apply_effect` (agrees with `P.sp a ·` on effects), `seqLeftMul_nonneg` (positivity), and `seqLeftMul_one`; its own docstring says "paper `lem:homog`(i), matrix-concrete". Uniqueness of the extension is `OrderUnitSpace.linearMap_eq_of_eq_on_effects` (abstract, arc-5). So clause (i) is PARTIAL for the same single reason as clause (ii) — concrete carrier vs the article's EJA generality — and **not** for want of a construction. This was the fifth absence claim in two arcs that was wrong on the page rather than in the tree. The Archimedean note below records why clause (ii) did not generalize *for free* — and is itself now superseded in its pricing: supplying Archimedean as an explicit `Prop` was enough, and the ladder ported essentially verbatim. |
-| `lem:cone-ext` — extension of the product to positive-cone first arguments | **FORMALIZED 2026-08-08** (ARC-6 rung 6.3) | ★ **Row rewritten; the previous text said PARTIAL and "inherits that row's Archimedean obstruction", which is now discharged.** All three clauses are proved at abstract order-unit-space generality, **about a defined extension** `SequentialProductOn.spCone`: `spCone_eq` (well-defined — agrees with every admissible normalization), `spCone_of_isEffect` (agreement on effects), `spCone_smul` (positive homogeneity). Self-audit note: the first version proved these only at the normalization level (`sp_coneNorm_indep`, `sp_coneNorm_smul`, `sp_coneNorm_eq_of_isEffect`, `exists_isConeNorm` — retained as ingredients), which stated homogeneity about expressions rather than about the extension; `spCone` closes that gap before it could be called an overstatement. It does consume `lem:homog`(ii) — which is why it landed only once that was abstract — and it is **norm-free**, unlike the article, whose `μ ≥ ‖v‖` presupposes the carrier's norm is the order-unit norm. `sp_coneNorm_smul` carries neither `IsArchimedean` nor S2: both were inert there and were removed before landing. |
+| `lem:homog` — positive linear extension of `L_a` (i), and first-variable homogeneity `(λa)·b = λ(a·b)` (ii) | **PARTIAL** | ★ **Clause (ii) is now proved at ABSTRACT generality — row corrected 2026-08-08 (ARC-6 rung 6.3); the previous wording "on the concrete carrier only" is superseded.** `SequentialProductOn.sp_smul_left` (`SequentialProduct.lean`) carries S1–S7 + the article's S2 + `OrderUnitSpace.IsArchimedean`, at the generality of this tree's order-unit interface — ★ **"which covers every EJA" is struck 2026-08-22**, the phrase §1 explicitly bans; say instead that every finite-dimensional formally real Jordan algebra instantiates the interface in-tree (`EJA.orderUnitSpaceOfBilinear`, ARC-9), while the `IsArchimedean` strengthening *this row also consumes* is proved only under the Euclidean-form hypothesis the tree carries rather than derives (`WallCertificates/eja-order.lean`). See §1. The concrete `Necessity.sp_smul_left` (`Necessity/FirstArgument.lean`) remains, following vdW Prop. 3.9 with the σ-SEA normality passage replaced by exactly one use of S2. ★ **Clause (i) IS in the tree on the concrete carrier — corrected 2026-08-08 (ARC-6). The previous wording here, "not in the tree in any form", was FALSE.** `Necessity.seqLeftMul` (`Necessity/LeftMultiplication.lean`) *is* the positive linear extension: it is an honest `HermitianMat n 𝕜 →ₗ[ℝ] HermitianMat n 𝕜`, built through `spPos` on the cone and the `x = x⁺ − x⁻` splitting, with `seqLeftMul_apply_effect` (agrees with `P.sp a ·` on effects), `seqLeftMul_nonneg` (positivity), and `seqLeftMul_one`; its own docstring says "paper `lem:homog`(i), matrix-concrete". Uniqueness of the extension is `OrderUnitSpace.linearMap_eq_of_eq_on_effects` (abstract, arc-5). So clause (i) is PARTIAL for the same single reason as clause (ii) — concrete carrier vs the article's EJA generality — and **not** for want of a construction. This was the fifth absence claim in two arcs that was wrong on the page rather than in the tree. The Archimedean note below records why clause (ii) did not generalize *for free* — and is itself now superseded in its pricing: supplying Archimedean as an explicit `Prop` was enough, and the ladder ported essentially verbatim. |
+| `lem:cone-ext` — extension of the product to positive-cone first arguments | **FORMALIZED 2026-08-08** (ARC-6 rung 6.3) | ★ **Row rewritten; the previous text said PARTIAL and "inherits that row's Archimedean obstruction", which is now discharged.** All three clauses are proved at abstract order-unit-space generality, **about a defined extension** `SequentialProductOn.spCone`: `spCone_eq` (well-defined — agrees with every admissible normalization), `spCone_of_isEffect` (agreement on effects), `spCone_smul` (positive homogeneity). Self-audit note: the first version proved these only at the normalization level (`sp_coneNorm_indep`, `sp_coneNorm_smul`, `sp_coneNorm_eq_of_isEffect`, `exists_isConeNorm` — retained as ingredients), which stated homogeneity about expressions rather than about the extension; `spCone` closes that gap before it could be called an overstatement. It does consume `lem:homog`(ii) — which is why it landed only once that was abstract — and its **admissibility condition** is norm-free, unlike the article's `μ ≥ ‖v‖`, which presupposes the carrier's norm is the order-unit norm. ★ **"it is norm-free, unlike the article" is struck 2026-08-22** — it is the phrasing this file's own §3b closing note forbids ("say *norm-free admissibility condition*, never *norm-free row*"), and the row is not norm-free: `spCone_smul` (`SequentialProduct.lean`:811) carries `hS2`, which is a norm-topology hypothesis. `sp_coneNorm_smul` carries neither `IsArchimedean` nor S2: both were inert there and were removed before landing. |
 | `lem:frame-fix` — `Θ_r` fixes the frame and the diagonal, preserves each Peirce block, lies in `Stab(F)°`, hence `L_{a(r)}` is Peirce-block-diagonal | **PARTIAL** | A certificate for the *produced* setup exists inside `MasterTheorem/Master.lean`; the general statement, quantified over frames and over `r`, does not. |
 | `prop:bridge` — standard-product compatibility is exactly Jordan operator commutation | **ABSENT, by design** | A cited external result (`Wetering2018three` Props. A.1, A.3). It enters the skeleton as an interface field and the paper does not claim to reprove it. Not a target of any rung. |
 
@@ -933,13 +1012,26 @@ vectors, Lean takes the vanishing directly from the differentiated coalescence
 kills a hyperplane — exact, and with no `2π` bookkeeping, the same simplification that
 replaced the universal-cover lift in the rank-two lane.
 
-**Honest status: PARTIAL, not FORMALIZED**, for one reason only — `lem:homomorphism` sits in
-the article's *general machinery* section (before the type-by-type branches) and is stated
-for a simple EJA with a Jordan frame, whereas all of the above lives on the concrete `H_n(ℂ)`
-carrier (with the `Gen` variants covering `RCLike 𝕜`). Same generality gap as `prop:theta`
-and `prop:pseudo-transfer`, and it is the *only* thing between this row and FORMALIZED. The
-secondary gap is packaging, not content: the tree never names `Stab(F)°` as a Lie group with
-an identity component, working instead with `blockSkewSubmodule` and `dChiStab`.
+**Honest status: PARTIAL, not FORMALIZED** — for **two** reasons, neither of them a missing
+proof. ★★ **Corrected 2026-08-22: this paragraph said "for one reason only" and "the *only*
+thing between this row and FORMALIZED", and then named a second gap two lines later. A
+totalizer cancelled by its own next sentence is exactly where this file's errors live.**
+
+1. **Generality.** `lem:homomorphism` sits in the article's *general machinery* section (before
+   the type-by-type branches) and is stated for a simple EJA with a Jordan frame, whereas all
+   of the above lives on the concrete `H_n(ℂ)` carrier (with the `Gen` variants covering
+   `RCLike 𝕜`). ★ **"Same generality gap as `prop:theta`" is struck 2026-08-22** (see
+   `STATEMENT-MANIFEST.md` row 17): `prop:theta`'s residue is a cited classical rigidity
+   theorem, whereas the port here is analytic and group-theoretic work on `χ̃`'s differential
+   and on `Stab(F)`. "Generality alone" is true and is **not** a synonym for "the EJA
+   axiomatization" — that reading is what mislabelled this row EJA-GATED for twelve days.
+2. **Packaging.** The tree never names `Stab(F)°` as a Lie group with an identity component,
+   working instead with `blockSkewSubmodule` and `dChiStab`.
+
+★ **This list is not exhaustive either.** `STATEMENT-MANIFEST.md` row 17 counts **three**
+independent residues, adding the `DiagonalHomSetup` interface fields (`ρ`, `ρ_skew`, `dχAdd`,
+`dχAdd_cont`, `coalescence_diff`), which the *abstract skeleton* still carries as hypotheses
+however much the concrete carrier derives. Read that row for the full accounting.
 
 ## 4. SymPy labels
 
