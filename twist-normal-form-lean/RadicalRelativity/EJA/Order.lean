@@ -390,6 +390,53 @@ theorem inner_mul_self_nonneg_of_idem
   rw [hsplit, inner_add_left, real_inner_smul_left]
   linarith
 
+/-- **The vanishing case of `inner_mul_self_nonneg_of_idem`.**  `⟪L_c y, y⟫ = ‖P₁y‖² + ½‖P_{½}y‖²`,
+so the pairing vanishes exactly when both Peirce components do — and then `L_c y` itself is zero.
+
+This is the self-duality step a sequential product needs: orthogonality *in the inner product*
+upgrades to orthogonality *in the Jordan product*.  Same proof as the positivity statement above,
+read at equality instead of inequality. -/
+theorem mul_eq_zero_of_inner_mul_self_eq_zero
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hjordan : ∀ a b : J, m (m a b) (m a a) = m a (m b (m a a)))
+    (hassoc : ∀ x y z : J, inner ℝ (m x y) z = inner ℝ y (m x z))
+    {c : J} (hc : m c c = c) {y : J} (h : (inner ℝ (m c y) y : ℝ) = 0) : m c y = 0 := by
+  letI : NonUnitalNonAssocCommRing J := ringOfBilinear m hcomm
+  letI : IsCommJordan J := ⟨hjordan⟩
+  letI : IsScalarTower ℝ J J := ⟨fun r x y => smul_bilinear m r x y⟩
+  have hc' : c * c = c := hc
+  have hsa : ∀ u v : J, inner ℝ (c * u) v = inner ℝ u (c * v) := fun u v => hassoc c u v
+  have hsa1 : ∀ u v : J, inner ℝ (peirceOne c u) v = inner ℝ u (peirceOne c v) := by
+    intro u v
+    simp only [peirceOne_apply, inner_sub_left, inner_sub_right, real_inner_smul_left,
+      real_inner_smul_right]
+    rw [hsa (c * u) v, hsa u (c * v), hsa u v]
+  have hsah : ∀ u v : J, inner ℝ (peirceHalf c u) v = inner ℝ u (peirceHalf c v) := by
+    intro u v
+    simp only [peirceHalf_apply, inner_sub_left, inner_sub_right, real_inner_smul_left,
+      real_inner_smul_right]
+    rw [hsa (c * u) v, hsa u (c * v), hsa u v]
+  have hid1 : peirceOne c (peirceOne c y) = peirceOne c y :=
+    peirceOne_of_eigen (mul_peirceOne hc' y)
+  have hidh : peirceHalf c (peirceHalf c y) = peirceHalf c y :=
+    peirceHalf_of_eigen_half (mul_peirceHalf hc' y)
+  have hsplit : (m c y : J) = peirceOne c y + (2 : ℝ)⁻¹ • peirceHalf c y := by
+    show c * y = _
+    simp only [peirceOne_apply, peirceHalf_apply]
+    module
+  have key1 : (inner ℝ (peirceOne c y) (peirceOne c y) : ℝ) = inner ℝ (peirceOne c y) y := by
+    rw [hsa1 y (peirceOne c y), hid1, real_inner_comm]
+  have keyh : (inner ℝ (peirceHalf c y) (peirceHalf c y) : ℝ) = inner ℝ (peirceHalf c y) y := by
+    rw [hsah y (peirceHalf c y), hidh, real_inner_comm]
+  have h1 : (0 : ℝ) ≤ inner ℝ (peirceOne c y) y := key1 ▸ real_inner_self_nonneg
+  have hh : (0 : ℝ) ≤ inner ℝ (peirceHalf c y) y := keyh ▸ real_inner_self_nonneg
+  rw [hsplit, inner_add_left, real_inner_smul_left] at h
+  have hz1 : (inner ℝ (peirceOne c y) y : ℝ) = 0 := by linarith
+  have hzh : (inner ℝ (peirceHalf c y) y : ℝ) = 0 := by linarith
+  have e1 : peirceOne c y = 0 := inner_self_eq_zero.mp (key1.trans hz1)
+  have eh : peirceHalf c y = 0 := inner_self_eq_zero.mp (keyh.trans hzh)
+  rw [hsplit, e1, eh, smul_zero, add_zero]
+
 /-- **A sum of squares has nonnegative spectral coefficients.**
 
 Pairing against `q k` reads the coefficient off — the idempotents are pairwise orthogonal for
