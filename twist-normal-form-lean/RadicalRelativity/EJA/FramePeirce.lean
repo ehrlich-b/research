@@ -72,6 +72,13 @@ to `ℝ ∙ pᵢ`: that is the next module's `dim V_{ii} = 1`, and it is not pro
 carried as data.  See `EJA/Rank.lean`'s module docstring.  Do not read
 `frameBlock_isInternal` as a statement about the rank.
 
+★ That guard got easier to trip once `EJA/HermitianCarrier.lean` named a frame.
+`diagJordanFrame : JordanFrame (HermitianMat n ℂ) (Fintype.card n)` puts a frame of cardinality
+`Fintype.card n` on `H_n(ℂ)`, which reads like "`rank (H_n(ℂ)) = Fintype.card n`".  It is not:
+`EJA/Rank.lean` supplies `JordanFrame.card_le_rank`, an inequality in one direction only, and
+`rank` is a supremum over *every* orthogonal family of nonzero idempotents.  A named frame of
+cardinality `k` is a lower bound on the rank and nothing more.
+
 ★ **The carrier arrived after this file — this paragraph used to say the opposite.**  As
 written on 2026-08-23 it recorded that the only `EuclideanJordanAlgebra` instances in the tree
 were `EJA/PeirceSubalgebra.lean`'s two, both *conditional* on an ambient
@@ -81,7 +88,10 @@ applied to no concrete algebra.  That was true when written and is **false now**
 `HermitianMat n 𝕜` an instance for every `RCLike 𝕜`, and its `hermitian_exists_jordanFrame`
 and `hermitian_frameBlock_isInternal` (both under `[Nonempty n]`, which is what `1 ≠ 0` needs)
 are `exists_jordanFrame` and `frameBlock_isInternal` read on that carrier.  So the theorems
-below are statements about a live object, not only about an unwitnessed class.
+below are statements about a live object, not only about an unwitnessed class.  Since
+`1ad66d2` the carrier module goes past existence and *names* a frame — `diagJordanFrame`, the
+diagonal matrix units, over ℂ — so `frameBlock_isInternal` has an instance with nothing left
+existentially quantified.  Note what that does and does not settle: see the rank guard above.
 
 ## Scope
 
