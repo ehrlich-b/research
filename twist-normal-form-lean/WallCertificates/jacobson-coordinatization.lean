@@ -18,6 +18,12 @@ custom axioms exactly `[]`. What they do **not** build is the isomorphism `J ≅
 states the three separately-statable things that resist, so that each is a proposition that can be
 falsified rather than a paragraph asserting a price.
 
+★★ **Residue 1 is DISCHARGED as of 2026-08-23** — `H_n(C)` exists, as
+`RadicalRelativity/Composition/HermMat.lean`'s `CompositionAlgebra.HermMat`; read that section
+below before quoting this file's "does not exist as a type". Residues 2 and 3 are untouched and
+all three `sorry`s below stand, because none of them was the *type*: the isomorphism, the ideal
+notion and the four-index associativity argument are all still absent.
+
 ```
 cd /Users/ehrlich/repos/research/twist-normal-form-lean
 grep -rn "^import.*WallCertificates" RadicalRelativity/ RadicalRelativity.lean   # expect no hits
@@ -54,7 +60,8 @@ same morning.** `Composition/Classification.lean` landed the classification half
 a dimension computation on the block, not more Hurwitz. None of the three residues below moves on
 this.
 
-## Residue 1 — `H_n(C)` does not exist as a type, and the vendored one cannot be reused
+## Residue 1 — DISCHARGED 2026-08-23. `H_n(C)` now exists as a type; the vendored one still
+cannot be reused
 
 The tree's hermitian matrices are `RadicalRelativity/Vendor/HermitianMat/`. Their Jordan product
 is declared at
@@ -75,8 +82,33 @@ What *is* de-risked: Mathlib's `Matrix n n α` gets `Mul` from `[Fintype n] [Mul
 [AddCommMonoid α]`, so non-associative coefficients need no work at all. The carrier is cheap;
 the surrounding API is what is absent.
 
-★ **Not attempted.** No line of `HermC` was written. The "cheap carrier / absent API" split above
-is read off declaration hypotheses, not off a compile.
+★★ **DISCHARGED 2026-08-23 by `RadicalRelativity/Composition/HermMat.lean`**, 48 declarations,
+`grep -cE 'sorry|native_decide|^axiom '` returns `0`, `#print axioms` on each of
+`symmMul_mem`, `jmul`, `hermBilin`, `hermIdem_jmul_hermOff`, `hermCongr_jmul`,
+`jmul_jordan_of_assoc` gives exactly `[propext, Classical.choice, Quot.sound]`, and the tree's
+census passes at 197 modules with custom axioms `[]`. `CompositionAlgebra.HermMat ι C` is the
+hermitian matrices as a `Submodule ℝ (Matrix ι ι C)` with the entrywise condition
+`A j i = cstar (A i j)`, and `jmul` / `hermBilin` is `½(AB + BA)`, closed on it
+(`symmMul_mem`, which spends `cstar_mul`'s anti-multiplicativity and no associativity).
+
+★ The paragraph above **priced this residue by reading declaration hypotheses rather than by
+compiling**, and the compile agrees on both halves: the ambient really was free (the `Mul`
+instance at `Mathlib/Data/Matrix/Mul.lean:302` needs only `[Fintype n] [Mul α]
+[AddCommMonoid α]`), and the API really was the work. What the prediction did **not** name is
+that the diagonal-is-real clause is *not* an extra condition: `cstar x = x ⟹ x = ip x 1 • 1`
+(`eq_smul_one_of_cstar_eq_self`), so the `i = j` instance of the entrywise condition already
+says it.
+
+★ Three limits of the discharge, so it is not read as more than it is. **(a)** `HermMat ι C` is
+**not** proved to be a Jordan algebra for non-associative `C`: `jmul_jordan_of_assoc` assumes
+`[Ring C]`, and `jmul_jordan_of_isCompIso` extends that only to `C` isomorphic to such a ring —
+between them they cover the `ℝ`, `ℂ`, `ℍ` branches of `CoordAlg.classification_coordAlg` and
+**not** the `𝕆` branch, at any rank. Neither half of the classical "`H_n(𝕆)` is Jordan iff
+`n ≤ 3`" is proved anywhere in the tree. **(b)** No dimension count: `finrank ℝ (HermMat (Fin 3)
+Octonion) = 27` is not proved and no basis is constructed; the only non-degeneracy fact is
+`hermOff_injective`. **(c)** No connection to `Albert/`: `h3O` is a *different type* (a structure
+of 3 reals and 3 octonions, not 9 matrix entries), and no map between it and
+`HermMat (Fin 3) Octonion` is constructed, so "the same algebra" remains a design intention.
 
 ## Residue 2 — there is no notion of a Jordan ideal in this tree
 
@@ -163,10 +195,13 @@ The `sorry`s are on `simple_frame_connected`, `jacobson_coordinatization` and
 `coordAlg_assoc_of_four`, and nowhere else.
 
 ★ `jacobson_coordinatization` is stated against `Matrix (Fin n) (Fin n) (CoordAlg D)` with the
-hermitian condition spelled out entrywise, rather than against a bundled `H_n(C)`, precisely
-because residue 1 says the bundled type does not exist. Consequence for reading it: the statement
-is what an `H_n(C)` isomorphism would *unfold to*, so discharging it is the full content, but it
-does not by itself produce the type the classification theorem would want to name.
+hermitian condition spelled out entrywise, rather than against a bundled `H_n(C)`. **The reason
+given for that is now stale**: it said the bundled type does not exist, and since 2026-08-23 it
+does (`CompositionAlgebra.HermMat`, residue 1 above). The statement is deliberately left
+unchanged — it is what an `H_n(C)` isomorphism unfolds to, so discharging it is still the full
+content — but the consequence clause is retracted: the type the classification theorem would want
+to name now exists, and `HermMat n (CoordAlg D)` with `hermBilin` is available to restate this
+`sorry` against whenever someone attacks it.
 -/
 
 namespace JacobsonWall
