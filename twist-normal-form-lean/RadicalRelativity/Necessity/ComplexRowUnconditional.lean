@@ -499,12 +499,11 @@ product is known to be `twistSeq t` on effects, the extension is pinned everywhe
 `linearMap_eq_of_eq_on_effects`, because both sides are linear and the effects span. -/
 theorem seqLeftMul_eq_conjLinear_twistFactor
     (P : SequentialProductOn (HermitianMat n ℂ)) {t : ℝ}
-    (ht : ∀ a b : HermitianMat n ℂ, IsEffect a → IsEffect b →
-      P.sp a b = HermitianMat.twistSeq t a b)
-    {a : HermitianMat n ℂ} (ha : IsEffect a) :
+    {a : HermitianMat n ℂ} (ha : IsEffect a)
+    (ht : ∀ b : HermitianMat n ℂ, IsEffect b → P.sp a b = HermitianMat.twistSeq t a b) :
     seqLeftMul P a ha = HermitianMat.conjLinear ℝ (HermitianMat.twistFactor a t) := by
   refine OrderUnitSpace.linearMap_eq_of_eq_on_effects _ _ (fun b hb => ?_)
-  rw [seqLeftMul_apply_effect P ha hb, ht a b ha hb]
+  rw [seqLeftMul_apply_effect P ha hb, ht b hb]
   rfl
 
 /-- The article's block-action coefficient `E(x,y) = √(xy)·exp(t·log(x/y)·𝒥)`, for
@@ -571,7 +570,7 @@ theorem blockAction_entry
         * z
         * star (((Real.sqrt (Real.exp (r j)) : ℝ) : ℂ)
             * Complex.exp (((t * r j : ℝ) : ℂ) * Complex.I)) := by
-  rw [seqLeftMul_eq_conjLinear_twistFactor P ht hr]
+  rw [seqLeftMul_eq_conjLinear_twistFactor P hr (fun b hb => ht _ b hr hb)]
   show (HermitianMat.twistSeq t (diagFamily r) (blockHerm i j z)).mat i j = _
   rw [twistSeq_diagFamily_entry, blockHerm_entry hij]
 
@@ -667,8 +666,8 @@ covariant — at `t = 0` the block coefficient is the swap-symmetric `√(xy)` w
 theorem luders_peirceExchangeCovariant :
     PeirceExchangeCovariant (N := N) (twistProductOn 0) := by
   intro i j hij r h h' z
-  rw [seqLeftMul_eq_conjLinear_twistFactor _ (fun a b _ _ => twistProductOn_sp 0 a b) h,
-    seqLeftMul_eq_conjLinear_twistFactor _ (fun a b _ _ => twistProductOn_sp 0 a b) h']
+  rw [seqLeftMul_eq_conjLinear_twistFactor _ h (fun b _ => twistProductOn_sp 0 _ b),
+    seqLeftMul_eq_conjLinear_twistFactor _ h' (fun b _ => twistProductOn_sp 0 _ b)]
   show HermitianMat.twistSeq 0 (diagFamily r) (blockHerm i j z)
       = HermitianMat.twistSeq 0 (diagFamily (r ∘ Equiv.swap i j)) (blockHerm i j z)
   rw [twistSeq_diagFamily_blockHerm _ _ hij, twistSeq_diagFamily_blockHerm _ _ hij]
@@ -687,5 +686,119 @@ theorem peirceExchangeCovariant_forces_zero (hN : 3 ≤ N) (t : ℝ)
       (twistProductOn_firstArgContinuous t) hexch)).symm
 
 end SelectorExchangeMain
+
+/-! ## `prop:n2-necessity` at the level of `Θ` (row 29, gap (b))
+
+The tree's rank-two necessity statement (`Necessity.n2_sp_eq_twistSeq_frame`) is a
+**product-level** identity: `P.sp a b = a^{1/2+it̃} b a^{1/2−it̃}`.  The article states
+`prop:n2-necessity` about the **comparison map** instead, `Θ_a|_{W_n} = exp(ℓ·t̃(n)·𝒥_n)` with
+`ℓ = log(λ₊/λ₋)`.  Those are the same fact, but nothing said so; the equivalence was the route
+and not a theorem.  It is a theorem here.
+
+The bridge is `seqLeftMul_eq_conjLinear_twistFactor` above: once the product is `twistSeq t` at
+a given effect `a`, its left multiplication is conjugation by `a^{1/2+it}` **everywhere**, not
+only on the effects — which is what makes `Θ_a` computable, since the coherence block contains
+no nonzero effect.  Then `Q_{√a}⁻¹` cancels the modulus `√a` exactly (`invSqrt_mul_sqrt`),
+leaving `Θ_a = Ad_{a^{it}}`, and at `a = Ad_U(diag(e^{r_k}))` the phase `a^{it}` is the torus
+unitary `U·U_t(r)·U*`, whose block action `torusU_block` already computes.
+
+★ **The frame index is the thing to check here, and the wall certificate's own record says why**:
+its first version of this statement applied `Θ_a` to the *standard* block while taking a
+`U`-conjugated base point, and was false for that reason.  Every object below carries the same
+`U`: the base point is `Ad_U(diag)`, the block is `Ad_U(blockHerm i j z)`, and the conclusion is
+in `Ad_U`'s image.  `W_n` is `a`'s own coherence space, not the standard one. -/
+
+section ThetaLevel
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+/-- **`Θ_a` at a diagonalized base point is conjugation by `a^{it}`.**  For
+`a = Ad_U(diag(e^{r_k}))` and a product that is `twistSeq t` at that `a`, the comparison map is
+`Ad_{U·U_t(r)·U*}`: the `Q_{√a}⁻¹` half cancels the modulus of the twist factor exactly, leaving
+the pure phase. -/
+theorem theta_eq_conjLinear_torus
+    (P : SequentialProductOn (HermitianMat n ℂ)) {t : ℝ} {r : n → ℝ}
+    (U : Matrix.unitaryGroup n ℂ)
+    {a : HermitianMat n ℂ} (hUa : a = adU (U : Matrix n n ℂ) (diagFamily r))
+    (ha : IsEffect a) (hbd : a.mat.PosDef)
+    (ht : ∀ b : HermitianMat n ℂ, IsEffect b → P.sp a b = HermitianMat.twistSeq t a b) :
+    theta P ha hbd
+      = HermitianMat.conjLinear ℝ
+          ((U : Matrix n n ℂ) * torusU t r * (U : Matrix n n ℂ)ᴴ) := by
+  have hU : (U : Matrix n n ℂ)ᴴ * (U : Matrix n n ℂ) = 1 := by
+    have h := U.property
+    rwa [Matrix.mem_unitaryGroup_iff', Matrix.star_eq_conjTranspose] at h
+  have hU' : (U : Matrix n n ℂ) * (U : Matrix n n ℂ)ᴴ = 1 := by
+    have h := U.property
+    rwa [Matrix.mem_unitaryGroup_iff, Matrix.star_eq_conjTranspose] at h
+  have hkey : (a.cfc fun x => (Real.sqrt x)⁻¹).mat * HermitianMat.twistFactor a t
+      = (U : Matrix n n ℂ) * torusU t r * (U : Matrix n n ℂ)ᴴ := by
+    have hcfc : (a.cfc fun x => (Real.sqrt x)⁻¹)
+        = adU (U : Matrix n n ℂ) ((diagFamily r).cfc fun x => (Real.sqrt x)⁻¹) := by
+      rw [hUa, adU_apply, adU_apply, HermitianMat.cfc_conj_unitary]
+    have htf : HermitianMat.twistFactor a t
+        = (U : Matrix n n ℂ)
+            * (((diagFamily r).cfc Real.sqrt).mat * torusU t r) * (U : Matrix n n ℂ)ᴴ := by
+      rw [hUa, twistFactor_adU_mat _ hU' t, twistFactor_diagFamily]
+    rw [hcfc, htf, adU_apply, HermitianMat.conj_apply_mat]
+    have hpd : (diagFamily r).mat.PosDef := diagFamily_posDef r
+    set V : Matrix n n ℂ := (U : Matrix n n ℂ) with hV
+    set D1 : Matrix n n ℂ := ((diagFamily r).cfc fun x => (Real.sqrt x)⁻¹).mat with hD1
+    set D2 : Matrix n n ℂ := ((diagFamily r).cfc Real.sqrt).mat with hD2
+    calc V * D1 * Vᴴ * (V * (D2 * torusU t r) * Vᴴ)
+        = V * D1 * (Vᴴ * V) * (D2 * torusU t r) * Vᴴ := by noncomm_ring
+      _ = V * (D1 * D2) * torusU t r * Vᴴ := by rw [hU]; noncomm_ring
+      _ = V * torusU t r * Vᴴ := by
+          rw [hD1, hD2, invSqrt_mul_sqrt hpd]; noncomm_ring
+  refine LinearMap.ext fun x => ?_
+  rw [theta]
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, HermitianMat.conjLinear_apply]
+  rw [seqLeftMul_eq_conjLinear_twistFactor P ha ht, HermitianMat.conjLinear_apply,
+    quadRepEquiv_symm_apply, conj_conj_mat, hkey]
+
+/-- **`prop:n2-necessity`, at the level of `Θ`.**  With `a = Ad_U(diag(e^{r_k}))` the comparison
+map acts on the coherence block of `a`'s **own** frame, `Ad_U(W)`, by the rotation through
+`t·(r_i − r_j)` — the article's `Θ_a|_{W_n} = exp(ℓ·t̃(n)·𝒥_n)` with `ℓ = r_i − r_j` the ordered
+log-ratio. -/
+theorem theta_block_rotation
+    (P : SequentialProductOn (HermitianMat n ℂ)) {t : ℝ} {r : n → ℝ}
+    (U : Matrix.unitaryGroup n ℂ)
+    {a : HermitianMat n ℂ} (hUa : a = adU (U : Matrix n n ℂ) (diagFamily r))
+    (ha : IsEffect a) (hbd : a.mat.PosDef)
+    (ht : ∀ b : HermitianMat n ℂ, IsEffect b → P.sp a b = HermitianMat.twistSeq t a b)
+    {i j : n} (hij : i ≠ j) (z : ℂ) :
+    theta P ha hbd (adU (U : Matrix n n ℂ) (blockHerm i j z))
+      = adU (U : Matrix n n ℂ)
+          (blockHerm i j (Complex.exp ((↑(t * (r i - r j)) : ℂ) * Complex.I) * z)) := by
+  have hU : (U : Matrix n n ℂ)ᴴ * (U : Matrix n n ℂ) = 1 := by
+    have h := U.property
+    rwa [Matrix.mem_unitaryGroup_iff', Matrix.star_eq_conjTranspose] at h
+  rw [theta_eq_conjLinear_torus P U hUa ha hbd ht, HermitianMat.conjLinear_apply,
+    ← torusU_block t r hij z]
+  simp only [adU_apply]
+  rw [conj_conj_mat, conj_conj_mat, Matrix.mul_assoc, Matrix.mul_assoc, hU, Matrix.mul_one]
+
+end ThetaLevel
+
+section N2ThetaLevel
+
+/-- **Row 29 gap (b), discharged.**  The wall certificate's `n2_necessity_theta_level`: for an
+arbitrary S1–S7 product with S2 on `H_2(ℂ)` and an invertible effect `a = Ad_U(diag(e^{r_k}))`,
+the comparison map rotates `a`'s own coherence block by `t̃(U)·(r_0 − r_1)`. -/
+theorem n2_theta_block_rotation
+    (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) {r : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0)
+    {a : HermitianMat (Fin 2) ℂ}
+    (hUa : a = adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r))
+    (ha : IsEffect a) (hbd : a.mat.PosDef) (z : ℂ) :
+    theta P ha hbd (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (blockHerm 0 1 z))
+      = adU (U : Matrix (Fin 2) (Fin 2) ℂ)
+          (blockHerm 0 1
+            (Complex.exp ((↑(n2FrameTwist P hS2 U * (r 0 - r 1)) : ℂ) * Complex.I) * z)) :=
+  theta_block_rotation P U hUa ha hbd
+    (fun b hb => n2_sp_eq_twistSeq_frame P hS2 U hr hUa hb) (by decide) z
+
+end N2ThetaLevel
+
 
 end Necessity
