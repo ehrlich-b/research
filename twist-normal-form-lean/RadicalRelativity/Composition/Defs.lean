@@ -113,9 +113,20 @@ theorem nf_eq_zero_iff {x : C} : nf x = 0 ↔ x = 0 := by
     exact absurd h (ne_of_gt (B_pos x hx))
   · rintro rfl; simp [nf]
 
+@[simp] theorem nf_neg (x : C) : nf (-x) = nf x := by
+  simp only [nf_eq_ip, ip_neg_left, ip_neg_right, neg_neg]
+
+theorem nf_smul (r : ℝ) (x : C) : nf (r • x) = r ^ 2 * nf x := by
+  simp only [nf_eq_ip, ip_smul_left, ip_smul_right]
+  ring
+
 theorem nf_add (x y : C) : nf (x + y) = nf x + 2 * ip x y + nf y := by
   simp only [nf, ip, map_add, LinearMap.add_apply]
   rw [B_symm y x]; ring
+
+theorem nf_sub (x y : C) : nf (x - y) = nf x - 2 * ip x y + nf y := by
+  simp only [nf_eq_ip, ip_sub_left, ip_sub_right, ip_symm y x]
+  ring
 
 /-- The **composition law**, in `nf` form. -/
 theorem comp (x y : C) : nf (x * y) = nf x * nf y := B_comp x y

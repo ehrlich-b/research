@@ -785,3 +785,12 @@ import RadicalRelativity.Composition.Instances
 -- with NO associativity hypothesis on A, which relocates where Hurwitz's dimension bound comes
 -- from: not from closure, but from the norm.  Substrate; it moves no row.
 import RadicalRelativity.Composition.Doubling
+-- Hurwitz's theorem, dimension form: a finite-dimensional Euclidean composition algebra has real
+-- dimension 1, 2, 4 or 8 (`finrank_eq_one_or_two_or_four_or_eight`), and `Composition.Instances`
+-- attains all four.  The bound is a contrapositive, not a failure of closure: expanding the
+-- composition law on A + Au forces A to be ASSOCIATIVE (`forced_assoc`), so a non-associative
+-- composition subalgebra has no unit vector orthogonal to it and is therefore everything.
+-- ★ The CLASSIFICATION -- that those four algebras are the only ones up to isomorphism, not just
+-- the only dimensions -- is NOT proved; see `WallCertificates/hurwitz-classification.lean`.
+-- Substrate; it moves no row.
+import RadicalRelativity.Composition.Hurwitz
