@@ -422,4 +422,29 @@ theorem closedBall_half_subset_isEffect (harch : IsArchimedean V) :
   have h := isEffect_half_smul_unit_add harch hx
   rwa [add_sub_cancel] at h
 
+
+/-- **ε–δ continuity on a set, both distances in the order-unit norm**, at the interface's own
+generality.
+
+`ContinuousOn` cannot express this: the carrier has exactly one `TopologicalSpace` instance and
+it comes from the `NormedAddCommGroup` parent, whose norm is independent structure and is not
+the order-unit norm.  So the article's continuity hypotheses have to be written out in ε–δ form
+against `ouNorm` on **both** sides of the map, which is exactly how the manuscript states them.
+
+`Necessity/OrderUnitS2.lean` has the same definition at the concrete carrier
+(`HermitianMat.ContinuousOnOu`) together with the bridge to `ContinuousOn`, which needs the
+two-sided norm comparison and is therefore carrier-specific.  This one is available wherever an
+order unit space is. -/
+def ContinuousOnOu (f : V → V) (s : Set V) : Prop :=
+  ∀ a₀ ∈ s, ∀ ε > 0, ∃ δ > 0, ∀ a ∈ s, ouNorm (a - a₀) < δ → ouNorm (f a - f a₀) < ε
+
+/-- Two maps agreeing on `s` have the same order-unit continuity on `s`. -/
+theorem ContinuousOnOu.congr {f g : V → V} {s : Set V} (h : ContinuousOnOu f s)
+    (hfg : ∀ a ∈ s, f a = g a) : ContinuousOnOu g s := by
+  intro a₀ ha₀ ε hε
+  obtain ⟨δ, hδ, hmain⟩ := h a₀ ha₀ ε hε
+  refine ⟨δ, hδ, fun a ha hd => ?_⟩
+  rw [← hfg a ha, ← hfg a₀ ha₀]
+  exact hmain a ha hd
+
 end OrderUnitSpace

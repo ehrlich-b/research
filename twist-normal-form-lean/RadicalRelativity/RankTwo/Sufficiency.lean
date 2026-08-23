@@ -1924,6 +1924,84 @@ theorem extendSp_restrictSp_on_effects (P : SequentialProductOn V) {a b : V}
   rw [extendSp_sp_effect _ ha hb]
   rfl
 
+/-! ### S2: the article's eighth clause, now writable
+
+`EffectSequentialProduct` above carries S1 and S3–S7.  The article lists S2 — continuity of
+`a ↦ a·b` on the effects, in the **order-unit** norm — as a clause of `def:sp`
+(`main.tex:363-392`), and until 2026-08-23 it could not be a field at abstract generality:
+`OrderUnitSpace`'s carried norm is independent structure, not the order-unit norm, and the tree
+had no abstract order-unit norm to state the clause against.  `OrderUnitSpace.ouNorm` and
+`OrderUnitSpace.ContinuousOnOu` supply exactly that, so the clause is written here.
+
+★ **What is and is not claimed.**  `SpFirstArgContinuousOu` and the tree's
+`SequentialProductOn.FirstArgContinuous` are **different conditions** at this generality, and
+nothing here says otherwise: the second is `ContinuousOn` in the carried topology, and relating
+the two needs a two-sided norm comparison that only a specific carrier can supply
+(`Necessity.firstArgContinuousOu_iff`, on `HermitianMat`).  What is proved here is that the
+article's S2 transports across restriction and extension exactly as the other seven clauses do,
+so `EffectSequentialProductS2` is `def:sp` with all eight clauses and the round trip still
+holds. -/
+
+/-- **The article's S2 for a pinned product**, in the order-unit norm. -/
+def SpFirstArgContinuousOu (P : SequentialProductOn V) : Prop :=
+  ∀ ⦃b : V⦄, IsEffect b →
+    OrderUnitSpace.ContinuousOnOu (fun a : V => P.sp a b) {a : V | IsEffect a}
+
+/-- **S2 as a clause of `def:sp`**, for an article-level effect-domain product: the S2 of its
+extension by zero.  On the effects the extension *is* the product, so this says nothing about
+the extension's off-effect values, which are a convention. -/
+def EffectSequentialProduct.FirstArgContinuousOu (E : EffectSequentialProduct V) : Prop :=
+  SpFirstArgContinuousOu (extendSp E)
+
+/-- S2 restricts: `extendSp (restrictSp P)` agrees with `P` on the effects, and
+`ContinuousOnOu` only ever looks at effects. -/
+theorem restrictSp_firstArgContinuousOu (P : SequentialProductOn V)
+    (h : SpFirstArgContinuousOu P) : (restrictSp P).FirstArgContinuousOu := by
+  intro b hb
+  refine (h hb).congr ?_
+  intro a ha
+  exact (extendSp_restrictSp_on_effects P ha hb).symm
+
+/-- S2 extends, definitionally: the article-level clause *is* the pinned clause of the
+extension. -/
+theorem extendSp_firstArgContinuousOu (E : EffectSequentialProduct V)
+    (h : E.FirstArgContinuousOu) : SpFirstArgContinuousOu (extendSp E) := h
+
+/-- **`def:sp`, all eight clauses in one object.**  S1 and S3–S7 come from
+`EffectSequentialProduct`; S2 is the field. -/
+structure EffectSequentialProductS2 (V : Type*) [OrderUnitSpace V] extends
+    EffectSequentialProduct V where
+  /-- **S2** Continuity of `a ↦ a·b` on the effects, in the order-unit norm. -/
+  first_arg_continuous_ou : toEffectSequentialProduct.FirstArgContinuousOu
+
+/-- Restriction, carrying S2. -/
+def restrictSpS2 (P : SequentialProductOn V) (h : SpFirstArgContinuousOu P) :
+    EffectSequentialProductS2 V :=
+  ⟨restrictSp P, restrictSp_firstArgContinuousOu P h⟩
+
+/-- Extension, carrying S2. -/
+def extendSpS2 (E : EffectSequentialProductS2 V) : SequentialProductOn V :=
+  extendSp E.toEffectSequentialProduct
+
+theorem extendSpS2_firstArgContinuousOu (E : EffectSequentialProductS2 V) :
+    SpFirstArgContinuousOu (extendSpS2 E) := E.first_arg_continuous_ou
+
+/-- **The round trip is still the identity with S2 aboard.**  This is `restrictSp_extendSp`
+plus proof irrelevance in the `Prop`-valued S2 field. -/
+theorem restrictSpS2_extendSpS2 (E : EffectSequentialProductS2 V) :
+    restrictSpS2 (extendSpS2 E) (extendSpS2_firstArgContinuousOu E) = E := by
+  cases E with
+  | mk E h =>
+    simp only [restrictSpS2, extendSpS2, EffectSequentialProductS2.mk.injEq]
+    exact restrictSp_extendSp E
+
+/-- **`def:sp` with all eight clauses is inhabited by exactly the tree's pinned products that
+satisfy the article's S2.** -/
+theorem restrictSpS2_surjective (E : EffectSequentialProductS2 V) :
+    ∃ (P : SequentialProductOn V) (h : SpFirstArgContinuousOu P), restrictSpS2 P h = E :=
+  ⟨extendSpS2 E, extendSpS2_firstArgContinuousOu E, restrictSpS2_extendSpS2 E⟩
+
+
 
 /-- `restrictSp` is injective exactly at the resolution the axioms have: two pinned products
 restrict to the same article-level product iff they agree on every pair of effects. -/

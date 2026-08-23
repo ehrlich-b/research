@@ -116,7 +116,7 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 continuous on the effects, with both distances measured in the ORDER-UNIT norm. -/
 def FirstArgContinuousOu (P : SequentialProductOn (HermitianMat n 𝕜)) : Prop :=
   ∀ ⦃b : HermitianMat n 𝕜⦄, IsEffect b →
-    ContinuousOnOu (fun a => P.sp a b) {a : HermitianMat n 𝕜 | IsEffect a}
+    HermitianMat.ContinuousOnOu (fun a => P.sp a b) {a : HermitianMat n 𝕜 | IsEffect a}
 
 /-- **The paper's S2 and the tree's S2 are the same hypothesis.** -/
 theorem firstArgContinuousOu_iff [Nonempty n] (P : SequentialProductOn (HermitianMat n 𝕜)) :
