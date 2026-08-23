@@ -160,6 +160,19 @@ theorem lin_jordan_apply (p q b w : J) :
       + (q * (p * b * w) - p * b * (q * w)) = 0 :=
   nsmul_eq_zero_iff' (by norm_num) (four_lin2_apply p q b w)
 
+/-- **The linearised identity on the diagonal `p = q = a`:**
+`⁅L_b, L_{a²}⁆ + 2·⁅L_a, L_{ab}⁆ = 0`.
+
+The single most-used consequence of `lin_jordan_apply`: it trades a commutator against `L_{a²}` —
+the operator the quadratic representation is built from — for one against `L_{ab}`, which is one
+degree lower in `a`.  Every step of the ladder toward the fundamental formula runs on it. -/
+theorem lin_jordan_diag (a b w : J) :
+    b * (a * a * w) - a * a * (b * w)
+      + (2 : ℝ) • (a * (a * b * w) - a * b * (a * w)) = 0 := by
+  have h := lin_jordan_apply a a b w
+  rw [two_smul]
+  linear_combination (norm := module) h
+
 /-- **`L_x` commutes with `L_c` when `c ∘ x = x`.** The `1`-eigenvectors of `L_c` are
 operator-compatible with `c`. Five of the six multiplication rules come from this and its
 `0`-eigenvalue twin. -/
