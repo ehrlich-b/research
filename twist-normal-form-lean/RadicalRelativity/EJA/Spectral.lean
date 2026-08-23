@@ -616,7 +616,15 @@ theorem mul_jinvOfResolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamil
   rw [mul_inv_cancel₀ (hlam i), one_smul]
 
 /-- A square root of `∑ᵢ λᵢ cᵢ` relative to the resolution `(c, lam)`: take roots of the
-eigenvalues. -/
+eigenvalues.
+
+★ **This is NOT new capability, and must not be read as any.**  `EJA/Order.lean`'s
+`isSoS_iff_exists_sq` already produces a square root for every element of the cone, by this same
+construction (`∑ᵢ √(max λᵢ 0) • qᵢ`) and via the same `nonneg_coeff_of_isSoS`.  The only thing
+these two declarations add is the same statement one level down — over the ring vocabulary
+(`NonUnitalNonAssocCommRing` + `IsCommJordan`) rather than over a bundled bilinear map `m` — which
+is the side of `EJA/Bridge.lean`'s `ringOfBilinear` crossing the resolution lemmas above live on.
+Use `isSoS_iff_exists_sq` where the order is what matters. -/
 noncomputable def jsqrtOfResolution {n : ℕ} (c : Fin n → J) (lam : Fin n → ℝ) : J :=
   ∑ i, Real.sqrt (lam i) • c i
 
@@ -632,8 +640,9 @@ theorem jsqrtOfResolution_mul_self {n : ℕ} {c : Fin n → J} (hfam : IsOrthIde
 
 omit [IsCommJordan J] in
 /-- **Existence form.**  An element carrying a resolution with nonnegative eigenvalues has a
-square root.  Deriving the hypothesis from `0 ≤ x` in the order of `EJA/Order.lean` is a separate
-step and is not done here. -/
+square root.  ★ Deriving the hypothesis from `0 ≤ x` is *already done* on the bilinear-map side —
+`EJA/Order.lean`'s `nonneg_coeff_of_isSoS` proves a sum of squares has nonnegative coefficients,
+and `isSoS_iff_exists_sq` chains it to exactly this conclusion.  Nothing here supersedes that. -/
 theorem exists_mul_self_eq_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
     {lam : Fin n → ℝ} (hlam : ∀ i, 0 ≤ lam i) {x : J} (hx : x = ∑ i, lam i • c i) :
     ∃ s : J, s * s = x :=
