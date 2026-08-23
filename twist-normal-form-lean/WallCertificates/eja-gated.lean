@@ -1,9 +1,22 @@
 /-
-EJA-GATED CERTIFICATE — rows 13, 16, 17 of STATEMENT-MANIFEST.md
+EJA-GATED CERTIFICATE — rows 13 and 16 of STATEMENT-MANIFEST.md
   (rows 5, 6, 15 were claimed here on 2026-08-10 and are WITHDRAWN the same day — see the
-   WITHDRAWAL block below)
+   WITHDRAWAL block below; ★★★ **row 17 is WITHDRAWN 2026-08-22** — this file's own per-row line
+   has said since 2026-08-10 that it "should be read as WALL-CERTIFIED, not EJA-GATED", and
+   `STATEMENT-MANIFEST.md` carried it as EJA-GATED anyway, a live contradiction at HEAD for twelve
+   days.  Resolved in this file's favour; see the row-17 line for the three non-EJA residues that
+   settle it.)
 Date: 2026-08-10, ARC-8 block 8.6.  Tag at issue: `paperA-arc8-cp4` and later.
-Denominator pin: main.tex blob 205fdf5a (never re-pinned).
+Denominator pin: main.tex blob 205fdf5a **as of the date above**.
+  ★★★ **"(never re-pinned)" DELETED 2026-08-22 — IT WAS FALSE.**  `STATEMENT-MANIFEST.md` re-pinned
+  the denominator to blob `4b0dba30` on 2026-08-22 after the manuscript was brought to JMP form.
+  Nothing about this certificate moves on it: the re-pin verified that the 36-row extraction and the
+  full `\label{...}` set are byte-identical between the two blobs, so no row was added, dropped or
+  renumbered.  What did change is the *line numbers*: every `main.tex` line cited at blob `205fdf5a`
+  is **+2** at blob `4b0dba30` (+3 from row 36 onward).  Line references added below are at the NEW
+  blob and say so.  ★ Other certificates in this directory carry `205fdf5a` as a dated record of
+  what they were written against, which is correct and is left alone; the defect was asserting that
+  the pin had never moved.
 
 WHAT THIS FILE IS, AND WHAT IT IS NOT
 
@@ -60,6 +73,28 @@ THE THREE GATES (the names used throughout, and in EJA-DIVIDEND.md)
   ★ Honest status: (E3) as stated is **not** obviously external, the load-bearing sentence of this
   file's first version was overstated, and whether rows 16/17 can reach FORMALIZED is **OPEN** pending
   a decision about which theorem row 14 actually reserves.
+  ★★★ **THAT QUESTION IS SETTLED, 2026-08-22 — AND IT MOVED NO ROW.  Both halves matter and they
+  point opposite ways, so read them together.**
+    * **SETTLED: (E3) as stated is Koecher / Alfsen–Shultz, not vIR.**  Verified at source.
+      `gate_E3_theta_jordan` below takes `Φ : J ≃ₗ[ℝ] J`, which is **linear by TYPE, not by
+      hypothesis** — there is no linearity premise to drop, because the linearity is in the arrow.
+      The interface makes the same commitment: `ComparisonSetup.Θ : J → (J ≃ₗ[ℝ] J)`
+      (`MasterTheorem/Interface.lean:264`), so `Θ_a`'s linearity is the field's *type* rather than
+      anything the field concludes.  The article does the same thing in prose: `prop:theta`'s proof
+      (`main.tex:775-789`, blob `4b0dba30`) gets "a **unital linear order isomorphism** `Θ_a`" out of
+      vdW Prop 5.3 FIRST, and only then upgrades it to a Jordan automorphism.  So the theorem this
+      gate reserves is the classical unital-linear one, and a Mathlib-grade f.d. EJA layer containing
+      Koecher / AS 2.80 **would** discharge it in-tree.  vIR's genuine delta — order isomorphisms not
+      assumed linear, at JB-algebra generality — is strictly stronger than anything this gate asks
+      for.
+    * **AND IT UNLOCKS NEITHER ROW 16 NOR ROW 17.**  The 2026-08-10 hope recorded above was that
+      discharging (E3) in-tree would let rows 16/17 reach FORMALIZED.  It would not, for reasons that
+      have nothing to do with which theorem (E3) is: row 16 does not *consume* `Theta_jordan` at all
+      (see its per-row line below), row 17 is not EJA-gated at all (see its line), and neither row's
+      binding constraint is any of the three gates (see `EJA-DIVIDEND.md`'s 2026-08-22 retraction of
+      the CLOSES column).  ★ **The pattern is worth keeping: a crux question can be answered cleanly
+      and still be the wrong question.**  Ten days of this file's prose turned on "which theorem does
+      (E3) reserve", and the answer changed no row, because the rows were never gated on (E3).
   ★ A citation inconsistency found in the same pass and **RESOLVED 2026-08-20**: `external-rows.md`
   named the row-14 source "van Ittersum–Reijnders" while `Interface.lean` and this file name it "van
   Imhoff–Roelands" (arXiv:1904.09278).  Checked against the arXiv metadata record for 1904.09278:
@@ -99,8 +134,9 @@ THE THREE GATES (the names used throughout, and in EJA-DIVIDEND.md)
   ★ Rows 5, 6, 15 revert to WALL-CERTIFIED with this arc's attack evidence, and their non-EJA residues
   are now named in the manifest.
 
-PER-ROW: WHICH GATE, AND WHAT IS ALREADY CLOSED IN-TREE (rows 13, 16, 17; the three withdrawn rows'
-lines are retained below with their defects marked, because the retraction is the content)
+PER-ROW: WHICH GATE, AND WHAT IS ALREADY CLOSED IN-TREE (rows 13 and 16; the FOUR withdrawn rows'
+lines — 5, 6 and 15 on 2026-08-10, and 17 on 2026-08-22 — are retained below with their defects
+marked, because the retraction is the content)
 
   row 5  [WITHDRAWN — see above; the ball clause is open and is NOT an EJA gap] `lem:span` — the order-unit half (effects contain the ½-ball about ½e, hence span, hence
                            linear maps agreeing on effects are equal) is CLOSED in-tree on the
@@ -116,11 +152,26 @@ lines are retained below with their defects marked, because the retraction is th
                            (`Necessity/PseudoInverse.lean`).  Residue = the spectral inverse at EJA
                            generality.  GATE (E1) — ★ **the RESOLUTION half of (E1) is now
                            DISCHARGED (2026-08-22, see below); this row does NOT move, because its
-                           residue was never the resolution.**  A spectral inverse is a functional
-                           calculus on the resolution, and no functional calculus is built.  What
-                           has changed is that the residue is now a NAMED, SMALLER object — invert
-                           the eigenvalues of an existing resolution — rather than the whole
-                           spectral theorem.
+                           residue was never the resolution.**  What has changed is that the residue
+                           is now a NAMED, SMALLER object — invert the eigenvalues of an existing
+                           resolution — rather than the whole spectral theorem.
+                           ★★★ **THE REASON GIVEN HERE WAS WRONG, CORRECTED 2026-08-22.**  This line
+                           read "A spectral inverse is a functional calculus on the resolution, and
+                           no functional calculus is built."  A **polynomial** functional calculus at
+                           EJA generality IS built: `RadicalRelativity.EJA.jeval`
+                           (`EJA/Spectral.lean:98`), `jeval x : ℝ[X] →ₗ[ℝ] J`, with its
+                           multiplication rule `jeval_mul` (`:128`).  And the spectral inverse over a
+                           finite spectrum is a polynomial — interpolate `λ ↦ λ⁻²` at the eigenvalues
+                           — so it needs no *general* calculus.  What is actually absent is narrower:
+                           no declaration evaluates a polynomial ON a resolution (`jeval x p =
+                           ∑ᵢ λᵢ p(λᵢ) qᵢ` is not in the tree), and no declaration produces an
+                           inverse.  **The row does not move, and this correction does not resize its
+                           residue either — the 08-22 (E1) discharge above did that.  What was false
+                           was only the stated reason.**  ★ The reason it survived: it rested on
+                           a grep of the EJA declaration list for `calculus|cfc|sqrt|inverse`, which
+                           returns 0 hits and is *accurate* — `jeval` contains none of the four
+                           strings.  Standing rule, a further time: **an accurate grep is evidence
+                           about a string, not evidence of absence.**
   row 15 [WITHDRAWN — see above; the `Stab(F)°` clause is non-EJA and open] `lem:frame-fix` — the non-EJA content is closed in-tree.  Residue = the Peirce-block
                            statements (Θ_r preserves each block; L_{a(r)} is block-diagonal).
                            GATE (E2) — ★ now DISCHARGED, see below; the row stays WITHDRAWN on its
@@ -128,10 +179,46 @@ lines are retained below with their defects marked, because the retraction is th
   row 16 `lem:coalescence` — ★ BOTH CLAUSES ARE ALREADY PROVED AT THE INTERFACE'S OWN ABSTRACT
                            GENERALITY (`MasterTheorem.CoalescenceSetup.coalescence_J2q` and
                            `coalescence_block`), and instantiated on the concrete carrier.  There is
-                           NO missing mathematics.  Residue = that `Theta_jordan` is CARRIED, plus
-                           `Theta_fix`.  ★ **GATE (E3) ALONE, updated 2026-08-20** — (E2) is
-                           DISCHARGED (see below: `gate_E2_peirce` is now a proved theorem, via
-                           `EJA/InterfaceInstance.lean`'s `toCoalescenceSetup`).
+                           NO missing mathematics.
+                           ★★★ **"Residue = that `Theta_jordan` is CARRIED, plus `Theta_fix`.  GATE
+                           (E3) ALONE" IS FALSE IN BOTH HALVES — CORRECTED 2026-08-22.**
+                           (a) **`Theta_jordan` is consumed by NEITHER clause.**  `coalescence_J2q`'s
+                           entire proof term is `C.Θ_fix a ha b (C.simDiag_opCommute i j a b hsc hb)`
+                           (`MasterTheorem/Coalescence.lean:140-142`), and `coalescence_block` is its
+                           `r i = r j` specialization through `aOf_inv` / `aOf_scalarOn` /
+                           `block_mem_J2` (`:148-151`).  The article agrees: at `main.tex:963-964`
+                           (blob `4b0dba30`) `lem:coalescence`'s proof invokes `prop:theta`'s
+                           **fixing** clause — "so \Cref{prop:theta} gives Θ_a(b) = b" — and then
+                           `lem:span`, and never its Jordan-automorphism clause.  `Θ_jordan` touches
+                           this row only as a `ComparisonSetup` field that any *instance* must supply
+                           (concretely the hypothesis `ThetaPreservesJordan`,
+                           `Necessity/ComparisonInstance.lean:381`).  That is a cost of the bundle,
+                           not a residue of this row's mathematics.
+                           (b) **`Theta_fix` is not (E3).**  (E3) is `Theta_jordan`, and nothing else.
+                           `Θ_fix` is vdW **Prop 5.5 in span-extended form** (`Interface.lean:284-290`,
+                           whose own docstring says Prop 5.5 is stated at the effect level and "the
+                           paper extends it to all of `J` by linearity (effects span `J`)").  That
+                           extension is `lem:span` — **manifest row 5**, the row WITHDRAWN from
+                           EJA-GATED in the block above precisely because its residue is non-EJA.
+                           ★★★ **This is the FOURTH instance of the error the WITHDRAWAL block above
+                           documents three times: classify a row by its LARGEST residue and let that
+                           stand for the WHOLE residue.**  Here it ran in both directions at once —
+                           the item named as the residue (`Theta_jordan`) is not a residue of this row
+                           at all, and the item that is (`Theta_fix`) was filed under a gate it does
+                           not belong to.  Naming the biggest thing you can see is not the same act as
+                           checking the complement, and this file exists to make that distinction.
+                           ★ `EJA/InterfaceInstance.lean:54-55` has recorded the true thing since it
+                           was written — "Row 16 rests on `Θ_fix` as much as on the FK three" — and
+                           this certificate contradicted it at HEAD until today.
+                           ★★ **CONSEQUENCE DELIBERATELY LEFT OPEN.**  EJA-GATED requires every
+                           non-EJA clause to be closed in-tree first, and `Θ_fix`'s span extension is
+                           a non-EJA import.  On the WITHDRAWAL block's own test row 16's EJA-GATED
+                           label is therefore in question.  It is NOT changed here: this pass was
+                           scoped to the stated reason, and moving a terminal state is a campaign
+                           decision.  Recorded so that it gets decided rather than inherited.
+                           ★ (E2) IS still DISCHARGED (see below: `gate_E2_peirce` is a proved
+                           theorem via `EJA/InterfaceInstance.lean`'s `toCoalescenceSetup`) — that
+                           half of the 2026-08-20 update stands; only "(E3) ALONE" falls.
   row 17 `lem:homomorphism` — the hyperplane clause closed in ARC-6.  GATE (E3) alone, as row 16.
                            ★ **BUT ROW 17 IS NOT WHOLLY EJA-GATED and its listing here overstates**:
                            `DiagonalHomSetup`'s `ρ`, `ρ_skew`, `dχAdd`, `dχAdd_cont` and
@@ -141,6 +228,38 @@ lines are retained below with their defects marked, because the retraction is th
                            mis-classification that withdrew rows 5, 6 and 15 above: classifying a row
                            by its BIGGEST residue and letting that stand for its WHOLE residue.
                            Row 17 should be read as WALL-CERTIFIED, not EJA-GATED.
+                           ★★★ **AND IT NOW IS — CONTRADICTION RESOLVED 2026-08-22, IN THIS FILE'S
+                           FAVOUR.**  `STATEMENT-MANIFEST.md` carried row 17 in terminal state
+                           EJA-GATED from 2026-08-10 while this line said it should not be: a live
+                           contradiction at HEAD, in two of the campaign's own decision instruments,
+                           for twelve days.  The manifest is corrected rather than this file, because
+                           the residue is checkable and it is non-EJA on **three independent counts**,
+                           none of which is (E1), (E2) or (E3):
+                             * `DiagonalHomSetup` (`MasterTheorem/DiagonalHom.lean:180-193`) carries
+                               `ρ`, `ρ_skew`, `dχAdd`, `dχAdd_cont` and `coalescence_diff` as FIELDS,
+                               and their own docstrings call them "interface data; the paper's
+                               analytic differentiation of `χ̃`, not constructed here" and "a cited
+                               hypothesis".  No Jordan axiomatization produces an analytic
+                               differential or a continuity hypothesis;
+                             * the article's statement includes "`→ Stab(F)^∘`", which needs the
+                               stabilizer as a group with an identity component — vocabulary two
+                               other certificates in this directory already record as absent
+                               (`frame-geometry.lean:17`, `differential-trio.lean:161`), and the
+                               same non-EJA clause that withdrew row 15.  ★ Precision, since one of
+                               those two prices it: `differential-trio.lean:161` calls this residue
+                               **packaging** rather than missing mathematics (`torusU_block` has the
+                               content; the quotient by the global phase is stated nowhere).  That
+                               makes it cheap.  It does not make it EJA;
+                             * `Θ_r` is the comparison map of the *unknown sequential product*, and
+                               the order-unit/effect layer that product lives on is supplied by no
+                               gate — see `EJA-DIVIDEND.md`'s 2026-08-22 retraction and the
+                               measurement behind it.  ★ That measurement is dated and is being
+                               falsified on purpose (`EJA/Order.lean`, in progress the same day);
+                               re-run it before quoting it.  The first two counts above do not
+                               depend on it.
+                           Row 17 is **WALL-CERTIFIED**, its evidence is
+                           `WallCertificates/differential-trio.lean` (which covers rows 16, 17, 18
+                           with zero gaps), and EJA-GATED now stands for rows **13 and 16**.
 
   ★ Note what the shape of this list means.  Four of the six rows have their mathematics done
   somewhere; what they lack is that the ARTICLE'S hypothesis class is not expressible.  That is a
@@ -241,8 +360,14 @@ interpolation bookkeeping.
 as "spectral resolution into a Jordan frame with real eigenvalues, AND the functional calculus on
 it".  Two parts of that phrase are NOT discharged by the theorem below and are not built anywhere:
 
-  * **the functional calculus** — nothing maps `f : ℝ → ℝ` to `∑ f(λᵢ) qᵢ` and proves it is a
-    homomorphism.  This is what row 13's spectral inverse needs.
+  * **the functional calculus for an arbitrary `f : ℝ → ℝ`** — nothing maps such an `f` to
+    `∑ f(λᵢ) qᵢ` and proves it a homomorphism.  ★★ **Read that scope literally, corrected
+    2026-08-22.**  The *polynomial* calculus exists at this generality — `jeval x : ℝ[X] →ₗ[ℝ] J`
+    (`EJA/Spectral.lean:98`) with `jeval_mul` (`:128`) — and row 13's spectral inverse is a
+    polynomial value, so the earlier gloss "this is what row 13's spectral inverse needs" was false.
+    What row 13 needs, exactly, is the evaluation identity `jeval x p = ∑ᵢ λᵢ p(λᵢ) qᵢ` on a
+    resolution plus the interpolation that inverts the eigenvalues.  Neither is written; neither is
+    the general calculus.
   * **primitivity** — a Jordan *frame* is a complete orthogonal family of PRIMITIVE idempotents.
     The `qᵢ` below are orthogonal, complete and have real coefficients; they are NOT shown
     primitive, and for a repeated eigenvalue they are not.
@@ -357,6 +482,12 @@ tree-facing ingredients.
   ALONE.**  `STATEMENT-MANIFEST.md` already said this on 08-13; this file did not, and the two
   contradicted each other at HEAD for a week — in the file that teaches "fix the row, not just the
   footnote."
+  ★★★ **HALF OF THAT CONSEQUENCE IS WITHDRAWN 2026-08-22.**  "(E2) is DISCHARGED" stands.  "rows
+  16/17 are gated by (E3) ALONE" is false: row 16 never consumed `Theta_jordan`, and row 17 is not
+  EJA-GATED — see both per-row lines above.  ★ Note the shape of the propagation error.  The
+  correction of 08-20 was real, it was applied in the right file, and it carried a *second* clause
+  that had never been checked; the reconciliation of a contradiction is a good place to smuggle one
+  in, because the reader's attention is on the half being fixed.
   ★ And the stated *reason* for the weakening no longer holds: `Real.exp` is available —
   `EJA/InterfaceInstance.lean` imports `Mathlib.Analysis.SpecialFunctions.Exp` and uses exactly that
   form.  **A hypothesis weakened for an import-convenience reason, with the weakening's cost
@@ -379,20 +510,37 @@ theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (H : JB
       p_sum := hp_sum }
   exact ⟨E.J2', E.ScalarOn', E.aOfScalar', E.blockMem', E.simDiag'⟩
 
-/-! ### GATE (E3) — `Theta_jordan` derivable, AND IT IS EXTERNAL
+/-! ### GATE (E3) — `Theta_jordan` derivable — ★★★ AND IT GATES NO MANIFEST ROW (2026-08-22)
 
-Gates the other half of rows 16/17.  ★★ This is manifest row 14 `prop:theta` at van
-Imhoff–Roelands generality, which is PRE-REGISTERED EXTERNAL.  Building the axiomatization makes it
-statable; it does not prove it. -/
+★★★ **THIS HEADER READ "Gates the other half of rows 16/17.  ★★ This is manifest row 14
+`prop:theta` at van Imhoff–Roelands generality, which is PRE-REGISTERED EXTERNAL."  BOTH SENTENCES
+ARE WITHDRAWN.**  Row 16 does not consume `Theta_jordan` (see its per-row line above: the whole
+proof term of `coalescence_J2q` is `Θ_fix` composed with `simDiag_opCommute`), and row 17 is not
+EJA-GATED at all.  As for the identification with row 14: the gate below assumes `Φ` **linear by
+type**, so it is the classical Koecher / Alfsen–Shultz theorem, not vIR's JB-generality version —
+settled at source 2026-08-22, see the header block.
 
-/-- **GAP — GATE (E3), van Imhoff–Roelands.**  A unital order isomorphism of the cone preserves the
-Jordan product.  Gates: the `Theta_jordan` half of rows 16 and 17.
+What the statement below still is: an honest, falsifiable Lean statement of the one
+`ComparisonSetup` field that a JB-premised axiomatization would make derivable.  What it is NOT any
+longer: the thing standing between any manifest row and FORMALIZED. -/
+
+/-- **GAP — GATE (E3): `Theta_jordan` derivable.**  A unital *linear* order isomorphism of the cone
+preserves the Jordan product.
+
+★★★ **"Gates: the `Theta_jordan` half of rows 16 and 17" — WITHDRAWN 2026-08-22.**  It gates
+neither.  Row 16's two clauses never invoke `Θ_jordan`; row 17's residue is analytic and
+group-theoretic, not Jordan-algebraic.  This declaration now gates a `ComparisonSetup` FIELD and
+nothing above it.  ★ Keeping the statement is deliberate: it is the one place the field and the
+theorem that would replace it can be read side by side, and the `example` at the bottom of this file
+exists for exactly that comparison.
 
 ★★★ **CLAIM WEAKENED — see the header block; this paragraph contradicted it for 200 lines.**  It read
 "THIS GATE IS PRE-REGISTERED EXTERNAL (row 14)", and the diff audit found the retraction had been applied
 to the header and not here.  As stated this gate assumes `Φ` LINEAR, so it is the classical
 Koecher/Alfsen–Shultz theorem, not vIR's JB-generality version; whether rows 16/17 can reach FORMALIZED
-is **OPEN**.  Original text follows.
+is **OPEN**.  ★★★ **NO LONGER OPEN, 2026-08-22: the theorem is settled as Koecher/AS (the `Φ` above is
+linear by TYPE, not by hypothesis), and rows 16/17 do not turn on it either way.**  See the header
+block.  Original text follows.
 ★★ (formerly:) **THIS GATE IS PRE-REGISTERED EXTERNAL (row 14).**  Discharging it is NOT in ARC-8's scope and
 would not be in the scope of the axiomatization either — the axiomatization's contribution is that
 this statement becomes expressible at the article's generality, so `ComparisonSetup.Θ_jordan` can be a
@@ -406,9 +554,14 @@ theorem gate_E3_theta_jordan [FiniteDimensional ℝ J] (C : ComparisonSetup J) (
 /-! ### What is ALREADY closed, made self-evidencing
 
 None of these is a gap.  They compile, so a reader who suspects the per-row reading above is
-over-generous can check it here rather than take it on trust.  ★ In particular rows 16 and 17 have no
-missing mathematics at the interface's own generality — which is why their residue is (E3), a
-citation, and not a proof. -/
+over-generous can check it here rather than take it on trust.
+★★★ **THE SENTENCE THAT STOOD HERE — "In particular rows 16 and 17 have no missing mathematics at
+the interface's own generality — which is why their residue is (E3), a citation, and not a proof" —
+IS WITHDRAWN 2026-08-22.**  Its first half is true and its second half is false, which is the shape
+that made it durable.  Row 16's residue is `Theta_fix` (vdW Prop 5.5 span-extended by `lem:span`,
+manifest row 5), not (E3); row 17 is not EJA-GATED.  ★ **Note where the false half sat: in a summary
+sentence, three hundred lines away from the per-row lines it summarised, introduced by "in
+particular".**  The per-row line for row 17 had contradicted it since the day both were written. -/
 
 /-- Row 16's SECOND clause at the interface's abstract generality — **in the tree**. -/
 example (C : CoalescenceSetup J) {a b : J} {i j : Fin C.n}

@@ -16,8 +16,30 @@ is a citation, not a gap.
 | 10 | `prop:bridge` | Cited result | none, by design | that standard-product compatibility is exactly Jordan operator commutation |
 | 1 | `mthm:master` | Stated over an *abstract* simple EJA, so the one-theorem form needs Jordan–von Neumann–Wigner | **the ℝ and ℂ rows outright** (`real_classification`, `complex_classification_unconditional`, both `+ _ouNorm`), each carrying only S1–S7 + S2 + a dimension bound, both Lean-core | JvNW: that every f.d. simple EJA is one of the four types. The campaign's one pre-registered permanent import |
 | 2 | `mthm:omnibus` | Same, plus the summand decomposition | `MasterTheorem.Central.central_decomposition` (componentwise identity) | JvNW again, plus summand inheritance of S1–S7 (which is row 12's interior part, and is **not** external — see `abstract-tier.lean`) |
-| 14 | `prop:theta` | The article states it at van Imhoff–Roelands' JB-algebra generality | derived on **both** concrete carriers from in-tree Kadison rigidity | vIR's JB-algebra-level statement |
+| 14 | `prop:theta` | ★★★ **The reason recorded here was FALSE and is corrected 2026-08-22 — see "A third thing" below. The row stays EXTERNAL; only the reason changes.** It read "The article states it at van Imhoff–Roelands' JB-algebra generality". Corrected: the article *cites* this step rather than proving it — the row-4/row-10 reason — and what it cites is satisfiable by the classical theorem it names alongside vIR | derived on **both** concrete carriers from in-tree Kadison rigidity | ★★★ **CORRECTED 2026-08-22**: formerly "vIR's JB-algebra-level statement". At most **the classical unital-linear-order-isomorphism theorem (Koecher / Alfsen–Shultz 2.80) at f.d. EJA generality**. vIR's JB-generality version is strictly stronger than this row's own statement requires |
 | 21 | `thm:albert` | Needs the unscoped Albert-algebra M2 machinery | `MasterTheorem.luders_albert_produced` at skeleton level, from cited Spin(8) block injectivity | the M2-for-Albert equational algebra. ★ **NOT the octonions** — see below |
+
+## A third thing, and it is a defect in this table rather than a warning (2026-08-22)
+
+**Row 14's stated reason was false against the manuscript, and the row is external anyway.** Read
+at `main.tex:775-789` (blob `4b0dba30`), `prop:theta` is stated on the article's own `J`, which its
+proof calls "a finite-dimensional JB-algebra". The proof gets linearity **first**, from van de
+Wetering's Prop 5.3 — "constructs a *unital linear order isomorphism* `Θ_a`" — and only then
+upgrades it to a Jordan automorphism, citing van Imhoff–Roelands Cor. 2.5 **and, for exactly that
+step, Alfsen–Shultz classically**. So the theorem the row needs is the classical unital-*linear*
+one. vIR's genuine content is order isomorphisms that are *not* assumed linear, at JB-algebra
+generality; the article never asks for that, and neither does the Lean interface, whose
+`ComparisonSetup.Θ : J → (J ≃ₗ[ℝ] J)` (`MasterTheorem/Interface.lean:264`) makes linearity the
+field's **type**. The external register was reserving a strictly stronger theorem than the row's own
+statement requires.
+
+★★ **What is NOT changed, and this is the point worth carrying: the decision and its reason came
+apart, and only the reason was wrong.** Row 14's externality is a pre-registered ARC-5/6 decision;
+it is not relitigated here and this pass did not attempt to. But a pre-registered decision protects
+the *decision*, not the sentence written under it — and this sentence had been load-bearing
+elsewhere: `eja-gated.lean` built an inference about rows 16/17 on top of it, and
+`STATEMENT-MANIFEST.md` repeated it in the ceiling arithmetic and in row 14's own status cell. A
+reason nobody may re-open is a reason nobody re-reads.
 
 ## Two things about this table that are easy to get wrong
 

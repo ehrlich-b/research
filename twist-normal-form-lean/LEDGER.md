@@ -191,6 +191,18 @@ JB-algebra premises (Jordan identity, formal reality, cone of squares) so that t
 standing decision instrument and its verdict is unchanged: the axiomatization CLOSES rows 13, 16, 17,
 is PARTIAL on 5, 6, 8, 14, 15, 22, and does **nothing** for the entire rank-two lane.
 
+★★★ **THE CITED VERDICT WAS RETRACTED ON 2026-08-22, AFTER THESE ORDERS WERE WRITTEN. The scope
+above is unchanged; the pricing under it is not.** `EJA-DIVIDEND.md`'s CLOSES column is now **empty**:
+rows 13, 16 and 17 are retracted to PARTIAL, so the count is CLOSES 0 / PARTIAL 9 (5, 6, 8, 13, 14,
+15, 16, 17, 22) / NOTHING 15. The reason is that all three gates are Jordan-algebraic while those
+three rows are blocked on **order structure** — `SequentialProductOn` is declared over
+`[OrderUnitSpace V]` (`SequentialProduct.lean:244`) and `RadicalRelativity/EJA/` contains zero
+occurrences of `OrderUnitSpace` and zero of `IsEffect`, measured per file across all 15 files. ★ **This
+does NOT fire the do-it-unless-it-does-literally-nothing test** (nine rows still move in part) and it
+changes no status word and no coverage count; the census stays 12 FORMALIZED / 19 PARTIAL / 5 ABSENT.
+Read `EJA-DIVIDEND.md`'s "The decision, on this evidence" before quoting any verdict from this
+paragraph.
+
 **WHAT THE GROUND ACTUALLY LOOKS LIKE (scouted 2026-08-12, first move of this arc).** Mathlib
 v4.28.0 contains exactly one Jordan-algebra file, `Mathlib/Algebra/Jordan/Basic.lean`, 237 lines:
 the classes `IsJordan` / `IsCommJordan`, five operator-commutation lemmas (`commute_lmul_rmul` and
@@ -494,6 +506,12 @@ as designed for the second time this arc, after the power-associativity refutati
 ★ **No manifest row moves.** Row 16 rests on four hypotheses; three are now discharged on the
 concrete carrier, and `Θ_fix` (vdW Prop 5.5) plus `Θ_jordan` (M3, via `ThetaPreservesJordan`) remain
 cited. The EJA-GATED terminal state stands with its **(E2) half discharged and only (E3) remaining**.
+★★★ **"only (E3) remaining" WITHDRAWN 2026-08-22.** The sentence before it is exactly right — `Θ_fix`
+**and** `Θ_jordan` both remain cited — and this one drops the wrong survivor. Row 16 does not consume
+`Θ_jordan` at all (`coalescence_J2q`'s whole proof term is `C.Θ_fix a ha b (C.simDiag_opCommute …)`,
+`MasterTheorem/Coalescence.lean:140-142`; the article's proof at `main.tex:963-964` uses `prop:theta`'s
+*fixing* clause and `lem:span`), and `Θ_fix` is not a gate — it is vdW Prop 5.5 span-extended by
+`lem:span`, manifest row 5, non-EJA. "No manifest row moves" stands.
 
 **Verification:** `lake build` 3121 jobs, 0 errors; `AxiomAudit.lean` PASS — **164** tracked modules
 == frozen 164-name manifest, custom axioms exactly `[]`; `ejaComparison` `#print axioms`-checked; the

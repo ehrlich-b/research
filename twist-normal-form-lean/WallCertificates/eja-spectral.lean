@@ -140,6 +140,30 @@ this certificate's statement, and two parts of that wider scope are not built:
    spectral inverse — actually needs, so **row 13 does not move**, and neither do rows 16/17.
    ★ The `cfc` on `HermitianMat` (`Hermitian/Resolution.lean`, `Hermitian/CfcPoly.lean`) is the
    concrete-carrier version and is Mathlib's, not an EJA-generality one.
+   ★★★ **THE HEADLINE OF THIS ITEM IS FALSE AND ITS CONCLUSION SURVIVES — CORRECTED 2026-08-22,
+   HOURS AFTER IT WAS WRITTEN, BY THE PASS THAT READ IT.** A **polynomial** functional calculus at
+   EJA generality is built, in this very file's target: `RadicalRelativity.EJA.jeval`
+   (`EJA/Spectral.lean:98`), `jeval x : ℝ[X] →ₗ[ℝ] J`, `jeval x p = ∑ₙ p.coeff n • jpow x n`, with
+   multiplicativity as `jeval_mul` (`:128`). It is the file's central object — every step of the
+   route table above is stated in terms of it — and **its name contains none of the four search
+   strings**. The `f : ℝ → ℝ` sentence is literally true and the "No functional calculus" heading
+   over it is not.
+   ★★ **And the inference to row 13 was wrong, not just the heading.** A spectral inverse over a
+   *finite* spectrum is a polynomial value: interpolate `λ ↦ λ⁻²` at the eigenvalues and
+   `jeval x p = ∑ᵢ λᵢ p(λᵢ) qᵢ` is `∑ᵢ λᵢ⁻¹ qᵢ`. So row 13 never needed a general calculus. What
+   it does need, and what is genuinely absent, is narrower and should be priced as such: **the
+   evaluation identity `jeval x p = ∑ᵢ λᵢ p(λᵢ) qᵢ` on a resolution is not in the tree** (no
+   `jpow`-of-a-diagonal-family lemma exists — `EJA/Frame.lean` and `EJA/Orthogonal.lean` declaration
+   lists checked 2026-08-22), **and no declaration produces an inverse.** Row 13 does not move and
+   its residue does not shrink; only the stated reason changes.
+   ★★★ **This is the standing rule a further time, and the third time in this file: an accurate grep
+   is evidence about a string, not evidence of absence.** The grep above is correct — re-run it and
+   it still returns 0. Two items further down, the same file records itself asserting a `primitive`
+   count it had not run, and corrects it with "grep the declaration list, not the file text". This
+   item *did* grep the declaration list. **The declaration list was the right instrument and the
+   search terms were still a guess about vocabulary**, which is the failure one level up: the first
+   move is to READ the declaration list of the file in question, not to filter it by what you expect
+   the names to be.
 2. **No primitivity.**
    `grep -rn "^def \|^theorem \|^lemma \|^structure \|^abbrev \|^noncomputable def " RadicalRelativity/ --include="*.lean" | grep -i primitive`
    → **0 hits** (run 2026-08-22): no declaration defines or asserts primitivity. A Jordan
