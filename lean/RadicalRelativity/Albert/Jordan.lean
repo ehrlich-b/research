@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Albert.Inner
+import Mathlib.Algebra.Jordan.Basic
 
 set_option linter.style.longLine false
 
@@ -80,8 +81,6 @@ theorem mixed_moufang_right (p q r s : Octonion) :
       = mul (mul (mul (conj q) (conj r)) s) (conj r)
         + (2 * octIp (mul (conj p) (conj q)) s) • p := by
   ext i; fin_cases i <;> simp [mul, conj, octIp, Fin.sum_univ_eight, Fin.isValue] <;> ring
-
-end Octonion
 
 end Octonion
 
@@ -211,6 +210,52 @@ theorem jordan_off_zero (a b : h3O) :
     + ((a.diag 0 - a.diag 2) / 4) • polar_right_alt (a.off 2) (b.off 2) (a.off 0)
     + ((b.diag 1 - b.diag 2) / 8) • polar_right_alt (a.off 2) (a.off 2) (a.off 0)
     - ((b.diag 1 - b.diag 2) / 8) • polar_left_alt (a.off 1) (a.off 1) (a.off 0)
+
+/-! ## The remaining four components, by the cyclic automorphism -/
+
+theorem jordan_diag_one (a b : h3O) :
+    (jordanMul (jordanMul a b) (jordanMul a a)).diag 1
+      = (jordanMul a (jordanMul b (jordanMul a a))).diag 1 := by
+  simpa only [jordanMul_cyc, cyc_diag_zero] using jordan_diag_zero (cyc a) (cyc b)
+
+theorem jordan_diag_two (a b : h3O) :
+    (jordanMul (jordanMul a b) (jordanMul a a)).diag 2
+      = (jordanMul a (jordanMul b (jordanMul a a))).diag 2 := by
+  simpa only [jordanMul_cyc, cyc_diag_zero, cyc_diag_one] using
+    jordan_diag_zero (cyc (cyc a)) (cyc (cyc b))
+
+theorem jordan_off_one (a b : h3O) :
+    (jordanMul (jordanMul a b) (jordanMul a a)).off 1
+      = (jordanMul a (jordanMul b (jordanMul a a))).off 1 := by
+  simpa only [jordanMul_cyc, cyc_off_zero] using jordan_off_zero (cyc a) (cyc b)
+
+theorem jordan_off_two (a b : h3O) :
+    (jordanMul (jordanMul a b) (jordanMul a a)).off 2
+      = (jordanMul a (jordanMul b (jordanMul a a))).off 2 := by
+  simpa only [jordanMul_cyc, cyc_off_zero, cyc_off_one] using
+    jordan_off_zero (cyc (cyc a)) (cyc (cyc b))
+
+/-! ## The Jordan identity and the `IsCommJordan` instance -/
+
+/-- **The Jordan identity on `h₃(𝕆)`**: `(a ∘ b) ∘ a² = a ∘ (b ∘ a²)`. -/
+theorem jordanMul_jordan (a b : h3O) :
+    jordanMul (jordanMul a b) (jordanMul a a)
+      = jordanMul a (jordanMul b (jordanMul a a)) :=
+  ext_six (jordan_diag_zero a b) (jordan_diag_one a b) (jordan_diag_two a b)
+    (jordan_off_zero a b) (jordan_off_one a b) (jordan_off_two a b)
+
+/-- The Jordan product as Mathlib's `CommMagma`.  This is the only `Mul h3O` in the tree; it
+carries no additive data, so it does not reintroduce the `AddCommGroup` diamond that
+`Albert/Mul.lean` bundles the product to avoid. -/
+instance instCommMagma : CommMagma h3O where
+  mul := jordanMul
+  mul_comm := jordanMul_comm
+
+theorem mul_eq_jordanMul (a b : h3O) : a * b = jordanMul a b := rfl
+
+/-- **`h₃(𝕆)` is a commutative Jordan algebra**, in Mathlib's own class. -/
+instance instIsCommJordan : IsCommJordan h3O where
+  lmul_comm_rmul_rmul a b := jordanMul_jordan a b
 
 end h3O
 
