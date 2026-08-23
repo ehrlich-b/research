@@ -6,6 +6,26 @@ silently moves the target and makes the count unfalsifiable. Created 2026-08-08 
 **5.0** of the ARC-5 orders (`LEDGER.md`; superseded as campaign SSOT by ARC-6, 2026-08-08,
 then by ARC-7, 2026-08-09).
 
+
+> ## ★★★ SCOPE DECISION 2026-08-23: THE EXTERNAL PRE-REGISTRATION IS REVERSED
+>
+> Bryan, verbatim: **"I want to 'reach ground' on everything / So formalize anything you need
+> that's imported."**
+>
+> The six pre-registered EXTERNAL rows (1, 2, 4, 10, 14, 21) and row 8, whose residue is now
+> purely its three cited clauses, are **IN SCOPE from this date**. `WallCertificates/
+> external-rows.md` calls closing them "out of scope *by design*"; that design decision is
+> superseded, by the author, on the record.
+>
+> What this commits to, named so nobody discovers it later: van de Wetering's representation
+> theorem (row 4, which `main.tex` says the paper "never claims to reprove"), Jordan-von
+> Neumann-Wigner (row 2), Yokota's Spin(8) triality (row 21), Koecher / Alfsen-Shultz at f.d. EJA
+> generality (row 14), and vdW Thm A.6 + Props 4.19-4.20 (row 8).
+>
+> ★ **The pre-registration is not deleted.** ARC-5/6 registered these as imports and that record
+> stands as what was believed then. This note is the reversal, dated, with its authority named.
+> A row that reaches FORMALIZED under it must say so in its own cell.
+
 ## The pin
 
 | | |
