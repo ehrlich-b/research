@@ -28,16 +28,27 @@ section carries `[Ring C]` on top of the composition-algebra bundle — that is,
 * **does not** cover the octonionic case at any rank, `n = 3` included.  `H_3(𝕆)` is classically
   a Jordan algebra and this tree proves the Jordan identity for it by hand — but on the *other*
   carrier, `Albert/Carrier.lean`'s `h3O`, and `EJA/AlbertCarrier.lean` installs the class there.
-  ★ **No claim is made here relating `HermMat (Fin 3) Octonion` to `h3O`.**  As
-  `Composition/HermMat.lean`'s docstring records, the two are different types and **no map
-  between them is constructed anywhere in the tree**, so `Albert/Jordan.lean`'s Jordan identity
-  does not transfer and `EJA/AlbertCarrier.lean`'s instance is not an instance on `HermMat`.
-  Extending the instance below to `𝕆` would need that map, or an octonionic proof of
-  `jmul_jordan_of_assoc`; neither exists.
+  ★ **No claim is made here relating `HermMat (Fin 3) Octonion` to `h3O`.**  Extending the
+  instance below to `𝕆` would need a map between the two carriers, or an octonionic proof of
+  `jmul_jordan_of_assoc`.
+
+★★ **Narrowed 2026-08-23.**  The paragraph above used to continue "…and **no map between them is
+constructed anywhere in the tree**, so `Albert/Jordan.lean`'s Jordan identity does not transfer…;
+neither exists."  That is now false.  `EJA/AlbertBridge.lean` — downstream of this file, so
+invisible from here — constructs `toHermMat : h3O ≃ₗ[ℝ] HermMat (Fin 3) Octonion`, proves it
+intertwines the two products, and transports the Jordan identity, so
+`HermMat (Fin 3) Octonion` **does** carry `EJA/Class.lean`'s class; that file also gets the
+identity on `HermMat (Fin 3) C` for every finite-dimensional Euclidean composition algebra
+through `hurwitz_classification`.  What is stated about *this file* is unchanged: the instance
+below still requires `[Ring C]` and still covers no octonionic case, and the octonionic instance
+is a separate declaration in a separate module.  The residue that survives is `𝕆` at ranks
+`≥ 4`.
 
 ★ Nor is the boundary claimed to be *sharp*.  Nothing in this tree proves that `H_n(𝕆)` fails to
 be a Jordan algebra for `n ≥ 4`; that is residue (3) of
 `WallCertificates/jacobson-coordinatization.lean`, and it is a citation here, not a theorem.
+The rank-3 result above is likewise not evidence about rank `≥ 4` in either direction: it is a
+transported hand computation, not a general argument with a rank bound falling out of it.
 
 ## What this is not
 
@@ -98,7 +109,10 @@ instance.
   (`EJA/AlbertCarrier.lean`) — grepping `instance … : EuclideanJordanAlgebra` across
   `RadicalRelativity/` on 2026-08-23 returns exactly those two plus
   `EJA/PeirceSubalgebra.lean`'s two, which are conditional on an ambient
-  `[EuclideanJordanAlgebra J]` and exhibit nothing on their own.
+  `[EuclideanJordanAlgebra J]` and exhibit nothing on their own.  ★ That census is a snapshot,
+  not an invariant: `EJA/AlbertBridge.lean` added a fifth the same day, on
+  `HermMat (Fin 3) Octonion`.  "Third base carrier" was and remains right — that fifth instance
+  is on this same carrier at coefficients this instance cannot reach.
 * the first instance whose **coefficients are quaternionic**.  `HermitianMat n 𝕜` cannot supply
   one: `RCLike 𝕜` covers `ℝ` and `ℂ` only.  ★ This is **not** the claim that the tree had no
   quaternionic hermitian matrices — it has them, as `Hermitian/Symplectic.lean`'s `QuatCarrier n`,
@@ -159,11 +173,13 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι] {C : Type*} [Ring C] [Module
 class on `Composition/HermMat.lean`'s carrier, under the symmetrised product `A ∘ B = ½(AB + BA)`
 and `Composition/HermInner.lean`'s entrywise form.
 
-★ `[Ring C]` is the associativity hypothesis, and it is not removable by any argument in this
-tree: it is what `jmul_jordan_of_assoc` needs.  Over the Hurwitz list this instance therefore
-covers `ℝ`, `ℂ` and `ℍ` and **not** `𝕆` — the octonionic case at rank 3 is carried by the
-different type `h3O` in `EJA/AlbertCarrier.lean`, with no map between the two constructed
-anywhere.  See the module docstring. -/
+★ `[Ring C]` is the associativity hypothesis, and it is not removable *here*: it is what
+`jmul_jordan_of_assoc` needs.  Over the Hurwitz list this instance therefore covers `ℝ`, `ℂ` and
+`ℍ` and **not** `𝕆`.  ★ Narrowed 2026-08-23: the octonionic case at rank 3 is no longer
+uncovered by the tree — `EJA/AlbertBridge.lean` installs a separate instance on
+`HermMat (Fin 3) Octonion`, transported from `h3O`.  It does not weaken *this* declaration's
+hypothesis, and the two instances never overlap, since `Octonion` has no `Ring` instance.  See
+the module docstring. -/
 instance instEuclideanJordanAlgebraHermMat :
     EuclideanJordanAlgebra (HermMat ι C) where
   mul := jmul

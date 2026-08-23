@@ -745,11 +745,15 @@ import RadicalRelativity.EJA.Connection
 -- connectors between them has real dimension 1, 2, 4 or 8.  ★★ And since
 -- `Composition.Classification` landed, `classification_coordAlg`: that block is ISOMORPHIC as a
 -- composition algebra to R, C, H or O -- the composition-algebra half of Jordan-von
--- Neumann-Wigner, on the Jordan-side object.  It does not say WHICH of the four.  ★ The full Jacobson isomorphism
--- `J = H_n(C)` is NOT proved here, and `H_n(C)` does not exist in this tree as a type; the three
+-- Neumann-Wigner, on the Jordan-side object.  It does not say WHICH of the four.
+-- ★ The full Jacobson isomorphism `J = H_n(C)` is NOT proved here; the three
 -- residues -- the isomorphism, simple ==> connected, and n >= 4 ==> the coordinate algebra is
 -- associative -- are stated in Lean with a sorry at each in
--- `WallCertificates/jacobson-coordinatization.lean`.  Substrate; it moves no row.
+-- `WallCertificates/jacobson-coordinatization.lean`.  ★ Corrected 2026-08-23: this entry also
+-- said "`H_n(C)` does not exist in this tree as a type", a claim `EJA.Coordinatize`'s own
+-- docstring struck the same day and this copy outlived.  `Composition.HermMat` builds the type,
+-- `EJA.HermMatCarrier` puts the EJA class on it for associative `C` and `EJA.AlbertBridge` at
+-- `(Fin 3, O)`; what is missing is the isomorphism, not the target.  Substrate; it moves no row.
 import RadicalRelativity.EJA.Coordinatize
 -- A witness for the coordinate algebra.  `E_ij + E_ji` on `H_d(C)` is shown to lie in the block
 -- `V_ij` of the diagonal frame and to square to `E_ii + E_jj`, so it is a CONNECTOR, and three
@@ -886,11 +890,13 @@ import RadicalRelativity.Composition.HermMat
 -- arbitrary Euclidean composition algebra from the two adjunction lemmas of `Composition.Defs`,
 -- which are polarisations of the composition law rather than consequences of associativity and
 -- so hold over the octonions.  ★ This file does NOT exhibit `HermMat ι C` as a Euclidean Jordan
--- algebra: the Jordan identity remains available only for associative `C`.  ★ Narrowed
--- 2026-08-23 -- this entry used to add that formal reality is proved nowhere for this carrier
--- and that no `EuclideanJordanAlgebra` instance exists in this tree; both hold for
--- non-associative `C` only, since `EJA.HermMatCarrier` below installs the class, and with it
--- formal reality, under `[Ring C]`.  Substrate; it moves no row.
+-- algebra: the Jordan identity is not proved in it at any tier.  ★ Narrowed
+-- 2026-08-23 -- this entry used to add that formal reality is proved nowhere for this carrier,
+-- that no `EuclideanJordanAlgebra` instance exists in this tree, and that the Jordan identity is
+-- available only for associative `C`.  All three hold for THIS file only: `EJA.HermMatCarrier`
+-- below installs the class, and with it formal reality, under `[Ring C]`, and `EJA.AlbertBridge`
+-- installs it at `(Fin 3, O)` and proves the Jordan identity on `H_3(C)` for EVERY
+-- finite-dimensional Euclidean composition algebra.  Substrate; it moves no row.
 import RadicalRelativity.Composition.HermInner
 
 -- `H_ι(C)` as a Euclidean Jordan algebra, FOR ASSOCIATIVE `C` ONLY.  The class of `EJA.Class`
@@ -900,12 +906,32 @@ import RadicalRelativity.Composition.HermInner
 -- Mathlib's orientation of the Jordan identity, the class carries the other).  Formal reality
 -- comes for free from `EJA.Class`'s `instIsFormallyReal`.  ★ The `[Ring C]` hypothesis is the
 -- associativity of the coefficient algebra and is NOT removable here: over the Hurwitz list it
--- means R, C and H and NOT O, so the octonionic case is uncovered at every rank, rank 3
--- included -- that one is carried by the DIFFERENT type `h3O` in `EJA.AlbertCarrier`, and no map
--- between the two types is constructed anywhere in the tree.  ★ This does NOT discharge the
+-- means R, C and H and NOT O, so THIS module leaves the octonionic case uncovered at every rank.
+-- ★ Narrowed 2026-08-23: rank 3 is no longer uncovered by the tree.  `EJA.AlbertBridge` below --
+-- downstream of this file, so invisible from here -- builds the map to `h3O` whose absence this
+-- entry used to record and transports the Jordan identity across it, so
+-- `HermMat (Fin 3) Octonion` DOES carry the class.  Ranks `≥ 4` over `O` remain uncovered, and
+-- there classically no Jordan algebra exists to cover.  ★ This does NOT discharge the
 -- Jacobson coordinatization residue: the isomorphism `J ≅ H_n(C)` is still a `sorry` in
 -- `WallCertificates/jacobson-coordinatization.lean`; what lands is Jordan structure on that
 -- theorem's right-hand side.  ★ Unlike both existing carriers there is no `Mul` collision to
 -- measure -- `Composition.HermMat` installs no `Mul`, and `#synth Mul` on the carrier fails
 -- without this module.  Substrate; it moves no row.
 import RadicalRelativity.EJA.HermMatCarrier
+
+-- The bridge `h₃(𝕆) ≃ H₃(𝕆)`, and the octonionic case at rank 3.  `toHermMat` is the coordinate
+-- linear equivalence between `Albert.h3O` and `Composition.HermMat (Fin 3) Octonion` -- the map
+-- whose ABSENCE five docstrings in this tree recorded until 2026-08-23 -- and
+-- `toHermMat_jordanMul` says it intertwines `Albert.jordanMul` with the symmetrised matrix
+-- product.  Transporting `Albert.Jordan`'s `jordanMul_jordan` across it gives
+-- `HermMat (Fin 3) Octonion` the Jordan identity `jmul_jordan_of_assoc` cannot reach (`𝕆` is not
+-- associative) and with it the `EuclideanJordanAlgebra` instance, plus, through
+-- `hurwitz_classification`, the identity on `H₃(C)` for EVERY finite-dimensional Euclidean
+-- composition algebra.  Also `toHermMat_hermIp` (the trace form on `h₃(𝕆)` is the entrywise form
+-- on `H₃(𝕆)`) and `finrank ℝ (HermMat (Fin 3) Octonion) = 27`.  ★ RANK 3 ONLY: nothing here
+-- says anything about `n ≥ 4`, where `H_n(𝕆)` is classically not a Jordan algebra at all -- that
+-- remains a citation, with neither half proved in this tree, and residue (3) of
+-- `WallCertificates/jacobson-coordinatization.lean` stays open.  ★ This does NOT discharge
+-- Jacobson coordinatization: `J ≅ H_n(C)` is residue (1) and is still a `sorry` there.
+-- Substrate; it moves no row.
+import RadicalRelativity.EJA.AlbertBridge

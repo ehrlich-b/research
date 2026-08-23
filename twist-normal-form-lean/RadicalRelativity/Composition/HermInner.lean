@@ -34,7 +34,11 @@ is used anywhere in this file**.
 ★ That the two agree — `∑ i, ∑ j, ⟪A i j, B i j⟫_C = Tr(A ∘ B)` — is classical and is what makes
 the entrywise form the *trace* form, but it is **not proved here**: this file constructs no trace
 map on `HermMat ι C` and states no theorem relating `hermIp` to `hermBilin`.  Treat the
-identification as a citation, not as a result of this tree.
+identification as a citation, not as a result of this tree.  ★ **Narrowed 2026-08-23 at one
+point only**: `EJA/AlbertBridge.lean`'s `toHermMat_hermIp` proves `hermIp` on
+`HermMat (Fin 3) Octonion` equals `Albert/Inner.lean`'s `h3O.traceForm` under the coordinate
+equivalence.  That is one `(ι, C)` and one *already written-out* form; the general statement,
+which needs a trace map this tree still does not construct, is untouched.
 
 ## The Euclidean hypothesis
 
@@ -60,8 +64,16 @@ be relied on.  It used to say that formal reality "is proved nowhere for this ca
 "no `EuclideanJordanAlgebra` instance on `HermMat ι C` exists in this tree".  Both are now false
 **for associative `C`**: `EJA/HermMatCarrier.lean` — downstream of this file, so invisible from
 here — installs the class under `[Ring C] [Nontrivial C] [DecidableEq ι]`, and formal reality
-follows from it through `EJA/Class.lean`'s `instIsFormallyReal`.  Both remain true for
-non-associative `C`, `𝕆` at every rank included, which is exactly the `hjordan` gap above.
+follows from it through `EJA/Class.lean`'s `instIsFormallyReal`.
+
+★★ **Narrowed again, later the same day, and the clause "in particular not for `𝕆` at any rank"
+above is now WRONG at rank three.**  `EJA/AlbertBridge.lean`, further downstream still, builds
+`toHermMat : h3O ≃ₗ[ℝ] HermMat (Fin 3) Octonion`, shows it intertwines `jordanMul` with `jmul`,
+and transports `Albert/Jordan.lean`'s Jordan identity across it.  So `hjordan` **is** available
+for `HermMat (Fin 3) C` at every finite-dimensional Euclidean composition algebra `C` — through
+`hurwitz_classification`, `𝕆` included — and the class, with formal reality, is installed at
+`HermMat (Fin 3) Octonion`.  What remains genuinely open is `𝕆` at ranks `≥ 4`, where classically
+there is no Jordan algebra to find; this tree proves neither that nor its converse.
 
 ## What is deliberately absent
 
@@ -248,12 +260,15 @@ and an arbitrary `[Fintype ι]`.
 Stated with `jmul` rather than `*` because no `Mul` instance is installed — see the module
 docstring — and with `D` for the third element because `C` is the coefficient algebra.
 
-★ It does **not** follow that `HermMat ι C` is a Euclidean Jordan algebra.  The Jordan identity
-is still available only for associative `C` (`jmul_jordan_of_assoc`) or `C` isomorphic to such a
-one (`jmul_jordan_of_isCompIso`).  ★ **Narrowed 2026-08-23**: this sentence used to add that
-formal reality is proved nowhere for this carrier and that no `EuclideanJordanAlgebra` instance
-on `HermMat ι C` exists in this tree.  Both hold for non-associative `C` only —
-`EJA/HermMatCarrier.lean` installs the class, and with it formal reality, under `[Ring C]`. -/
+★ It does **not** follow that `HermMat ι C` is a Euclidean Jordan algebra, and nothing in *this
+file* supplies the Jordan identity at any tier.  ★ **Narrowed 2026-08-23**: this sentence used
+to add that formal reality is proved nowhere for this carrier, that no `EuclideanJordanAlgebra`
+instance on `HermMat ι C` exists in this tree, and that the Jordan identity is available only
+for associative `C` or `C` isomorphic to such a one.  All three describe this file only:
+`EJA/HermMatCarrier.lean` installs the class, and with it formal reality, under `[Ring C]`, and
+`EJA/AlbertBridge.lean` proves the Jordan identity on `HermMat (Fin 3) C` for every
+finite-dimensional Euclidean composition algebra and installs the class at
+`HermMat (Fin 3) Octonion`. -/
 theorem hermIp_jmul_assoc (A B D : HermMat ι C) :
     hermIp (jmul A B) D = hermIp B (jmul A D) := by
   have ha : ∀ p q : ι, (A : Matrix ι ι C) q p = cstar ((A : Matrix ι ι C) p q) := A.2

@@ -55,7 +55,13 @@ Three different hypothesis bundles appear below, and they are not interchangeabl
 (Jacobson) `H_n(𝕆)` is a Jordan algebra exactly for `n ≤ 3`, and the `n ≥ 4` failure is what
 residue (3) of the certificate is about — but that is a citation, not a theorem of this tree:
 **nothing here proves either half of it**, neither the `n ≤ 3` octonionic case nor the `n ≥ 4`
-failure.  Nothing here installs a `Mul` instance either: as in `Albert/Mul.lean`, the product is bundled as a bilinear map
+failure.  ★ **Narrowed 2026-08-23** as to the first half only: `EJA/AlbertBridge.lean` —
+downstream of this file, so invisible from here — proves the Jordan identity on
+`HermMat (Fin 3) C` for every finite-dimensional Euclidean composition algebra `C`, `𝕆`
+included, by transporting `Albert/Jordan.lean`'s coordinate computation across a linear
+equivalence with `h3O`.  That is the single rank `n = 3`; `n = 1`, `n = 2` and the `n ≥ 4`
+failure are all still unproved here and there.
+Nothing here installs a `Mul` instance either: as in `Albert/Mul.lean`, the product is bundled as a bilinear map
 `hermBilin`, because a `Mul` instance alongside a future `NormedAddCommGroup` would reintroduce
 the diamond `EJA/Bridge.lean` exists to dodge.
 
@@ -67,10 +73,17 @@ the diamond `EJA/Bridge.lean` exists to dodge.
 `Albert/Mul.lean`'s `jordanMul` written out in those coordinates.  `HermMat (Fin 3) Octonion`
 is *intended* to be the same algebra presented as an actual submodule of
 `Matrix (Fin 3) (Fin 3) Octonion` — but **that is a design intention, not a theorem here**: no
-linear map between the two types is constructed, so nothing in this file says `jordanMul` agrees
-with the symmetrised matrix product under any identification.  None of `Albert/` is touched or
-subsumed; `Albert/Jordan.lean`'s Jordan identity for `h3O` is a theorem this file cannot reach,
-because the associative section below excludes `Octonion` by hypothesis.
+linear map between the two types is constructed *in this file*, so nothing below says `jordanMul`
+agrees with the symmetrised matrix product under any identification.  None of `Albert/` is
+touched or subsumed; `Albert/Jordan.lean`'s Jordan identity for `h3O` is a theorem this file
+cannot reach, because the associative section below excludes `Octonion` by hypothesis.
+
+★ **Narrowed 2026-08-23.**  This paragraph used to say that no linear map between the two types
+is constructed *anywhere in the tree*, and that is now false.  `EJA/AlbertBridge.lean` — which
+imports this file, so it is invisible from here — constructs `toHermMat : h3O ≃ₗ[ℝ] HermMat (Fin
+3) Octonion` and proves `toHermMat_jordanMul`, that it intertwines the two products; the design
+intention is discharged at `(Fin 3, 𝕆)`.  Everything in *this* file is unchanged by that: the
+sentences above describe this file's contents and remain exact.
 
 ## Main definitions
 
@@ -501,7 +514,10 @@ elaborate at a named coefficient algebra.
 
 ★ What is **not** here: no dimension count.  `finrank ℝ (HermMat (Fin 3) Octonion) = 27` is not
 proved, and no basis of `HermMat ι C` is constructed, so nothing below rules out the submodule
-being smaller than intended. -/
+being smaller than intended.  ★ **Narrowed 2026-08-23** as to the first clause only:
+`EJA/AlbertBridge.lean`'s `finrank_hermMat_octonion` proves `= 27`, by transporting
+`h3O.finrank_eq_twentyseven` across the linear equivalence, not by exhibiting a basis.  No basis
+of `HermMat ι C` is constructed anywhere, and no other `(ι, C)` is counted. -/
 
 section Examples
 
@@ -509,8 +525,10 @@ open scoped Quaternion
 
 /-- `H_3(𝕆)`, the Albert-size carrier, exists through this construction, and its diagonal frame
 sums to the unit.  ★ This is the octonionic case at rank three: the Jordan identity for it is
-**not** available here — `jmul_jordan_of_assoc` assumes associativity — and remains the
-hand-built `Albert/Jordan.lean` theorem about the different carrier `h3O`. -/
+**not** available here — `jmul_jordan_of_assoc` assumes associativity — and is the hand-built
+`Albert/Jordan.lean` theorem about the different carrier `h3O`.  ★ Since 2026-08-23 it does
+reach this carrier, through `EJA/AlbertBridge.lean`'s equivalence between the two; that file is
+downstream of this one, so nothing here changes. -/
 theorem albert_sum_hermIdem :
     ∑ i : Fin 3, (hermIdem i : HermMat (Fin 3) Octonion) = hermOne :=
   sum_hermIdem

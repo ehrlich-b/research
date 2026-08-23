@@ -81,17 +81,31 @@ at every finite `ι`, under `[Ring C] [Nontrivial C] [DecidableEq ι]`, with for
 following from `EJA/Class.lean`'s `instIsFormallyReal`.  Over the Hurwitz list `[Ring C]` is
 `ℝ`, `ℂ` and `ℍ`.
 
+★★★ **And the octonionic residue has itself NARROWED at rank three, 2026-08-23.**  This list used
+to open with "**the octonionic case, at every rank.**  The class's `jordan` field is discharged by
+`Composition/HermMat.lean`'s `jmul_jordan_of_assoc`, which is stated under `[Ring C]`, so
+`HermMat ι Octonion` carries no instance — rank 3 included, even though `EJA/AlbertCarrier.lean`
+puts the class on `h3O`, a **different type**, with no map between the two constructed anywhere in
+the tree."  The final clause is now false: `EJA/AlbertBridge.lean` constructs that map,
+`toHermMat : h3O ≃ₗ[ℝ] HermMat (Fin 3) Octonion`, shows it intertwines `jordanMul` with `jmul`,
+and transports the Jordan identity, so `HermMat (Fin 3) Octonion` carries the class and — through
+`hurwitz_classification` — `HermMat (Fin 3) C` satisfies the Jordan identity for *every*
+finite-dimensional Euclidean composition algebra `C`.  All four branches of
+`classification_coordAlg` are therefore covered **at rank 3**.
+
 What genuinely remains, and is the honest residue now:
 
-* **the octonionic case, at every rank.**  The class's `jordan` field is discharged by
-  `Composition/HermMat.lean`'s `jmul_jordan_of_assoc`, which is stated under `[Ring C]`, so
-  `HermMat ι Octonion` carries no instance — rank 3 included, even though `EJA/AlbertCarrier.lean`
-  puts the class on `h3O`, a **different type**, with no map between the two constructed
-  anywhere in the tree;
+* **the octonionic case at ranks `≥ 4`.**  `jmul_jordan_of_assoc` still needs `[Ring C]`, and the
+  rank-3 discharge is a transported hand computation with no rank parameter, so it says nothing
+  about `n ≥ 4`.  Classically there is nothing to find there — `H_n(𝕆)` is not a Jordan algebra
+  for `n ≥ 4` — but **that is a citation, not a theorem of this tree**, and it is residue (3);
+* **ranks 1 and 2 over `𝕆`.**  Not stated anywhere: the discharge is at `Fin 3` literally;
 * **the isomorphism itself.**  Giving the right-hand side its Jordan structure is not
   coordinatization: `J ≅ H_n(C)` is residue (1) of
   `WallCertificates/jacobson-coordinatization.lean` and is still a `sorry` there, as are the
-  other two.
+  other two.  ★ Nothing in `EJA/AlbertBridge.lean` touches it: an equivalence between two
+  *concrete* presentations of `H_3(𝕆)` is not an equivalence between an abstract `J` and one of
+  them.
 
 ★ `classification_coordAlg` says the block is isomorphic to *one of* the four; it does not say
 **which**, and nothing here computes the dimension of a particular block.  For `H_d(ℂ)` the block

@@ -83,6 +83,12 @@ claimed that anything currently pays the cost — **no module in the tree import
 the root aggregator does), so `Albert/Jordan.lean`'s own `h3O.mul_eq_jordanMul` and everything
 else stated over `instCommMagma` sees exactly what it saw before.
 
+★ **Corrected 2026-08-23**: one module now does import this one.  `EJA/AlbertBridge.lean` imports
+it, and its `toHermMat_mul` is stated with the `*` a `Mul h3O` search returns — this instance's
+`toMul` — and proved by `toHermMat_jordanMul`, which is stated on the bare `h3O.jordanMul`.  That
+elaborating is one more exercise of the defeq, alongside `albert_isCommJordan_through_class`
+below.  The rest of the paragraph stands: nothing stated over `instCommMagma` changed.
+
 The `AddCommGroup` diamond `EJA/Bridge.lean` and `EJA/Class.lean` were written to dodge does
 **not** appear.  `CommMagma` extends `Mul` alone and carries no additive data, and the class
 `extends Mul J, One J` over the ambient `[NormedAddCommGroup J] [InnerProductSpace ℝ J]`, so the
