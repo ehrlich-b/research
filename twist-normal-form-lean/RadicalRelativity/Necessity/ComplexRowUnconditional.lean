@@ -137,9 +137,16 @@ trace (`inner_twistSeq_left`).  So trace symmetry says the product is represente
 `-t` as well as by `t`, and the `∃!` of `complex_classification_unconditional` closes
 it: `-t = t`.  No new analysis is involved; the selector is a corollary of uniqueness.
 
-**Clauses (i) and (iii) are NOT proved here** — see `THEOREM-MAP.md`.  Clause (iii)
-(covariance under every unital order automorphism; the article notes the transpose
-suffices) needed one missing ingredient, and only one: that transposition commutes with
+★ **CORRECTED.**  This paragraph used to open "**Clauses (i) and (iii) are NOT proved
+here**".  Both are now proved here, further down this same file: clause (iii) as
+`selector_transpose` (ARC-7 block 7.3) and clause (i) as `selector_peirceExchange`.  The
+sentence survived the arrival of clause (iii) in its own file by eight days, which is the
+failure mode this development has on record — a summary left asserting the old thing after
+the row moved — so it is corrected rather than deleted.  All three selectors of
+`cor:selectors` are proved in this file.
+
+Clause (iii) (covariance under every unital order automorphism; the article notes the
+transpose suffices) needed one missing ingredient, and only one: that transposition commutes with
 the real functional calculus, `(cfc f a)ᵀ = cfc f (aᵀ)`.  ★ **That ingredient is now in
 this tree** — `Necessity.cfc_transpose` and `Necessity.transposeMap_cfc`, added
 2026-08-08 (ARC-6 rung 6.4) by exactly the route below; the sentence that used to stand
@@ -151,7 +158,9 @@ does *not* reverse products and `star (conj A) = conj (star A)` — built from
 `AlgHom.mapMatrix Complex.conjAe.toAlgHom` plus a `map_star'` field; for Hermitian `a`,
 `aᵀ = conj a`.  With that lemma, `transposeMap (twistSeq t a b) = twistSeq (-t)
 (transposeMap a) (transposeMap b)` and clause (iii) closes by the same uniqueness step
-used below.  Clause (i) additionally needs the coherence-block action on `H_N(ℂ)`. -/
+used below.  Clause (i) additionally needs the coherence-block action on `H_N(ℂ)`; that
+action is `twistSeq_diagFamily_blockHerm` in the Peirce-exchange section at the end of this
+file, where the block coefficient is computed rather than assumed. -/
 
 /-- The twist product's **trace adjoint flips the twist**: conjugating the left slot by
 `a^{1/2+it}` is adjoint, for the trace form, to conjugating the right slot by
@@ -440,5 +449,243 @@ theorem selector_transpose_luders (hN : 3 ≤ N)
   rw [selector_transpose hN P hS2 hcov a b ha hb, HermitianMat.twistSeq_zero]
 
 end SelectorTransposeMain
+
+/-! ## `cor:selectors` clause (i): Peirce exchange covariance selects Lüders
+
+The last of the article's three selectors.  `main.tex` fixes the hypothesis in the sentence
+that introduces it: writing `E(x,y)` for the action of `a ∘ (·)` on a coherence block `V_ij`
+when `a` has eigenvalues `x, y` on the atoms `p_i, p_j`, so that `thm:complex` makes
+`E(x,y) = √(xy)·exp(t·log(x/y)·𝒥)`, *Peirce exchange covariance* means `E(x,y) = E(y,x)`
+**with the block's complex structure `𝒥` held fixed** — and the article says in the same
+breath that this is *not* a relabelling of `p_i, p_j`.
+
+That is the statement carried here, and the two halves of it are separately visible.
+
+* `twistSeq_diagFamily_blockHerm` realizes `E(x,y)`: on the block `V_ij = {z E_ij + z̄ E_ji}`
+  the product with first argument `diag(e^{r_k})` acts by multiplication by the single
+  complex number `blockCoef r t i j = √(e^{r_i}e^{r_j})·exp(i·t·(r_i − r_j))`, which is the
+  article's displayed formula with `x = e^{r_i}`, `y = e^{r_j}` and `𝒥` the multiplication by
+  `i` on the block coordinate.  So `E` is exhibited, not assumed.
+* `PeirceExchangeCovariant` then swaps only the *eigenvalues*, `r ↦ r ∘ (i j)`, and compares
+  the two actions **on the same block element** `blockHerm i j z`.  The block, its coordinate
+  and hence `𝒥` are literally the same term on both sides of the equation, and no permutation
+  is applied to the argument.  This is the article's condition and not the relabelling it
+  excludes.
+
+The proof is the same three-line shape as clauses (ii) and (iii): the classification supplies
+`t`, exchange covariance says the block phase is its own inverse, and
+`Globalization.real_character_unique` on an interval of `r_i − r_j` gives `t = −t` with no
+`2π` ambiguity.  The one new ingredient is `seqLeftMul_eq_conjLinear_twistFactor`, which
+identifies the *linear extension* `L_a` of `b ↦ P.sp a b` with conjugation by the twist
+factor — needed because a nonzero block element is never an effect (its two nonzero
+eigenvalues are `±|z|`), so the article's `E` lives on `L_a` rather than on `P.sp` directly.
+
+**Scope, stated so it is not overread.**  The hypothesis here ranges over the blocks of the
+*standard* frame only, whereas the article's clause (i) asks for exchange covariance on every
+coherence block of every Jordan frame.  Fewer instances is a *weaker* hypothesis, so this
+theorem is at least as strong as the article's; it is not a weakening of the conclusion.
+
+Non-vacuity is certified both ways: `luders_peirceExchangeCovariant` shows the Lüders product
+satisfies the hypothesis, and `peirceExchangeCovariant_forces_zero` shows no other member of
+the twist family does.  So the class is inhabited and the condition genuinely selects. -/
+
+section SelectorExchange
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+/-- **The left multiplication of a classified product is conjugation by the twist factor.**
+`seqLeftMul P a` is the positive linear extension of `b ↦ P.sp a b` off the effects; once the
+product is known to be `twistSeq t` on effects, the extension is pinned everywhere by
+`linearMap_eq_of_eq_on_effects`, because both sides are linear and the effects span. -/
+theorem seqLeftMul_eq_conjLinear_twistFactor
+    (P : SequentialProductOn (HermitianMat n ℂ)) {t : ℝ}
+    (ht : ∀ a b : HermitianMat n ℂ, IsEffect a → IsEffect b →
+      P.sp a b = HermitianMat.twistSeq t a b)
+    {a : HermitianMat n ℂ} (ha : IsEffect a) :
+    seqLeftMul P a ha = HermitianMat.conjLinear ℝ (HermitianMat.twistFactor a t) := by
+  refine OrderUnitSpace.linearMap_eq_of_eq_on_effects _ _ (fun b hb => ?_)
+  rw [seqLeftMul_apply_effect P ha hb, ht a b ha hb]
+  rfl
+
+/-- The article's block-action coefficient `E(x,y) = √(xy)·exp(t·log(x/y)·𝒥)`, for
+`x = e^{r_i}`, `y = e^{r_j}` and `𝒥` the multiplication by `i` on the block coordinate. -/
+def blockCoef (r : n → ℝ) (t : ℝ) (i j : n) : ℂ :=
+  ((Real.sqrt (Real.exp (r i)) * Real.sqrt (Real.exp (r j)) : ℝ) : ℂ)
+    * Complex.exp (((t * (r i - r j) : ℝ) : ℂ) * Complex.I)
+
+/-- The two twist-factor entries of `twistSeq_diagFamily_entry` collapse to `blockCoef`:
+the moduli multiply to `√(xy)` and the phases subtract to `t·log(x/y)`. -/
+theorem twistFactorEntry_mul (r : n → ℝ) (t : ℝ) (i j : n) (z : ℂ) :
+    (((Real.sqrt (Real.exp (r i)) : ℝ) : ℂ)
+        * Complex.exp (((t * r i : ℝ) : ℂ) * Complex.I))
+      * z
+      * star (((Real.sqrt (Real.exp (r j)) : ℝ) : ℂ)
+        * Complex.exp (((t * r j : ℝ) : ℂ) * Complex.I))
+      = blockCoef r t i j * z := by
+  rw [blockCoef]
+  simp only [star_mul', Complex.star_def, Complex.conj_ofReal, ← Complex.exp_conj]
+  rw [map_mul, Complex.conj_ofReal, Complex.conj_I]
+  rw [show (((Real.sqrt (Real.exp (r i)) * Real.sqrt (Real.exp (r j)) : ℝ)) : ℂ)
+      = ((Real.sqrt (Real.exp (r i)) : ℝ) : ℂ) * ((Real.sqrt (Real.exp (r j)) : ℝ) : ℂ) by
+    push_cast; ring]
+  rw [show Complex.exp (((t * (r i - r j) : ℝ) : ℂ) * Complex.I)
+      = Complex.exp (((t * r i : ℝ) : ℂ) * Complex.I)
+        * Complex.exp (((t * r j : ℝ) : ℂ) * -Complex.I) by
+    rw [← Complex.exp_add]; congr 1; push_cast; ring]
+  ring
+
+/-- **The block action `E(x,y)`, exhibited.**  The twist product with first argument
+`diag(e^{r_k})` maps the coherence block `V_ij` into itself, acting on the block coordinate by
+multiplication by `blockCoef r t i j = √(xy)·exp(i·t·log(x/y))`.  This is the article's
+displayed formula for `E(x,y)`, and it is what makes the exchange hypothesis below a statement
+about `E` rather than about a permutation. -/
+theorem twistSeq_diagFamily_blockHerm (r : n → ℝ) (t : ℝ) {i j : n} (hij : i ≠ j) (z : ℂ) :
+    HermitianMat.twistSeq t (diagFamily r) (blockHerm i j z)
+      = blockHerm i j (blockCoef r t i j * z) := by
+  ext k l
+  rw [twistSeq_diagFamily_entry, blockHerm_mat, blockHerm_mat]
+  simp only [Matrix.add_apply, Matrix.smul_apply, Matrix.single_apply, smul_eq_mul,
+    mul_add, add_mul, mul_ite, ite_mul, mul_zero, zero_mul, mul_one, one_mul]
+  by_cases h1 : i = k ∧ j = l
+  · obtain ⟨rfl, rfl⟩ := h1
+    have hne : ¬ (j = i ∧ i = j) := fun h => hij h.1.symm
+    rw [if_neg hne, if_neg hne, add_zero, add_zero, if_pos ⟨rfl, rfl⟩, if_pos ⟨rfl, rfl⟩]
+    exact twistFactorEntry_mul r t i j z
+  · by_cases h2 : j = k ∧ i = l
+    · obtain ⟨rfl, rfl⟩ := h2
+      rw [if_neg h1, if_neg h1, zero_add, zero_add, if_pos ⟨rfl, rfl⟩, if_pos ⟨rfl, rfl⟩]
+      rw [← twistFactorEntry_mul r t i j z]
+      simp only [star_mul', star_star]
+      ring
+    · rw [if_neg h1, if_neg h2, if_neg h1, if_neg h2, add_zero]
+
+/-- The block coordinate of `L_a`'s action, for a classified product. -/
+theorem blockAction_entry
+    (P : SequentialProductOn (HermitianMat n ℂ)) {t : ℝ}
+    (ht : ∀ a b : HermitianMat n ℂ, IsEffect a → IsEffect b →
+      P.sp a b = HermitianMat.twistSeq t a b)
+    {r : n → ℝ} (hr : IsEffect (diagFamily r)) {i j : n} (hij : i ≠ j) (z : ℂ) :
+    (seqLeftMul P (diagFamily r) hr (blockHerm i j z)).mat i j
+      = (((Real.sqrt (Real.exp (r i)) : ℝ) : ℂ)
+            * Complex.exp (((t * r i : ℝ) : ℂ) * Complex.I))
+        * z
+        * star (((Real.sqrt (Real.exp (r j)) : ℝ) : ℂ)
+            * Complex.exp (((t * r j : ℝ) : ℂ) * Complex.I)) := by
+  rw [seqLeftMul_eq_conjLinear_twistFactor P ht hr]
+  show (HermitianMat.twistSeq t (diagFamily r) (blockHerm i j z)).mat i j = _
+  rw [twistSeq_diagFamily_entry, blockHerm_entry hij]
+
+end SelectorExchange
+
+section SelectorExchangeMain
+
+variable {N : ℕ}
+
+/-- **Peirce exchange covariance** (`cor:selectors`(i)).  For every coherence block `V_ij` of
+the standard frame and every base point `diag(e^{r_k})`, the action of `a ∘ (·)` on that block
+is unchanged when the two eigenvalues on `p_i, p_j` are interchanged — `E(x,y) = E(y,x)`.
+
+The block, its coordinate `z`, and hence its complex structure `𝒥` are the *same term* on both
+sides: only the eigenvalue vector `r` is transposed at `i, j`.  So this is the article's
+fixed-orientation condition and not the relabelling of `p_i, p_j` the article rules out.
+
+The action is taken on `seqLeftMul`, the linear extension of `b ↦ P.sp a b`, because a nonzero
+block element is not an effect. -/
+def PeirceExchangeCovariant (P : SequentialProductOn (HermitianMat (Fin N) ℂ)) : Prop :=
+  ∀ (i j : Fin N), i ≠ j → ∀ (r : Fin N → ℝ)
+      (h : IsEffect (diagFamily r)) (h' : IsEffect (diagFamily (r ∘ Equiv.swap i j)))
+      (z : ℂ),
+    seqLeftMul P (diagFamily r) h (blockHerm i j z)
+      = seqLeftMul P (diagFamily (r ∘ Equiv.swap i j)) h' (blockHerm i j z)
+
+/-- **`cor:selectors` clause (i).**  Peirce exchange covariance selects the Lüders product:
+for an S1–S7 product with S2 on `H_N(ℂ)`, `N ≥ 3`, if the block action is symmetric under
+interchanging the two eigenvalues then `a · b = √a · b · √a`.
+
+The article's clause (i) assumes the condition on every coherence block of every Jordan frame;
+the hypothesis here asks for it on the standard frame's blocks only, which is weaker, so this
+covers the article's statement. -/
+theorem selector_peirceExchange (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ)) (hS2 : P.FirstArgContinuous)
+    (hexch : PeirceExchangeCovariant P) :
+    ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      P.sp a b = HermitianMat.twistSeq 0 a b := by
+  obtain ⟨t, ht, huniq⟩ := complex_classification_unconditional hN P hS2
+  have h0 : (0 : ℕ) < N := by omega
+  have h1 : (1 : ℕ) < N := by omega
+  set i : Fin N := ⟨0, h0⟩ with hi
+  set j : Fin N := ⟨1, h1⟩ with hj
+  have hij : i ≠ j := by rw [hi, hj]; exact Fin.ne_of_val_ne (by norm_num)
+  have hchar : t = -t := by
+    refine MasterTheorem.Globalization.real_character_unique (a := -1) (b := 0) (by norm_num) ?_
+    intro x hx
+    have hxneg : x < 0 := hx.2
+    have hrle : ∀ k, (Pi.single i x : Fin N → ℝ) k ≤ 0 := by
+      intro k
+      by_cases hk : k = i
+      · rw [hk, Pi.single_eq_same]; exact le_of_lt hxneg
+      · rw [Pi.single_eq_of_ne hk]
+    have hr'le : ∀ k, ((Pi.single i x : Fin N → ℝ) ∘ Equiv.swap i j) k ≤ 0 := fun k => hrle _
+    have hentry := congrArg (fun M : HermitianMat (Fin N) ℂ => M.mat i j)
+      (hexch i j hij (Pi.single i x) (diagFamily_isEffect hrle) (diagFamily_isEffect hr'le) 1)
+    rw [blockAction_entry P ht (diagFamily_isEffect hrle) hij,
+      blockAction_entry P ht (diagFamily_isEffect hr'le) hij] at hentry
+    have hri : (Pi.single i x : Fin N → ℝ) i = x := Pi.single_eq_same _ _
+    have hrj : (Pi.single i x : Fin N → ℝ) j = 0 := Pi.single_eq_of_ne (Ne.symm hij) _
+    have hr'i : ((Pi.single i x : Fin N → ℝ) ∘ Equiv.swap i j) i = 0 := by
+      simp only [Function.comp_apply, Equiv.swap_apply_left]; exact hrj
+    have hr'j : ((Pi.single i x : Fin N → ℝ) ∘ Equiv.swap i j) j = x := by
+      simp only [Function.comp_apply, Equiv.swap_apply_right]; exact hri
+    rw [hri, hrj, hr'i, hr'j] at hentry
+    simp only [Real.exp_zero, Real.sqrt_one, mul_zero, Complex.ofReal_zero, zero_mul,
+      Complex.exp_zero, mul_one, star_one, Complex.ofReal_one, one_mul, star_mul',
+      Complex.star_def, Complex.conj_ofReal, ← Complex.exp_conj] at hentry
+    have hne : ((Real.sqrt (Real.exp x) : ℝ) : ℂ) ≠ 0 := by
+      simp only [ne_eq, Complex.ofReal_eq_zero]
+      exact Real.sqrt_ne_zero'.mpr (Real.exp_pos x)
+    have hcancel := mul_left_cancel₀ hne hentry
+    rw [show ((t : ℂ) * (x : ℂ)) = ((t * x : ℝ) : ℂ) by push_cast; ring, hcancel]
+    congr 1
+    rw [map_mul, Complex.conj_ofReal, Complex.conj_I]
+    push_cast
+    ring
+  have ht0 : t = 0 := by linarith
+  intro a b ha hb
+  rw [ht a b ha hb, ht0]
+
+/-- Clause (i) with the Lüders product written out as `b.conj √a`. -/
+theorem selector_peirceExchange_luders (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ)) (hS2 : P.FirstArgContinuous)
+    (hexch : PeirceExchangeCovariant P) :
+    ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      P.sp a b = b.conj ((a.cfc Real.sqrt) : Matrix (Fin N) (Fin N) ℂ) := by
+  intro a b ha hb
+  rw [selector_peirceExchange hN P hS2 hexch a b ha hb, HermitianMat.twistSeq_zero]
+
+/-- **Non-vacuity: the hypothesis class is inhabited.**  The Lüders product is Peirce exchange
+covariant — at `t = 0` the block coefficient is the swap-symmetric `√(xy)` with no phase. -/
+theorem luders_peirceExchangeCovariant :
+    PeirceExchangeCovariant (N := N) (twistProductOn 0) := by
+  intro i j hij r h h' z
+  rw [seqLeftMul_eq_conjLinear_twistFactor _ (fun a b _ _ => twistProductOn_sp 0 a b) h,
+    seqLeftMul_eq_conjLinear_twistFactor _ (fun a b _ _ => twistProductOn_sp 0 a b) h']
+  show HermitianMat.twistSeq 0 (diagFamily r) (blockHerm i j z)
+      = HermitianMat.twistSeq 0 (diagFamily (r ∘ Equiv.swap i j)) (blockHerm i j z)
+  rw [twistSeq_diagFamily_blockHerm _ _ hij, twistSeq_diagFamily_blockHerm _ _ hij]
+  congr 2
+  rw [blockCoef, blockCoef, Function.comp_apply, Function.comp_apply,
+    Equiv.swap_apply_left, Equiv.swap_apply_right]
+  rw [mul_comm (Real.sqrt (Real.exp (r j)))]
+  norm_num
+
+/-- **Non-vacuity: the hypothesis genuinely selects.**  No twist product other than Lüders is
+Peirce exchange covariant, so the condition is not satisfied by the whole family. -/
+theorem peirceExchangeCovariant_forces_zero (hN : 3 ≤ N) (t : ℝ)
+    (hexch : PeirceExchangeCovariant (twistProductOn (n := Fin N) t)) : t = 0 :=
+  ((complex_classification_sharp hN t 0).mp
+    (selector_peirceExchange hN (twistProductOn t)
+      (twistProductOn_firstArgContinuous t) hexch)).symm
+
+end SelectorExchangeMain
 
 end Necessity
