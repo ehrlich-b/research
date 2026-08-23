@@ -16,9 +16,9 @@ The 27-dimensional real vector space `h₃(𝕆)` of hermitian `3 × 3` octonion
 carrying `AddCommGroup`, `Module ℝ`, and `FiniteDimensional ℝ` with `finrank = 27`.
 
 This file builds **only the linear structure**.  The Jordan product is `Albert/Mul.lean`, the
-trace form and the Euclidean hypothesis are `Albert/Inner.lean`, and the Jordan identity --
-the gate onto the whole `EJA/` layer -- is not here and is not claimed anywhere in this
-module set.
+trace form and the Euclidean hypothesis are `Albert/Inner.lean`, and the Jordan identity is
+`Albert/Jordan.lean`, which also installs Mathlib's `IsCommJordan h3O`.  Nothing in this file
+claims any of that.
 
 ## Layout convention
 

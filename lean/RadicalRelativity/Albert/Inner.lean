@@ -39,8 +39,9 @@ instances of `Octonion.octIp_conj_cyc`/`octIp_conj_cyc'`, which are corollaries 
 at the default heartbeat budget.
 
 ★ In particular `hassoc` does **not** consume the Jordan identity, formal reality, or any
-spectral input.  It is exactly what `OctonionTrace.lean` was built to make cheap, and it is
-what makes `h₃(𝕆)` a candidate *Euclidean* Jordan algebra once the Jordan identity lands.
+spectral input.  It is exactly what `OctonionTrace.lean` was built to make cheap.  The Jordan
+identity and formal reality are proved downstream, in `Albert/Jordan.lean`, on top of this
+file rather than alongside it.
 
 ## Main definitions
 

@@ -11,7 +11,44 @@ set_option linter.style.longLine false
 /-!
 # The Jordan identity on `h₃(𝕆)`
 
-placeholder module docstring
+`Albert/Mul.lean` builds the product `a ∘ b = ½(ab + ba)` and proves it commutative with unit
+`1`; `Albert/Inner.lean` proves the Euclidean hypothesis `⟪x ∘ y, z⟫ = ⟪y, x ∘ z⟫`.  What was
+left over is the **Jordan identity** `(a ∘ b) ∘ a² = a ∘ (b ∘ a²)`.  It is proved here as
+`jordanMul_jordan`, and Mathlib's `IsCommJordan h3O` is installed on the back of it.
+
+## Shape of the proof
+
+The identity is cubic in `a` and linear in `b`, so in the 54 real coordinates of `(a, b)` it is
+a degree-4 polynomial identity; it is not expanded there.  Instead the two sides are subtracted
+component by component in the layout of `Albert/Carrier.lean`, and each component difference is
+an `ℝ`-linear combination -- with coefficients built from the diagonal entries and from `octIp`
+-- of octonionic identities:
+
+* the diagonal components use `octIp_conj_cyc` and `octIp_conj_cyc'` of `Albert/Carrier.lean`
+  together with `octIp_mul_conj_left`, `octIp_mul_conj_right`, `octIp_conj_mul_assoc_left` and
+  `octIp_conj_mul_assoc_right` below;
+* the off-diagonal components use `polar_left_alt`, `polar_right_alt`, `polar_moufang`,
+  `mixed_moufang_left` and `mixed_moufang_right` below.
+
+Those nine, plus the two cyclic-rotation lemmas of `Albert/Carrier.lean`, are the only
+octonionic identities the assembly consumes; the normalisation ahead of it additionally uses
+bilinearity of the octonion product and `conj_mul`.  Each of the nine is proved by expanding
+the multiplication table of `Octonions.lean`; six close at the default heartbeat budget and the
+three quartic ones carry an eight-fold budget.  `linear_combination` then does the assembly, `simp only` having first
+distributed the products and pushed conjugation onto the variables with `conj_mul`; the
+`octIp_comm` instances in those `simp only` lists do nothing but orient the inner products, so
+that the goal and the supplied identities present `ring` with the same atoms.
+
+Only two of the six components are proved directly.  `cyc` is the cyclic shift of both index
+families, and `jordanMul_cyc` says it commutes with the product; that carries
+`jordan_diag_zero` and `jordan_off_zero` onto the remaining four.
+
+## Main results
+
+* `jordanMul_jordan` -- the Jordan identity on `h₃(𝕆)`
+* `instIsCommJordan` -- `h₃(𝕆)` as a `CommMagma` satisfying Mathlib's `IsCommJordan`
+* `eq_zero_of_sum_sq_eq_zero` -- formal reality in sum-of-squares form, which the trace form of
+  `Albert/Inner.lean` already forces
 -/
 
 noncomputable section
@@ -90,11 +127,12 @@ open Octonion
 
 namespace h3O
 
-/-! ## The cyclic automorphism
+/-! ## The cyclic shift
 
-Conjugating a hermitian matrix by the cyclic permutation matrix is a Jordan automorphism, and
-in the layout of `Albert/Carrier.lean` it is the shift `k ↦ k + 1` on both index families.  It
-is what lets the two component identities below cover all six components.
+In the layout of `Albert/Carrier.lean`, shifting both index families by one is the map induced
+by conjugating a hermitian matrix with the cyclic permutation matrix.  Only the one property
+proved below is used: it commutes with the Jordan product.  That is what lets the two component
+identities cover all six components.
 -/
 
 /-- The cyclic index shift, written with the same `if` cascade as `jordanMul` so that its six
@@ -110,7 +148,7 @@ def cyc (a : h3O) : h3O :=
 @[simp] theorem cyc_off_one (a : h3O) : (cyc a).off 1 = a.off 2 := rfl
 @[simp] theorem cyc_off_two (a : h3O) : (cyc a).off 2 = a.off 0 := rfl
 
-/-- `cyc` is an automorphism of the Jordan product. -/
+/-- The cyclic shift commutes with the Jordan product. -/
 @[simp] theorem jordanMul_cyc (a b : h3O) :
     jordanMul (cyc a) (cyc b) = cyc (jordanMul a b) := by
   refine ext_six ?_ ?_ ?_ ?_ ?_ ?_ <;>
@@ -133,15 +171,9 @@ theorem jordan_diag_zero (a b : h3O) :
     conj_add, conj_smul, conj_mul, conj_conj,
     mul_add', add_mul', smul_mul, mul_smul',
     octIp_comm (mul (conj (a.off 0)) (conj (b.off 1))) (mul (conj (a.off 0)) (conj (a.off 1))),
-    octIp_comm (mul (conj (a.off 1)) (conj (b.off 2))) (mul (conj (a.off 1)) (conj (a.off 2))),
     octIp_comm (mul (conj (a.off 2)) (conj (b.off 0))) (mul (conj (a.off 2)) (conj (a.off 0))),
     octIp_comm (mul (conj (b.off 0)) (conj (a.off 1))) (mul (conj (a.off 0)) (conj (a.off 1))),
-    octIp_comm (mul (conj (b.off 1)) (conj (a.off 2))) (mul (conj (a.off 1)) (conj (a.off 2))),
     octIp_comm (mul (conj (b.off 2)) (conj (a.off 0))) (mul (conj (a.off 2)) (conj (a.off 0))),
-    octIp_comm (a.off 0) (mul (mul (a.off 0) (a.off 2)) (conj (b.off 2))),
-    octIp_comm (a.off 0) (mul (conj (a.off 1)) (conj (b.off 2))),
-    octIp_comm (a.off 0) (mul (conj (b.off 1)) (mul (a.off 1) (a.off 0))),
-    octIp_comm (a.off 0) (mul (conj (b.off 1)) (conj (a.off 2))),
     octIp_comm (a.off 1) (mul (mul (a.off 1) (a.off 0)) (conj (b.off 0))),
     octIp_comm (a.off 1) (mul (conj (a.off 2)) (conj (b.off 0))),
     octIp_comm (a.off 1) (mul (conj (b.off 2)) (mul (a.off 2) (a.off 1))),
@@ -150,8 +182,6 @@ theorem jordan_diag_zero (a b : h3O) :
     octIp_comm (a.off 2) (mul (conj (a.off 0)) (conj (b.off 1))),
     octIp_comm (a.off 2) (mul (conj (b.off 0)) (mul (a.off 0) (a.off 2))),
     octIp_comm (a.off 2) (mul (conj (b.off 0)) (conj (a.off 1))),
-    octIp_comm (b.off 0) (mul (conj (a.off 1)) (conj (a.off 2))),
-    octIp_comm (b.off 0) (a.off 0),
     octIp_comm (b.off 1) (mul (conj (a.off 2)) (conj (a.off 0))),
     octIp_comm (b.off 1) (a.off 1),
     octIp_comm (b.off 2) (mul (conj (a.off 0)) (conj (a.off 1))),
@@ -175,27 +205,9 @@ theorem jordan_off_zero (a b : h3O) :
       = (jordanMul a (jordanMul b (jordanMul a a))).off 0 := by
   simp only [jordanMul_diag_zero, jordanMul_diag_one, jordanMul_diag_two,
     jordanMul_off_zero, jordanMul_off_one, jordanMul_off_two,
-    octIp_add_left, octIp_add_right, octIp_smul_left, octIp_smul_right,
+    octIp_add_right, octIp_smul_right,
     conj_add, conj_smul, conj_mul, conj_conj,
     mul_add', add_mul', smul_mul, mul_smul',
-    octIp_comm (mul (conj (a.off 0)) (conj (b.off 1))) (mul (conj (a.off 0)) (conj (a.off 1))),
-    octIp_comm (mul (conj (a.off 1)) (conj (b.off 2))) (mul (conj (a.off 1)) (conj (a.off 2))),
-    octIp_comm (mul (conj (a.off 2)) (conj (b.off 0))) (mul (conj (a.off 2)) (conj (a.off 0))),
-    octIp_comm (mul (conj (b.off 0)) (conj (a.off 1))) (mul (conj (a.off 0)) (conj (a.off 1))),
-    octIp_comm (mul (conj (b.off 1)) (conj (a.off 2))) (mul (conj (a.off 1)) (conj (a.off 2))),
-    octIp_comm (mul (conj (b.off 2)) (conj (a.off 0))) (mul (conj (a.off 2)) (conj (a.off 0))),
-    octIp_comm (a.off 0) (mul (mul (a.off 0) (a.off 2)) (conj (b.off 2))),
-    octIp_comm (a.off 0) (mul (conj (a.off 1)) (conj (b.off 2))),
-    octIp_comm (a.off 0) (mul (conj (b.off 1)) (mul (a.off 1) (a.off 0))),
-    octIp_comm (a.off 0) (mul (conj (b.off 1)) (conj (a.off 2))),
-    octIp_comm (a.off 1) (mul (mul (a.off 1) (a.off 0)) (conj (b.off 0))),
-    octIp_comm (a.off 1) (mul (conj (a.off 2)) (conj (b.off 0))),
-    octIp_comm (a.off 1) (mul (conj (b.off 2)) (mul (a.off 2) (a.off 1))),
-    octIp_comm (a.off 1) (mul (conj (b.off 2)) (conj (a.off 0))),
-    octIp_comm (a.off 2) (mul (mul (a.off 2) (a.off 1)) (conj (b.off 1))),
-    octIp_comm (a.off 2) (mul (conj (a.off 0)) (conj (b.off 1))),
-    octIp_comm (a.off 2) (mul (conj (b.off 0)) (mul (a.off 0) (a.off 2))),
-    octIp_comm (a.off 2) (mul (conj (b.off 0)) (conj (a.off 1))),
     octIp_comm (b.off 0) (mul (conj (a.off 1)) (conj (a.off 2))),
     octIp_comm (b.off 0) (a.off 0),
     octIp_comm (b.off 1) (mul (conj (a.off 2)) (conj (a.off 0))),
@@ -256,6 +268,41 @@ theorem mul_eq_jordanMul (a b : h3O) : a * b = jordanMul a b := rfl
 /-- **`h₃(𝕆)` is a commutative Jordan algebra**, in Mathlib's own class. -/
 instance instIsCommJordan : IsCommJordan h3O where
   lmul_comm_rmul_rmul a b := jordanMul_jordan a b
+
+/-! ## Formal reality
+
+Nothing octonionic is left to do here: the trace form of `Albert/Inner.lean` is already positive
+definite and is already the trace of the Jordan product, so a vanishing sum of squares has
+vanishing trace term by term.
+-/
+
+theorem trace_add (a b : h3O) : trace (a + b) = trace a + trace b := by
+  simp only [trace, add_diag]; ring
+
+@[simp] theorem trace_zero : trace (0 : h3O) = 0 := by simp [trace]
+
+theorem trace_sum {ι : Type*} (s : Finset ι) (f : ι → h3O) :
+    trace (∑ i ∈ s, f i) = ∑ i ∈ s, trace (f i) := by
+  classical
+  induction s using Finset.induction with
+  | empty => simp
+  | insert i s hi ih => rw [Finset.sum_insert hi, Finset.sum_insert hi, trace_add, ih]
+
+/-- **Formal reality**, in the sum-of-squares form: if a finite sum of squares vanishes then
+every summand does. -/
+theorem eq_zero_of_sum_sq_eq_zero {ι : Type*} {s : Finset ι} {v : ι → h3O}
+    (h : ∑ i ∈ s, jordanMul (v i) (v i) = 0) {i : ι} (hi : i ∈ s) : v i = 0 := by
+  have hsum : ∑ j ∈ s, traceForm (v j) (v j) = 0 := by
+    have h1 : ∑ j ∈ s, traceForm (v j) (v j) = trace (∑ j ∈ s, jordanMul (v j) (v j)) := by
+      rw [trace_sum]
+      exact Finset.sum_congr rfl fun j _ => traceForm_eq_trace_jordanMul (v j) (v j)
+    rw [h1, h, trace_zero]
+  exact traceForm_self_eq_zero
+    ((Finset.sum_eq_zero_iff_of_nonneg fun j _ => traceForm_self_nonneg (v j)).mp hsum i hi)
+
+/-- The single-square form, `a ∘ a = 0 → a = 0`. -/
+theorem eq_zero_of_sq_eq_zero {a : h3O} (h : jordanMul a a = 0) : a = 0 :=
+  traceForm_self_eq_zero (by rw [traceForm_eq_trace_jordanMul, h, trace_zero])
 
 end h3O
 

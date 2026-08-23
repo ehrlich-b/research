@@ -32,15 +32,11 @@ written to dodge.  So the product is bundled here and never installed as a `Mul`
 
 ## What is NOT here
 
-The **Jordan identity** `m (m a b) (m a a) = m a (m b (m a a))`.  It is the gate onto the
-`EJA/` layer -- `IsCommJordan` is Mathlib's own class and its single field is exactly that
-identity -- and it is structural rather than equational: the naive route (unfold to
-coordinates, `ring`) was measured not to close.  Nothing in this file, and nothing in
-`Albert/Inner.lean`, assumes it.
-
-Formal reality is likewise absent here; the older expository `RadicalRelativity/Albert.lean`
-proves the single-square form `a ∘ a = 0 → a = 0`, which is weaker than the
-sum-of-squares `hfr` that `orderUnitSpaceOfBilinear` takes.
+The **Jordan identity** `m (m a b) (m a a) = m a (m b (m a a))` and formal reality.  Both are
+in `Albert/Jordan.lean` -- `jordanMul_jordan` and `eq_zero_of_sum_sq_eq_zero`, the latter in
+the sum-of-squares form `orderUnitSpaceOfBilinear` takes -- and neither is proved by expanding
+the identity in coordinates.  Nothing in this file, and nothing in `Albert/Inner.lean`, assumes
+either of them.
 
 ## Main definitions
 
