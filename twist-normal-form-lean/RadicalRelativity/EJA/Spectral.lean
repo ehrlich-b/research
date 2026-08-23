@@ -792,6 +792,40 @@ theorem idem_unique_of_resolutions {n m : ℕ} {c : Fin n → J} {d : Fin m → 
   rw [← idem_eq_jeval_lagrange hc hinjc k hk, ← idem_eq_jeval_lagrange hd hinjd l hk', hx, hkl,
     lagrange_basis_congr hinjc hinjd himg hkl]
 
+/-- **The square root of a resolved element is `jeval` of a polynomial.**
+
+Every idempotent carrying a nonzero eigenvalue is `jeval x` of a Lagrange interpolant
+(`idem_eq_jeval_lagrange`), and `jeval x` is linear, so the whole square root is `jeval x` of a
+single polynomial built from the eigenvalue list.
+
+★ **This is the payoff of the canonicity chain.**  The zero eigenvalue needs no separate
+treatment here — `√0 = 0` deletes its term — so the square root depends only on the *nonzero*
+spectrum and its idempotents, and `exists_idem_iff_forall_jann_eval` and
+`idem_unique_of_resolutions` show both of those are functions of `x`.  A square root produced this
+way is therefore not a choice, which is what `SequentialProductOnEJA` needs and what
+`isSoS_iff_exists_sq`, which merely *exhibits* one, does not give. -/
+theorem sqrt_sum_eq_jeval {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hinj : Function.Injective lam) :
+    (∑ i, Real.sqrt (lam i) • c i)
+      = jeval (∑ i, lam i • c i)
+          (∑ i ∈ Finset.univ.filter (fun i => lam i ≠ 0),
+            Real.sqrt (lam i) • (C (lam i)⁻¹ * Lagrange.basis Finset.univ lam i)) := by
+  classical
+  rw [map_sum]
+  have hterm : ∀ i ∈ Finset.univ.filter (fun i => lam i ≠ 0),
+      jeval (∑ j, lam j • c j)
+          (Real.sqrt (lam i) • (C (lam i)⁻¹ * Lagrange.basis Finset.univ lam i))
+        = Real.sqrt (lam i) • c i := by
+    intro i hi
+    rw [map_smul, idem_eq_jeval_lagrange hfam hinj i (Finset.mem_filter.mp hi).2]
+  rw [Finset.sum_congr rfl hterm]
+  refine (Finset.sum_subset (Finset.filter_subset _ _) ?_).symm
+  intro i _ hi
+  have hz : lam i = 0 := by
+    by_contra hne
+    exact hi (Finset.mem_filter.mpr ⟨Finset.mem_univ i, hne⟩)
+  rw [hz, Real.sqrt_zero, zero_smul]
+
 /-- **A resolution with distinct eigenvalues.**  Merging the idempotents that share an eigenvalue
 leaves an orthogonal idempotent family, still complete for `e`, whose coefficients are injective.
 
