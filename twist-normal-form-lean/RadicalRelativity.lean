@@ -670,8 +670,19 @@ import RadicalRelativity.EJA.FrameExists
 -- of the blocks `V_ii = J_2(p i)` and `V_ij = {x | p i * x = x/2 and p j * x = x/2}`, indexed by
 -- `Sym2 (Fin n)`.  Spanning is proved by a residual argument rather than by expanding a product
 -- of commuting projections, and `EJA.Pattern` is not used.  No proof uses primitivity, and
--- `dim V_ii = 1` is NOT proved.  Substrate; it moves no row.
+-- `dim V_ii = 1` is not proved IN THIS MODULE -- it is proved in the next one.
+-- Substrate; it moves no row.
 import RadicalRelativity.EJA.FramePeirce
+-- The Faraut-Koranyi multiplication table relative to a frame.  `V_ii * V_ii` and `V_ii * V_ij`
+-- stay put, `V_ij * V_jk` lands in `V_ik`, blocks with disjoint index pairs annihilate each
+-- other, and `V_ij * V_ij` lands in `R p_i + R p_j`.  The last of these was the build plan's one
+-- explicitly unpriced step: it falls to the frame's completeness (`sum p_k = 1` collapses the
+-- product to its `p_i` and `p_j` components) and NOT to the trace form the plan expected to
+-- need.  `dim V_ii = 1` is proved here, by running the spectral theorem inside `J_2(p i)`; this
+-- is the first module that spends primitivity rather than transporting it.  The frame's
+-- cardinality is still NOT claimed to be the rank, and nothing here is instantiated on
+-- `H_n(K)`.  Substrate; it moves no row.
+import RadicalRelativity.EJA.FramePeirceMul
 -- A carrier for the class.  `H_n(K)` under the symmetrized product and the real trace form is a
 -- `EuclideanJordanAlgebra`, so `EJA.Class`'s class is inhabited and `exists_jordanFrame` and
 -- `frameBlock_isInternal` are statements about a live object rather than about a class nothing

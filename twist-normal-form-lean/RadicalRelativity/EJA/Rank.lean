@@ -81,7 +81,8 @@ theorem IsPrimitive.eq_zero_or_eq {c : J} (h : IsPrimitive c) {d : J} (hd : d * 
 /-- Primitivity of `c`, read *inside* `J₂(c)`: `c` is primitive exactly when the only
 idempotents of the Peirce subalgebra are its zero and its unit.  The intended consumer is the
 `dim V_ii = 1` step of the frame Peirce decomposition, which runs the spectral theorem inside
-`J₂(pᵢ)`; that step is not built yet. -/
+`J₂(pᵢ)`; that step is `EJA/FramePeirceMul.lean`'s `peirceOneSub_eq_span_of_isPrimitive`, and it
+consumes this lemma in the `→` direction. -/
 theorem isPrimitive_iff_of_idem {c : J} (hc : c * c = c) (hc0 : c ≠ 0) :
     IsPrimitive c ↔ ∀ d : ↥(peirceOneSub hc), d * d = d → d = 0 ∨ d = 1 := by
   constructor
