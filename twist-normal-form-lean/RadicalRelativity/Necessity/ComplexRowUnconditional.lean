@@ -140,7 +140,8 @@ it: `-t = t`.  No new analysis is involved; the selector is a corollary of uniqu
 ★ **CORRECTED.**  This paragraph used to open "**Clauses (i) and (iii) are NOT proved
 here**".  Both are now proved here, further down this same file: clause (iii) as
 `selector_transpose` (ARC-7 block 7.3) and clause (i) as `selector_peirceExchange`.  The
-sentence survived the arrival of clause (iii) in its own file by eight days, which is the
+sentence survived the arrival of clause (iii) in its own file by thirteen days (2026-08-09
+to 2026-08-22), which is the
 failure mode this development has on record — a summary left asserting the old thing after
 the row moved — so it is corrected rather than deleted.  All three selectors of
 `cor:selectors` are proved in this file.
@@ -838,8 +839,8 @@ What is proved here, clause by clause, and at what generality:
   object and the angle really is `t(\log λ − \log λ_k)`, but the passage from an arbitrary spectral
   decomposition to it is open.
 
-`blockHerm_isCrossCoherent` certifies that `X` is not the zero space, so none of the three clauses
-is vacuously true.
+`blockHerm_isCrossCoherent` together with `blockHerm_ne_zero` certifies that `X` is not the zero
+space, so none of the three clauses is vacuously true.
 
 ★ **Placement note.**  This lemma feeds `lem:adjacent` in the article's own architecture.  This
 development reaches the complex row by a different route (`frameTwistConst`, via `AdjAxis`), so
@@ -1171,8 +1172,17 @@ theorem symmMul_add_left (A B C : HermitianMat n ℂ) :
     HermitianMat.symmMul_toMat, HermitianMat.symmMul_toMat, Matrix.add_mul, Matrix.mul_add]
   module
 
+/-- A block element with a nonzero coordinate is nonzero. -/
+theorem blockHerm_ne_zero {i j : n} (hij : i ≠ j) {z : ℂ} (hz : z ≠ 0) :
+    blockHerm i j z ≠ 0 := by
+  intro h
+  refine hz ?_
+  have hentry := congrArg (fun M : HermitianMat n ℂ => M.mat i j) h
+  rwa [blockHerm_entry hij, HermitianMat.mat_zero, Matrix.zero_apply] at hentry
+
 /-- **The cross-coherence space is not the zero space**: every block element `z E_ik + z̄ E_ki`
-lies in it, so `lem:orientation`'s clauses are not vacuously true. -/
+lies in it, and by `blockHerm_ne_zero` those are not all zero, so `lem:orientation`'s clauses
+are not vacuously true. -/
 theorem blockHerm_isCrossCoherent {i j k : n} (hij : i ≠ j) (hki : k ≠ i) (hkj : k ≠ j)
     (z : ℂ) : IsCrossCoherent (framePair i j) (frameProj k) (blockHerm i k z) := by
   refine ⟨?_, frameProj_symmMul_blockHerm_right (Ne.symm hki) z⟩
