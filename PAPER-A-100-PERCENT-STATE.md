@@ -243,3 +243,29 @@ guess identifiers. This is the rule `prop:central`'s row records validating itse
 `(a*a)*b = 0` from `a*b = 0`, which needs associativity a Jordan algebra does not have. Ship two
 correct lemmas over three with one false.
 
+## The exact next step, with the design decision already made
+
+`sqrt_sum_eq_of_resolutions` — "two resolutions of the same element give the same square root" —
+is the one theorem standing between the canonicity chain and a *definition* of `jsqrt`. Everything
+it needs is proved:
+
+* `nonzero_spectrum_eq_of_resolutions` — the two index sets carry the same eigenvalues;
+* `idem_unique_of_resolutions` — matched eigenvalues carry the same idempotent;
+* both sums collapse onto their nonzero parts because `Real.sqrt 0 = 0`.
+
+**Design decision, made and recorded so it is not re-litigated:** use `Finset.sum_bij'`, NOT
+`Finset.sum_nbij'`. Checked at source
+(`.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Defs.lean:527`): `sum_nbij'`
+takes *non-dependent* total functions `ι -> κ`, and the forward map here ("send `i` to the unique
+`j` with `ld j = lc i`") only exists on the filtered subset — off it there is no `j`, and `Fin m`
+has no junk value when `m = 0`. `sum_bij'` takes `i : forall a in s, κ`, so the membership proof
+is in scope exactly where the witness is extracted. That is the right tool.
+
+Attempted once on 2026-08-23 and reverted rather than left as a `sorry`. Estimated 60-100 lines.
+
+After it: `jsqrt` becomes definable, then `a . b := quadJ (jsqrt a) b`, then S1-S7.
+**S1 and S3 are already discharged** (`quadJ_add`, `quadJ_unit_left`). ★ **S4-S7 are NOT cheap** —
+an earlier note in this file called the whole assembly "ordinary", which was too broad for five of
+the seven clauses. Orthogonality symmetry, compatible associativity and the two multiplicativity
+clauses are substantive Jordan identities and nothing built tonight makes them fall out.
+
