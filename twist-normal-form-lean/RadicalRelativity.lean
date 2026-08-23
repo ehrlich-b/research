@@ -635,3 +635,8 @@ import RadicalRelativity.EJA.InterfaceInstance
 import RadicalRelativity.EJA.ConcreteInstance
 import RadicalRelativity.EJA.Witness
 import RadicalRelativity.EJA.Spectral
+-- The order structure.  `EJA.Order` puts an `OrderUnitSpace` on a Euclidean Jordan algebra,
+-- with the cone of sums of squares as the positive cone; order-unit boundedness is read off
+-- `EJA.Spectral`'s resolution.  It is the enabling layer for rows 13 and 16 — before it,
+-- `SequentialProductOn` could not be *stated* at EJA generality — and it moves no row.
+import RadicalRelativity.EJA.Order
