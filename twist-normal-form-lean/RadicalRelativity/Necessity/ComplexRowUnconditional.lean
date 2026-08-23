@@ -801,4 +801,386 @@ theorem n2_theta_block_rotation
 end N2ThetaLevel
 
 
+/-! ## `lem:orientation` (row 22): the splitting-independent complex structure on a
+cross-coherence space
+
+`main.tex` defines `X = {x : q ∘ x = ½x = p_k ∘ x}` for a rank-two projection `q` and an
+orthogonal atom `p_k`, identifies it with the self-adjoint part of `qM_n(ℂ)p_k ⊕ p_kM_n(ℂ)q`
+("each `x ∈ X` is `x = z + z*` with corner `z = q x p_k`"), and defines
+`𝒥_{q,k}(x) = i z − i z*`.
+
+★ **`X` is a predicate, not a carrier, and every clause of the lemma is pointwise under it.**
+`IsCrossCoherent` is the article's definition verbatim; `isCrossCoherent_iff` **proves** the
+article's identification with the corner form rather than assuming it; and `orientationJ` is the
+article's real-linear map, defined for every `x` and restricted where the article restricts it.
+
+What is proved here, clause by clause, and at what generality:
+
+* **(i)** `orientationJ_corner` (the corner of `𝒥x` is `iz`), `orientationJ_isCrossCoherent`
+  (`𝒥` maps `X` into `X`), `orientationJ_sq` (`𝒥² = −id` on `X`).  At the article's generality:
+  `q`, `p_k` orthogonal idempotents, arbitrary `n`.
+  ★ The clause's remaining phrase — "depends only on `q`, `p_k` and the fixed ambient `i`, **not**
+  on any splitting `q = p₁ + p₂`" — is discharged by the *form of the definition*: `orientationJ`
+  takes `q` and `p` and nothing else, so there is no splitting for it to depend on.  **No theorem
+  is stated for it**, because every Lean rendering of "the two splittings agree" is `rfl`, and a
+  `rfl` theorem here would record awkwardness and read as depth.
+* **(ii)** `orientationJ_adU`.  Proved **unrestricted** — for every `x`, not only on `X` — because
+  the article's own computation `q(uxu*)p_k = u(q x p_k)u*` never uses the coherence condition.
+  Stronger than the article's clause.
+* **(iii)** `adU_eq_rotation_on_crossCoherent`.  ★ **This is where the row stays PARTIAL, and the
+  gap is named rather than papered over.**  What is proved is the article's own proof step at its
+  own generality: *any* unitary acting on `q` and on `p_k` by unit scalars rotates `X` through the
+  angle carried by the ratio of those scalars, in the orientation fixed by `𝒥_{q,k}`.  What is
+  **not** proved is that `a^{it}` is such a unitary for an arbitrary `a = λq + Σ_{l≥3} λ_l p_l`;
+  that needs `cfc f a · q = f(λ)·q` for a spectral projection `q` of `a`, which this tree has only
+  for the diagonal family.  `torusU_framePair` supplies exactly that identification at the standard
+  frame, where `a^{it}` **is** `U_t(r)` — so the hypothesis class is inhabited by the article's own
+  object and the angle really is `t(\log λ − \log λ_k)`, but the passage from an arbitrary spectral
+  decomposition to it is open.
+
+`blockHerm_isCrossCoherent` certifies that `X` is not the zero space, so none of the three clauses
+is vacuously true.
+
+★ **Placement note.**  This lemma feeds `lem:adjacent` in the article's own architecture.  This
+development reaches the complex row by a different route (`frameTwistConst`, via `AdjAxis`), so
+nothing below consumes `lem:orientation`; it is formalized as an article row, not as a dependency.
+-/
+
+section Orientation
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+/-- The corner `z = q x p_k` of the article's `lem:orientation`. -/
+def coherenceCorner (q p x : HermitianMat n ℂ) : Matrix n n ℂ := q.mat * x.mat * p.mat
+
+/-- `i·z − i·z*` is self-adjoint. -/
+theorem orientationJ_isHermitian (q p x : HermitianMat n ℂ) :
+    (Complex.I • coherenceCorner q p x - Complex.I • (coherenceCorner q p x)ᴴ).IsHermitian := by
+  unfold Matrix.IsHermitian
+  rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_smul, Matrix.conjTranspose_smul,
+    Matrix.conjTranspose_conjTranspose]
+  simp only [Complex.star_def, Complex.conj_I]
+  module
+
+/-- `𝒥_{q,k}(x) = i z − i z*`, `z = q x p_k`, before bundling. -/
+def orientationJFun (q p x : HermitianMat n ℂ) : HermitianMat n ℂ :=
+  ⟨Complex.I • coherenceCorner q p x - Complex.I • (coherenceCorner q p x)ᴴ,
+    orientationJ_isHermitian q p x⟩
+
+@[simp]
+theorem orientationJFun_mat (q p x : HermitianMat n ℂ) :
+    (orientationJFun q p x).mat
+      = Complex.I • coherenceCorner q p x - Complex.I • (coherenceCorner q p x)ᴴ := rfl
+
+/-- **The article's `𝒥_{q,k}`**, as the real-linear map it is. -/
+def orientationJ (q p : HermitianMat n ℂ) : HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ where
+  toFun := orientationJFun q p
+  map_add' x y := by
+    ext1
+    simp only [orientationJFun_mat, coherenceCorner, HermitianMat.mat_add, Matrix.mul_add,
+      Matrix.add_mul, Matrix.conjTranspose_add, smul_add]
+    abel
+  map_smul' c x := by
+    ext1
+    simp only [orientationJFun_mat, coherenceCorner, HermitianMat.mat_smul, RingHom.id_apply,
+      Matrix.mul_smul, Matrix.smul_mul, Matrix.conjTranspose_smul, star_trivial, smul_sub]
+    rw [smul_comm Complex.I, smul_comm Complex.I]
+
+@[simp]
+theorem orientationJ_apply (q p x : HermitianMat n ℂ) :
+    orientationJ q p x = orientationJFun q p x := rfl
+
+
+/-- The Peirce eigenrelation `y ∘ x = ½x`, in matrix form. -/
+theorem symmMul_eq_half_iff (y x : HermitianMat n ℂ) :
+    y.symmMul x = (1 / 2 : ℝ) • x ↔ y.mat * x.mat + x.mat * y.mat = x.mat := by
+  constructor
+  · intro h
+    have h' := congrArg HermitianMat.mat h
+    rw [HermitianMat.symmMul_toMat, HermitianMat.mat_smul] at h'
+    have hc : ((1 / 2 : ℝ) • x.mat : Matrix n n ℂ) = ((2 : ℂ))⁻¹ • x.mat := by module
+    rw [hc] at h'
+    exact smul_right_injective _ (by norm_num : ((2 : ℂ))⁻¹ ≠ 0) h'
+  · intro h
+    ext1
+    rw [HermitianMat.symmMul_toMat, HermitianMat.mat_smul, h]
+    module
+
+
+/-- The article's cross-coherence space `X = {x : q ∘ x = ½x = p_k ∘ x}`, as the predicate it is. -/
+def IsCrossCoherent (q p x : HermitianMat n ℂ) : Prop :=
+  q.symmMul x = (1 / 2 : ℝ) • x ∧ p.symmMul x = (1 / 2 : ℝ) • x
+
+theorem corner_conjTranspose (q p x : HermitianMat n ℂ) :
+    (coherenceCorner q p x)ᴴ = p.mat * x.mat * q.mat := by
+  rw [coherenceCorner, Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, q.H, p.H, x.H,
+    Matrix.mul_assoc]
+
+theorem mul_comm_zero {q p : HermitianMat n ℂ} (hqp : q.mat * p.mat = 0) :
+    p.mat * q.mat = 0 := by
+  have h := congrArg Matrix.conjTranspose hqp
+  rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_zero, q.H, p.H] at h
+  exact h
+
+/-- **The article's identification of `X`**: `x ∈ X` iff `x = z + z*` for its own corner
+`z = q x p_k`.  The article asserts this identification; it is proved here. -/
+theorem isCrossCoherent_iff {q p : HermitianMat n ℂ}
+    (hqp : q.mat * p.mat = 0) (hq : q.mat * q.mat = q.mat) (hp : p.mat * p.mat = p.mat)
+    (x : HermitianMat n ℂ) :
+    IsCrossCoherent q p x
+      ↔ coherenceCorner q p x + (coherenceCorner q p x)ᴴ = x.mat := by
+  have hpq : p.mat * q.mat = 0 := mul_comm_zero hqp
+  rw [IsCrossCoherent, symmMul_eq_half_iff, symmMul_eq_half_iff, corner_conjTranspose,
+    coherenceCorner]
+  constructor
+  · rintro ⟨h1, h2⟩
+    have hxp : x.mat * p.mat = q.mat * x.mat * p.mat := by
+      conv_lhs => rw [← h1]
+      calc (q.mat * x.mat + x.mat * q.mat) * p.mat
+          = q.mat * x.mat * p.mat + x.mat * (q.mat * p.mat) := by noncomm_ring
+        _ = q.mat * x.mat * p.mat := by rw [hqp, Matrix.mul_zero, add_zero]
+    have hpx : p.mat * x.mat = p.mat * x.mat * q.mat := by
+      conv_lhs => rw [← h1]
+      calc p.mat * (q.mat * x.mat + x.mat * q.mat)
+          = (p.mat * q.mat) * x.mat + p.mat * x.mat * q.mat := by noncomm_ring
+        _ = p.mat * x.mat * q.mat := by rw [hpq, Matrix.zero_mul, zero_add]
+    rw [← hxp, ← hpx, add_comm]
+    exact h2
+  · intro hx
+    have hqx : q.mat * x.mat = q.mat * x.mat * p.mat := by
+      conv_lhs => rw [← hx]
+      calc q.mat * (q.mat * x.mat * p.mat + p.mat * x.mat * q.mat)
+          = (q.mat * q.mat) * x.mat * p.mat + (q.mat * p.mat) * x.mat * q.mat := by noncomm_ring
+        _ = q.mat * x.mat * p.mat := by
+            rw [hq, hqp, Matrix.zero_mul, Matrix.zero_mul, add_zero]
+    have hxq : x.mat * q.mat = p.mat * x.mat * q.mat := by
+      conv_lhs => rw [← hx]
+      calc (q.mat * x.mat * p.mat + p.mat * x.mat * q.mat) * q.mat
+          = q.mat * x.mat * (p.mat * q.mat) + p.mat * x.mat * (q.mat * q.mat) := by noncomm_ring
+        _ = p.mat * x.mat * q.mat := by rw [hpq, hq, Matrix.mul_zero, zero_add]
+    have hpx : p.mat * x.mat = p.mat * x.mat * q.mat := by
+      conv_lhs => rw [← hx]
+      calc p.mat * (q.mat * x.mat * p.mat + p.mat * x.mat * q.mat)
+          = (p.mat * q.mat) * x.mat * p.mat + (p.mat * p.mat) * x.mat * q.mat := by noncomm_ring
+        _ = p.mat * x.mat * q.mat := by
+            rw [hpq, hp, Matrix.zero_mul, Matrix.zero_mul, zero_add]
+    have hxp : x.mat * p.mat = q.mat * x.mat * p.mat := by
+      conv_lhs => rw [← hx]
+      calc (q.mat * x.mat * p.mat + p.mat * x.mat * q.mat) * p.mat
+          = q.mat * x.mat * (p.mat * p.mat) + p.mat * x.mat * (q.mat * p.mat) := by noncomm_ring
+        _ = q.mat * x.mat * p.mat := by rw [hp, hqp, Matrix.mul_zero, add_zero]
+    exact ⟨by rw [hqx, hxq]; exact hx, by rw [hpx, hxp, add_comm]; exact hx⟩
+
+/-- **`lem:orientation`(i), corner.**  On `X`, the corner of `𝒥_{q,k}(x)` is `i z`. -/
+theorem orientationJ_corner {q p : HermitianMat n ℂ}
+    (hqp : q.mat * p.mat = 0) (hq : q.mat * q.mat = q.mat) (hp : p.mat * p.mat = p.mat)
+    (x : HermitianMat n ℂ) :
+    coherenceCorner q p (orientationJ q p x) = Complex.I • coherenceCorner q p x := by
+  have hpq : p.mat * q.mat = 0 := mul_comm_zero hqp
+  rw [orientationJ_apply, coherenceCorner, orientationJFun_mat, corner_conjTranspose,
+    coherenceCorner]
+  calc q.mat * (Complex.I • (q.mat * x.mat * p.mat)
+        - Complex.I • (p.mat * x.mat * q.mat)) * p.mat
+      = Complex.I • ((q.mat * q.mat) * x.mat * (p.mat * p.mat))
+        - Complex.I • ((q.mat * p.mat) * x.mat * (q.mat * p.mat)) := by
+        simp only [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_smul, Matrix.smul_mul]
+        congr 2 <;> noncomm_ring
+    _ = Complex.I • (q.mat * x.mat * p.mat) := by
+        rw [hq, hp, hqp, Matrix.zero_mul, Matrix.zero_mul, smul_zero, sub_zero]
+
+/-- **`lem:orientation`(i), stability.**  `𝒥_{q,k}` maps `X` into `X`. -/
+theorem orientationJ_isCrossCoherent {q p : HermitianMat n ℂ}
+    (hqp : q.mat * p.mat = 0) (hq : q.mat * q.mat = q.mat) (hp : p.mat * p.mat = p.mat)
+    {x : HermitianMat n ℂ} (hx : IsCrossCoherent q p x) :
+    IsCrossCoherent q p (orientationJ q p x) := by
+  rw [isCrossCoherent_iff hqp hq hp] at hx ⊢
+  rw [orientationJ_corner hqp hq hp, orientationJ_apply, orientationJFun_mat,
+    Matrix.conjTranspose_smul, Complex.star_def, Complex.conj_I]
+  module
+
+/-- **`lem:orientation`(i), complex structure.**  `𝒥_{q,k}² = −id` on `X`. -/
+theorem orientationJ_sq {q p : HermitianMat n ℂ}
+    (hqp : q.mat * p.mat = 0) (hq : q.mat * q.mat = q.mat) (hp : p.mat * p.mat = p.mat)
+    {x : HermitianMat n ℂ} (hx : IsCrossCoherent q p x) :
+    orientationJ q p (orientationJ q p x) = -x := by
+  have hxc := (isCrossCoherent_iff hqp hq hp x).mp hx
+  ext1
+  rw [orientationJ_apply, orientationJFun_mat, orientationJ_corner hqp hq hp,
+    HermitianMat.mat_neg, ← hxc, Matrix.conjTranspose_smul, Complex.star_def, Complex.conj_I]
+  match_scalars <;> simp [Complex.I_sq]
+
+
+/-- **`lem:orientation`(ii).**  Every inner automorphism `Ad_u` fixing `q` and `p_k` commutes
+with `𝒥_{q,k}`.  ★ Stated for **every** `x`, not only on `X`: the article's computation
+`q(uxu*)p_k = u(q x p_k)u*` never uses the coherence condition, so the restriction to `X` is not
+needed and the unrestricted form is what is proved. -/
+theorem orientationJ_adU {q p : HermitianMat n ℂ} {u : Matrix n n ℂ}
+    (hq : u * q.mat = q.mat * u) (hp : u * p.mat = p.mat * u) (huu : uᴴ * u = 1)
+    (x : HermitianMat n ℂ) :
+    orientationJ q p (adU u x) = adU u (orientationJ q p x) := by
+  have hcorner : coherenceCorner q p (adU u x) = u * coherenceCorner q p x * uᴴ := by
+    rw [coherenceCorner, coherenceCorner, adU_apply, HermitianMat.conj_apply_mat]
+    calc q.mat * (u * x.mat * uᴴ) * p.mat
+        = (q.mat * u) * x.mat * (uᴴ * p.mat) := by noncomm_ring
+      _ = (u * q.mat) * x.mat * (p.mat * uᴴ) := by
+          rw [← hq]
+          congr 1
+          have h := congrArg Matrix.conjTranspose hp
+          rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, p.H] at h
+          exact h.symm
+      _ = u * (q.mat * x.mat * p.mat) * uᴴ := by noncomm_ring
+  ext1
+  rw [orientationJ_apply, orientationJFun_mat, hcorner, adU_apply, HermitianMat.conj_apply_mat,
+    orientationJ_apply, orientationJFun_mat]
+  rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose]
+  simp only [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_smul, Matrix.smul_mul]
+  congr 2 <;> noncomm_ring
+
+/-- **`lem:orientation`(iii), the mechanism at the article's own generality.**  A unitary that
+acts on `q` and on `p_k` by unit scalars — which `a^{it}` does, with `e^{it\log λ}` and
+`e^{it\log λ_k}` — rotates `X` through the angle carried by the ratio of those scalars, in the
+orientation fixed by `𝒥_{q,k}`. -/
+theorem adU_eq_rotation_on_crossCoherent {q p : HermitianMat n ℂ} {u : Matrix n n ℂ}
+    (hqp : q.mat * p.mat = 0) (hq : q.mat * q.mat = q.mat) (hp : p.mat * p.mat = p.mat)
+    {c d : ℂ} (hcq : u * q.mat = c • q.mat) (hdp : u * p.mat = d • p.mat)
+    {φ : ℝ} (hcd : c * (starRingEnd ℂ) d = Complex.exp ((φ : ℂ) * Complex.I))
+    {x : HermitianMat n ℂ} (hx : IsCrossCoherent q p x) :
+    adU u x = Real.cos φ • x + Real.sin φ • orientationJ q p x := by
+  have hxc := (isCrossCoherent_iff hqp hq hp x).mp hx
+  have hpu : p.mat * uᴴ = (starRingEnd ℂ) d • p.mat := by
+    have h := congrArg Matrix.conjTranspose hdp
+    rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_smul, p.H] at h
+    exact h
+  have hcorner : u * coherenceCorner q p x * uᴴ
+      = (c * (starRingEnd ℂ) d) • coherenceCorner q p x := by
+    rw [coherenceCorner]
+    calc u * (q.mat * x.mat * p.mat) * uᴴ
+        = (u * q.mat) * x.mat * (p.mat * uᴴ) := by noncomm_ring
+      _ = (c • q.mat) * x.mat * ((starRingEnd ℂ) d • p.mat) := by rw [hcq, hpu]
+      _ = (c * (starRingEnd ℂ) d) • (q.mat * x.mat * p.mat) := by
+          simp only [Matrix.smul_mul, Matrix.mul_smul, smul_smul]
+          rw [mul_comm]
+  ext1
+  rw [adU_apply, HermitianMat.conj_apply_mat, HermitianMat.mat_add, HermitianMat.mat_smul,
+    HermitianMat.mat_smul, orientationJ_apply, orientationJFun_mat, ← hxc]
+  rw [show u * (coherenceCorner q p x + (coherenceCorner q p x)ᴴ) * uᴴ
+      = (u * coherenceCorner q p x * uᴴ) + (u * coherenceCorner q p x * uᴴ)ᴴ from by
+    rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose]
+    noncomm_ring]
+  rw [hcorner, hcd]
+  have hexp : Complex.exp ((φ : ℂ) * Complex.I)
+      = ((Real.cos φ : ℝ) : ℂ) + ((Real.sin φ : ℝ) : ℂ) * Complex.I := by
+    rw [Complex.exp_mul_I, Complex.ofReal_cos, Complex.ofReal_sin]
+  have hstar : star (Complex.exp ((φ : ℂ) * Complex.I))
+      = ((Real.cos φ : ℝ) : ℂ) - ((Real.sin φ : ℝ) : ℂ) * Complex.I := by
+    rw [hexp]
+    simp only [Complex.star_def, map_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+    ring
+  rw [Matrix.conjTranspose_smul, hstar, hexp]
+  match_scalars <;>
+    simp only [← Complex.ofReal_cos, ← Complex.ofReal_sin, Complex.coe_algebraMap] <;>
+    ring
+
+
+/-! ### Non-vacuity: the article's own `q`, `p_k` and `a^{it}` -/
+
+/-- The rank-two projection `q = p_i + p_j` of the article. -/
+def framePair (i j : n) : HermitianMat n ℂ := frameProj i + frameProj j
+
+theorem framePair_mat (i j : n) :
+    (framePair i j).mat
+      = Matrix.diagonal (fun l => (if l = i then (1 : ℂ) else 0) + (if l = j then 1 else 0)) := by
+  rw [framePair, HermitianMat.mat_add, frameProj_mat, frameProj_mat, ← Matrix.diagonal_add]
+
+theorem framePair_idem {i j : n} (hij : i ≠ j) :
+    (framePair i j).mat * (framePair i j).mat = (framePair i j).mat := by
+  rw [framePair_mat, Matrix.diagonal_mul_diagonal]
+  congr 1
+  funext l
+  by_cases hli : l = i
+  · simp [hli, hij]
+  · by_cases hlj : l = j <;> simp [hli, hlj, Ne.symm hij]
+
+theorem framePair_mul_frameProj {i j k : n} (hki : k ≠ i) (hkj : k ≠ j) :
+    (framePair i j).mat * (frameProj k).mat = 0 := by
+  rw [framePair_mat, frameProj_mat, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_zero]
+  congr 1
+  funext l
+  by_cases hlk : l = k
+  · subst hlk; simp [hki, hkj]
+  · simp [hlk]
+
+theorem frameProj_idem (k : n) : (frameProj k).mat * (frameProj k).mat = (frameProj k).mat := by
+  rw [frameProj_mat, Matrix.diagonal_mul_diagonal]
+  congr 1
+  funext l
+  by_cases hlk : l = k <;> simp [hlk]
+
+/-- A diagonal unitary acts by a single scalar on any diagonal projection whose support it is
+constant on. -/
+theorem torusU_mul_diagonal (t : ℝ) (r : n → ℝ) (h : n → ℂ) (c : ℂ)
+    (hc : ∀ l, h l ≠ 0 → Complex.exp ((↑(t * r l) : ℂ) * Complex.I) = c) :
+    torusU t r * Matrix.diagonal h = c • Matrix.diagonal h := by
+  ext a b
+  rw [torusU, Matrix.diagonal_mul_diagonal, Matrix.diagonal_apply, Matrix.smul_apply,
+    Matrix.diagonal_apply]
+  by_cases hab : a = b
+  · subst hab
+    simp only [if_pos rfl, smul_eq_mul]
+    by_cases hl : h a = 0
+    · simp [hl]
+    · rw [hc a hl]; simp
+  · simp [hab]
+
+/-- **The hypothesis class of `adU_eq_rotation_on_crossCoherent` is inhabited, by `a^{it}`.**
+For `a = diag(e^{r_l})` with `r i = r j`, the phase `a^{it} = U_t(r)` acts on `q = p_i + p_j` by
+`e^{it r_i}` and on `p_k` by `e^{it r_k}`, so the rotation angle is `t(r_i − r_k)` — the article's
+`t(\log λ − \log λ_k)`. -/
+theorem torusU_framePair {i j k : n} (hij : i ≠ j) (hki : k ≠ i) (hkj : k ≠ j)
+    (t : ℝ) {r : n → ℝ} (hr : r i = r j) :
+    torusU t r * (framePair i j).mat
+        = Complex.exp ((↑(t * r i) : ℂ) * Complex.I) • (framePair i j).mat
+      ∧ torusU t r * (frameProj k).mat
+        = Complex.exp ((↑(t * r k) : ℂ) * Complex.I) • (frameProj k).mat
+      ∧ Complex.exp ((↑(t * r i) : ℂ) * Complex.I)
+          * (starRingEnd ℂ) (Complex.exp ((↑(t * r k) : ℂ) * Complex.I))
+        = Complex.exp ((↑(t * (r i - r k)) : ℝ) * Complex.I) := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [framePair_mat]
+    refine torusU_mul_diagonal t r _ _ (fun l hl => ?_)
+    by_cases hli : l = i
+    · rw [hli]
+    · by_cases hlj : l = j
+      · rw [hlj, hr]
+      · simp [hli, hlj] at hl
+  · rw [frameProj_mat]
+    refine torusU_mul_diagonal t r _ _ (fun l hl => ?_)
+    by_cases hlk : l = k
+    · rw [hlk]
+    · simp [hlk] at hl
+  · rw [← Complex.exp_conj, ← Complex.exp_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+    congr 1
+    push_cast
+    ring
+
+/-- `symmMul` is additive in its first slot. -/
+theorem symmMul_add_left (A B C : HermitianMat n ℂ) :
+    (A + B).symmMul C = A.symmMul C + B.symmMul C := by
+  ext1
+  rw [HermitianMat.symmMul_toMat, HermitianMat.mat_add, HermitianMat.mat_add,
+    HermitianMat.symmMul_toMat, HermitianMat.symmMul_toMat, Matrix.add_mul, Matrix.mul_add]
+  module
+
+/-- **The cross-coherence space is not the zero space**: every block element `z E_ik + z̄ E_ki`
+lies in it, so `lem:orientation`'s clauses are not vacuously true. -/
+theorem blockHerm_isCrossCoherent {i j k : n} (hij : i ≠ j) (hki : k ≠ i) (hkj : k ≠ j)
+    (z : ℂ) : IsCrossCoherent (framePair i j) (frameProj k) (blockHerm i k z) := by
+  refine ⟨?_, frameProj_symmMul_blockHerm_right (Ne.symm hki) z⟩
+  rw [framePair, symmMul_add_left,
+    frameProj_symmMul_blockHerm_left (Ne.symm hki) z,
+    frameProj_symmMul_blockHerm_other (Ne.symm hij) (fun h => hkj h.symm) z, add_zero]
+
+
+end Orientation
+
 end Necessity
