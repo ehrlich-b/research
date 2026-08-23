@@ -741,6 +741,15 @@ import RadicalRelativity.EJA.Connection
 -- connectors between them has real dimension 1, 2, 4 or 8.  ★ The full Jacobson isomorphism
 -- `J = H_n(C)` is NOT proved here.  Substrate; it moves no row.
 import RadicalRelativity.EJA.Coordinatize
+-- A witness for the coordinate algebra.  `E_ij + E_ji` on `H_d(C)` is shown to lie in the block
+-- `V_ij` of the diagonal frame and to square to `E_ii + E_jj`, so it is a CONNECTOR, and three
+-- distinct diagonal indices assemble a `CoordData`.  That makes `EJA.Coordinatize` a theory with
+-- an inhabitant rather than a theory about an empty structure -- the exposure ARC-6 shipped with
+-- `IsArchimedean` -- and instantiates the dimension theorem:
+-- `finrank_frameBlockRaw_diagJordanFrame` says an off-diagonal block of the diagonal frame on
+-- `H_d(C)` has real dimension 1, 2, 4 or 8 whenever `card d >= 3`.  ★ It is 2, and THAT is not
+-- proved here; only membership in the Hurwitz list is.  Substrate; it moves no row.
+import RadicalRelativity.EJA.CoordinatizeWitness
 
 -- The octonion algebra and its trace form (infrastructure for the Albert branch).
 -- `Octonions` builds `𝕆` as `Fin 8 → ℝ` with the Fano-plane table and proves the
