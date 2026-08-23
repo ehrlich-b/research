@@ -99,6 +99,20 @@ that the diagonal-is-real clause is *not* an extra condition: `cstar x = x ⟹ x
 (`eq_smul_one_of_cstar_eq_self`), so the `i = j` instance of the entrywise condition already
 says it.
 
+★★★ **ALL THREE LIMITS BELOW WERE CLOSED ON 2026-08-23 (commit `9c24894`), hours after this
+paragraph was written.  They are kept, struck, rather than deleted, because the pattern —
+a certificate priced against a tree that moved underneath it — is the recurring failure mode this
+whole directory exists to catch.**  (a) `EJA/AlbertBridge.lean`'s `hermMat3_jmul_jordan` proves
+the Jordan identity on `HermMat (Fin 3) C` for **every** composition algebra `C`, splitting on
+`hurwitz_classification` and handling the `𝕆` branch through `jmul_jordan_of_isCompIso_octonion`
+— so the "`𝕆` branch, at any rank" gap is closed at rank 3, which is the rank the Albert algebra
+needs.  (b) `finrank_hermMat_octonion : finrank ℝ (HermMat (Fin 3) Octonion) = 27` is proved.
+(c) `toHermMat : h3O ≃ₗ[ℝ] HermMat (Fin 3) Octonion` is constructed, and carries both the Jordan
+product (`toHermMat_mul`) and the trace form (`toHermMat_hermIp`), so "the same algebra" is a
+theorem rather than a design intention.  ★ What this does **not** close: the classical
+"`H_n(𝕆)` is Jordan iff `n ≤ 3`" — neither half — remains unproved, and rank 3 is proved
+positively rather than as the boundary case of that equivalence.
+
 ★ Three limits of the discharge, so it is not read as more than it is. **(a)** `HermMat ι C` is
 **not** proved to be a Jordan algebra for non-associative `C`: `jmul_jordan_of_assoc` assumes
 `[Ring C]`, and `jmul_jordan_of_isCompIso` extends that only to `C` isomorphic to such a ring —
