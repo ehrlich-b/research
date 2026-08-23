@@ -308,4 +308,118 @@ kind of check self-review does not generate, because the author already believes
 theorem arch_iff {V : Type*} [OrderUnitSpace V] : IsArchimedean V ↔ IsArchNat V :=
   ⟨archNat_of_arch, arch_of_archNat⟩
 
+
+/-! ## The order-unit norm, and the article's `½`-ball route to spanning
+
+`span_isEffect_eq_top` above proves the article's *conclusion* — that the effects span — from
+order-unit boundedness alone, which is strictly more general than the article's argument.  This
+section formalizes the article's own *route*, which the manifest recorded as the open half of
+`lem:span`: the effects contain the closed ball of radius `½` about `½ • 𝟙`, measured in the
+order-unit norm (`main.tex:420-431`).
+
+Two things the interface does not carry are supplied here rather than assumed.  The order-unit
+norm is an unbundled `def`, not a `Norm` instance — the carried `Norm` slot belongs to the
+`NormedAddCommGroup` parent, and a competing bundled norm would make instance resolution
+ambiguous.  That is the same choice `Hermitian/OrderUnit.lean` makes at the concrete carrier,
+for the same reason.  And the *closed* ball needs the infimum to be **attained**, which is
+exactly what `IsArchimedean` buys: the `archimedean` field is order-unit boundedness only, and
+on its own it gives the open ball and no more.  So the ball clause is proved under an explicit
+`IsArchimedean` hypothesis, discharged at every carrier that has one. -/
+
+/-- The scalars that sandwich `x` between `∓ t • 𝟙`.  The order-unit norm is its infimum. -/
+def ouBound (x : V) : Set ℝ := {t : ℝ | 0 ≤ t ∧ -(t • 𝟙) ≤ x ∧ x ≤ t • 𝟙}
+
+/-- Order-unit boundedness applied to `x` and to `-x`, with `max` merging the two bounds. -/
+theorem ouBound_nonempty (x : V) : (ouBound x).Nonempty := by
+  obtain ⟨r, hr0, hr⟩ := archimedean x
+  obtain ⟨s, hs0, hs⟩ := archimedean (-x)
+  refine ⟨max r s, le_trans hr0 (le_max_left r s), ?_, ?_⟩
+  · have h : -x ≤ max r s • (𝟙 : V) :=
+      le_trans hs (smul_le_smul_of_le_of_nonneg (le_max_right r s) ousUnit_nonneg)
+    have h2 := neg_le_neg h
+    rwa [neg_neg] at h2
+  · exact le_trans hr (smul_le_smul_of_le_of_nonneg (le_max_left r s) ousUnit_nonneg)
+
+theorem bddBelow_ouBound (x : V) : BddBelow (ouBound x) := ⟨0, fun _ ht => ht.1⟩
+
+/-- **The order-unit norm** `‖x‖₁ = inf {t ≥ 0 | -t • 𝟙 ≤ x ≤ t • 𝟙}`, at the interface's own
+generality.  Deliberately unbundled; see the section docstring. -/
+noncomputable def ouNorm (x : V) : ℝ := sInf (ouBound x)
+
+theorem ouNorm_nonneg (x : V) : 0 ≤ ouNorm x :=
+  le_csInf (ouBound_nonempty x) fun _ ht => ht.1
+
+theorem ouNorm_le {x : V} {t : ℝ} (ht : t ∈ ouBound x) : ouNorm x ≤ t :=
+  csInf_le (bddBelow_ouBound x) ht
+
+/-- Order-arithmetic helper: `a ≤ b + c` gives `a - b ≤ c`.  The interface carries
+`add_le_add_left` as a field and no `OrderedAddCommGroup` instance, so this is done by hand. -/
+theorem sub_le_of_le_add {a b c : V} (h : a ≤ b + c) : a - b ≤ c := by
+  have h1 := add_le_add_right' h (-b)
+  have hb : b + c + -b = c := by abel
+  rw [hb] at h1
+  rwa [← sub_eq_add_neg] at h1
+
+/-- **The Archimedean squeeze in the form the ball clause needs.**  An element under
+`(t + ε) • 𝟙` for *every* positive `ε` is under `t • 𝟙`. -/
+theorem le_smul_unit_of_forall_pos (harch : IsArchimedean V) {y : V} {t : ℝ}
+    (h : ∀ ε : ℝ, 0 < ε → y ≤ (t + ε) • 𝟙) : y ≤ t • 𝟙 := by
+  have key : y - t • (𝟙 : V) ≤ 0 := by
+    refine harch _ fun ε hε => ?_
+    have h1 := h ε hε
+    rw [add_smul] at h1
+    exact sub_le_of_le_add h1
+  have h2 := add_le_add_right' key (t • (𝟙 : V))
+  rwa [sub_add_cancel, zero_add] at h2
+
+/-- **The infimum defining the order-unit norm is attained.**  Equivalently: the order-unit
+ball is closed.  This is the one step that needs `IsArchimedean` rather than the class's weaker
+order-unit boundedness, and it is why the article's ball clause is a *closed*-ball statement. -/
+theorem ouNorm_mem_ouBound (harch : IsArchimedean V) (x : V) : ouNorm x ∈ ouBound x := by
+  have hx : x ≤ ouNorm x • (𝟙 : V) := by
+    refine le_smul_unit_of_forall_pos harch fun ε hε => ?_
+    obtain ⟨u, hu, hlt⟩ := Real.lt_sInf_add_pos (ouBound_nonempty x) hε
+    exact le_trans hu.2.2 (smul_le_smul_of_le_of_nonneg (le_of_lt hlt) ousUnit_nonneg)
+  have hnx : -x ≤ ouNorm x • (𝟙 : V) := by
+    refine le_smul_unit_of_forall_pos harch fun ε hε => ?_
+    obtain ⟨u, hu, hlt⟩ := Real.lt_sInf_add_pos (ouBound_nonempty x) hε
+    have h1 : -x ≤ u • (𝟙 : V) := by
+      have h2 := neg_le_neg hu.2.1
+      rwa [neg_neg] at h2
+    exact le_trans h1 (smul_le_smul_of_le_of_nonneg (le_of_lt hlt) ousUnit_nonneg)
+  refine ⟨ouNorm_nonneg x, ?_, hx⟩
+  have h3 := neg_le_neg hnx
+  rwa [neg_neg] at h3
+
+/-- **`lem:span`, ball clause — the article's route, formalized.**
+
+`main.tex:420-431` proves the spanning property by observing that `‖v‖ ≤ ½` implies
+`0 ≤ ½𝟙 + v ≤ 𝟙`, so the effects contain the closed `½`-ball about `½𝟙`.  That is this
+theorem, with `‖·‖` the order-unit norm and the closedness paid for by `IsArchimedean`.
+
+The manifest recorded this clause as open on the grounds that it "needs the norm to *be* the
+order-unit norm plus Archimedean"; both are now supplied by name. -/
+theorem isEffect_half_smul_unit_add (harch : IsArchimedean V) {v : V}
+    (hv : ouNorm v ≤ 1 / 2) : IsEffect ((1 / 2 : ℝ) • 𝟙 + v) := by
+  obtain ⟨-, hlo, hhi⟩ := ouNorm_mem_ouBound harch v
+  have hscale : ouNorm v • (𝟙 : V) ≤ (1 / 2 : ℝ) • 𝟙 :=
+    smul_le_smul_of_le_of_nonneg hv ousUnit_nonneg
+  have hup : v ≤ (1 / 2 : ℝ) • (𝟙 : V) := le_trans hhi hscale
+  have hlow : -((1 / 2 : ℝ) • (𝟙 : V)) ≤ v := le_trans (neg_le_neg hscale) hlo
+  refine ⟨?_, ?_⟩
+  · have h := add_le_add_left _ _ hlow ((1 / 2 : ℝ) • (𝟙 : V))
+    rwa [add_neg_cancel] at h
+  · have h := add_le_add_left _ _ hup ((1 / 2 : ℝ) • (𝟙 : V))
+    have h2 : (1 / 2 : ℝ) • (𝟙 : V) + (1 / 2 : ℝ) • 𝟙 = 𝟙 := by
+      rw [← add_smul]; norm_num
+    rwa [h2] at h
+
+/-- The ball clause as the set inclusion the article states: the closed order-unit ball of
+radius `½` about `½ • 𝟙` sits inside the effects. -/
+theorem closedBall_half_subset_isEffect (harch : IsArchimedean V) :
+    {x : V | ouNorm (x - (1 / 2 : ℝ) • 𝟙) ≤ 1 / 2} ⊆ {a : V | IsEffect a} := by
+  intro x hx
+  have h := isEffect_half_smul_unit_add harch hx
+  rwa [add_sub_cancel] at h
+
 end OrderUnitSpace

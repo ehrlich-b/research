@@ -237,4 +237,52 @@ theorem finrank_peirceZeroSub_lt (hne : c ≠ 0) :
 
 end Finrank
 
+
+section OrderUnit
+
+variable [FiniteDimensional ℝ J] {c : J} (hc : c * c = c)
+
+/-! ## `J₂(c)` as an order unit space, and the Peirce clause of `lem:span`
+
+`STATEMENT-MANIFEST.md` row 5 recorded its Peirce clause as open with the reason that the
+article "gets [it] by instantiating this lemma at `(J₂(q), q)` — so it follows *once* the tree
+knows `J₂(q)` is an order unit space, **which it does not**".
+
+That reason is now out of date rather than wrong-in-kind: `instEJAPeirceOneSub` above makes
+`J₂(c)` a Euclidean Jordan algebra in its own right, and `EJA/Order.lean`'s
+`orderUnitSpaceOfBilinear` turns any such thing into an order unit space with the cone of sums
+of squares and the Jordan unit — here `1 = c`, by `coe_one_peirceOneSub`.  The five arguments
+it takes are `EJA/Class.lean`'s `jmulₗ` tuple, supplied by name.  So the clause is an
+instantiation, exactly as the article has it, and nothing new is proved about `J₂(c)`. -/
+
+/-- **`J₂(c)` is an order unit space**, with the cone of sums of squares of `J₂(c)` and `c`
+itself as the order unit.
+
+A `def`, not an `instance`, for the reason `EJA/Order.lean`'s module docstring gives: the
+`NormedAddCommGroup` and `NormedSpace` parents are filled from the ambient submodule instances,
+so no second normed structure is created, but registering it globally would put a
+`PartialOrder` on every Peirce subalgebra whether or not the order is wanted there. -/
+@[instance_reducible]
+def peirceOneSubOrderUnitSpace : OrderUnitSpace ↥(peirceOneSub hc) :=
+  orderUnitSpaceOfBilinear (jmulₗ ↥(peirceOneSub hc)) jmulₗ_comm jmulₗ_jordan
+    jmulₗ_formallyReal (1 : ↥(peirceOneSub hc)) jmulₗ_one_mul
+
+/-- The order unit of `J₂(c)` is `c`.  This is what makes the effect interval of
+`peirceOneSubOrderUnitSpace` the article's `[0, q]` and not some other interval. -/
+theorem coe_ousUnit_peirceOneSub :
+    letI := peirceOneSubOrderUnitSpace hc
+    ((OrderUnitSpace.ousUnit : ↥(peirceOneSub hc)) : J) = c := rfl
+
+/-- **`lem:span`, Peirce clause.**  `[0, c]` spans `J₂(c)`.
+
+The article's own derivation: instantiate the spanning lemma at `(J₂(q), q)`.  Here that is
+`OrderUnitSpace.span_isEffect_eq_top` read through `peirceOneSubOrderUnitSpace`, whose effects
+are `[0, c]` by `coe_ousUnit_peirceOneSub`. -/
+theorem span_isEffect_peirceOneSub_eq_top :
+    letI := peirceOneSubOrderUnitSpace hc
+    Submodule.span ℝ {a : ↥(peirceOneSub hc) | OrderUnitSpace.IsEffect a} = ⊤ :=
+  span_isEffect_eq_top_ofBilinear _ _ _ _ _ _
+
+end OrderUnit
+
 end RadicalRelativity.EJA
