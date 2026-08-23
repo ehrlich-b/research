@@ -18,12 +18,30 @@ Denominator pin: main.tex blob 205fdf5a **as of the date above**.
   what they were written against, which is correct and is left alone; the defect was asserting that
   the pin had never moved.
 
+★★★ STATUS 2026-08-23: THIS FILE HAS NO `sorry`.  ALL THREE GATES ARE PROVED THEOREMS.
+  (E1) via `EJA/Spectral.lean` (2026-08-22), (E2) via `EJA/InterfaceInstance.lean` (2026-08-20),
+  (E3) via `EJA/OrderAuto.lean` (2026-08-23), which proves Koecher / Alfsen–Shultz at
+  finite-dimensional formally-real generality.
+  ★★★ **AND NO ROW MOVED ON ANY OF THE THREE.**  That is the fact this file exists to keep visible.
+  A gate is an INGREDIENT; the rows that cite it need something built ON the ingredient.  Row 13
+  needs the spectral *inverse*, not the spectral *resolution*.  Rows 16 and 17 were never gated on
+  (E3) at all — row 16 does not consume `Theta_jordan`, row 17 is WALL-CERTIFIED, not EJA-GATED.
+  Row 14 has three clauses and (E3) is one of them; its terminal state is EXTERNAL by
+  pre-registration, which no discharge here touches.
+  ★ So the per-row lines below, and not the gate statuses, are what a reader should audit.  A reader
+  who converts "all three gates proved" into "the rows are FORMALIZED" has made exactly the error
+  this file exists to prevent, and has now made it in a new way: the gates going green is precisely
+  the evidence that the gates were not the binding constraint.
+
 WHAT THIS FILE IS, AND WHAT IT IS NOT
 
   The ARC-8 ORDERS define a terminal state EJA-GATED: a row whose ENTIRE remaining residue is the
   EJA axiomatization gap, evidenced by a compiling certificate that (a) confirms every non-EJA clause
   is closed in-tree, and (b) states the article-generality statement in Lean with `sorry` exactly at
   the axiomatization gap, NAMING which ingredient gates it.
+  ★ As of 2026-08-23 this file no longer instantiates (b) with a `sorry`, because all three named
+  ingredients are proved.  The terminal state EJA-GATED is unaffected: it is defined by what a row's
+  residue IS, and rows 13 and 16 still have theirs.  See the status block above.
 
   This file does (b) honestly by stating the three GATES THEMSELVES, once each, rather than restating
   six rows six ways.  That is deliberate and it is the more falsifiable choice: if a gate is wrong,
@@ -38,6 +56,10 @@ WHAT THIS FILE IS, AND WHAT IT IS NOT
   a `sorry`.  **No row moves on either discharge**, and the reason is the same in both cases: a gate
   is an INGREDIENT, and the rows that cite it need something built ON the ingredient.  Row 13 needs
   the spectral *inverse*, not the spectral *resolution* — see its line below.
+  ★★★ **"(E3) alone is still a `sorry`" IS FALSE FROM 2026-08-23** — `EJA/OrderAuto.lean` proves it.
+  The sentence is left standing rather than edited because the paragraph is a dated record of the
+  08-22 correction, and because the clause after it is the one that matters and is unchanged: **no
+  row moved on the third discharge either**, for the same reason as the first two.
   ★★ CORRECTED 2026-08-10: an earlier version of this paragraph said "discharging a gate below would
   make the corresponding `ComparisonSetup` FIELD derivable".  That is true only of (E3).  (E1) and
   (E2) correspond to **no field at all** — they are ingredients the fields are built from, and (E2)
@@ -88,7 +110,8 @@ THE THREE GATES (the names used throughout, and in EJA-DIVIDEND.md)
       assumed linear, at JB-algebra generality — is strictly stronger than anything this gate asks
       for.
     * **AND IT UNLOCKS NEITHER ROW 16 NOR ROW 17.**  The 2026-08-10 hope recorded above was that
-      discharging (E3) in-tree would let rows 16/17 reach FORMALIZED.  It would not, for reasons that
+      discharging (E3) in-tree would let rows 16/17 reach FORMALIZED.  ★★★ **(E3) WAS discharged
+      in-tree on 2026-08-23, and the hope was wrong: neither row moved.**  It could not, for reasons that
       have nothing to do with which theorem (E3) is: row 16 does not *consume* `Theta_jordan` at all
       (see its per-row line below), row 17 is not EJA-gated at all (see its line), and neither row's
       binding constraint is any of the three gates (see `EJA-DIVIDEND.md`'s 2026-08-22 retraction of
@@ -348,6 +371,7 @@ NOT imported from RadicalRelativity/.
 import RadicalRelativity.MasterTheorem.Coalescence
 import RadicalRelativity.EJA.InterfaceInstance
 import RadicalRelativity.EJA.Spectral
+import RadicalRelativity.EJA.OrderAuto
 
 set_option linter.style.longLine false
 
@@ -652,46 +676,71 @@ theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (H : JB
       p_sum := hp_sum }
   exact ⟨E.J2', E.ScalarOn', E.aOfScalar', E.blockMem', E.simDiag'⟩
 
-/-! ### GATE (E3) — `Theta_jordan` derivable — ★★★ AND IT GATES NO MANIFEST ROW (2026-08-22)
+/-! ### FORMERLY GATE (E3) — `Theta_jordan` derivable — ★★★ NOW A THEOREM (2026-08-23), AND IT STILL GATES NO MANIFEST ROW
+
+★★★ **PROVED, 2026-08-23.**  `RadicalRelativity/EJA/OrderAuto.lean` proves Koecher / Alfsen–Shultz
+at finite-dimensional formally-real generality —
+`RadicalRelativity.EJA.orderIso_preservesJordan` — and the declaration below is that theorem applied
+to `ComparisonSetup` plus `JBPremises`.  **This file now has no `sorry`**, and all three gates
+(E1)/(E2)/(E3) are proved theorems.
+
+★★★ **AND NO ROW MOVES.  Read that literally; it is not a hedge.**  Row 13's gate is (E1), and its
+residue is the spectral *inverse*, built on (E1) rather than equal to it.  Row 16 does not consume
+`Theta_jordan` at all — the whole proof term of `coalescence_J2q` is `Θ_fix` composed with
+`simDiag_opCommute`.  Row 17 is WALL-CERTIFIED, not EJA-GATED, and its residue is analytic and
+group-theoretic.  Row 14 `prop:theta` has three clauses — the construction of `Θ_a` from the
+sequential product (vdW Prop 5.3), the Jordan-automorphism upgrade, and the fixing/cocycle clauses
+(vdW Props 5.5, 5.7) — and this closes **one**; its terminal state is EXTERNAL by pre-registration,
+a campaign decision this discharge does not touch.
 
 ★★★ **THIS HEADER READ "Gates the other half of rows 16/17.  ★★ This is manifest row 14
 `prop:theta` at van Imhoff–Roelands generality, which is PRE-REGISTERED EXTERNAL."  BOTH SENTENCES
-ARE WITHDRAWN.**  Row 16 does not consume `Theta_jordan` (see its per-row line above: the whole
-proof term of `coalescence_J2q` is `Θ_fix` composed with `simDiag_opCommute`), and row 17 is not
-EJA-GATED at all.  As for the identification with row 14: the gate below assumes `Φ` **linear by
-type**, so it is the classical Koecher / Alfsen–Shultz theorem, not vIR's JB-generality version —
-settled at source 2026-08-22, see the header block.
+ARE WITHDRAWN** (2026-08-22, and the withdrawal stands).  Row 16 does not consume `Theta_jordan`,
+and row 17 is not EJA-GATED at all.  As for the identification with row 14: the theorem below
+assumes `Φ` **linear by type**, so it is the classical Koecher / Alfsen–Shultz theorem, not vIR's
+JB-generality version — settled at source 2026-08-22, see the header block.  That identification is
+exactly why it was provable in-tree: vIR's version *concludes* linearity, which is a strictly
+harder theorem and is not what this statement asks for.
 
-What the statement below still is: an honest, falsifiable Lean statement of the one
-`ComparisonSetup` field that a JB-premised axiomatization would make derivable.  What it is NOT any
-longer: the thing standing between any manifest row and FORMALIZED. -/
+★ **What changes, and it is a certificate-level fact rather than a census one:**
+`ComparisonSetup.Θ_jordan` becomes derivable for any instance carrying `JBPremises`, so one cited
+hypothesis can leave the interface bundle.  The `example` at the end of this file still shows the
+field, so the theorem and the field it would replace can be read side by side. -/
 
-/-- **GAP — GATE (E3): `Theta_jordan` derivable.**  A unital *linear* order isomorphism of the cone
-preserves the Jordan product.
+/-- **FORMERLY GATE (E3), `Theta_jordan` derivable; NOW A THEOREM (2026-08-23).**  A unital *linear*
+order isomorphism of the cone preserves the Jordan product.
 
-★★★ **"Gates: the `Theta_jordan` half of rows 16 and 17" — WITHDRAWN 2026-08-22.**  It gates
-neither.  Row 16's two clauses never invoke `Θ_jordan`; row 17's residue is analytic and
-group-theoretic, not Jordan-algebraic.  This declaration now gates a `ComparisonSetup` FIELD and
-nothing above it.  ★ Keeping the statement is deliberate: it is the one place the field and the
-theorem that would replace it can be read side by side, and the `example` at the bottom of this file
-exists for exactly that comparison.
+**The statement is unchanged.**  Nothing was added to its hypotheses and nothing was weakened in its
+conclusion; only the binder names moved, from `_H`/`_hunital`/`_horder` to `H`/`hunital`/`horder`,
+because all three are now used.  Hypothesis by hypothesis against
+`RadicalRelativity.EJA.orderIso_preservesJordan`:
 
-★★★ **CLAIM WEAKENED — see the header block; this paragraph contradicted it for 200 lines.**  It read
-"THIS GATE IS PRE-REGISTERED EXTERNAL (row 14)", and the diff audit found the retraction had been applied
-to the header and not here.  As stated this gate assumes `Φ` LINEAR, so it is the classical
-Koecher/Alfsen–Shultz theorem, not vIR's JB-generality version; whether rows 16/17 can reach FORMALIZED
-is **OPEN**.  ★★★ **NO LONGER OPEN, 2026-08-22: the theorem is settled as Koecher/AS (the `Φ` above is
-linear by TYPE, not by hypothesis), and rows 16/17 do not turn on it either way.**  See the header
-block.  Original text follows.
-★★ (formerly:) **THIS GATE IS PRE-REGISTERED EXTERNAL (row 14).**  Discharging it is NOT in ARC-8's scope and
-would not be in the scope of the axiomatization either — the axiomatization's contribution is that
-this statement becomes expressible at the article's generality, so `ComparisonSetup.Θ_jordan` can be a
-citation instead of an unexaminable field.  Rows 16 and 17 therefore terminate at EJA-GATED. — ★ SUPERSEDED, see above. -/
-theorem gate_E3_theta_jordan [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H : JBPremises C)
-    (Φ : J ≃ₗ[ℝ] J) (_hunital : Φ C.e = C.e)
-    (_horder : ∀ x, C.nonneg x ↔ C.nonneg (Φ x)) (x y : J) :
-    Φ (C.jordan x y) = C.jordan (Φ x) (Φ y) := by
-  sorry
+* `C.jordan_comm`, `C.jordan_unit`, `H.jordan_identity`, `H.formally_real` are the four algebra
+  hypotheses, in the same shapes;
+* `H.nonneg_iff_squares` is **the same proposition** as `RadicalRelativity.EJA.IsSoS C.jordan`, so
+  the cone rewrite is free — this is the hypothesis that would have bitten if `nonneg` had been a
+  cone-membership predicate instead of the cone of squares;
+* `Φ : J ≃ₗ[ℝ] J` supplies linearity **and** bijectivity, and bijectivity is genuinely spent, in
+  transporting the sharpness clause through `Φ.symm`;
+* ★ `horder` must stay a **biconditional**.  A one-directional `nonneg x → nonneg (Φ x)` would not
+  suffice: the sharpness clause is a `∀` over the cone, and reflecting it needs the converse.
+
+★ Unused by the proof and inert here: `C.n`, `C.rank_ge`, `C.p`, `C.Inv`, `C.aOf`, `C.aOf_inv`,
+`C.Θ` and all five `Θ_*` fields.  In particular `C.Θ_jordan` is **not** smuggled back in — it could
+not be, since `Φ` is an arbitrary linear equivalence and need not be any `C.Θ a`.
+
+★★★ **"Gates: the `Theta_jordan` half of rows 16 and 17" — WITHDRAWN 2026-08-22, and the withdrawal
+stands.**  It gates neither.  Row 16's two clauses never invoke `Θ_jordan`; row 17's residue is
+analytic and group-theoretic.  What this discharge buys is that a `ComparisonSetup` FIELD becomes
+derivable, and nothing above it. -/
+theorem gate_E3_theta_jordan [FiniteDimensional ℝ J] (C : ComparisonSetup J) (H : JBPremises C)
+    (Φ : J ≃ₗ[ℝ] J) (hunital : Φ C.e = C.e)
+    (horder : ∀ x, C.nonneg x ↔ C.nonneg (Φ x)) (x y : J) :
+    Φ (C.jordan x y) = C.jordan (Φ x) (Φ y) :=
+  RadicalRelativity.EJA.orderIso_preservesJordan C.jordan C.jordan_comm H.jordan_identity
+    H.formally_real C.e C.jordan_unit Φ hunital
+    (fun z => ((H.nonneg_iff_squares z).symm.trans (horder z)).trans
+      (H.nonneg_iff_squares (Φ z))) x y
 
 /-! ### What is ALREADY closed, made self-evidencing
 
