@@ -18,14 +18,21 @@ are conditional on an ambient `[EuclideanJordanAlgebra J]`, so nothing exhibited
 `exists_jordanFrame` and `frameBlock_isInternal` were universally quantified over a class no
 object was known to inhabit.
 
-This file supplies the base model.  `H_n(𝕜)` — Hermitian matrices over `𝕜 = ℝ` or `ℂ` under the
-symmetrized product `A ∘ B = ½(AB + BA)` and the real trace form — is a `EuclideanJordanAlgebra`.
+This file supplies the base model.  `H_n(𝕜)` — Hermitian matrices over an `RCLike` field, under
+the symmetrized product `A ∘ B = ½(AB + BA)` and the real trace form — is a
+`EuclideanJordanAlgebra`.
 
 ★ **This is the same exposure ARC-6 shipped and had to repair.**  Two abstract rows landed
 FORMALIZED carrying `IsArchimedean` as a hypothesis with no carrier known to satisfy it;
 `HermitianMat.isArchimedean` was proved to retire that caveat, and `EJA/Witness.lean`'s
 `instIsFormallyReal` and `diagFrame_orthIdem` retired it for `IsFormallyReal` and
-`IsOrthIdemFamily`.  The class was the last hypothesis in the layer with no witness.
+`IsOrthIdemFamily`.
+
+★ The class was **not** the only unwitnessed hypothesis left in the layer, and an earlier draft
+of this docstring said it was.  `EJA/Rank.lean`'s `IsPrimitive` and `JordanFrame` had no witness
+either — `EJA/Witness.lean` builds the diagonal matrix units but never proves one primitive, so
+no `JordanFrame` had ever been constructed.  Both are witnessed at the end of this file, but by a
+separate argument, and the class instance alone would not have supplied them.
 
 ## No field needed new mathematics
 
@@ -64,9 +71,14 @@ and `EJA/Order.lean`'s two `open HermMul` proofs — `hermitian_jordan_id` and
 ★ Two things this does *not* claim.  It is not claimed that the collision is invisible: instance
 search does return a different term inside `open HermMul` once this module is imported, and a
 proof that pins the instance by name rather than by its product would notice.  And it is not
-claimed that anything currently pays that cost — **no module in the tree imports this one**, so
-the four existing `open HermMul` sites (`EJA/Order.lean`, `EJA/Spectral.lean`, `EJA/Witness.lean`,
-`EJA/ConcreteInstance.lean`) are all upstream of this file and see exactly what they saw before.
+claimed that anything currently pays that cost — **no module in the tree imports this one** (only
+the root aggregator does), so the four existing `open HermMul` sites see exactly what they saw
+before.  ★ Three of them, `EJA/Order.lean`, `EJA/Spectral.lean` and `EJA/Witness.lean`, are
+strictly *upstream* — this file's import closure contains them.  The fourth,
+`EJA/ConcreteInstance.lean`, is not: it is a **sibling**, reached through
+`EJA/InterfaceInstance.lean` and `EJA/Bridge.lean`, which nothing here imports.  The conclusion
+is the same for both kinds — neither an upstream module nor a sibling can see this instance —
+but "all upstream" was wrong and is the sort of thing a later reader would rely on.
 
 ★ One elaboration trap, recorded because it cost a probe round.  Inside the structure-instance
 notation, `simpa only [...] using e` **fails** on fields whose statement is in `*` form while `e`
@@ -84,10 +96,12 @@ now known to be about a nonempty class: `hermitian_exists_jordanFrame` and
 `H_n(𝕜)`.
 
 ★ The last section goes past existence and **names a frame** on `H_n(ℂ)`: `diagJordanFrame`, the
-diagonal matrix units of `EJA/Witness.lean` reindexed along `Fintype.equivFin`.  That needed one
-piece of genuinely new mathematics — `diagFrame_isPrimitive`, which `EJA/Witness.lean` does not
-prove and which is the only obligation of `JordanFrame` its `diagFrame_orthIdem` and
-`diagFrame_sum` do not already discharge.  ★ Note what primitivity is **not**: it is not
+diagonal matrix units of `EJA/Witness.lean` reindexed along `Fintype.equivFin`.  Unlike the class
+instance, that is not repackaging: `diagFrame_isPrimitive` is the one obligation of `JordanFrame`
+that no lemma in the tree discharges — `diagFrame_orthIdem` gives `orthIdem` and `diagFrame_sum`
+gives `complete`, and `p` is data — and its proof and the four entrywise lemmas under it are
+written here.  (`hermitian_one_ne_zero` is new too, but it is three lines and reads off one
+matrix entry.)  ★ Note what primitivity is **not**: it is not
 `dim V_ii = 1`, and this file does not prove that.  Two scope limits on the frame: it is over
 `ℂ` only, because `EJA/Witness.lean`'s `diagFrame` is, and its cardinality is `Fintype.card n`,
 which is **not** proved to be the rank — `EJA/Rank.lean` proves only `card ≤ rank` and
@@ -206,7 +220,7 @@ theorem hermitian_exists_frame_isInternal [Nonempty n] :
 
 `EJA/Witness.lean` builds the diagonal matrix units `E_ii` and proves them orthogonal
 idempotents summing to the unit.  That is three of `JordanFrame`'s four fields.  The missing one
-is **primitivity**, which is proved here and is the only new mathematics in this file.
+is **primitivity**, which is proved here.
 
 The argument is entrywise and short.  If `d` is fixed by `E_ii ∘ -` then reading the `(a, b)`
 entry of `½(E_ii D + D E_ii) = D` gives `D_ab = 0` off `(i, i)` — the three off-diagonal cases
