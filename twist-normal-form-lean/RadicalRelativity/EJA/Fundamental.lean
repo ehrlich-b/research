@@ -102,4 +102,40 @@ theorem comm_sq_eq_two_comm (a b w : J) :
   have h := lin_jordan_diag a b w
   linear_combination (norm := module) -h
 
+
+/-! ## Polarisation of the quadratic representation
+
+`Q` is quadratic in its subscript, so its polarisation `Q_{x+y} − Q_x − Q_y` is the symmetric
+bilinear object every derivation of the fundamental formula runs on.  It is `2{x, ·, y}` — twice
+the triple product with the two outer slots split — which is why the triple product is the right
+primitive and `Q` the derived one. -/
+
+/-- **`Q_x x = x³`**, in the bracketing the tree's `jpow` uses. -/
+theorem quadJ_self (x : J) : quadJ x x = x * (x * x) := by
+  rw [quadJ_apply, two_smul, mul_comm (x * x) x]
+  abel
+
+/-- **The polarisation identity** `Q_{x+y} − Q_x − Q_y = 2·{x, ·, y}`.
+
+Both sides are checked by expanding; the only non-formal step is that `Q`'s `L_{x²}` term
+contributes the cross term `2(xy)z`, which is exactly the `−z(xy)` of the triple product doubled
+and re-signed. -/
+theorem quadJ_polarisation (x y z : J) :
+    quadJ (x + y) z - quadJ x z - quadJ y z = (2 : ℝ) • tripleJ x z y := by
+  have hxy : (x + y) * ((x + y) * z) =
+      x * (x * z) + x * (y * z) + (y * (x * z) + y * (y * z)) := by
+    simp only [add_mul, mul_add]
+    abel
+  have hsq : (x + y) * (x + y) * z = x * x * z + x * y * z + (y * x * z + y * y * z) := by
+    simp only [add_mul, mul_add]
+    abel
+  have hcomm : y * x * z = x * y * z := by rw [mul_comm y x]
+  rw [quadJ_apply, quadJ_apply, quadJ_apply, tripleJ_apply, hxy, hsq, hcomm,
+    two_smul, two_smul, two_smul, two_smul]
+  have h1 : z * (x * y) = x * y * z := by rw [mul_comm z (x * y)]
+  have h2 : x * (z * y) = x * (y * z) := by rw [mul_comm z y]
+  have h3 : y * (z * x) = y * (x * z) := by rw [mul_comm z x]
+  rw [h1, h2, h3]
+  abel
+
 end RadicalRelativity.EJA
