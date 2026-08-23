@@ -792,6 +792,39 @@ theorem idem_unique_of_resolutions {n m : ℕ} {c : Fin n → J} {d : Fin m → 
   rw [← idem_eq_jeval_lagrange hc hinjc k hk, ← idem_eq_jeval_lagrange hd hinjd l hk', hx, hkl,
     lagrange_basis_congr hinjc hinjd himg hkl]
 
+open scoped Classical in
+/-- **Two resolutions of the same element have the same nonzero spectrum**, as Finsets.
+
+Immediate from `exists_idem_iff_forall_jann_eval`: membership on each side is the same condition on
+`jann x`, and `x` is the same element.  Zero belongs to neither side by construction, so the
+excluded case costs nothing.
+
+This is the input `idem_unique_of_resolutions` takes as a hypothesis, now discharged. -/
+theorem nonzero_spectrum_eq_of_resolutions {n m : ℕ} {c : Fin n → J} {d : Fin m → J}
+    (hc : IsOrthIdemFamily c) (hd : IsOrthIdemFamily d)
+    (lc : Fin n → ℝ) (ld : Fin m → ℝ)
+    (hx : (∑ i, lc i • c i) = ∑ j, ld j • d j) :
+    (Finset.univ.filter (fun i => c i ≠ 0 ∧ lc i ≠ 0)).image lc
+      = (Finset.univ.filter (fun j => d j ≠ 0 ∧ ld j ≠ 0)).image ld := by
+  classical
+  ext t
+  simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
+  by_cases ht : t = 0
+  · subst ht
+    constructor
+    · rintro ⟨i, ⟨-, hne⟩, hi⟩; exact absurd hi hne
+    · rintro ⟨j, ⟨-, hne⟩, hj⟩; exact absurd hj hne
+  · have hL : (∃ i, (c i ≠ 0 ∧ lc i ≠ 0) ∧ lc i = t) ↔ ∃ i, c i ≠ 0 ∧ lc i = t := by
+      constructor
+      · rintro ⟨i, ⟨hci, -⟩, hi⟩; exact ⟨i, hci, hi⟩
+      · rintro ⟨i, hci, hi⟩; exact ⟨i, ⟨hci, hi ▸ ht⟩, hi⟩
+    have hR : (∃ j, (d j ≠ 0 ∧ ld j ≠ 0) ∧ ld j = t) ↔ ∃ j, d j ≠ 0 ∧ ld j = t := by
+      constructor
+      · rintro ⟨j, ⟨hdj, -⟩, hj⟩; exact ⟨j, hdj, hj⟩
+      · rintro ⟨j, hdj, hj⟩; exact ⟨j, ⟨hdj, hj ▸ ht⟩, hj⟩
+    rw [hL, hR, exists_idem_iff_forall_jann_eval hc lc ht,
+      exists_idem_iff_forall_jann_eval hd ld ht, hx]
+
 /-- **The square root of a resolved element is `jeval` of a polynomial.**
 
 Every idempotent carrying a nonzero eigenvalue is `jeval x` of a Lagrange interpolant
