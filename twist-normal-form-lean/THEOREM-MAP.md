@@ -1012,10 +1012,18 @@ vectors, Lean takes the vanishing directly from the differentiated coalescence
 kills a hyperplane — exact, and with no `2π` bookkeeping, the same simplification that
 replaced the universal-cover lift in the rank-two lane.
 
-**Honest status: PARTIAL, not FORMALIZED** — for **two** reasons, neither of them a missing
-proof. ★★ **Corrected 2026-08-22: this paragraph said "for one reason only" and "the *only*
+**Honest status: PARTIAL, not FORMALIZED** — for **two** reasons, **one of which is a missing
+proof**. ★★ **Corrected 2026-08-22: this paragraph said "for one reason only" and "the *only*
 thing between this row and FORMALIZED", and then named a second gap two lines later. A
 totalizer cancelled by its own next sentence is exactly where this file's errors live.**
+★★★ **Corrected AGAIN the same day, and the second correction was worse than the first.** The
+repair above replaced the totalizer with "for two reasons, **neither of them a missing proof**"
+— which is FALSE, and was supplied in the drafting instruction rather than read off the tree.
+Reason 2 was called *packaging*; it is *content*, and item 2 below now says so. **A correction
+pass removed a false totalizer and installed a different false claim in its place**, which is
+the third time in one night that a defect on this project was created by the fix rather than
+found by it. The rule: a drafted replacement is a hypothesis about the tree, and it must be
+checked against the tree before it is applied, exactly like the claim it replaces.
 
 1. **Generality.** `lem:homomorphism` sits in the article's *general machinery* section (before
    the type-by-type branches) and is stated for a simple EJA with a Jordan frame, whereas all
@@ -1025,8 +1033,23 @@ totalizer cancelled by its own next sentence is exactly where this file's errors
    theorem, whereas the port here is analytic and group-theoretic work on `χ̃`'s differential
    and on `Stab(F)`. "Generality alone" is true and is **not** a synonym for "the EJA
    axiomatization" — that reading is what mislabelled this row EJA-GATED for twelve days.
-2. **Packaging.** The tree never names `Stab(F)°` as a Lie group with an identity component,
-   working instead with `blockSkewSubmodule` and `dChiStab`.
+2. **Content, not packaging — a genuinely missing proof.** `blockSkewSubmodule`'s membership
+   predicate `IsBlockSkew` (`Necessity/StabilizerInstance.lean:106`) is `∀ i j, i ≠ j → …`:
+   it constrains the **off-diagonal blocks only** and says nothing about the frame. So the
+   frame-annihilation half of "`dχ` lands in `𝔰𝔱𝔞𝔟(F)`" — `dChi P hS2 hjord r (frameProj k) = 0`
+   — is **not in the tree**. Evidence with scope, re-run 2026-08-22: `grep -rn 'dChi'
+   RadicalRelativity/` returns **193** lines (non-empty, so the grep saw data), of which **0**
+   mention any of `frameProj`, `frameProjG`, `pairProj`, `frameMap`, `diagFamily` or
+   `blochFrame` — six spellings, not one. `dChi_jordan_derivation`
+   (`Necessity/JordanDerivation.lean:98`) does **not** supply it: a derivation on an idempotent
+   gives `D p = 2 p∘D p`, not `D p = 0`. It should be short from
+   `Necessity.chiTilde_fixes_frameProj` (`Necessity/TwistIdentification.lean:54`, S2 alone) plus
+   `chiTilde_eq_exp_dChi`, but **until it is written the row's stabilizer clause is half-proved**.
+   ★ This got past three readings because `blockSkewSubmodule`'s own docstring calls it
+   "The stabilizer", and the row's table cell glosses membership as "whose membership *is*
+   block-skewness" — which is exactly right, and is the reason the claim reads as complete.
+   Separately, and **additionally**, the tree never names `Stab(F)°` as a Lie group with an
+   identity component, working instead with `blockSkewSubmodule` and `dChiStab`.
 
 ★ **This list is not exhaustive either.** `STATEMENT-MANIFEST.md` row 17 counts **three**
 independent residues, adding the `DiagonalHomSetup` interface fields (`ρ`, `ρ_skew`, `dχAdd`,
