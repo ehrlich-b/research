@@ -739,7 +739,10 @@ import RadicalRelativity.EJA.Connection
 -- `CompositionAlgebra` instances, so `Composition.Hurwitz` applies to it and gives
 -- `finrank_coordAlg`: an off-diagonal block of a Jordan frame with three distinct indices and
 -- connectors between them has real dimension 1, 2, 4 or 8.  ★ The full Jacobson isomorphism
--- `J = H_n(C)` is NOT proved here.  Substrate; it moves no row.
+-- `J = H_n(C)` is NOT proved here, and `H_n(C)` does not exist in this tree as a type; the three
+-- residues -- the isomorphism, simple ==> connected, and n >= 4 ==> the coordinate algebra is
+-- associative -- are stated in Lean with a sorry at each in
+-- `WallCertificates/jacobson-coordinatization.lean`.  Substrate; it moves no row.
 import RadicalRelativity.EJA.Coordinatize
 -- A witness for the coordinate algebra.  `E_ij + E_ji` on `H_d(C)` is shown to lie in the block
 -- `V_ij` of the diagonal frame and to square to `E_ii + E_jj`, so it is a CONNECTOR, and three
@@ -809,8 +812,8 @@ import RadicalRelativity.EJA.AlbertCarrier
 -- octonion one discharges the composition field verbatim from `Octonions.norm_multiplicative`,
 -- which was proved there from the Fano multiplication table with no reference to composition
 -- algebras.  This is the coordinate-algebra substrate Jacobson coordinatization at rank >= 3
--- consumes.  ★ Hurwitz's classification -- that these four are the ONLY ones -- is NOT proved
--- here.  Substrate; it moves no row.
+-- consumes.  ★ Hurwitz's classification -- that these four are the ONLY ones -- is proved in
+-- `Composition.Classification`, not here.  Substrate; it moves no row.
 import RadicalRelativity.Composition.Defs
 import RadicalRelativity.Composition.Instances
 -- The Cayley-Dickson doubling, done INSIDE a composition algebra rather than as a new type.
@@ -839,6 +842,16 @@ import RadicalRelativity.Composition.Isomorphisms
 -- composition law on A + Au forces A to be ASSOCIATIVE (`forced_assoc`), so a non-associative
 -- composition subalgebra has no unit vector orthogonal to it and is therefore everything.
 -- ★ The CLASSIFICATION -- that those four algebras are the only ones up to isomorphism, not just
--- the only dimensions -- is NOT proved; see `WallCertificates/hurwitz-classification.lean`.
+-- the only dimensions -- is NOT proved in this file; it is `Composition.Classification` below.
 -- Substrate; it moves no row.
 import RadicalRelativity.Composition.Hurwitz
+-- Hurwitz's theorem, CLASSIFICATION form: a finite-dimensional Euclidean composition algebra is
+-- isomorphic -- preserving unit, product AND norm form -- to R, C, H or O
+-- (`hurwitz_classification`).  The step the dimension proof was missing is `CompEmb.double`, the
+-- transport lemma: an embedding of D onto a composition subalgebra A, plus a unit vector normal
+-- to A, assembles into an embedding of the EXTERNAL double `CD D` onto `double A u`.  Running
+-- that alongside the dimension proof's chain and renaming the source at each step by
+-- `Composition.Isomorphisms` names every subalgebra in it.  ★ The final branch is not
+-- re-derived: the third double already has dimension 8, which is the largest value the dimension
+-- theorem allows, so it is everything.  Substrate; it moves no row.
+import RadicalRelativity.Composition.Classification

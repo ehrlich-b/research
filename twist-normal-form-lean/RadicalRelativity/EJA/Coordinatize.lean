@@ -9,9 +9,66 @@ import RadicalRelativity.Composition.Hurwitz
 set_option linter.style.longLine false
 
 /-!
-# The coordinate algebra of a connected Jordan frame
+# The coordinate algebra of a Jordan frame
 
-Placeholder docstring; rewritten at the end of the build.
+The object Jacobson coordinatization builds `H_n(C)` out of: an off-diagonal block `V_{ij}`,
+carrying a product that makes it a **Euclidean composition algebra**.
+
+## Why a third index
+
+The Jordan product does not restrict to a block.  `EJA/FramePeirceMul.lean` shows
+`V_{ij} ∘ V_{ij} ⊆ ℝpᵢ + ℝpⱼ` — the product of two block elements leaves the block, always.
+Faraut–Korányi's device is to route through a third index `k`: with connectors `u ∈ V_{ij}` and
+`v ∈ V_{ik}`, and `w := 2 (u ∘ v) ∈ V_{jk}`,
+
+  `x ⊙ y := 8 ((x ∘ w) ∘ (v ∘ y))`.
+
+The two inner products land in `V_{ik}` and `V_{kj}`, where the middle-index rule
+`V_{ik} ∘ V_{kj} ⊆ V_{ij}` applies and brings the answer home.  Reading the model `H_n(C)` with
+`V_{ij} = {a E_{ij} + a* E_{ji}}`, `u = [1]_{ij}` and `v = [1]_{ik}`: `2(x ∘ w) = [a]_{ik}`,
+`2(v ∘ y) = [b]_{kj}`, and twice their product is `[ab]_{ij}`.  So `⊙` is multiplication of the
+off-diagonal coordinates.
+
+★ **The third index is where rank `≥ 3` is spent.**  `EJA/Connection.lean` also carries three
+distinct indices, but there they are hypotheses on statements about two *given* blocks; here the
+third index is structural — remove it and there is no product to define.  Nothing in this file
+says anything at rank 2.
+
+## What is proved
+
+`⊙` is bilinear, closed on the block, and has `u` as a two-sided unit — both unit laws are
+`EJA/Connection.lean`'s `IsConnector.act` at a permuted index order.  Its **composition law**
+`coordMul_sq` is three applications of `block_mul_sq`: the coefficient of `x` is carried to
+`V_{ik}` by `w`, the coefficient of `y` to `V_{kj}` by `v`, and the middle-index product
+multiplies them.
+
+`CoordData` then bundles the frame, the three indices and the connectors, and `CoordAlg D` is the
+block regarded as an algebra through them.  It carries `NonAssocRing`, `Nontrivial`,
+`IsScalarTower ℝ`, `SMulCommClass ℝ` and — the point —
+`CompositionAlgebra`, whose norm form is the ambient inner product rescaled so the unit has norm
+one.  `RadicalRelativity/Composition/Hurwitz.lean` therefore applies, and gives
+`CoordAlg.finrank_coordAlg`: **an off-diagonal block of a Jordan frame with three distinct
+indices and connectors between them has real dimension `1`, `2`, `4` or `8`.**
+
+★ The connectors are **data**, carried in `CoordData`; in particular `CoordData.hw` is a field
+rather than a derivation, so the algebra structure needs no dimension hypothesis.
+`CoordData.mk'` derives it under `[FiniteDimensional ℝ J]`.
+
+## Scope
+
+**No manifest row moves.**  Substrate for the Jordan–von Neumann–Wigner campaign.
+
+★ **The isomorphism `J ≅ H_n(C)` is not proved here, and `H_n(C)` does not exist in this tree as
+a type.**  See `WallCertificates/jacobson-coordinatization.lean`, which states all three
+residues — the isomorphism, simplicity ⟹ connectedness, and `n ≥ 4` ⟹ the coordinate algebra is
+associative — in Lean with a `sorry` at each.
+
+★ `finrank_coordAlg` gives membership in the Hurwitz list, **not** the identification of the
+algebra.  For `H_d(ℂ)` the block is two-dimensional; that is not proved anywhere, and would need
+the classification half of Hurwitz (`WallCertificates/hurwitz-classification.lean`).
+
+★ The class is inhabited: `EJA/CoordinatizeWitness.lean` exhibits a `CoordData` on `H_d(ℂ)`.
+Nothing below is instantiated on the Albert carrier.
 -/
 
 noncomputable section

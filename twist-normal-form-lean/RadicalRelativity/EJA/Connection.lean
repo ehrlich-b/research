@@ -10,7 +10,62 @@ set_option linter.style.longLine false
 /-!
 # Connections between frame blocks
 
-Placeholder docstring; rewritten at the end of the build.
+`EJA/FramePeirceMul.lean` gives the multiplication table of a Jordan frame's blocks.  This file
+proves the two identities that turn that table into an *algebra*, and they are the engine of
+Jacobson coordinatization.
+
+## The two identities
+
+**(1) An off-diagonal block element squares to a multiple of `pᵢ + pⱼ`.**
+`frameBlockRaw_mul_self_eq` already gives `x ∘ x = a • pᵢ + b • pⱼ` for `x ∈ V_{ij}`.  Here
+`a = b` (`frameBlockRaw_sq_coeff_eq`), so the square is a multiple of the *idempotent*
+`pᵢ + pⱼ` and its coefficient is a quadratic form on the block (`exists_sq_smul`,
+`sq_eq_inner_smul`).
+
+★ **The proof is power associativity, not the trace form.**  Computing `x⁴` as `x² ∘ x²` and as
+`x ∘ (x ∘ x²)` — the same element, by `EJA/PowerAssoc.lean`'s `jpow_mul_jpow` — gives
+`a² = a(a+b)/2` and `b² = b(a+b)/2` after pairing against `pᵢ` and `pⱼ`.  Adding those,
+`a² + b² = (a+b)²/2 = 2ab`, so `(a - b)² = 0`.  The inner product enters only to *read off*
+those two scalar equations from an equation between elements; the identity `a = b` itself is
+algebraic.
+
+**(2) `x ∘ (x ∘ y) = (a/4) • y` for `x ∈ V_{ij}` and `y ∈ V_{jk}`** (`block_sq_act`).  So `2 L_x`
+restricted to `V_{jk}` squares to the scalar `a`.
+
+★ **The plain Jordan identity gives nothing here.**  Both sides of `x ∘ (x² ∘ y) = x² ∘ (x ∘ y)`
+reduce to `½ a • (x ∘ y)` using only the eigenvalue rules, so it is satisfied for *any* value of
+`x ∘ (x ∘ y)`.  What works is the fully **linearised** Jordan identity — Mathlib's
+`two_nsmul_lie_lmul_lmul_add_add_eq_zero`, restated pointwise here as `lin_jordan` — at
+`(x, x, y)`, evaluated at `pⱼ`.  Six terms; `x ∘ y ∈ V_{ik}` is annihilated by `pⱼ`, `pⱼ` halves
+`x` and `y`, and what survives is `-(x ∘ (x ∘ y)) + (a/4) • y = 0`.
+
+## Connectors
+
+A **connector** on `(i, j)` is a `c ∈ V_{ij}` with `c ∘ c = pᵢ + pⱼ`.  A nonzero block has one
+(`exists_isConnector`: normalise by `a^{-1/2}`), and identity (2) at `a = 1` makes
+`y ↦ 2 (c ∘ y)` an involution, hence a linear equivalence `V_{jk} ≃ V_{ik}` (`connEquiv`).  So
+connected blocks have the same dimension, connectivity is transitive, and a block is nonzero
+exactly when it carries a connector.
+
+The **composition law** `block_mul_sq` says the coefficients multiply: if `x ∘ x = a • (pᵢ + pⱼ)`
+and `y ∘ y = b • (pⱼ + p_k)` then `(2 (x ∘ y)) ∘ (2 (x ∘ y)) = (ab) • (pᵢ + p_k)`.  It follows
+from (2) by pairing, once `⟪pᵢ, pᵢ⟫ = ⟪pⱼ, pⱼ⟫`.  ★ That identification is **not** unconditional:
+`inner_p_eq_of_sq` gets it from (1) — the two pairings of `x ∘ x` both return `½‖x‖²`, so
+`a τᵢ = a τⱼ` — and then needs `a ≠ 0` to cancel.  `V_{ij} = 0` really does leave `τᵢ` and `τⱼ`
+unrelated, and `block_mul_sq` disposes of that case separately rather than through the
+identification.
+
+## Scope
+
+**No manifest row moves.**  This is substrate for the Jordan–von Neumann–Wigner campaign.
+
+★ `rank J = n` is **not** available and nothing here is a step towards it; a `JordanFrame J n` is
+carried as data and its cardinality bounds the rank from below, nothing more.
+
+★ Nothing here says a frame *is* connected.  Connectors are hypotheses everywhere they appear.
+The statement "a simple `J` has every block nonzero" is **not proved anywhere in this tree** —
+see `WallCertificates/jacobson-coordinatization.lean`, residue 2, which also records that the
+tree has no notion of a Jordan ideal to state simplicity with.
 -/
 
 noncomputable section

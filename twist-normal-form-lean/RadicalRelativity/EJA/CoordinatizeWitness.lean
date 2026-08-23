@@ -11,7 +11,46 @@ set_option linter.style.longLine false
 /-!
 # A witness for the coordinate algebra
 
-Placeholder docstring; rewritten at the end of the build.
+`EJA/Coordinatize.lean` builds `CoordAlg D` from a `CoordData D`, which carries two connectors.
+Nothing there produces a `CoordData`, so on its own that file is a theory that might be about an
+empty structure — the exposure ARC-6 shipped with `IsArchimedean`, where the abstract rows had no
+carrier satisfying their hypothesis.  This file closes it.
+
+## The connector
+
+On `H_d(ℂ)` with `EJA/HermitianCarrier.lean`'s named diagonal frame, the connector on `(i, j)` is
+the off-diagonal matrix unit `E_{ij} + E_{ji}` (`offFrame`).  Two entrywise computations:
+
+* `E_{ii} ∘ (E_{ij} + E_{ji}) = ½ (E_{ij} + E_{ji})` (`diagFrame_symmMul_offFrame`), because each
+  of the two nonzero entries lies on exactly one arm of the `pᵢ`-cross — `(i,j)` on row `i`,
+  `(j,i)` on column `i`, neither on both — so the symmetrised product halves it rather than
+  fixing or killing it;
+* `(E_{ij} + E_{ji})² = E_{ii} + E_{jj}` (`offFrame_symmMul_self`), because the only surviving
+  term of `∑_c M_{ac} M_{cb}` is the one whose middle index is the partner of `a`.
+
+Together these are `IsConnector`, and three distinct indices assemble `hermCoordData`.
+
+## What that buys
+
+`finrank_frameBlockRaw_diagJordanFrame`: an off-diagonal block of the diagonal frame on `H_d(ℂ)`
+has real dimension `1`, `2`, `4` or `8`, whenever a third index exists.
+
+★ **It is `2`** — the block is `{a E_{kl} + ā E_{lk} : a ∈ ℂ}` — **and that is not proved here.**
+Only membership in the Hurwitz list is.  Sharpening it needs the classification half of Hurwitz
+(`WallCertificates/hurwitz-classification.lean`), not anything in this file.
+
+## Scope
+
+**No manifest row moves.**  Substrate.
+
+★ The frame's cardinality `Fintype.card d` is **not** claimed to be the rank of `H_d(ℂ)`; see
+`EJA/HermitianCarrier.lean`'s note on `diagJordanFrame`.
+
+★ The Albert carrier is **not** treated here.  `EJA/AlbertCarrier.lean` makes `h₃(𝕆)` a
+`EuclideanJordanAlgebra`, so `EJA/FrameExists.lean`'s `exists_jordanFrame` elaborates on it (it
+still wants `(1 : h₃(𝕆)) ≠ 0`, which is not discharged anywhere), but **no frame on `h₃(𝕆)` is
+named and no connector on it is exhibited**, so `CoordData` has no witness there.  Building one
+is the natural next test of this layer, and it is not what this file does.
 -/
 
 noncomputable section
@@ -67,8 +106,8 @@ theorem offFrame_row_other {i j : d} {a : d} (hai : a ≠ i) (haj : a ≠ j) (b 
 
 /-! ## It lies in the block, and it is a connector -/
 
-/-- `E_ii ∘ (E_ij + E_ji) = ½ (E_ij + E_ji)`.  The `pᵢ`-cross meets `E_ij + E_ji` in exactly one
-of its two entries, so the symmetrised product halves it. -/
+/-- `E_ii ∘ (E_ij + E_ji) = ½ (E_ij + E_ji)`.  Each nonzero entry lies on exactly one arm of the
+`pᵢ`-cross — `(i,j)` on row `i`, `(j,i)` on column `i` — so the symmetrised product halves it. -/
 theorem diagFrame_symmMul_offFrame {i j : d} (hij : i ≠ j) :
     (diagFrame i).symmMul (offFrame i j) = ((2 : ℝ)⁻¹ : ℝ) • offFrame i j := by
   apply HermitianMat.ext
