@@ -21,17 +21,19 @@ associative).
 
 ## Why the vendored `HermitianMat` could not be reused
 
-`RadicalRelativity/Vendor/HermitianMat/Jordan.lean:91` declares the symmetrised product over
-`[Field 𝕜] [StarRing 𝕜]`, and its `RCLike` section from line 147 assumes more still.  A
-composition algebra is not a field, not commutative, and not associative, so no declaration in
-that directory applies.  Nor is the hermitian predicate reusable: `Matrix.IsHermitian` is
+The four `variable` lines of `RadicalRelativity/Vendor/HermitianMat/Jordan.lean` (26, 91, 126,
+147) put the whole file over `[Field 𝕜] [StarRing 𝕜]`, and its last section over `[RCLike 𝕜]`;
+the symmetrised product enters at line 94 as a `CommMagma` instance inside the section headed by
+line 91.  A composition algebra is not a field, not commutative, and not associative, so no
+declaration in that directory applies.  Nor is the hermitian predicate reusable: `Matrix.IsHermitian` is
 `Aᴴ = A`, and `Matrix.conjTranspose` needs a `Star` instance, which `CompositionAlgebra`
 does not carry — `cstar` (`Composition/Defs.lean:174`) is a plain `def`.  So the hermitian
 condition is written entrywise here, exactly as the certificate's gap statement writes it.
 
-What is genuinely cheap is the ambient: Mathlib's `Matrix.instMul` needs only `[Fintype ι]`,
-`[Mul α]` and `[AddCommMonoid α]` on the coefficients, so a `NonAssocRing` coefficient type
-already multiplies.  The certificate's "cheap carrier / absent API" split is confirmed.
+What is genuinely cheap is the ambient: Mathlib's `Mul (Matrix n n α)`
+(`Mathlib/Data/Matrix/Mul.lean:302`) needs only `[Fintype n]`, `[Mul α]` and `[AddCommMonoid α]`
+on the coefficients, so a `NonAssocRing` coefficient type already multiplies.  The certificate's
+"cheap carrier / absent API" split is confirmed.
 
 ## The generality of each result, stated
 
@@ -40,17 +42,20 @@ Three different hypothesis bundles appear below, and they are not interchangeabl
 * **`C` any composition algebra.**  The submodule `HermMat ι C`, closure of the symmetrised
   product, its bilinearity, its commutativity, and the fact that a hermitian matrix's diagonal
   entries lie in `ℝ ∙ 1`.
-* **`C` any composition algebra, `Nontrivial`.**  The unit `1 ∈ HermMat ι C`, the diagonal
-  frame `hermIdem i`, its multiplication table (`hermIdem_jmul_self`,
-  `hermIdem_jmul_of_ne`, `sum_hermIdem`), and the off-diagonal elements `hermOff i j x`
-  with their Peirce-`½` relation `hermIdem_jmul_hermOff`.
+* **`C` any composition algebra, `Nontrivial`; `ι` finite with `DecidableEq`.**  The unit
+  `1 ∈ HermMat ι C`, the diagonal frame `hermIdem i`, its multiplication table
+  (`hermIdem_jmul_self`, `hermIdem_jmul_of_ne`, `sum_hermIdem`), and the off-diagonal elements
+  `hermOff hij x` with their injectivity and their Peirce-`½` relation `hermIdem_jmul_hermOff`.
 * **`C` associative** (`[Ring C]`, which over the Hurwitz list means `ℝ`, `ℂ`, `ℍ` and *not*
-  `𝕆`).  The **Jordan identity** `(A ∘ B) ∘ (A ∘ A) = A ∘ (B ∘ (A ∘ A))`, at every index type.
+  `𝕆`).  The **Jordan identity** `(A ∘ B) ∘ (A ∘ A) = A ∘ (B ∘ (A ∘ A))`, at every finite index
+  type — and, through `jmul_jordan_of_isCompIso`, for every `C` merely *isomorphic* to such a
+  `D`, which is the shape `CoordAlg.classification_coordAlg` hands out.
 
-★ **`HermMat ι C` is NOT claimed to be a Jordan algebra for general `C`.**  It is one for
-`C = 𝕆` only at `n ≤ 3`, and the `n ≥ 4` failure is precisely what residue (3) of the
-certificate is about.  Nothing here proves the `n ≤ 3` octonionic case, and nothing here
-installs a `Mul` instance: as in `Albert/Mul.lean`, the product is bundled as a bilinear map
+★ **`HermMat ι C` is NOT claimed to be a Jordan algebra for general `C`.**  Classically
+(Jacobson) `H_n(𝕆)` is a Jordan algebra exactly for `n ≤ 3`, and the `n ≥ 4` failure is what
+residue (3) of the certificate is about — but that is a citation, not a theorem of this tree:
+**nothing here proves either half of it**, neither the `n ≤ 3` octonionic case nor the `n ≥ 4`
+failure.  Nothing here installs a `Mul` instance either: as in `Albert/Mul.lean`, the product is bundled as a bilinear map
 `hermBilin`, because a `Mul` instance alongside a future `NormedAddCommGroup` would reintroduce
 the diamond `EJA/Bridge.lean` exists to dodge.
 
@@ -60,10 +65,12 @@ the diamond `EJA/Bridge.lean` exists to dodge.
 `diag : Fin 3 → ℝ` and `off : Fin 3 → Octonion`, i.e. the 27 real coordinates of a hermitian
 `3 × 3` octonionic matrix rather than the 9 octonionic matrix entries, with the product
 `Albert/Mul.lean`'s `jordanMul` written out in those coordinates.  `HermMat (Fin 3) Octonion`
-is the same algebra presented as an actual submodule of `Matrix (Fin 3) (Fin 3) Octonion`.
-**No isomorphism between them is proved here**, and none of `Albert/` is touched or subsumed by
-this file; `Albert/Jordan.lean`'s Jordan identity for `h3O` is a theorem this file cannot reach,
-because the theorem below assumes associativity and `Octonion` is not associative.
+is *intended* to be the same algebra presented as an actual submodule of
+`Matrix (Fin 3) (Fin 3) Octonion` — but **that is a design intention, not a theorem here**: no
+linear map between the two types is constructed, so nothing in this file says `jordanMul` agrees
+with the symmetrised matrix product under any identification.  None of `Albert/` is touched or
+subsumed; `Albert/Jordan.lean`'s Jordan identity for `h3O` is a theorem this file cannot reach,
+because the associative section below excludes `Octonion` by hypothesis.
 
 ## Main definitions
 
@@ -72,6 +79,7 @@ because the theorem below assumes associativity and `Octonion` is not associativ
 * `CompositionAlgebra.HermMat` — `H_ι(C)`, as a `Submodule ℝ (Matrix ι ι C)`
 * `CompositionAlgebra.jmul` / `hermBilin` — the symmetrised product, bare and bundled
 * `CompositionAlgebra.hermIdem` / `hermOff` — the diagonal frame and the off-diagonal elements
+* `CompositionAlgebra.hermCongr` — the transport map along `IsCompIso`
 
 ## Main results
 
@@ -79,8 +87,11 @@ because the theorem below assumes associativity and `Octonion` is not associativ
 * `CompositionAlgebra.diag_eq_smul_one` — the diagonal of a hermitian matrix is real
 * `CompositionAlgebra.hermIdem_jmul_self`, `hermIdem_jmul_of_ne`, `sum_hermIdem` — the frame
 * `CompositionAlgebra.hermIdem_jmul_hermOff` — `pᵢ ∘ x_{ij} = ½ x_{ij}`
+* `CompositionAlgebra.hermOff_injective` — the block at `(i, j)` carries a copy of `C`
 * `CompositionAlgebra.jmul_jordan_of_assoc` — the Jordan identity, for associative `C`
-* `CompositionAlgebra.hermCongr` — transport along a composition-algebra isomorphism
+* `CompositionAlgebra.jmul_jordan_of_isCompIso` — the same, for `C` isomorphic to an associative
+  composition algebra, which is what the classification supplies
+* `CompositionAlgebra.hermCongr_jmul` — the transport intertwines the two products
 
 ## Scope
 
@@ -173,6 +184,10 @@ theorem diag_eq_smul_one (A : HermMat ι C) (i : ι) :
     (A : Matrix ι ι C) i i = ip ((A : Matrix ι ι C) i i) 1 • (1 : C) :=
   eq_smul_one_of_cstar_eq_self (A.2 i i).symm
 
+/-- `H_ι(C)` is finite-dimensional whenever `ι` is finite and `C` is.  ★ This is `inferInstance`:
+Mathlib's `Submodule.finiteDimensional` already supplies it from the ambient `Matrix ι ι C`, and
+this declaration only gives it a name.  It is **not** a dimension count — see
+`hermOff_injective` for the only non-degeneracy fact this file proves. -/
 instance instFiniteDimensionalHermMat [Fintype ι] [FiniteDimensional ℝ C] :
     FiniteDimensional ℝ (HermMat ι C) :=
   inferInstance
@@ -341,6 +356,19 @@ def hermOff {i j : ι} (hij : i ≠ j) (x : C) : HermMat ι C :=
     ((hermOff hij x : HermMat ι C) : Matrix ι ι C)
       = Matrix.single i j x + Matrix.single j i (cstar x) := rfl
 
+@[simp] theorem hermOff_apply {i j : ι} (hij : i ≠ j) (x : C) :
+    ((hermOff hij x : HermMat ι C) : Matrix ι ι C) i j = x := by
+  simp [hermOff_coe, Matrix.single_apply, hij, Ne.symm hij]
+
+/-- The off-diagonal elements at a fixed pair are pairwise distinct, so the block `V_{ij}` really
+carries a copy of `C`.  This is the only non-degeneracy fact proved about `HermMat`: no basis and
+no dimension count is constructed anywhere in this file. -/
+theorem hermOff_injective {i j : ι} (hij : i ≠ j) :
+    Function.Injective (fun x : C => (hermOff hij x : HermMat ι C)) := by
+  intro x y h
+  have h2 := congrArg (fun A : HermMat ι C => (A : Matrix ι ι C) i j) h
+  simpa using h2
+
 /-- **The Peirce-`½` relation.**  `pᵢ ∘ x_{ij} = ½ x_{ij}`: the off-diagonal elements at `(i, j)`
 sit in the `½`-eigenspace of multiplication by `pᵢ`, which is what makes them the block `V_{ij}`
 of the diagonal frame.  Proved with no associativity: the two matrix products each collapse to a
@@ -447,6 +475,20 @@ theorem hermCongr_jmul {f : C ≃ₗ[ℝ] D} (hf : IsCompIso f) (A B : HermMat �
   ext i j
   simp only [hermCongr_coe, jmul_coe, Matrix.map_apply, Matrix.smul_apply, Matrix.add_apply,
     Matrix.mul_apply, map_smul, map_add, map_sum, hf.map_mul]
+
+/-- **The Jordan identity, transported.**  If `C` is merely *isomorphic* to an associative
+composition algebra `D` — which is the form `EJA/Coordinatize.lean`'s
+`CoordAlg.classification_coordAlg` delivers, `∃ f : CoordAlg D ≃ₗ[ℝ] ℝ / ℂ / ℍ / 𝕆` together with
+`IsCompIso f` — then `H_ι(C)` satisfies the Jordan identity even though `C` itself carries only a
+`NonAssocRing` instance and no `Ring` one.  Three of that theorem's four branches land here; the
+fourth, `𝕆`, does not, and that is where residue (3) lives. -/
+theorem jmul_jordan_of_isCompIso {D : Type w} [Ring D] [Module ℝ D] [IsScalarTower ℝ D D]
+    [SMulCommClass ℝ D D] [CompositionAlgebra D] {f : C ≃ₗ[ℝ] D} (hf : IsCompIso f)
+    (A B : HermMat ι C) :
+    jmul (jmul A B) (jmul A A) = jmul A (jmul B (jmul A A)) := by
+  apply (hermCongr (ι := ι) hf).injective
+  simp only [hermCongr_jmul]
+  exact jmul_jordan_of_assoc _ _
 
 end Transport
 
