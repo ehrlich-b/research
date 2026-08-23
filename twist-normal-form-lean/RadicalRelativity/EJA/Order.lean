@@ -723,6 +723,45 @@ theorem mul_eq_zero_of_inner_eq_zero_of_isSoS
   rw [map_smul, LinearMap.smul_apply]
   exact hmul i
 
+/-- **The per-idempotent form**, which is what a square root needs.
+
+`mul_eq_zero_of_inner_eq_zero_of_isSoS` concludes `x ∘ a = 0`; this concludes the same for *any*
+function of the eigenvalues that kills zero.  Taking `g = Real.sqrt` gives `√x ∘ a = 0`, which is
+the term `Q_{√x} a = 2·√x(√x·a) − x·a` needs in order to vanish.
+
+`hg : g 0 = 0` is exactly what covers the zero eigenvalue, where `⟪qᵢ,a⟫` carries no information
+because the `λᵢ` factor already killed the term. -/
+theorem smul_resolution_mul_eq_zero_of_inner_eq_zero
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hjordan : ∀ a b : J, m (m a b) (m a a) = m a (m b (m a a)))
+    (hassoc : ∀ x y z : J, inner ℝ (m x y) z = inner ℝ y (m x z))
+    {n : ℕ} {q : Fin n → J} {lam : Fin n → ℝ}
+    (hidem : ∀ i, m (q i) (q i) = q i) (horth : ∀ i j, i ≠ j → m (q i) (q j) = 0)
+    {x : J} (hx : x = ∑ i, lam i • q i) (hxsos : IsSoS m x)
+    {a : J} (ha : IsSoS m a) (h : (inner ℝ x a : ℝ) = 0)
+    (g : ℝ → ℝ) (hg : g 0 = 0) :
+    m (∑ i, g (lam i) • q i) a = 0 := by
+  classical
+  have hab : (inner ℝ x a : ℝ) = ∑ i, lam i * inner ℝ (q i) a := by
+    rw [hx, sum_inner]
+    exact Finset.sum_congr rfl fun i _ => real_inner_smul_left _ _ _
+  have hterm : ∀ i, (0 : ℝ) ≤ lam i * inner ℝ (q i) a := by
+    intro i
+    by_cases hqi : q i = 0
+    · rw [hqi, inner_zero_left, mul_zero]
+    · exact mul_nonneg (nonneg_coeff_of_isSoS hcomm hjordan hassoc hidem horth hx hxsos hqi)
+        (inner_idem_isSoS_nonneg hcomm hjordan hassoc (hidem i) ha)
+  have hzero : ∀ i, lam i * inner ℝ (q i) a = 0 := fun i =>
+    (Finset.sum_eq_zero_iff_of_nonneg fun j _ => hterm j).mp (hab.symm.trans h) i
+      (Finset.mem_univ i)
+  rw [map_sum, LinearMap.sum_apply]
+  refine Finset.sum_eq_zero fun i _ => ?_
+  rw [map_smul, LinearMap.smul_apply]
+  by_cases hli : lam i = 0
+  · rw [hli, hg, zero_smul]
+  · have hip : (inner ℝ (q i) a : ℝ) = 0 := (mul_eq_zero.mp (hzero i)).resolve_left hli
+    rw [mul_isSoS_eq_zero_of_inner_eq_zero hcomm hjordan hassoc (hidem i) ha hip, smul_zero]
+
 variable (m) in
 /-- **The bridge between the tree's two spellings of sharpness.**
 
