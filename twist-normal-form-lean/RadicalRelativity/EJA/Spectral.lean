@@ -1079,6 +1079,21 @@ theorem exists_resolution_distinct (e : J) (he : ∀ y : J, e * y = y) (x : J) :
     exact (Equiv.sum_comp S.equivFin.symm (fun a : {y // y ∈ S} => (a : ℝ) • d (a : ℝ))).symm
 
 
+omit [IsCommJordan J] [IsFormallyReal J] [Module.Finite ℝ J] in
+/-- **The square-root identity, needing nonnegativity only where it can be observed.**
+
+A resolution's coefficient at a *zero* idempotent is unconstrained — `0 • 0 = 1 • 0` — so
+demanding `0 ≤ λᵢ` everywhere asks for more than the cone can supply.  Where `cᵢ = 0` the term
+vanishes on both sides regardless. -/
+theorem jsqrtOfResolution_mul_self' {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hlam : ∀ i, c i ≠ 0 → 0 ≤ lam i) :
+    jsqrtOfResolution c lam * jsqrtOfResolution c lam = ∑ i, lam i • c i := by
+  rw [jsqrtOfResolution, sum_smul_mul_sum_smul_of_orthIdem hfam]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  by_cases hi : c i = 0
+  · rw [hi, smul_zero, smul_zero]
+  · rw [Real.mul_self_sqrt (hlam i hi)]
+
 /-! ### `jsqrt`: the square root as a function
 
 `sqrt_sum_eq_of_resolutions` says the sum `∑ √λᵢ cᵢ` does not depend on which resolution produced
@@ -1114,6 +1129,16 @@ theorem jsqrt_mul_self (e : J) (he : ∀ y : J, e * y = y) (x : J)
     jsqrt e he x * jsqrt e he x = x := by
   rw [jsqrt_eq_of_resolution e he x hfam hinj hx, hx]
   exact jsqrtOfResolution_mul_self hfam hnn
+
+/-- `jsqrt_mul_self` with nonnegativity demanded only at the idempotents that are present —
+the form the cone actually supplies, via `nonneg_coeff_of_isSoS`. -/
+theorem jsqrt_mul_self' (e : J) (he : ∀ y : J, e * y = y) (x : J)
+    {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c)
+    (hinj : Function.Injective lam) (hx : x = ∑ i, lam i • c i)
+    (hnn : ∀ i, c i ≠ 0 → 0 ≤ lam i) :
+    jsqrt e he x * jsqrt e he x = x := by
+  rw [jsqrt_eq_of_resolution e he x hfam hinj hx, hx]
+  exact jsqrtOfResolution_mul_self' hfam hnn
 
 end Split
 
