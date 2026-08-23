@@ -966,6 +966,68 @@ theorem sqrt_sum_eq_jeval {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c
     exact hi (Finset.mem_filter.mpr ⟨Finset.mem_univ i, hne⟩)
   rw [hz, Real.sqrt_zero, zero_smul]
 
+/-- **The square root does not depend on the resolution.**
+
+Both sums collapse onto their nonzero-eigenvalue parts (`√0 = 0`); those index sets carry the same
+eigenvalues (`nonzero_spectrum_eq_of_resolutions`); and matched eigenvalues carry the same
+idempotent (`idem_unique_of_nonzero_spectrum`).  The bijection sends `i` to the unique `j` with
+`ld j = lc i`, which exists by the spectrum equality and is unique by injectivity.
+
+★ **This is the theorem that licenses a definition of `√`.**  Everything before it showed the
+ingredients are determined by `x`; this shows the assembled sum is. -/
+theorem sqrt_sum_eq_of_resolutions {n m : ℕ} {c : Fin n → J} {d : Fin m → J}
+    (hc : IsOrthIdemFamily c) (hd : IsOrthIdemFamily d)
+    {lc : Fin n → ℝ} {ld : Fin m → ℝ}
+    (hinjc : Function.Injective lc) (hinjd : Function.Injective ld)
+    (hx : (∑ i, lc i • c i) = ∑ j, ld j • d j) :
+    (∑ i, Real.sqrt (lc i) • c i) = ∑ j, Real.sqrt (ld j) • d j := by
+  classical
+  have hspec := nonzero_spectrum_eq_of_resolutions hc hd lc ld hx
+  have hcollapse : ∀ {k : ℕ} (u : Fin k → J) (lu : Fin k → ℝ),
+      (∑ i ∈ Finset.univ.filter (fun i => u i ≠ 0 ∧ lu i ≠ 0), Real.sqrt (lu i) • u i)
+        = ∑ i, Real.sqrt (lu i) • u i := by
+    intro k u lu
+    refine Finset.sum_subset (Finset.filter_subset _ _) fun i _ hi => ?_
+    by_cases hu : u i = 0
+    · rw [hu, smul_zero]
+    · have hz : lu i = 0 := by
+        by_contra hne
+        exact hi (Finset.mem_filter.mpr ⟨Finset.mem_univ i, hu, hne⟩)
+      rw [hz, Real.sqrt_zero, zero_smul]
+  rw [← hcollapse c lc, ← hcollapse d ld]
+  have hfwd : ∀ i ∈ Finset.univ.filter (fun i => c i ≠ 0 ∧ lc i ≠ 0),
+      ∃ j, j ∈ Finset.univ.filter (fun j => d j ≠ 0 ∧ ld j ≠ 0) ∧ ld j = lc i := by
+    intro i hi
+    have hmem : lc i ∈ (Finset.univ.filter (fun j => d j ≠ 0 ∧ ld j ≠ 0)).image ld := by
+      rw [← hspec]; exact Finset.mem_image_of_mem lc hi
+    obtain ⟨j, hj, hjl⟩ := Finset.mem_image.mp hmem
+    exact ⟨j, hj, hjl⟩
+  have hbwd : ∀ j ∈ Finset.univ.filter (fun j => d j ≠ 0 ∧ ld j ≠ 0),
+      ∃ i, i ∈ Finset.univ.filter (fun i => c i ≠ 0 ∧ lc i ≠ 0) ∧ lc i = ld j := by
+    intro j hj
+    have hmem : ld j ∈ (Finset.univ.filter (fun i => c i ≠ 0 ∧ lc i ≠ 0)).image lc := by
+      rw [hspec]; exact Finset.mem_image_of_mem ld hj
+    obtain ⟨i, hi, hil⟩ := Finset.mem_image.mp hmem
+    exact ⟨i, hi, hil⟩
+  refine Finset.sum_bij' (fun i hi => (hfwd i hi).choose) (fun j hj => (hbwd j hj).choose)
+    (fun i hi => (hfwd i hi).choose_spec.1) (fun j hj => (hbwd j hj).choose_spec.1)
+    ?_ ?_ (fun i hi => ?_)
+  · intro i hi
+    refine hinjc ?_
+    have h1 := (hbwd ((hfwd i hi).choose) ((hfwd i hi).choose_spec.1)).choose_spec.2
+    have h2 := (hfwd i hi).choose_spec.2
+    exact h1.trans h2
+  · intro j hj
+    refine hinjd ?_
+    have h1 := (hfwd ((hbwd j hj).choose) ((hbwd j hj).choose_spec.1)).choose_spec.2
+    have h2 := (hbwd j hj).choose_spec.2
+    exact h1.trans h2
+  have hval : ld ((hfwd i hi).choose) = lc i := (hfwd i hi).choose_spec.2
+  have hne : lc i ≠ 0 := (Finset.mem_filter.mp hi).2.2
+  have hidem : c i = d ((hfwd i hi).choose) :=
+    idem_unique_of_nonzero_spectrum hc hd hinjc hinjd hspec hx hval.symm hne
+  rw [hval, hidem]
+
 /-- **A resolution with distinct eigenvalues.**  Merging the idempotents that share an eigenvalue
 leaves an orthogonal idempotent family, still complete for `e`, whose coefficients are injective.
 
