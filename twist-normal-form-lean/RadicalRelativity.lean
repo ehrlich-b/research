@@ -864,3 +864,16 @@ import RadicalRelativity.Composition.Hurwitz
 -- re-derived: the third double already has dimension 8, which is the largest value the dimension
 -- theorem allows, so it is everything.  Substrate; it moves no row.
 import RadicalRelativity.Composition.Classification
+
+-- `H_n(C)`, the hermitian n x n matrices over a composition algebra, as an `ℝ`-submodule of
+-- `Matrix ι ι C` with the symmetrised product `A ∘ B = ½(AB + BA)`.  This is residue (1) of
+-- `WallCertificates/jacobson-coordinatization.lean`: the target type the coordinatization
+-- theorem needs on its right-hand side, which the tree did not have.  The vendored
+-- `HermitianMat` layer could not supply it -- it is over fields with a `Star` instance, and a
+-- composition algebra is neither -- so the hermitian condition is entrywise through `cstar`.
+-- Carries the closure of the product, its bilinearity and commutativity, the unit, the diagonal
+-- frame with its multiplication table, the off-diagonal elements and their Peirce-½ relation,
+-- transport along a composition-algebra isomorphism, and the Jordan identity FOR ASSOCIATIVE
+-- coefficients only.  ★ It is NOT proved to be a Jordan algebra for non-associative `C`; that
+-- boundary is residue (3).  Substrate; it moves no row.
+import RadicalRelativity.Composition.HermMat

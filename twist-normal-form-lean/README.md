@@ -206,10 +206,10 @@ implication quantified over the §2 interface fields. See "Axiom audit" above an
 - `RadicalRelativity/Selection/TwistIsotropy.lean`
 
 **The rest of the tree** — where the two unconditional rows actually live. The
-lists above are the abstract layer only; they are a small minority of the 194
-modules under `RadicalRelativity/` (195 tracked declaration-bearing modules, counting the
-root aggregator; measured 2026-08-23 11:10 EDT, and the audit prints its own denominator —
-read that rather than this), so the map is completed by directory rather than by file.
+lists above are the abstract layer only; they are a small minority of the 196
+modules under `RadicalRelativity/` (197 tracked declaration-bearing modules, counting the
+root aggregator; measured 2026-08-23 by `find RadicalRelativity -name '*.lean' | wc -l`, and the
+audit prints its own denominator — read that rather than this), so the map is completed by directory rather than by file.
 ★ Reproduce every count in the table with
 `for d in EJA Hermitian Necessity RankTwo PaperA Wigner Vendor; do echo "$d $(find RadicalRelativity/$d -name '*.lean' | wc -l)"; done`
 — these numbers went stale **four** times, the third within the same session that corrected
