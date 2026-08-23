@@ -1,0 +1,151 @@
+# Paper A → 100% formalized — working state
+
+**Goal (Bryan, 2026-08-23): every one of the 36 manifest rows FORMALIZED. Paper A is NOT
+submitted until then.** This is a hard gate, not a preference: the program already had a
+load-bearing theorem withdrawn and a flagship desk-rejected, and shipping a paper whose Lean
+artifact is a conditional dependency skeleton is how that recurs.
+
+## The metric — machine-derived, never asserted
+
+`STATEMENT-MANIFEST.md` is the SSOT for the 36 statements. Re-run its own census script after
+every move (it lives in that file, ~line 78); do not hand-count, and do not write
+"fully formalized" as prose.
+
+    python3 - <<'PY'
+    import re
+    c={}
+    for ln in open("STATEMENT-MANIFEST.md",encoding="utf-8"):
+        if re.match(r'^\| \d+ \|', ln):
+            s=re.split(r'(?<!\\)\|',ln)[1:-1][5].strip()
+            m=re.match(r'^\**[\s★]*\**\s*(FORMALIZED|PARTIAL|ABSENT)',s); assert m, ln[:60]
+            c[m.group(1)]=c.get(m.group(1),0)+1
+    print(c, sum(c.values()))
+    PY
+
+**Baseline 2026-08-23 (before today's EJA work is reflected): 16 FORMALIZED / 18 PARTIAL /
+2 ABSENT = 36.** 20 rows to move. Only 2 are ABSENT — the rest are PARTIAL, i.e. a clause of
+several or a concrete case where the article states it generally. These are moves, not builds
+from scratch.
+
+Standing rule of that file: `THEOREM-MAP.md` must be updated in the same commit as a status
+move. A debt is already recorded there from 2026-08-22 where that was violated.
+
+## What landed 2026-08-23 and is NOT yet reflected in the manifest
+
+Three commits in `ehrlich-b/research`, all verified (compile clean, full library build,
+axiom census exactly `[propext, Classical.choice, Quot.sound]`):
+
+* `dab33fa` — `Composition/HermInner.lean`: entrywise form `hermIp`, `InnerProductSpace ℝ
+  (HermMat ι C)` via `ofCore`, and `hermIp_jmul_assoc` (the Euclidean hypothesis
+  `⟪A∘B,D⟫ = ⟪B,A∘D⟫`) at arbitrary Euclidean composition algebra — **no associativity needed**,
+  because `ip_mul_adj_left/right` (`Composition/Defs.lean:229,238`) are polarisations of the
+  composition law, not consequences of associativity.
+* `f409d91` — `EJA/HermMatCarrier.lean`: `EuclideanJordanAlgebra (HermMat ι C)` for `[Ring C]`
+  (ℝ, ℂ, ℍ). Formal reality falls out via `EJA/Class.lean`'s `instIsFormallyReal`. No additive
+  diamond (proved by `rfl`).
+* `9c24894` — `EJA/AlbertBridge.lean`: `toHermMat : h3O ≃ₗ[ℝ] HermMat (Fin 3) Octonion`,
+  `toHermMat_jordanMul` (products agree), `toHermMat_hermIp` (isometry),
+  `finrank_hermMat_octonion = 27`, and **`hermMat3_jmul_jordan` — the Jordan identity on
+  `H₃(C)` for EVERY finite-dimensional Euclidean composition algebra**, by case-splitting
+  `hurwitz_classification`. Gives `EuclideanJordanAlgebra (HermMat (Fin 3) Octonion)`.
+
+**Consequence to chase first:** several manifest rows carry an `EJA-GATED` terminal state, and
+the H₃(𝕆) carrier those gates were waiting on now exists. Re-audit every EJA-GATED row before
+building anything new — some may be free promotions. See the terminal-state ledger in
+`STATEMENT-MANIFEST.md`.
+
+## The Albert row's real remaining blocker
+
+`IsAlbertModel` (`MasterTheorem/Branches/Albert.lean:81`) has exactly one field:
+`block_injective : ∀ i j : Fin 3, i ≠ j → Function.Injective (S.ρ i j)` — Yokota's
+Spin(8)-triality faithfulness. Its docstring says why it cannot be internalised: `Stab` carries
+no Lie structure in the abstract interface, so simplicity of `𝔰𝔭𝔦𝔫(8)` is unavailable.
+
+Mathlib inventory, **checked not assumed** (2026-08-23): `CliffordAlgebra/SpinGroup.lean`
+EXISTS; `Algebra/Lie/{Killing,Semisimple/,Classical,Weights}` EXIST; **triality: zero hits**;
+`SO(8)`/`Spin(8)` by name: zero hits. So the gap is triality specifically, not Lie theory
+wholesale.
+
+## Non-negotiable operating rules
+
+* **Lean memory.** Always `lake env lean -M 10240 -j 4 FILE`. **One Lean process at a time,
+  never concurrent** — two concurrent runs hit 61.8 GB + 46.7 GB on this 24 GB Mac on
+  2026-08-23 and killed the machine. NEVER `toString (repr e)` on a proof term (that was the
+  actual cause). `lake build` here rejects both `-j` and `--jobs`.
+  ★ The background memory watchdog was killed 2026-08-23 at Bryan's instruction, so the `-M`
+  cap is now the ONLY protection. Do not relax it.
+* **Verify agent claims yourself.** Four sub-agents went idle without their reports landing;
+  in every case the filesystem was the truth. Compile + full build + axiom census, always.
+* **Prose discipline.** Every Palomar rejection this project has taken was prose overclaiming
+  relative to the formal statement, never bad mathematics. Use `★` markers for prose-only
+  claims. When a result falsifies an older claim elsewhere in the tree, go NARROW that claim
+  in the same commit — do not leave the tree lying.
+* **A claimed library obstruction is a claim** — grep Mathlib before writing "Mathlib does not
+  have X". Recorded lesson; I violated it once today on Spin(8).
+
+## Open, needing Bryan
+
+1. **3 unpushed commits** in `ehrlich-b/research` (`dab33fa`, `f409d91`, `9c24894`).
+2. **The citation is WRONG, not merely stale.** `main.tex` pins `ehrlich-b/research@b7db3e8`,
+   which is the 2026-07-19 pre-campaign skeleton — 27 `.lean` files, **no `Necessity/`
+   directory**. A referee following it finds none of the flagship work. A drafted fix exists at
+   `research/paperA-supplementary-rewrite-draft.md` (eight stale disclosure claims + the
+   re-pin). `main.tex`/`supplementary.tex` are Bryan-gated. Bryan said "citation should be
+   updated" — needs a pushed commit to pin to.
+3. Tree is on Mathlib **v4.33.0**; the paper cites v4.28.0.
+
+## Palomar (separate track, self-draining)
+
+`~/scratch/palomar/tick.sh` on a session-only cron (:09/:29/:49). koecher `000005` and spectral
+`000006` registered. traceform/framepeirce withdrawn and folded into the grouped `structure`
+entry (6 theorems), which passed mechanical verification but whose **editorial review stalled**:
+event log frozen at 18:57:57Z on "The automated review did not complete; it will be tried
+again", ~2h with no retry. `classification` (4 theorems) queued behind it. NEVER `/register` —
+that is Bryan's decision alone.
+
+## Progress 2026-08-23 (post-compaction session)
+
+Baseline was 16 FORMALIZED / 18 PARTIAL / 2 ABSENT. **Now 18 / 16 / 2.**
+
+**Row 5 `lem:span` CLOSED** (commit `777c122`). Both open clauses:
+* Ball clause — added `OrderUnitSpace.ouNorm` (abstract order-unit norm, unbundled `def`),
+  `ouBound`/`ouBound_nonempty`/`bddBelow_ouBound`, `sub_le_of_le_add`,
+  `le_smul_unit_of_forall_pos`, `ouNorm_mem_ouBound` (the inf is ATTAINED — the single step
+  that consumes `IsArchimedean`), `isEffect_half_smul_unit_add`,
+  `closedBall_half_subset_isEffect`. All in `RadicalRelativity/OrderUnitSpace.lean`.
+* Peirce clause — `peirceOneSubOrderUnitSpace` + `coe_ousUnit_peirceOneSub` +
+  `span_isEffect_peirceOneSub_eq_top` in `RadicalRelativity/EJA/PeirceSubalgebra.lean`.
+  The row's stated reason ("the tree does not know J₂(q) is an order unit space") had been
+  stale since 2026-08-22.
+
+**Row 3 `def:sp` CLOSED** (commit `a20667a`). Its whole residue was "S2, alone … needs an
+abstract `ouNorm`, which the tree does not have". Added `OrderUnitSpace.ContinuousOnOu` +
+`ContinuousOnOu.congr`, then in `RankTwo/Sufficiency.lean`: `PaperA.SpFirstArgContinuousOu`,
+`EffectSequentialProduct.FirstArgContinuousOu`, `restrictSp_firstArgContinuousOu`,
+`extendSp_firstArgContinuousOu`, `EffectSequentialProductS2` (all eight clauses in one
+object), `restrictSpS2`, `extendSpS2`, `restrictSpS2_extendSpS2`, `restrictSpS2_surjective`.
+Collateral: `Necessity/OrderUnitS2.lean:119` needed `HermitianMat.` qualification — the bare
+name `ContinuousOnOu` became ambiguous. No statement there changed.
+
+★ **The leverage was real: ONE object (`ouNorm`) closed TWO rows.** Look for that shape again.
+
+All 16 new declarations: `[propext, Classical.choice, Quot.sound]`, no `sorryAx`.
+Full `lake build RadicalRelativity` green (3306 jobs) after each.
+
+★ **TRAP HIT TWICE — read this before believing a build.** (a) `lake env lean FILE` compiles
+against CACHED oleans, so after editing a dependency you must `lake build <ThatModule>` before
+the dependent file's errors mean anything; two "errors" were pure cascade. (b) `lake build ...
+| grep -i error` is NOT a success check — the style/doc-string linters emit warnings whose TEXT
+contains "error", and a genuine `Some required targets logged failures` line sits at the very
+end. Always read the LAST 3 lines.
+
+## Program-level flag raised by the gate audit, needing Bryan
+
+**Rows 2 (`mthm:omnibus`) and 4 (`thm:vdw1`) are PRE-REGISTERED EXTERNAL** — two of the six
+(rows 1, 2, 4, 10, 14, 21). `WallCertificates/external-rows.md` calls closing them "out of
+scope *by design*"; for row 4 the manifest says the paper "never claims to reprove" van de
+Wetering's theorem. Promoting them to FORMALIZED means REVERSING an ARC-5/6 pre-registration,
+not finishing an unfinished row. That is a scientific-record decision, not a Lean one.
+Bryan has said he wants 36/36 and does not want that re-litigated — this is recorded so the
+next session knows the two rows are a different KIND of work, not so it re-opens the question.
+
