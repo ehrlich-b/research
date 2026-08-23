@@ -11,18 +11,35 @@ set_option linter.style.longLine false
 /-!
 # The Euclidean Jordan algebra class
 
-Every module of the `EJA/` layer built before this one states its hypotheses as a *tuple*:
+The abstract modules of the `EJA/` layer built before this one — `Peirce`, `PeirceMul`,
+`Orthogonal`, `Frame`, `Power`, `PowerAssoc`, `FormallyReal`, `Subalgebra`, `Block`, `Pattern`
+and `Spectral` — state their hypotheses as a *tuple* drawn from
 `[NonUnitalNonAssocCommRing J] [IsCommJordan J] [Module ℝ J] [IsScalarTower ℝ J J]
-[IsFormallyReal J] [Module.Finite ℝ J]`, or — on the Euclidean side of `EJA/Order.lean` —
-as a bilinear map `m : J →ₗ[ℝ] J →ₗ[ℝ] J` carrying `hcomm`/`hjordan`/`hassoc` as ordinary
-hypotheses.  Both vocabularies are correct and neither is a *class*, so a theorem about a
-Euclidean Jordan algebra cannot be stated by naming one.
+[IsFormallyReal J] [Module.Finite ℝ J]`, each module taking the sub-tuple it needs; or — on the
+Euclidean side of `EJA/Order.lean` and in `Spectral`'s interface section — as a bilinear map
+`m : J →ₗ[ℝ] J →ₗ[ℝ] J` carrying `hcomm`/`hjordan`/`hassoc` as ordinary hypotheses.  (`Witness`,
+`ConcreteInstance`, `InterfaceInstance` and `Spectral`'s concrete section state theirs over
+`HermitianMat` or over `EJAComparison` instead.)  Both abstract vocabularies are correct and neither is a *class*, so a theorem
+about a Euclidean Jordan algebra cannot be stated by naming one.
 
-This file names one.  `EuclideanJordanAlgebra J` is Faraut–Korányi's definition (FK III.1) and
-is exactly the hypothesis the paper's two flagship rows carry
-(`landing/papers/twist-normal-form/main.tex:303`): a finite-dimensional real inner-product
-space with a commutative bilinear product with unit, satisfying the Jordan identity and the
-associativity of the inner product.
+This file names one.  `EuclideanJordanAlgebra J` is a real inner-product space with a
+commutative bilinear product with unit, satisfying the Jordan identity and the associativity of
+the inner product — Faraut–Korányi's definition (FK III.1), which is also the definition the
+paper's two flagship rows carry as their hypothesis
+(`landing/papers/twist-normal-form/main.tex`, section labelled `sec:eja`, lines 303-307 on
+2026-08-22).
+
+★ **Hypothesis direction.**  The class is *weaker* than the article's definition in two
+respects, which is the correct direction for an import — a theorem proved over this class
+applies to the article's setting, not the other way round.  First, finite-dimensionality is
+folded into the article's definition and is carried here as a separate `[FiniteDimensional ℝ J]`
+argument.  Second, the article fixes the inner product to be the trace form
+`⟪x, y⟫ = tr(x ∘ y)` for the Jordan trace, whereas the class asks only that *some*
+positive-definite associative inner product exist.  `inner_mul_one` below shows the gap is
+smaller than it looks: any associative inner product satisfies `⟪x ∘ y, 1⟫ = ⟪x, y⟫`, so it *is*
+the trace form of the linear functional `z ↦ ⟪z, 1⟫`.  It need not be the form of the *Jordan*
+trace — rescaling an associative inner product by a positive constant keeps it associative —
+and nothing here claims otherwise.
 
 ## The shape, and the diamond it dodges
 
@@ -42,33 +59,46 @@ Consequently `ringOfBilinear (jmulₗ J) mul_comm = instNonUnitalNonAssocCommRin
 ## What finite-dimensionality is, and is not, needed for
 
 `FiniteDimensional ℝ J` is deliberately **not** a field of the class.  It is genuinely required
-downstream — `spectral_resolution_complete` is false without it, as `EJA/Spectral.lean` records
-(`ℝ[X]` satisfies every other hypothesis and has no nonconstant resolution) — so it is carried
-as a separate instance argument at exactly the theorems that need it.
+downstream: `EJA/Spectral.lean` records that its `spectral_resolution_bilinear` — which is
+`spectral_resolution_complete` in bilinear vocabulary, and carries the same hypotheses minus the
+inner product — is false without it, `ℝ[X]` satisfying every other hypothesis with no nonconstant
+resolution.  So the dimension is carried as a separate instance argument at exactly the theorems
+that need it, and `spectral_resolution_complete'` below is one of them.
 
 ★ It is *not* needed for formal reality.  `instIsFormallyReal` below is unconditional: pairing a
 vanishing sum of squares against the unit turns `∑ᵢ ⟪xᵢ ∘ xᵢ, 1⟫` into `∑ᵢ ⟪xᵢ, xᵢ⟫` by one
 application of `inner_assoc`, and a vanishing sum of nonnegative reals has vanishing terms.
-This is a correction to the build plan, which routed the instance through
+
+This corrects the build plan on two points.  The plan derived the instance from
 `EJA/Spectral.lean`'s `isFormallyReal_of_fin` under `[FiniteDimensional ℝ J]`.  That lemma
-cannot do the job in either respect: it *takes formal reality as a hypothesis* (in `Fin k` form)
-and only reindexes it to the `Finset` form the class `IsFormallyReal` carries.  The derivation
-had to come from the inner product, and once it does, the dimension hypothesis is unused.
+cannot supply it: `isFormallyReal_of_fin` *takes formal reality as a hypothesis*, in `Fin k`
+form, and does nothing but reindex it to the `Finset` form the class `IsFormallyReal` carries.
+The derivation had to come from the inner product instead — and once it does, the dimension
+hypothesis turns out to be unused.
 
 ## Scope
 
-**No manifest row moves.**  This file is substrate: it introduces no mathematics that
-`EJA/Order.lean`, `EJA/Spectral.lean` and `EJA/Peirce.lean` did not already contain, and its
-whole content is the claim that those three are reachable from a single class.  The two
-restatements at the end of the file (`spectral_resolution_complete'`, `peirce_add_add'`) are
-that claim discharged, not new results.
+**No manifest row moves.**  This file is substrate, and almost all of it is repackaging: the two
+restatements at the end (`spectral_resolution_complete'`, `peirce_add_add'`) discharge the claim
+that the existing layer is reachable from the class, and are not new results.
+
+★ Two declarations are *not* repackaging, and the file should not be described as if they were.
+`inner_mul_one`, and `instIsFormallyReal` resting on it, derive formal reality from the
+associative inner product, and the existing layer does not contain that derivation anywhere: it
+takes formal reality as a hypothesis at every abstract site (`EJA/Spectral.lean`'s
+`isFormallyReal_of_fin` *receives* it and does nothing but reindex; `EJA/Order.lean`'s
+`orderUnitSpaceOfBilinear` receives it as `[IsFormallyReal J]`), and derives it only on the
+concrete carrier, in `EJA/Witness.lean`'s `instIsFormallyReal` for `HermitianMat d 𝕜`.  Both new
+declarations are short; the point is only that "this file contains no new mathematics" would be
+false.
 
 ★ One hazard to record for later modules.  `instNonUnitalNonAssocCommRing` fires on any type
-carrying `EuclideanJordanAlgebra`, and `HermitianMat d 𝕜` already carries a `Mul` (the scoped
-instance in `HermMul`).  Nothing declares `EuclideanJordanAlgebra (HermitianMat d 𝕜)` today,
-and until something does the two never meet; if one is ever declared, the `HermMul` scoped
-instance and this class's `toMul` will both be in scope inside `open HermMul` sections and one
-of them has to give way.
+carrying `EuclideanJordanAlgebra`, and `HermitianMat d 𝕜` already carries a `Mul` — from
+`RadicalRelativity/Vendor/HermitianMat/Jordan.lean`'s `scoped instance : CommMagma
+(HermitianMat d 𝕜)`, whose product is `HermitianMat.symmMul`.  Nothing declares
+`EuclideanJordanAlgebra (HermitianMat d 𝕜)` today, and until something does the two never meet;
+if one is ever declared, that scoped instance and this class's `toMul` will both be in scope
+inside `open HermMul` sections and one of them has to give way.
 -/
 
 noncomputable section
@@ -78,9 +108,10 @@ namespace RadicalRelativity.EJA
 /-- A **Euclidean Jordan algebra**: a real inner-product space carrying a commutative bilinear
 product with unit, satisfying the Jordan identity and the associativity of the inner product.
 
-This is Faraut–Korányi's definition (FK III.1) and the hypothesis `mthm:master` and
-`mthm:omnibus` carry (`main.tex:303`).  Finite-dimensionality is *not* a field — see the module
-docstring — and is carried as `[FiniteDimensional ℝ J]` at the theorems that need it. -/
+This is Faraut–Korányi's definition (FK III.1), weakened in the two ways the module docstring
+records: finite-dimensionality is *not* a field, and the inner product is an arbitrary
+associative one rather than the Jordan trace form.  Both weakenings run in the import-safe
+direction. -/
 class EuclideanJordanAlgebra (J : Type*) [NormedAddCommGroup J] [InnerProductSpace ℝ J]
     extends Mul J, One J where
   /-- The Jordan product is commutative. -/
@@ -136,9 +167,11 @@ instance instSMulCommClass : SMulCommClass ℝ J J :=
 
 theorem mul_one' (x : J) : x * (1 : J) = x := by rw [mul_comm, one_mul]
 
-/-- **The trace form is the inner product.**  `⟪x ∘ y, 1⟫ = ⟪x, y⟫`: one application of
-`inner_assoc` against the unit.  This is the identity that makes the inner product's
-positive-definiteness available as positive-definiteness of `tr(x ∘ y)`. -/
+/-- **The inner product is a trace form.**  `⟪x ∘ y, 1⟫ = ⟪x, y⟫`: one application of
+`inner_assoc` against the unit.  So the linear functional `z ↦ ⟪z, 1⟫` plays the role the
+article's `tr` plays, and the inner product's positive-definiteness is available as
+positive-definiteness of that form on products.  It is *not* claimed that this functional is the
+Jordan trace — see the module docstring. -/
 theorem inner_mul_one (x y : J) : (inner ℝ (x * y) (1 : J) : ℝ) = inner ℝ x y := by
   rw [inner_assoc x y 1, mul_one' x, real_inner_comm]
 

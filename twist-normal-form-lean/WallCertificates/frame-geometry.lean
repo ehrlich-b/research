@@ -124,7 +124,7 @@ PER-ROW STATUS AND GAP
     What exists is the entry-level `MasterTheorem.RankTwo.sp_blockForm` about
     `sp = Fdiag * b * Fdiag^H`, which no declaration identifies with `HermitianMat.twistSeq`;
     `Necessity.blockHerm` (the coherence block) occurs 0 times in `RankTwo/Sufficiency.lean`; and
-    `Necessity.orientationJ` (the article's J_n) occurs in 1 of the 167 files of
+    `Necessity.orientationJ` (the article's J_n) occurs in 1 of the tree's `.lean` files (**171** at 2026-08-23 02:50 EDT; re-derive with `find RadicalRelativity -name '*.lean' | wc -l` rather than trusting this number — it moved 167 → 171 in under two hours) of
     `RadicalRelativity/`, which names neither `n2Sp` nor `tauModuliRP2`.
     The manifest row is PARTIAL again on this finding, and the residue is ASSEMBLY of four
     in-tree declarations (`n2Sp_eq_twistSeq_at_frame`, `twistSeq_adU_mat`,

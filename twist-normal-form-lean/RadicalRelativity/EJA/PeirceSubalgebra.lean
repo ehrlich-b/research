@@ -27,27 +27,49 @@ risk #3, on a probe showing that `IsCommJordan ↥S` does not synthesise for a
 `NonUnitalSubalgebra` subtype: Mathlib has no such transfer instance, so one would have to be
 written, and `IsFormallyReal` with it.
 
-That probe is correct and the conclusion drawn from it does not apply here, because under
-`EJA/Class.lean`'s design **no transfer is needed**.  The class puts `Mul` and `One` on top of
-an inner-product space rather than alongside a ring structure, so the natural subobject is the
-same shape one level down: the ambient `Submodule ℝ J`, whose subtype already carries
+That probe reproduces here, re-run against this tree on 2026-08-22: with
+`[EuclideanJordanAlgebra J]` in context,
+`example (S : NonUnitalSubalgebra ℝ J) : IsCommJordan ↥S := inferInstance` fails to synthesise,
+while the same `example` for `NonUnitalNonAssocCommRing ↥S` succeeds.  The conclusion drawn from
+it still does not apply, because under `EJA/Class.lean`'s design **no transfer is needed**.
+The class puts `Mul` and `One` on top of an inner-product space rather than alongside a ring
+structure, so the natural subobject is the same shape one level down: the ambient
+`Submodule ℝ J`, whose subtype already carries
 `NormedAddCommGroup`, `InnerProductSpace ℝ` and `Module ℝ` from Mathlib, with `Mul` and `One`
 added on top.  Then `EuclideanJordanAlgebra ↥(peirceOneSub hc)` is *constructed* from six
 field proofs, every one of which is the ambient identity read through `Subtype.ext`, and
-`IsCommJordan`, `IsFormallyReal`, `IsScalarTower`, `SMulCommClass` and the ring structure all
-arrive on the subtype the same way they arrive on `J`: as `EJA/Class.lean`'s derived
-instances.  Nothing is transferred because nothing has to be.
+`IsCommJordan`, `IsScalarTower`, `SMulCommClass` and the ring structure then arrive on the
+subtype the same way they arrive on `J`: as `EJA/Class.lean`'s derived instances.  Nothing is
+transferred because nothing has to be.
 
-Three facts make this work, and all three were probed against the real tree before the file
-was written:
+★ **One rough edge, measured rather than predicted.**  `IsFormallyReal ↥(peirceOneSub hc)` does
+*not* come back from a bare `inferInstance`, though `IsCommJordan ↥(peirceOneSub hc)`,
+`IsScalarTower`, `SMulCommClass` and `NonUnitalNonAssocCommRing` all do.  The cause is
+`IsFormallyReal`'s keying: it is indexed on `[Mul J]` **and** `[AddCommMonoid J]` as two
+independent arguments, and on a `Submodule` subtype a bare goal picks
+`(peirceOneSub hc).addCommMonoid` while `EJA/Class.lean`'s instance carries the
+ring-derived `AddCommMonoid`.  The two are **definitionally equal** — both `rfl`-checked, as are
+the two `Mul` paths — so this is an elaboration-order artifact and not a diamond, and it costs
+nothing where it matters: every consumer in the tree demands `IsFormallyReal` downstream of a
+`NonUnitalNonAssocCommRing` argument, so the ring-derived path is the one in the goal and the
+instance matches.  `spectral_resolution_complete'` therefore runs inside `J₂(c)` unaided.
+Should a bare goal ever be wanted, `EuclideanJordanAlgebra.instIsFormallyReal
+(J := ↥(peirceOneSub hc))` supplies it — pinning the type is what fixes it, since without it the
+instance arguments are synthesised against a metavariable.  No such instance is declared here,
+because nothing needs one.
 
-* `NormedAddCommGroup ↥W` and `InnerProductSpace ℝ ↥W` synthesise for any `W : Submodule ℝ J`;
-* the inner product on the subtype is the ambient one **by `rfl`**, which is why the
-  `inner_assoc` field is discharged by applying the ambient `inner_assoc` to the coercions with
-  no rewriting at all;
-* membership in the two carriers is *definitionally* the eigenvalue equation, so
-  `eigen_one_mul_one hc x.2 y.2` is directly the `mul_mem` proof and `x.2` is directly the
-  `one_mul` proof.
+Three facts make this work.  None is asserted here on the strength of a past probe: each is
+re-checked every time the file compiles, at the declaration named after it.
+
+* `NormedAddCommGroup ↥W` and `InnerProductSpace ℝ ↥W` synthesise for any `W : Submodule ℝ J` —
+  without which `instEJAPeirceOneSub` could not even be stated, since the class is indexed by
+  them;
+* the inner product on the subtype is the ambient one **by `rfl`**, which is why
+  `instEJAPeirceOneSub`'s `inner_assoc` field is the ambient `inner_assoc` applied to the
+  coercions with no rewriting at all;
+* membership in the two carriers is *definitionally* the eigenvalue equation, which is why
+  `instMulPeirceOneSub` passes `eigen_one_mul_one hc x.2 y.2` straight in as the closure proof
+  and `instEJAPeirceOneSub`'s `one_mul` field is `Subtype.ext x.2`.
 
 The plan's *specific* warning — that the class carries `One`, so the instance on `J₂(q)` is
 constructed with `1 = q` rather than derived, and `simp`-normal-form care is owed around
@@ -65,8 +87,11 @@ The literature writes the eigenvalue-`1` and eigenvalue-`0` Peirce spaces as `J�
 `J₀(c)`, indexing by twice the eigenvalue.  The tree's existing projections are named by the
 eigenvalue itself (`peirceOne`, `peirceHalf`, `peirceZero`), and consistency inside the tree
 wins: `peirceOneSub hc` **is** `J₂(c)` and `peirceZeroSub hc` **is** `J₀(c)`.  Reading
-`peirceOneSub` as `J₁(c)` — the half-eigenspace — would be a mistake; the half-eigenspace is
-not closed under the product and gets no subalgebra here.
+`peirceOneSub` as `J₁(c)` — the half-eigenspace — would be a mistake.  The half-eigenspace gets
+no subalgebra here, and cannot get one on the same terms: `EJA/PeirceMul.lean`'s
+`peirceHalf_mul_half_eq_zero` puts the product of two half-eigenvectors in `J₂(c) ⊕ J₀(c)`, so
+the half-eigenspace is closed under the product only in the degenerate case where it squares to
+zero.
 
 ## Scope
 

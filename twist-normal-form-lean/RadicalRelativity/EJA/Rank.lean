@@ -20,8 +20,11 @@ into a *Jordan frame* — every member primitive, and the family complete — an
 cardinality" looks like a prerequisite — "rank `n ≥ 3`" seems meaningless before it — and its
 classical proof (Faraut–Korányi Thm IV.2.5, conjugacy of frames under `Aut(J)`) is a chapter of
 its own.  The direction saves it.  The article *defines* the rank as the size of a Jordan frame
-(`landing/papers/twist-normal-form/main.tex:322-324`), so the article's hypothesis "rank `= n`"
-**implies** "there exists a Jordan frame of cardinality `n`".  Taking the latter as the Lean
+("A *Jordan frame* is a complete system of orthogonal primitive idempotents
+`F = {p₁, …, pₙ}`, `∑ᵢ pᵢ = e`; `n` is the rank of `J`" —
+`landing/papers/twist-normal-form/main.tex`, section labelled `sec:eja`, lines 317-320 on
+2026-08-22), so the article's hypothesis "rank `= n`" **implies** "there exists a Jordan frame
+of cardinality `n`".  Taking the latter as the Lean
 hypothesis makes the Lean theorem weaker or equal, which is the correct direction for an
 import; and well-definedness falls out downstream, since once `J ≅ H_n(K)` the dimension pins
 `n`.
@@ -30,16 +33,18 @@ import; and well-definedness falls out downstream, since once `J ≅ H_n(K)` the
 should carry a `JordanFrame J n` as *data* rather than reason about the number `rank J`.  What
 is proved about `rank J` is exactly two inequalities: `JordanFrame.card_le_rank` (a frame's
 cardinality is at most the rank) and `rank_le_finrank`.  The reverse of the first —
-`rank J = n` for a frame of cardinality `n` — is **not** proved, and cannot be without either
-frame conjugacy or the classification: `rank J` is a supremum over *all* orthogonal families of
-nonzero idempotents, primitive or not, and nothing here rules out a longer non-primitive one.
+`rank J = n` for a frame of cardinality `n` — is **not** proved here, and nothing in this file
+is a step towards it: `rank J` is a supremum over *all* orthogonal families of nonzero
+idempotents, primitive or not, and bounding such a family by `n` needs either the frame Peirce
+decomposition or frame conjugacy, neither of which is available yet.  Do not quote `rank J = n`
+off this file.
 
 ## The linear-independence argument is already in the tree
 
 Orthogonal nonzero idempotents are linearly independent, and the argument is
-`EJA/Order.lean`'s `inner_left_coeff` verbatim: the associativity of the inner product makes
-`⟪pₖ, pᵢ⟫ = ⟪pₖ, pₖ ∘ pᵢ⟫ = 0` for `i ≠ k`, so pairing a vanishing combination against `pₖ`
-reads off `gₖ ‖pₖ‖² = 0`.  That lemma is stated in `EJA/Order.lean`'s bilinear-map vocabulary;
+`EJA/Order.lean`'s `inner_left_coeff` verbatim: idempotency and then associativity of the inner
+product give `⟪pₖ, pᵢ⟫ = ⟪pₖ ∘ pₖ, pᵢ⟫ = ⟪pₖ, pₖ ∘ pᵢ⟫ = 0` for `i ≠ k`, so pairing a vanishing
+combination against `pₖ` reads off `gₖ ‖pₖ‖² = 0`.  That lemma is stated in `EJA/Order.lean`'s bilinear-map vocabulary;
 `EJA/Class.lean`'s `jmulₗ` and `jmulₗ_inner_assoc` are what let it be applied at the class
 without restating it.
 
@@ -74,8 +79,9 @@ theorem IsPrimitive.eq_zero_or_eq {c : J} (h : IsPrimitive c) {d : J} (hd : d * 
     (hcd : c * d = d) : d = 0 ∨ d = c := h.2.2 d hd hcd
 
 /-- Primitivity of `c`, read *inside* `J₂(c)`: `c` is primitive exactly when the only
-idempotents of the Peirce subalgebra are its zero and its unit.  This is the form
-`dim V_ii = 1` will consume, where the spectral theorem is run inside `J₂(pᵢ)`. -/
+idempotents of the Peirce subalgebra are its zero and its unit.  The intended consumer is the
+`dim V_ii = 1` step of the frame Peirce decomposition, which runs the spectral theorem inside
+`J₂(pᵢ)`; that step is not built yet. -/
 theorem isPrimitive_iff_of_idem {c : J} (hc : c * c = c) (hc0 : c ≠ 0) :
     IsPrimitive c ↔ ∀ d : ↥(peirceOneSub hc), d * d = d → d = 0 ∨ d = 1 := by
   constructor
