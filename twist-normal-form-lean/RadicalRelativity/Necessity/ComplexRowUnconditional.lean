@@ -830,8 +830,9 @@ What is proved here, clause by clause, and at what generality:
   Stronger than the article's clause.
 * **(iii)** `adU_eq_rotation_on_crossCoherent`.  ★ **This is where the row stays PARTIAL, and the
   gap is named rather than papered over.**  What is proved is the article's own proof step at its
-  own generality: *any* unitary acting on `q` and on `p_k` by unit scalars rotates `X` through the
-  angle carried by the ratio of those scalars, in the orientation fixed by `𝒥_{q,k}`.  What is
+  own generality: any `u` acting on `q` and on `p_k` by scalars whose ratio is a phase rotates `X`
+  through that phase's angle, in the orientation fixed by `𝒥_{q,k}` (unitarity of `u` is not
+  even needed).  What is
   **not** proved is that `a^{it}` is such a unitary for an arbitrary `a = λq + Σ_{l≥3} λ_l p_l`;
   that needs `cfc f a · q = f(λ)·q` for a spectral projection `q` of `a`, which this tree has only
   for the diagonal family.  `torusU_framePair` supplies exactly that identification at the standard
@@ -840,7 +841,9 @@ What is proved here, clause by clause, and at what generality:
   decomposition to it is open.
 
 `blockHerm_isCrossCoherent` together with `blockHerm_ne_zero` certifies that `X` is not the zero
-space, so none of the three clauses is vacuously true.
+space, so none of the three clauses is vacuously true.  And `adU_torusU_eq_rotation` **composes**
+the witnesses with clause (iii) rather than asserting that they fit: it is clause (iii) fired at
+the standard frame, with the article's angle `t(r_i − r_k)` in the conclusion.
 
 ★ **Placement note.**  This lemma feeds `lem:adjacent` in the article's own architecture.  This
 development reaches the complex row by a different route (`frameTwistConst`, via `AdjAxis`), so
@@ -1037,10 +1040,14 @@ theorem orientationJ_adU {q p : HermitianMat n ℂ} {u : Matrix n n ℂ}
   simp only [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_smul, Matrix.smul_mul]
   congr 2 <;> noncomm_ring
 
-/-- **`lem:orientation`(iii), the mechanism at the article's own generality.**  A unitary that
-acts on `q` and on `p_k` by unit scalars — which `a^{it}` does, with `e^{it\log λ}` and
-`e^{it\log λ_k}` — rotates `X` through the angle carried by the ratio of those scalars, in the
-orientation fixed by `𝒥_{q,k}`. -/
+/-- **`lem:orientation`(iii), the mechanism at the article's own generality.**  If `u` acts on
+`q` and on `p_k` by scalars `c` and `d` whose ratio `c·d̄` is a phase `e^{iφ}` — which `a^{it}`
+does, with `c = e^{it\log λ}` and `d = e^{it\log λ_k}`, so `φ = t(\log λ − \log λ_k)` — then
+`Ad_u` rotates `X` through `φ` in the orientation fixed by `𝒥_{q,k}`.
+
+★ Unitarity of `u` is **not** assumed: the computation needs only the two scalar actions and
+the phase condition on their ratio, so the hypothesis is weaker than "unitary" and the theorem
+correspondingly stronger. -/
 theorem adU_eq_rotation_on_crossCoherent {q p : HermitianMat n ℂ} {u : Matrix n n ℂ}
     (hqp : q.mat * p.mat = 0) (hq : q.mat * q.mat = q.mat) (hp : p.mat * p.mat = p.mat)
     {c d : ℂ} (hcq : u * q.mat = c • q.mat) (hdp : u * p.mat = d • p.mat)
@@ -1189,6 +1196,21 @@ theorem blockHerm_isCrossCoherent {i j k : n} (hij : i ≠ j) (hki : k ≠ i) (h
   rw [framePair, symmMul_add_left,
     frameProj_symmMul_blockHerm_left (Ne.symm hki) z,
     frameProj_symmMul_blockHerm_other (Ne.symm hij) (fun h => hkj h.symm) z, add_zero]
+
+
+/-- **Clause (iii), fired.**  The witnesses of `torusU_framePair` are plugged into
+`adU_eq_rotation_on_crossCoherent`, so the hypothesis class is certified inhabited by
+composition rather than by inspection, and the rotation angle is the article's
+`t(\log λ − \log λ_k)`. -/
+theorem adU_torusU_eq_rotation {i j k : n} (hij : i ≠ j) (hki : k ≠ i) (hkj : k ≠ j)
+    (t : ℝ) {r : n → ℝ} (hr : r i = r j) {x : HermitianMat n ℂ}
+    (hx : IsCrossCoherent (framePair i j) (frameProj k) x) :
+    adU (torusU t r) x
+      = Real.cos (t * (r i - r k)) • x
+        + Real.sin (t * (r i - r k)) • orientationJ (framePair i j) (frameProj k) x := by
+  obtain ⟨h1, h2, h3⟩ := torusU_framePair hij hki hkj t hr
+  exact adU_eq_rotation_on_crossCoherent (framePair_mul_frameProj hki hkj)
+    (framePair_idem hij) (frameProj_idem k) h1 h2 h3 hx
 
 
 end Orientation
