@@ -52,9 +52,16 @@ it does.  `hassoc` is one of several hypotheses those six declarations take, and
 not discharge are exactly the ones this carrier still lacks: the **Jordan identity** `hjordan`,
 available only for associative `C` (`jmul_jordan_of_assoc`) or for `C` isomorphic to an
 associative one (`jmul_jordan_of_isCompIso`) — in particular not for `𝕆` at any rank — and
-**formal reality** `hfr`, which is proved nowhere for this carrier.  (`hcomm` is `jmul_comm`,
-from `HermMat.lean`, not from this file.)  No `EuclideanJordanAlgebra` instance on `HermMat ι C`
-exists in this tree, and this file constructs none.
+**formal reality** `hfr`.  (`hcomm` is `jmul_comm`, from `HermMat.lean`, not from this file.)
+This file constructs no `EuclideanJordanAlgebra` instance on `HermMat ι C`.
+
+★ Two clauses of that sentence were **narrowed on 2026-08-23** and the earlier reading should not
+be relied on.  It used to say that formal reality "is proved nowhere for this carrier" and that
+"no `EuclideanJordanAlgebra` instance on `HermMat ι C` exists in this tree".  Both are now false
+**for associative `C`**: `EJA/HermMatCarrier.lean` — downstream of this file, so invisible from
+here — installs the class under `[Ring C] [Nontrivial C] [DecidableEq ι]`, and formal reality
+follows from it through `EJA/Class.lean`'s `instIsFormallyReal`.  Both remain true for
+non-associative `C`, `𝕆` at every rank included, which is exactly the `hjordan` gap above.
 
 ## What is deliberately absent
 
@@ -243,8 +250,10 @@ docstring — and with `D` for the third element because `C` is the coefficient 
 
 ★ It does **not** follow that `HermMat ι C` is a Euclidean Jordan algebra.  The Jordan identity
 is still available only for associative `C` (`jmul_jordan_of_assoc`) or `C` isomorphic to such a
-one (`jmul_jordan_of_isCompIso`), formal reality is proved nowhere for this carrier, and no
-`EuclideanJordanAlgebra` instance on `HermMat ι C` exists in this tree. -/
+one (`jmul_jordan_of_isCompIso`).  ★ **Narrowed 2026-08-23**: this sentence used to add that
+formal reality is proved nowhere for this carrier and that no `EuclideanJordanAlgebra` instance
+on `HermMat ι C` exists in this tree.  Both hold for non-associative `C` only —
+`EJA/HermMatCarrier.lean` installs the class, and with it formal reality, under `[Ring C]`. -/
 theorem hermIp_jmul_assoc (A B D : HermMat ι C) :
     hermIp (jmul A B) D = hermIp B (jmul A D) := by
   have ha : ∀ p q : ι, (A : Matrix ι ι C) q p = cstar ((A : Matrix ι ι C) p q) := A.2

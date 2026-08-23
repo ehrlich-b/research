@@ -70,11 +70,28 @@ in Lean with a `sorry` at each.
 ★★ **"`H_n(C)` does not exist in this tree as a type" is STRUCK 2026-08-23 — it was the last
 surviving copy of a claim the residue-1 discharge retracted everywhere else.**  `HermMat ι C`
 (`Composition/HermMat.lean:162`) is a type, `FiniteDimensional` over `ℝ`, and carries `jmul`,
-`hermBilin`, `hermOne`, `hermIdem`, `hermOff` and `hermCongr` with **zero sorries**.  What is
-genuinely absent is narrower and is the honest residue: there is **no
-`EuclideanJordanAlgebra (HermMat ι C)` instance anywhere in the tree** — measured by grep across
-`RadicalRelativity/`, 2026-08-23 — so the classification target exists as a Jordan-structured
-type but has not been shown to satisfy the EJA axioms.
+`hermBilin`, `hermOne`, `hermIdem`, `hermOff` and `hermCongr` with **zero sorries**.
+
+★★ **The residue that replaced it has itself NARROWED, 2026-08-23, and has not vanished.**  This
+paragraph used to continue "there is no `EuclideanJordanAlgebra (HermMat ι C)` instance anywhere
+in the tree, so the classification target exists as a Jordan-structured type but has not been
+shown to satisfy the EJA axioms."  That is now **false for associative `C`**:
+`EJA/HermMatCarrier.lean`'s `instEuclideanJordanAlgebraHermMat` puts the class on `HermMat ι C`
+at every finite `ι`, under `[Ring C] [Nontrivial C] [DecidableEq ι]`, with formal reality
+following from `EJA/Class.lean`'s `instIsFormallyReal`.  Over the Hurwitz list `[Ring C]` is
+`ℝ`, `ℂ` and `ℍ`.
+
+What genuinely remains, and is the honest residue now:
+
+* **the octonionic case, at every rank.**  The class's `jordan` field is discharged by
+  `Composition/HermMat.lean`'s `jmul_jordan_of_assoc`, which is stated under `[Ring C]`, so
+  `HermMat ι Octonion` carries no instance — rank 3 included, even though `EJA/AlbertCarrier.lean`
+  puts the class on `h3O`, a **different type**, with no map between the two constructed
+  anywhere in the tree;
+* **the isomorphism itself.**  Giving the right-hand side its Jordan structure is not
+  coordinatization: `J ≅ H_n(C)` is residue (1) of
+  `WallCertificates/jacobson-coordinatization.lean` and is still a `sorry` there, as are the
+  other two.
 
 ★ `classification_coordAlg` says the block is isomorphic to *one of* the four; it does not say
 **which**, and nothing here computes the dimension of a particular block.  For `H_d(ℂ)` the block

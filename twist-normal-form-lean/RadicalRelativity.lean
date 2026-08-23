@@ -885,8 +885,27 @@ import RadicalRelativity.Composition.HermMat
 -- Also `hermIp_jmul_assoc`, the Euclidean hypothesis `⟪A ∘ B, D⟫ = ⟪B, A ∘ D⟫`, proved at an
 -- arbitrary Euclidean composition algebra from the two adjunction lemmas of `Composition.Defs`,
 -- which are polarisations of the composition law rather than consequences of associativity and
--- so hold over the octonions.  ★ This does NOT exhibit `HermMat ι C` as a Euclidean Jordan
--- algebra: the Jordan identity remains available only for associative `C`, formal reality is
--- proved nowhere for this carrier, and no `EuclideanJordanAlgebra` instance exists in this tree.
--- Substrate; it moves no row.
+-- so hold over the octonions.  ★ This file does NOT exhibit `HermMat ι C` as a Euclidean Jordan
+-- algebra: the Jordan identity remains available only for associative `C`.  ★ Narrowed
+-- 2026-08-23 -- this entry used to add that formal reality is proved nowhere for this carrier
+-- and that no `EuclideanJordanAlgebra` instance exists in this tree; both hold for
+-- non-associative `C` only, since `EJA.HermMatCarrier` below installs the class, and with it
+-- formal reality, under `[Ring C]`.  Substrate; it moves no row.
 import RadicalRelativity.Composition.HermInner
+
+-- `H_ι(C)` as a Euclidean Jordan algebra, FOR ASSOCIATIVE `C` ONLY.  The class of `EJA.Class`
+-- on the carrier `Composition.HermMat` builds and `Composition.HermInner` gives an inner
+-- product to: `jmul` for the product, `hermOne` for the unit, and the six field obligations
+-- discharged by lemmas of `Composition/` with one re-orientation (`jmul_jordan_of_assoc` carries
+-- Mathlib's orientation of the Jordan identity, the class carries the other).  Formal reality
+-- comes for free from `EJA.Class`'s `instIsFormallyReal`.  ★ The `[Ring C]` hypothesis is the
+-- associativity of the coefficient algebra and is NOT removable here: over the Hurwitz list it
+-- means R, C and H and NOT O, so the octonionic case is uncovered at every rank, rank 3
+-- included -- that one is carried by the DIFFERENT type `h3O` in `EJA.AlbertCarrier`, and no map
+-- between the two types is constructed anywhere in the tree.  ★ This does NOT discharge the
+-- Jacobson coordinatization residue: the isomorphism `J ≅ H_n(C)` is still a `sorry` in
+-- `WallCertificates/jacobson-coordinatization.lean`; what lands is Jordan structure on that
+-- theorem's right-hand side.  ★ Unlike both existing carriers there is no `Mul` collision to
+-- measure -- `Composition.HermMat` installs no `Mul`, and `#synth Mul` on the carrier fails
+-- without this module.  Substrate; it moves no row.
+import RadicalRelativity.EJA.HermMatCarrier
