@@ -539,6 +539,177 @@ theorem isSoS_iff_exists_sq
   · rintro ⟨y, rfl⟩
     exact ⟨1, fun _ => y, by simp⟩
 
+
+/-! ## Sharpness: idempotent effects are sharp
+
+`STATEMENT-MANIFEST.md` row 8 (`lem:simple-bridge`) states its residue exactly: "define `E₀`,
+prove `idempotent ⟹ IsSharp` for the effect order, and state 'every effect is simple'".  The
+middle item is proved here; `OrderUnitSpace.IsSharp` is the article's own order-theoretic
+sharpness and had, before this, exactly one occurrence in the whole checkout — its definition.
+
+The proof needs no functional calculus and no new order theory.  It is three moves against
+`inner_mul_self_nonneg_of_idem`: an idempotent pairs nonnegatively with the cone, `p` and `e - p`
+pair to zero with each other, and an element of the cone pairing to zero with the unit is zero. -/
+
+/-- **An idempotent pairs nonnegatively with the cone.**  Extracted from the body of
+`nonneg_coeff_of_isSoS`, which proves exactly this en route and then discards it. -/
+theorem inner_idem_isSoS_nonneg
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hjordan : ∀ a b : J, m (m a b) (m a a) = m a (m b (m a a)))
+    (hassoc : ∀ x y z : J, inner ℝ (m x y) z = inner ℝ y (m x z))
+    {c : J} (hc : m c c = c) {x : J} (hx : IsSoS m x) : (0 : ℝ) ≤ inner ℝ c x := by
+  obtain ⟨j, f, hf⟩ := hx
+  rw [hf, inner_sum]
+  refine Finset.sum_nonneg fun i _ => ?_
+  have hstep : inner ℝ c (m (f i) (f i)) = inner ℝ (m c (f i)) (f i) := by
+    calc inner ℝ c (m (f i) (f i))
+        = inner ℝ (m (f i) (f i)) c := real_inner_comm _ _
+      _ = inner ℝ (f i) (m (f i) c) := hassoc (f i) (f i) c
+      _ = inner ℝ (f i) (m c (f i)) := by rw [hcomm (f i) c]
+      _ = inner ℝ (m c (f i)) (f i) := real_inner_comm _ _
+  rw [hstep]
+  exact inner_mul_self_nonneg_of_idem hcomm hjordan hassoc hc (f i)
+
+/-- **An element of the cone orthogonal to the unit is zero.**  `⟪e, ∑ fᵢ²⟫ = ∑ ‖fᵢ‖²`, so the
+pairing with the unit is the squared norm of the presentation. -/
+theorem eq_zero_of_isSoS_of_inner_unit_eq_zero
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hassoc : ∀ x y z : J, inner ℝ (m x y) z = inner ℝ y (m x z))
+    (e : J) (he : ∀ y : J, m e y = y) {x : J} (hx : IsSoS m x)
+    (h : inner ℝ e x = (0 : ℝ)) : x = 0 := by
+  obtain ⟨j, f, hf⟩ := hx
+  have hterm : ∀ i, inner ℝ e (m (f i) (f i)) = (inner ℝ (f i) (f i) : ℝ) := by
+    intro i
+    calc inner ℝ e (m (f i) (f i))
+        = inner ℝ (m (f i) (f i)) e := real_inner_comm _ _
+      _ = inner ℝ (f i) (m (f i) e) := hassoc (f i) (f i) e
+      _ = inner ℝ (f i) (f i) := by rw [hcomm (f i) e, he]
+  have hsum : (∑ i, (inner ℝ (f i) (f i) : ℝ)) = 0 := by
+    rw [← h, hf, inner_sum]
+    exact (Finset.sum_congr rfl fun i _ => hterm i).symm
+  have hzero : ∀ i, f i = 0 := by
+    intro i
+    have hnn : ∀ k, (0 : ℝ) ≤ inner ℝ (f k) (f k) := fun k => real_inner_self_nonneg
+    have := (Finset.sum_eq_zero_iff_of_nonneg fun k _ => hnn k).mp hsum i (Finset.mem_univ i)
+    exact inner_self_eq_zero.mp this
+  rw [hf]
+  exact Finset.sum_eq_zero fun i _ => by simp [hzero i]
+
+variable (m) in
+/-- **Every idempotent effect is sharp** — the interior half of `lem:simple-bridge`'s clause (ii).
+
+`p` and `e - p` are orthogonal idempotents, so each pairs to zero with the other.  An effect `a`
+below both is therefore orthogonal to both, hence to `e`, hence zero.
+
+★ The converse, `sharp ⟹ idempotent`, is **not** proved here and is not claimed: the article
+itself attributes it to a citation (vdW Prop. 3.15), so it is external by the article's own
+attribution.
+
+★★ **Read this before assuming it duplicates `EJA/OrderAuto.lean`.**  That file proves both
+directions, as `isSharp_of_idem`/`idem_of_isSharp`/`isSharp_iff_idem` — but against its *own*
+`EJA.IsSharp e c`, a sums-of-squares spelling at class generality, and its docstring states
+plainly that "**no lemma below relates the two**".  This theorem lands in
+`OrderUnitSpace.IsSharp`, which is the article's order-theoretic sharpness and the one
+`IsSimpleEffect` is defined against, at bilinear-map generality.  Relating the two spellings is
+still not done; `EJA.IsSharp` is the *stronger* of the two (its quantifier asks only `IsSoS x`
+where the order-theoretic one asks for a full effect), so that bridge should run in this
+direction and would make this proof redundant.  It does not exist today. -/
+theorem isSharpOrderUnit_of_idem
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hjordan : ∀ a b : J, m (m a b) (m a a) = m a (m b (m a a)))
+    (hfr : ∀ (k : ℕ) (f : Fin k → J), (∑ i, m (f i) (f i)) = 0 → ∀ i, f i = 0)
+    (hassoc : ∀ x y z : J, inner ℝ (m x y) z = inner ℝ y (m x z))
+    (e : J) (he : ∀ y : J, m e y = y) {p : J} (hp : m p p = p) :
+    letI := orderUnitSpaceOfBilinear m hcomm hjordan hfr e he
+    OrderUnitSpace.IsSharp p := by
+  letI := orderUnitSpaceOfBilinear m hcomm hjordan hfr e he
+  -- `e - p` is the complementary idempotent, and the two are orthogonal.
+  have hpe : m p e = p := by rw [hcomm p e, he]
+  have hcross : m p (e - p) = 0 := by rw [map_sub, hpe, hp, sub_self]
+  have hq : m (e - p) (e - p) = e - p := by
+    rw [map_sub, hcomm (e - p) e, he, hcomm (e - p) p, hcross, sub_zero]
+  -- Each pairs to zero with the other.
+  have hip : inner ℝ p (e - p) = (0 : ℝ) := by
+    calc inner ℝ p (e - p) = inner ℝ (m p p) (e - p) := by rw [hp]
+      _ = inner ℝ p (m p (e - p)) := hassoc p p (e - p)
+      _ = 0 := by rw [hcross, inner_zero_right]
+  have hiq : inner ℝ (e - p) p = (0 : ℝ) := by rw [real_inner_comm]; exact hip
+  refine ⟨(isEffect_ofBilinear (m := m) hcomm hjordan hfr e he p).mpr
+      ⟨isSoS_of_idem hp, isSoS_of_idem hq⟩, ?_⟩
+  intro a ha hap haq
+  have hasos : IsSoS m a := ((isEffect_ofBilinear (m := m) hcomm hjordan hfr e he a).mp ha).1
+  -- `a ≤ p` and `a ≤ e - p` are literally sums-of-squares statements.
+  have hpa : IsSoS m (p - a) := hap
+  have hqa : IsSoS m (e - p - a) := haq
+  -- Orthogonal to `e - p`, using `⟪e-p, p⟫ = 0`.
+  have h1 : inner ℝ (e - p) a = (0 : ℝ) := by
+    have hge := inner_idem_isSoS_nonneg hcomm hjordan hassoc hq hasos
+    have hle := inner_idem_isSoS_nonneg hcomm hjordan hassoc hq hpa
+    rw [inner_sub_right, hiq, zero_sub, neg_nonneg] at hle
+    linarith
+  -- Orthogonal to `p`, using `⟪p, e-p⟫ = 0`.
+  have h2 : inner ℝ p a = (0 : ℝ) := by
+    have hge := inner_idem_isSoS_nonneg hcomm hjordan hassoc hp hasos
+    have hle := inner_idem_isSoS_nonneg hcomm hjordan hassoc hp hqa
+    rw [inner_sub_right, hip, zero_sub, neg_nonneg] at hle
+    linarith
+  -- Hence orthogonal to the unit, hence zero.
+  refine eq_zero_of_isSoS_of_inner_unit_eq_zero hcomm hassoc e he hasos ?_
+  have : (e : J) = p + (e - p) := by abel
+  rw [this, inner_add_left, h2, h1, add_zero]
+
+
+variable (m) in
+/-- **`E = E₀`: every effect is simple** — `lem:simple-bridge` clause (ii), at the article's own
+generality.
+
+The article's proof is one sentence (`main.tex:549-550`): "holds by the Jordan spectral theorem:
+every element is a finite real combination of orthogonal idempotents".  That theorem is
+`spectral_resolution_bilinear`; what this adds is that its idempotents are *sharp* in the
+order-theoretic sense the definition of `E₀` requires, which is `isSharp_of_idem`, and that they
+form an orthogonal family in the order sense, which is completeness `∑ qᵢ = e` read through the
+cone.
+
+★ Clause (ii) is the row's **only interior clause** — the article assigns (i) to vdW Thm. A.6,
+(iii) to vdW Props. 4.19–4.20 and (iv) to a vdW remark.  ★ And the equivalence
+`sharp ⟺ idempotent` is used here in the direction `idempotent ⟹ sharp` only; the converse is
+vdW Prop. 3.15 and stays a citation. -/
+theorem isSimpleEffect_of_isEffect
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hjordan : ∀ a b : J, m (m a b) (m a a) = m a (m b (m a a)))
+    (hfr : ∀ (k : ℕ) (f : Fin k → J), (∑ i, m (f i) (f i)) = 0 → ∀ i, f i = 0)
+    (hassoc : ∀ x y z : J, inner ℝ (m x y) z = inner ℝ y (m x z))
+    (e : J) (he : ∀ y : J, m e y = y) (a : J) :
+    letI := orderUnitSpaceOfBilinear m hcomm hjordan hfr e he
+    OrderUnitSpace.IsEffect a → OrderUnitSpace.IsSimpleEffect a := by
+  classical
+  letI := orderUnitSpaceOfBilinear m hcomm hjordan hfr e he
+  intro ha
+  obtain ⟨n, q, lam, hidem, horth, hsum, hxa⟩ :=
+    spectral_resolution_bilinear m hcomm hjordan hfr e he a
+  -- Every partial sum of the resolution is an effect: its complement in the family is its
+  -- own certificate, because the family is complete for `e`.
+  have hcompl : ∀ s : Finset (Fin n), e - ∑ i ∈ s, q i = ∑ i ∈ sᶜ, q i := by
+    intro s
+    rw [← hsum, ← Finset.sum_add_sum_compl s q]
+    abel
+  have hpartial : ∀ s : Finset (Fin n),
+      OrderUnitSpace.IsEffect (∑ i ∈ s, q i) := by
+    intro s
+    refine (isEffect_ofBilinear (m := m) hcomm hjordan hfr e he _).mpr ⟨?_, ?_⟩
+    · exact isSoS_sum s q fun i _ => isSoS_of_idem (hidem i)
+    · rw [hcompl s]
+      exact isSoS_sum sᶜ q fun i _ => isSoS_of_idem (hidem i)
+  refine ⟨ha, n, q, lam, ⟨?_, ?_⟩, ?_, hxa⟩
+  · intro i
+    have := hpartial {i}
+    rwa [Finset.sum_singleton] at this
+  · intro s
+    have h := (hpartial s).2
+    rwa [ousUnit_ofBilinear (m := m) hcomm hjordan hfr e he] at h ⊢
+  · intro i
+    exact isSharpOrderUnit_of_idem m hcomm hjordan hfr hassoc e he (hidem i)
+
 end Euclidean
 
 /-! ## A live carrier for the hypothesis bundle

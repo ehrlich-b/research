@@ -447,4 +447,27 @@ theorem ContinuousOnOu.congr {f g : V → V} {s : Set V} (h : ContinuousOnOu f s
   rw [← hfg a ha, ← hfg a₀ ha₀]
   exact hmain a ha hd
 
+
+/-! ## van de Wetering's class `E₀`: the simple effects
+
+`main.tex:507-516` fixes the vocabulary verbatim: "a *simple effect* means an effect in van de
+Wetering's class `E₀`: one with a finite spectral decomposition `a = ∑ₖ λₖ pₖ` into orthogonal
+sharp effects".  Both notions it uses are order-theoretic and already here — `IsSharp` above is
+the article's own `p ∧ (e − p) = 0`, and orthogonality of effects is `a + b ≤ 𝟙`.
+
+★ The family condition below is the **subset-sum** form (every subfamily sums below the unit),
+which is strictly stronger than pairwise orthogonality.  That is deliberate: it is what a
+spectral decomposition actually satisfies, and taking the stronger reading makes
+`E = E₀` a stronger theorem where it is proved, not a weaker one. -/
+
+/-- A finite family of effects is **orthogonal** when every subfamily sums below the unit. -/
+def IsOrthogonalFamily {n : ℕ} (p : Fin n → V) : Prop :=
+  (∀ i, IsEffect (p i)) ∧ ∀ s : Finset (Fin n), (∑ i ∈ s, p i) ≤ 𝟙
+
+/-- **vdW's class `E₀`.**  An effect is *simple* when it has a finite spectral decomposition into
+an orthogonal family of sharp effects. -/
+def IsSimpleEffect (a : V) : Prop :=
+  IsEffect a ∧ ∃ (n : ℕ) (p : Fin n → V) (lam : Fin n → ℝ),
+    IsOrthogonalFamily p ∧ (∀ i, IsSharp (p i)) ∧ a = ∑ i, lam i • p i
+
 end OrderUnitSpace
