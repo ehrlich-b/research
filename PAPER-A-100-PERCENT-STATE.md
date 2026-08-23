@@ -388,3 +388,33 @@ layer. That is a genuine multi-day theorem, not an assembly, and it is the hones
 and 16. ★ Do NOT extrapolate from how fast S4 went: S4 consumed no Jordan identity beyond what
 `inner_mul_self_nonneg_of_idem` already used.
 
+## ★ The Peirce route into S5-S7 (found 2026-08-23, the one hopeful finding)
+
+`quadJ_eq_peirceOne`: for an idempotent `c`, **`Q_c = P_1(c)`** — literally the same operator,
+since `Q_c = 2L_c^2 - L_{c^2}` and `P_1(c) = 2L_c^2 - L_c` coincide once `c^2 = c`. Two lines.
+
+`jsqrt_idem`: `sqrt c = c` for an idempotent, via the two-element resolution
+`c = 1*c + 0*(1-c)`.
+
+`quadJ_jsqrt_idem`: therefore **`c . b = P_1(c) b`** at a sharp effect — the Luders map, on the
+nose, appearing concretely in this tree for the first time.
+
+**Why this matters for the wall.** S5-S7 in general need the fundamental formula, which is absent
+from the tree AND from Mathlib (verified above). But **at sharp effects the compatibility questions
+become Peirce questions**, and the tree carries Peirce theory in depth across five files
+(`Peirce`, `PeirceMul`, `PeirceSubalgebra`, `FramePeirce`, `FramePeirceMul`). That is the first
+route into S5-S7 that uses machinery which exists.
+
+★ This is NOT a claim that S5-S7 are cheap. The general case is unchanged. What changed is that
+the sharp-effect case has a plausible attack, and sharp effects are exactly what `E_0` and
+`lem:simple-bridge` (row 8) are about — so the two threads may converge.
+
+## Where a next session should start
+
+1. `sqrt_sum_eq_of_resolutions` and `jsqrt` are DONE; do not rebuild them.
+2. S1/S3/S4 are DONE (`quadJ_add`, `quadJ_unit_left` + `quadJ_jsqrt_one`, `quadJ_jsqrt_zero_symm`).
+3. Attack S5-S7 **at sharp effects first**, through `quadJ_eq_peirceOne` and the Peirce layer.
+4. `sp_effect` (that `Q_{sqrt a} b` is an effect) is still open and needs `Q_s` to preserve the
+   cone — not attempted.
+5. Route new work UP into `EJA/Class.lean` via the `jmulL` tuple, never DOWN from `mulLL`.
+
