@@ -877,3 +877,16 @@ import RadicalRelativity.Composition.Classification
 -- coefficients only.  ★ It is NOT proved to be a Jordan algebra for non-associative `C`; that
 -- boundary is residue (3).  Substrate; it moves no row.
 import RadicalRelativity.Composition.HermMat
+
+-- The Euclidean structure on `H_ι(C)`: the entrywise form `⟪A, B⟫ = ∑ i, ∑ j, ⟪A i j, B i j⟫_C`
+-- built from the composition algebra's own form, its symmetry, bilinearity and positive
+-- definiteness, and the resulting `Inner ℝ`, `NormedAddCommGroup` and `InnerProductSpace ℝ`
+-- instances -- so `HermMat ι C` now ELABORATES in the positions the EJA interfaces require.
+-- Also `hermIp_jmul_assoc`, the Euclidean hypothesis `⟪A ∘ B, D⟫ = ⟪B, A ∘ D⟫`, proved at an
+-- arbitrary Euclidean composition algebra from the two adjunction lemmas of `Composition.Defs`,
+-- which are polarisations of the composition law rather than consequences of associativity and
+-- so hold over the octonions.  ★ This does NOT exhibit `HermMat ι C` as a Euclidean Jordan
+-- algebra: the Jordan identity remains available only for associative `C`, formal reality is
+-- proved nowhere for this carrier, and no `EuclideanJordanAlgebra` instance exists in this tree.
+-- Substrate; it moves no row.
+import RadicalRelativity.Composition.HermInner
