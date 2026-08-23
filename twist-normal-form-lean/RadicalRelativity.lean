@@ -689,8 +689,11 @@ import RadicalRelativity.EJA.FramePeirceMul
 -- was known to satisfy -- the exposure ARC-6 shipped with `IsArchimedean` and had to repair.
 -- Every field obligation was already proved in the tree in `jordanBilinG`/`symmMul` vocabulary;
 -- the `HermMul` collision `EJA.Class` warned about is definitional (`hermMul_toMul_eq`), and no
--- module imports this one, so the four existing `open HermMul` sites are unaffected.  A frame on
--- `H_n(K)` is NOT exhibited -- primitivity of the diagonal matrix units is not proved.
+-- module imports this one, so the four existing `open HermMul` sites are unaffected.  The file
+-- also NAMES a frame: `diagFrame_isPrimitive` is the one `JordanFrame` obligation `EJA.Witness`
+-- leaves open, and `diagJordanFrame` is the diagonal matrix units as a frame on `H_n(C)`, so
+-- `diagJordanFrame_isInternal` is the frame Peirce decomposition with nothing quantified.  The
+-- named frame is over `C` only, and its cardinality is NOT proved to be the rank.
 -- Substrate; it moves no row.
 import RadicalRelativity.EJA.HermitianCarrier
 
