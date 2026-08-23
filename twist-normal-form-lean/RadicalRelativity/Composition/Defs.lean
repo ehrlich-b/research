@@ -183,6 +183,18 @@ theorem cstar_smul (r : ℝ) (x : C) : cstar (r • x) = r • cstar x := by
   simp only [cstar_apply, ip_smul_left]
   module
 
+@[simp] theorem cstar_zero : cstar (0 : C) = 0 := by
+  simp only [cstar_apply, ip_zero_left]
+  module
+
+theorem cstar_neg (x : C) : cstar (-x) = -cstar x := by
+  simp only [cstar_apply, ip_neg_left]
+  module
+
+theorem cstar_sub (x y : C) : cstar (x - y) = cstar x - cstar y := by
+  simp only [cstar_apply, ip_sub_left]
+  module
+
 /-- `N 1 = 1`: the unit is a unit vector. -/
 theorem nf_one [Nontrivial C] : nf (1 : C) = 1 := by
   have h := comp (1 : C) 1

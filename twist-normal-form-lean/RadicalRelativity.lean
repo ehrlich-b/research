@@ -795,6 +795,13 @@ import RadicalRelativity.Composition.Instances
 -- with NO associativity hypothesis on A, which relocates where Hurwitz's dimension bound comes
 -- from: not from closure, but from the norm.  Substrate; it moves no row.
 import RadicalRelativity.Composition.Doubling
+-- The Cayley-Dickson doubling as an EXTERNAL type former: `CD D := D x D` with
+-- (a,b)(c,d) = (ac - d* b, da + b c*), carrying the ring, module and bilinearity structure, and
+-- a `CompositionAlgebra` instance when D is ASSOCIATIVE.  Associativity is used exactly once, in
+-- `CD.cross`, the cross term of the composition law -- the same identity `forced_assoc` reads in
+-- the opposite direction.  This is what the classification consumes and the dimension bound does
+-- not.  Substrate; it moves no row.
+import RadicalRelativity.Composition.CayleyDickson
 -- Hurwitz's theorem, dimension form: a finite-dimensional Euclidean composition algebra has real
 -- dimension 1, 2, 4 or 8 (`finrank_eq_one_or_two_or_four_or_eight`), and `Composition.Instances`
 -- attains all four.  The bound is a contrapositive, not a failure of closure: expanding the
