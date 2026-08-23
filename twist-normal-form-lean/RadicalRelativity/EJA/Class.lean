@@ -254,4 +254,30 @@ every `c`. -/
 theorem peirce_add_add' (c y : J) : peirceOne c y + peirceHalf c y + peirceZero c y = y :=
   peirce_add_add c y
 
+
+/-! ## The Jordan quadratic representation over the class
+
+`EJA/Spectral.lean` defines `quadJ a = 2·L_a² − L_{a²}` in the ring vocabulary.  The class supplies
+the inner product, so the two facts a sequential product needs from it can be stated here:
+`Q_a` is self-adjoint, and `Q_{√a}` sends the unit to `a`. -/
+
+/-- **`Q_a` is self-adjoint.**  `L_a` is self-adjoint by `inner_assoc`, and `Q_a` is a real
+polynomial in `L_a`, so it inherits the property.  No spectral theory enters. -/
+theorem quadJ_inner_self_adjoint (a x y : J) :
+    (inner ℝ (quadJ a x) y : ℝ) = inner ℝ x (quadJ a y) := by
+  have hL : ∀ p q r : J, (inner ℝ (p * q) r : ℝ) = inner ℝ q (p * r) :=
+    fun p q r => EuclideanJordanAlgebra.inner_assoc p q r
+  rw [quadJ_apply, quadJ_apply, inner_sub_left, inner_sub_right, real_inner_smul_left,
+    hL a (a * x) y, hL a x (a * y), hL (a * a) x y, real_inner_smul_right]
+
+/-- **`Q_{√a}` sends the unit to `a`**, whenever `a` has a resolution with nonnegative
+eigenvalues — the identity that makes `a · e = a` for the candidate product `a · b = Q_{√a} b`,
+i.e. the other half of S3. -/
+theorem quadJ_jsqrt_one [FiniteDimensional ℝ J] {a : J} {n : ℕ} {c : Fin n → J}
+    {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c) (hinj : Function.Injective lam)
+    (ha : a = ∑ i, lam i • c i) (hnn : ∀ i, 0 ≤ lam i) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) (1 : J) = a := by
+  rw [quadJ_unit EuclideanJordanAlgebra.one_mul]
+  exact jsqrt_mul_self 1 EuclideanJordanAlgebra.one_mul a hfam hinj ha hnn
+
 end RadicalRelativity.EJA
