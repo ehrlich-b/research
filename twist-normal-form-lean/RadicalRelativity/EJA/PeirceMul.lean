@@ -143,6 +143,23 @@ theorem nsmul_eq_zero_iff' {n : ℕ} (hn : n ≠ 0) {x : J} (h : n • x = 0) : 
   · exact absurd (Nat.cast_eq_zero.mp h') hn
   · exact h'
 
+/-- **The fully linearised Jordan identity, torsion cancelled.**
+
+`four_lin2_apply` carries a factor `4` so that it holds over any coefficient ring; over `ℝ` the
+factor cancels, leaving the identity in the form every further computation wants:
+
+  `⁅L_b, L_{pq}⁆ + ⁅L_p, L_{qb}⁆ + ⁅L_q, L_{pb}⁆ = 0`,  evaluated at `w`.
+
+★ This is the bedrock of Jordan operator theory — the quadratic representation, the fundamental
+formula, and the Peirce multiplication rules all reduce to it.  Mathlib has `IsCommJordan` and its
+three defining identities but **not** this linearisation (checked 2026-08-23), so this and what is
+built on it are upstreamable. -/
+theorem lin_jordan_apply (p q b w : J) :
+    b * (p * q * w) - p * q * (b * w)
+      + (p * (q * b * w) - q * b * (p * w))
+      + (q * (p * b * w) - p * b * (q * w)) = 0 :=
+  nsmul_eq_zero_iff' (by norm_num) (four_lin2_apply p q b w)
+
 /-- **`L_x` commutes with `L_c` when `c ∘ x = x`.** The `1`-eigenvectors of `L_c` are
 operator-compatible with `c`. Five of the six multiplication rules come from this and its
 `0`-eigenvalue twin. -/
