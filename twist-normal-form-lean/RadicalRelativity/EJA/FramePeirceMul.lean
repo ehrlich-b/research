@@ -23,7 +23,8 @@ together with `dim V_{ii} = 1` (`finrank_frameBlockRaw_self`) and the eigenvalue
 `pᵢ ∘ x = ½ • x` on `V_{ij}` (`frameBlockRaw_mul_left_half`).  The last three lines of the table
 are also stated as literal submodule inclusions through `EJA/Class.lean`'s bundled `jmulₗ` and
 `Submodule.map₂`, in the `Map₂` section; there is no `Mul` on `Submodule ℝ J` to state them with,
-because `Submodule.mul` wants an associative unital algebra.
+because Mathlib's `Submodule.mul` instance is declared for `[Semiring A] [Module R A]
+[IsScalarTower R A A]` — an associative unital ring — which a Jordan algebra is not.
 
 ## ★ Where the coefficients come from — the plan's one unpriced step
 
@@ -48,11 +49,18 @@ The **coefficients** then come from `V_{ii}` being a line, not from an inner-pro
 two independent facts, and the trace form is in neither.  What *is* load-bearing is the
 completeness of the frame, used once, in `frameBlockRaw_mul_self_split`.
 
-## ★ Primitivity is spent here, and only here
+## ★ Primitivity is spent here
 
-`EJA/FramePeirce.lean` records that no proof in it uses primitivity.  This file is where the
-`JordanFrame.primitive` field is finally consumed, at exactly one theorem:
-`peirceOneSub_eq_span_of_isPrimitive`, which runs `EJA/Class.lean`'s
+`EJA/FramePeirce.lean` records that no proof in it uses primitivity at all.  This file is not,
+however, the first in the tree to *touch* the `IsPrimitive` clauses, and an earlier draft of this
+docstring said so wrongly: `EJA/Rank.lean`'s `JordanFrame.p_ne_zero` consumes the `ne_zero` clause,
+and `EJA/FrameExists.lean`'s `isPrimitive_coe_of_peirceOne` / `isPrimitive_coe_of_peirceZero`
+consume the splitting clause `∀ d, d ∘ d = d → c ∘ d = d → d = 0 ∨ d = c` in full.  What those two
+do with it is *transport* it across the coercion `↥(J₂(c)) → J`; they extract no structural
+consequence from it.
+
+This file is the first to spend it.  Within this file the splitting clause is used at exactly one
+theorem, `peirceOneSub_eq_span_of_isPrimitive`, which runs `EJA/Class.lean`'s
 `spectral_resolution_complete'` **inside** `J₂(c)` — legitimate because
 `EJA/PeirceSubalgebra.lean` gives `J₂(c)` its own `EuclideanJordanAlgebra` instance with unit `c`
 — and reads off that every idempotent appearing in the resolution is `0` or `1`, by
@@ -62,16 +70,28 @@ has every term a real multiple of `1 = c`.
 Orthogonality of the resolution is *not* used in that argument, only the two-valuedness; that is
 why the proof does not have to rule out two indices both landing on `1`.
 
-Everything before the `Primitive` section runs on `F.orthIdem` and `F.complete` alone.
+The rest of the `Primitive` section is downstream of that one theorem, except that
+`finrank_frameBlockRaw_self` also uses the `ne_zero` clause, through `JordanFrame.p_ne_zero`.
+Everything *before* the `Primitive` section runs on `F.orthIdem` and `F.complete` alone.
 
 ## Scope
 
 **No manifest row moves.**  This is substrate for the Jordan–von Neumann–Wigner campaign.
 
 ★ `rank J = n` is **not** available and nothing here is a step towards it — `dim V_{ii} = 1` is a
-statement about one block of a frame carried as data, not about the rank of `J`.  ★ The class
-still has no carrier in this tree (see `EJA/FramePeirce.lean`'s docstring), so nothing below
-exhibits an object it applies to.
+statement about one block of a frame carried as data, not about the rank of `J`.
+
+★ `EJA/FramePeirce.lean`'s docstring says the class has no carrier and that nothing in the tree
+exhibits an object its theorems apply to.  That was true when it was written and is **no longer
+true**: `EJA/HermitianCarrier.lean` supplies `instEuclideanJordanAlgebraHermitianMat`, an
+`EuclideanJordanAlgebra (HermitianMat n 𝕜)` conditional only on `[Fintype n] [DecidableEq n]
+[RCLike 𝕜]` and not on any ambient instance, and `hermitian_exists_jordanFrame` puts a Jordan
+frame on it.  So the theorems below have a live carrier and a live frame.
+
+What is still absent there is anything *explicit*: `hermitian_exists_jordanFrame` is an existence
+statement obtained from `EJA/FrameExists.lean`, no file exhibits the matrix-unit frame
+`(e₁₁, …, eₙₙ)`, and the cardinality `k` of the frame it produces is not identified with
+`card n`.  Nothing below has been instantiated on the carrier.
 -/
 
 noncomputable section
@@ -127,8 +147,9 @@ theorem frameBlockRaw_diag_mul_off (F : JordanFrame J n) {i j : Fin n} (hij : i 
 /-- **`V_{ij} ∘ V_{jk} ⊆ V_{ik}` for `i, j, k` distinct.**
 
 `pᵢ` halves `x` and kills `y`, `p_k` kills `x` and halves `y`; `eigen_zero_mul_half` at each of
-them is the whole proof.  Note that the middle index plays no role: nothing has to be shown about
-`pⱼ ∘ (x ∘ y)` for membership in `V_{ik}`. -/
+them is the whole proof.  The middle index enters only through the eigenvalue hypotheses on `x`
+and `y`: nothing has to be shown about `pⱼ ∘ (x ∘ y)`, because membership in `V_{ik}` is a
+condition at `pᵢ` and `p_k` only. -/
 theorem frameBlockRaw_mul_middle (F : JordanFrame J n) {i j k : Fin n} (hij : i ≠ j)
     (hjk : j ≠ k) (hik : i ≠ k) {x y : J} (hx : x ∈ frameBlockRaw F i j)
     (hy : y ∈ frameBlockRaw F j k) : x * y ∈ frameBlockRaw F i k := by
@@ -275,7 +296,8 @@ theorem finrank_frameBlock_diag (F : JordanFrame J n) (i : Fin n) :
     Module.finrank ℝ ↥(frameBlock F s(i, i)) = 1 :=
   finrank_frameBlockRaw_self F i
 
-/-- Membership in `V_{ii}` is being a multiple of `pᵢ`. -/
+/-- An element of `V_{ii}` is a real multiple of `pᵢ` — `frameBlockRaw_self_eq_span` read
+pointwise. -/
 theorem exists_smul_of_mem_frameBlockRaw_self (F : JordanFrame J n) {i : Fin n} {x : J}
     (hx : x ∈ frameBlockRaw F i i) : ∃ a : ℝ, x = a • F.p i := by
   rw [frameBlockRaw_self_eq_span F i, Submodule.mem_span_singleton] at hx
