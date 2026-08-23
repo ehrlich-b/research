@@ -166,7 +166,9 @@ same terms as everything else.
 The parent development carries three custom `axiom` declarations alongside these
 (Hurwitz's classification, `Aut(𝕆) = G₂`, `S⁶ = G₂/SU(3)`, the latter two `True`
 placeholders). Nothing consumed them; they were **dropped rather than ported**, so the
-census still reports custom axioms exactly `[]`. `Albert.lean` and `F4.lean` from the
+census still reports custom axioms exactly `[]`. ★ Hurwitz's classification is since
+2026-08-23 a **proved theorem** of this tree, `CompositionAlgebra.hurwitz_classification`
+in `RadicalRelativity/Composition/Classification.lean`; the other two remain unstated. `Albert.lean` and `F4.lean` from the
 parent development did not land: they carry `sorry`s and further custom axioms.
 
 ### Paper modules

@@ -18,8 +18,9 @@ These are item (3) of `WallCertificates/hurwitz-classification.lean`, which item
 turning Hurwitz's *dimension* theorem into Hurwitz's *classification* still needs: (1) the
 external `CD` functor, built in `Composition/CayleyDickson.lean`; (2) a transport lemma
 identifying `CD D` with the internal double `double A u` of `Composition/Doubling.lean`; and
-(3) these three. ★ Item (2) is **not** in this file and not elsewhere in the tree, so the
-classification is not proved here; only its base cases are.
+(3) these three. ★ Item (2) is **not** in this file: it is `CompEmb.double` in
+`Composition/Classification.lean`, which also assembles all three items into
+`hurwitz_classification`. This file proves only the base cases.
 
 ## Main definitions
 

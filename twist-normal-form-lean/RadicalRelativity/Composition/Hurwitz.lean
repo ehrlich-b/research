@@ -54,9 +54,11 @@ doubling these chain to `finrank A₁ ≤ 1`, contradicting `finrank A₁ = 2`.
 ## What is *not* proved here
 
 The **classification** — that a Euclidean composition algebra is *isomorphic to* `ℝ`, `ℂ`, `ℍ`
-or `𝕆` — is not proved. Only the dimension is. Building the four isomorphisms needs the chain
-to be identified with the concrete carriers step by step, which is a separate construction.
-See `WallCertificates/HurwitzClassification.lean` for what is missing and what it would need.
+or `𝕆` — is not proved *here*. Only the dimension is. Building the four isomorphisms needs the
+chain to be identified with the concrete carriers step by step, which is a separate
+construction: `Composition/Classification.lean`, `hurwitz_classification`. ★ That file re-runs
+the chain below with an embedding carried alongside it; it does not derive the maps from the
+dimension theorem, which it uses only once, to know the third double is everything.
 
 ## Scope
 
@@ -333,7 +335,8 @@ has real dimension `1`, `2`, `4` or `8`.
 
 `Composition/Instances.lean` exhibits `ℝ`, `ℂ`, `ℍ` and `𝕆` at the four values, so each is
 attained. The *classification* — that those four are the only algebras, not just the only
-dimensions — is not proved here. -/
+dimensions — is `Composition/Classification.lean`'s `hurwitz_classification`, not this
+theorem. -/
 theorem finrank_eq_one_or_two_or_four_or_eight :
     Module.finrank ℝ C = 1 ∨ Module.finrank ℝ C = 2 ∨ Module.finrank ℝ C = 4 ∨
       Module.finrank ℝ C = 8 := by

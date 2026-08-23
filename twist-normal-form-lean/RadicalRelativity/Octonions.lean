@@ -42,6 +42,9 @@ algebra that:
 Hurwitz's classification, `Aut(𝕆) = G₂`, and `S⁶ = G₂/SU(3)` are *not* stated here:
 they were carried as custom `axiom` declarations in the source tree and were dropped
 on the way in, since this tree admits no custom axioms and nothing consumed them.
+★ Of those three, Hurwitz's classification is since 2026-08-23 a *theorem* of this tree
+(`Composition/Classification.lean`, `hurwitz_classification`, axioms `[]`) rather than a
+dropped axiom. The other two remain unstated.
 
 ## References
 
