@@ -81,9 +81,17 @@ from such a message that the product is wrong.
 **No manifest row moves.**  This file is substrate.  What changes is that the M3/M4 results are
 now known to be about a nonempty class: `hermitian_exists_jordanFrame` and
 `hermitian_frameBlock_isInternal` are `exists_jordanFrame` and `frameBlock_isInternal` read on
-`H_n(𝕜)`.  ★ `hermitian_exists_jordanFrame` is an existence statement and stays one — this file
-does **not** exhibit a frame on `H_n(𝕜)`, and in particular does not prove the diagonal matrix
-units of `EJA/Witness.lean` primitive, which is what naming one would require.
+`H_n(𝕜)`.
+
+★ The last section goes past existence and **names a frame** on `H_n(ℂ)`: `diagJordanFrame`, the
+diagonal matrix units of `EJA/Witness.lean` reindexed along `Fintype.equivFin`.  That needed one
+piece of genuinely new mathematics — `diagFrame_isPrimitive`, which `EJA/Witness.lean` does not
+prove and which is the only obligation of `JordanFrame` its `diagFrame_orthIdem` and
+`diagFrame_sum` do not already discharge.  ★ Note what primitivity is **not**: it is not
+`dim V_ii = 1`, and this file does not prove that.  Two scope limits on the frame: it is over
+`ℂ` only, because `EJA/Witness.lean`'s `diagFrame` is, and its cardinality is `Fintype.card n`,
+which is **not** proved to be the rank — `EJA/Rank.lean` proves only `card ≤ rank` and
+`card ≤ finrank`.
 -/
 
 noncomputable section
@@ -193,5 +201,134 @@ theorem hermitian_exists_frame_isInternal [Nonempty n] :
     ∃ (k : ℕ) (F : JordanFrame (HermitianMat n 𝕜) k), DirectSum.IsInternal (frameBlock F) := by
   obtain ⟨k, ⟨F⟩⟩ := hermitian_exists_jordanFrame (n := n) (𝕜 := 𝕜)
   exact ⟨k, F, frameBlock_isInternal F⟩
+
+/-! ## A named frame on `H_n(ℂ)`
+
+`EJA/Witness.lean` builds the diagonal matrix units `E_ii` and proves them orthogonal
+idempotents summing to the unit.  That is three of `JordanFrame`'s four fields.  The missing one
+is **primitivity**, which is proved here and is the only new mathematics in this file.
+
+The argument is entrywise and short.  If `d` is fixed by `E_ii ∘ -` then reading the `(a, b)`
+entry of `½(E_ii D + D E_ii) = D` gives `D_ab = 0` off `(i, i)` — the three off-diagonal cases
+reduce to `½ D_ab = D_ab` or to `0 = D_ab` — so `D = D_ii · E_ii`.  Idempotency then forces
+`D_ii² = D_ii` at the surviving entry, so `D_ii ∈ {0, 1}` and `d` is `0` or `E_ii`. -/
+
+section Frame
+
+open Witness
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+omit [Fintype n] in
+/-- The diagonal matrix unit entrywise: `1` at `(i, i)` and `0` elsewhere. -/
+theorem diagFrame_mat_apply (i a b : n) :
+    (diagFrame i).mat a b = if a = b then (if a = i then (1 : ℂ) else 0) else 0 := by
+  rw [diagFrame_mat, Matrix.diagonal_apply]
+  split_ifs <;> simp_all
+
+/-- The entries of `E_ii ∘ D`.  Left multiplication by `E_ii` keeps row `i`, right
+multiplication keeps column `i`, so the symmetrized product halves everything meeting the cross
+at `i` exactly once and kills everything off it. -/
+theorem diagFrame_symmMul_mat_apply (i : n) (D : HermitianMat n ℂ) (a b : n) :
+    ((diagFrame i).symmMul D).mat a b
+      = (2 : ℂ)⁻¹ * ((if a = i then D.mat a b else 0) + (if b = i then D.mat a b else 0)) := by
+  rw [HermitianMat.symmMul_toMat]
+  simp only [Matrix.smul_apply, Matrix.add_apply, Matrix.mul_apply, smul_eq_mul]
+  congr 1
+  congr 1
+  · rw [Finset.sum_eq_single a]
+    · rw [diagFrame_mat_apply]; simp
+    · intro k _ hk; rw [diagFrame_mat_apply]; simp [Ne.symm hk]
+    · intro h; exact absurd (Finset.mem_univ a) h
+  · rw [Finset.sum_eq_single b]
+    · rw [diagFrame_mat_apply]; simp [eq_comm]
+    · intro k _ hk; rw [diagFrame_mat_apply]; simp [hk]
+    · intro h; exact absurd (Finset.mem_univ b) h
+
+/-- **An element fixed by `E_ii ∘ -` lives at the single entry `(i, i)`.**  Note this uses only
+the fixed-point hypothesis, not idempotency of `D`. -/
+theorem mat_eq_zero_of_diagFrame_fixed {i : n} {D : HermitianMat n ℂ}
+    (h : (diagFrame i).symmMul D = D) {a b : n} (hab : ¬(a = i ∧ b = i)) :
+    D.mat a b = 0 := by
+  have he := congrArg (fun M : HermitianMat n ℂ => M.mat a b) h
+  simp only [diagFrame_symmMul_mat_apply] at he
+  by_cases ha : a = i <;> by_cases hb : b = i
+  · exact absurd ⟨ha, hb⟩ hab
+  · rw [if_pos ha, if_neg hb, add_zero] at he
+    linear_combination -2 * he
+  · rw [if_neg ha, if_pos hb, zero_add] at he
+    linear_combination -2 * he
+  · rw [if_neg ha, if_neg hb, add_zero, mul_zero] at he
+    exact he.symm
+
+/-- So such an element is a scalar multiple of `E_ii`. -/
+theorem mat_eq_smul_of_diagFrame_fixed {i : n} {D : HermitianMat n ℂ}
+    (h : (diagFrame i).symmMul D = D) :
+    D.mat = D.mat i i • (diagFrame i).mat := by
+  ext a b
+  rw [Matrix.smul_apply, diagFrame_mat_apply, smul_eq_mul]
+  by_cases hab : a = b
+  · subst hab
+    by_cases ha : a = i
+    · subst ha; simp
+    · rw [mat_eq_zero_of_diagFrame_fixed h (fun hc => ha hc.1)]; simp [ha]
+  · rw [mat_eq_zero_of_diagFrame_fixed h (fun hc => hab (hc.1.trans hc.2.symm))]; simp [hab]
+
+/-- ★★ **The diagonal matrix units are primitive.**  The one obligation of `JordanFrame` that
+`EJA/Witness.lean` leaves open, and the only new mathematics in this file. -/
+theorem diagFrame_isPrimitive (i : n) : IsPrimitive (diagFrame (d := n) i) := by
+  refine ⟨(diagFrame_orthIdem (d := n)).idem i, ?_, ?_⟩
+  · intro h
+    have hii := congrArg (fun M : HermitianMat n ℂ => M.mat i i) h
+    rw [diagFrame_mat_apply] at hii
+    simp at hii
+  · intro D hD hcD
+    have hsupp : D.mat = D.mat i i • (diagFrame i).mat := mat_eq_smul_of_diagFrame_fixed hcD
+    -- the Jordan square of `D` is its matrix square, since `D` commutes with itself
+    have hD' : D.symmMul D = D := hD
+    have hsq : D.mat * D.mat = D.mat := by
+      have hm := congrArg HermitianMat.mat hD'
+      rwa [HermitianMat.symmMul_self] at hm
+    have hii : D.mat i i * D.mat i i = D.mat i i := by
+      have hentry := congrFun (congrFun hsq i) i
+      rw [Matrix.mul_apply, Finset.sum_eq_single i] at hentry
+      · exact hentry
+      · intro k _ hk
+        rw [mat_eq_zero_of_diagFrame_fixed hcD (fun hc => hk hc.2), zero_mul]
+      · intro h; exact absurd (Finset.mem_univ i) h
+    have hfac : D.mat i i * (D.mat i i - 1) = 0 := by linear_combination hii
+    rcases mul_eq_zero.mp hfac with h0 | h1
+    · left
+      apply HermitianMat.ext
+      rw [hsupp, h0, zero_smul, HermitianMat.mat_zero]
+    · right
+      apply HermitianMat.ext
+      rw [hsupp, sub_eq_zero.mp h1, one_smul]
+
+/-- ★★★ **A Jordan frame on `H_n(ℂ)`, named.**  The diagonal matrix units, reindexed along
+`Fintype.equivFin` because `JordanFrame` is `Fin`-indexed.  ★ Its cardinality `Fintype.card n`
+is **not** claimed to be the rank of the algebra — `EJA/Rank.lean` proves only that a frame's
+cardinality is bounded by the rank and by the dimension. -/
+noncomputable def diagJordanFrame : JordanFrame (HermitianMat n ℂ) (Fintype.card n) where
+  p k := diagFrame ((Fintype.equivFin n).symm k)
+  orthIdem :=
+    ⟨fun _ => (diagFrame_orthIdem (d := n)).idem _,
+     fun _ _ hkl => (diagFrame_orthIdem (d := n)).orth _ _
+       ((Fintype.equivFin n).symm.injective.ne hkl)⟩
+  primitive _ := diagFrame_isPrimitive _
+  complete := by
+    rw [Equiv.sum_comp (Fintype.equivFin n).symm diagFrame]
+    exact diagFrame_sum
+
+@[simp] theorem diagJordanFrame_p (k : Fin (Fintype.card n)) :
+    (diagJordanFrame (n := n)).p k = diagFrame ((Fintype.equivFin n).symm k) := rfl
+
+/-- **(M4) on a named frame.**  `H_n(ℂ)` is the internal direct sum of the Peirce blocks of the
+diagonal frame — the frame Peirce decomposition with nothing left quantified. -/
+theorem diagJordanFrame_isInternal :
+    DirectSum.IsInternal (frameBlock (diagJordanFrame (n := n))) :=
+  frameBlock_isInternal _
+
+end Frame
 
 end RadicalRelativity.EJA
