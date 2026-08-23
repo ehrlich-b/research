@@ -726,6 +726,17 @@ import RadicalRelativity.EJA.HermitianCarrier
 -- makes `y = 2 (c * y)` an involutive linear isomorphism `V_jk = V_ik`, and the norms multiply.
 -- Substrate; it moves no row.
 import RadicalRelativity.EJA.Connection
+-- The coordinate product, the object Jacobson coordinatization builds `H_n(C)` out of.  The
+-- Jordan product does NOT restrict to a block -- `V_ij * V_ij` lands in `R p_i + R p_j`, never
+-- back in `V_ij` -- so a THIRD index is routed through: with connectors `u` on (i,j) and `v` on
+-- (i,k), `x (*) y := 8 ((x w) (v y))` where `w = 2 (u v)`, which in the model `H_n(C)` is exactly
+-- multiplication of the off-diagonal coordinates.  It is bilinear, closed on `V_ij`, has `u` as a
+-- two-sided unit, and its norm form is MULTIPLICATIVE: `x * x = a (p_i + p_j)` and
+-- `y * y = b (p_i + p_j)` give `(x (*) y)^2 = (ab) (p_i + p_j)`.  That is the composition-algebra
+-- law, three applications of `EJA.Connection`'s `block_mul_sq`.  ★ This is where rank >= 3 is
+-- spent, and it is why nothing here says anything at rank 2.  ★ The full Jacobson isomorphism
+-- `J = H_n(C)` is NOT proved here.  Substrate; it moves no row.
+import RadicalRelativity.EJA.Coordinatize
 
 -- The octonion algebra and its trace form (infrastructure for the Albert branch).
 -- `Octonions` builds `𝕆` as `Fin 8 → ℝ` with the Fano-plane table and proves the

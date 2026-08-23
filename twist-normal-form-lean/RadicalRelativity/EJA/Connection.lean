@@ -315,25 +315,6 @@ theorem IsConnector.symm {F : JordanFrame J n} {i j : Fin n} {c : J} (h : IsConn
     IsConnector F j i c :=
   ⟨(frameBlockRaw_comm F i j) ▸ h.mem, by rw [h.sq, add_comm]⟩
 
-variable [FiniteDimensional ℝ J]
-
-/-- **A nonzero block has a connector.**  Normalise: `x ∘ x = a • (pᵢ + pⱼ)` with `a > 0`, and
-`c := a^{-1/2} • x` has `c ∘ c = pᵢ + pⱼ`. -/
-theorem exists_isConnector (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {x : J}
-    (hx : x ∈ frameBlockRaw F i j) (hx0 : x ≠ 0) : ∃ c : J, IsConnector F i j c := by
-  obtain ⟨a, ha, haspec⟩ := exists_sq_smul F hij hx
-  have hxx : (0 : ℝ) < inner ℝ x x := real_inner_self_pos.mpr hx0
-  have hτi : (0 : ℝ) < inner ℝ (F.p i) (F.p i) := inner_p_self_pos F i
-  have hapos : 0 < a := by nlinarith [haspec, hxx, hτi]
-  refine ⟨(Real.sqrt a)⁻¹ • x, Submodule.smul_mem _ _ hx, ?_⟩
-  rw [smul_mul, mul_smul_comm, ha, smul_smul, smul_smul]
-  have hcoef : (Real.sqrt a)⁻¹ * (Real.sqrt a)⁻¹ * a = 1 := by
-    have hs : Real.sqrt a * Real.sqrt a = a := Real.mul_self_sqrt hapos.le
-    have hs0 : Real.sqrt a ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hapos)
-    field_simp
-    linarith [hs]
-  rw [hcoef, one_smul]
-
 /-- **`c ∘ (c ∘ y) = ¼ • y` for a connector `c` on `(i, j)` and `y ∈ V_{jk}`** — `block_sq_act`
 at `a = 1`. -/
 theorem IsConnector.act {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k)
@@ -342,7 +323,6 @@ theorem IsConnector.act {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (h
   have h := block_sq_act F hij hjk hik hc.mem hy hc.sq'
   rw [h]; norm_num
 
-omit [FiniteDimensional ℝ J] in
 /-- The transfer map `y ↦ 2 (c ∘ y)` attached to a connector. -/
 def connMap (c : J) : J →ₗ[ℝ] J := (2 : ℝ) • jmulₗ J c
 
@@ -363,6 +343,25 @@ theorem connMap_connMap {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (h
   rw [connMap_apply, connMap_apply, mul_smul_comm, smul_smul,
     IsConnector.act hij hjk hik hc hy, smul_smul]
   norm_num
+
+variable [FiniteDimensional ℝ J]
+
+/-- **A nonzero block has a connector.**  Normalise: `x ∘ x = a • (pᵢ + pⱼ)` with `a > 0`, and
+`c := a^{-1/2} • x` has `c ∘ c = pᵢ + pⱼ`. -/
+theorem exists_isConnector (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {x : J}
+    (hx : x ∈ frameBlockRaw F i j) (hx0 : x ≠ 0) : ∃ c : J, IsConnector F i j c := by
+  obtain ⟨a, ha, haspec⟩ := exists_sq_smul F hij hx
+  have hxx : (0 : ℝ) < inner ℝ x x := real_inner_self_pos.mpr hx0
+  have hτi : (0 : ℝ) < inner ℝ (F.p i) (F.p i) := inner_p_self_pos F i
+  have hapos : 0 < a := by nlinarith [haspec, hxx, hτi]
+  refine ⟨(Real.sqrt a)⁻¹ • x, Submodule.smul_mem _ _ hx, ?_⟩
+  rw [smul_mul, mul_smul_comm, ha, smul_smul, smul_smul]
+  have hcoef : (Real.sqrt a)⁻¹ * (Real.sqrt a)⁻¹ * a = 1 := by
+    have hs : Real.sqrt a * Real.sqrt a = a := Real.mul_self_sqrt hapos.le
+    have hs0 : Real.sqrt a ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hapos)
+    field_simp
+    linarith [hs]
+  rw [hcoef, one_smul]
 
 /-- **The transfer map preserves the square coefficient.**  If `y ∘ y = b • (pⱼ + p_k)` then
 `(2 (c ∘ y)) ∘ (2 (c ∘ y)) = b • (pᵢ + p_k)` — `block_mul_sq` at `a = 1`. -/
