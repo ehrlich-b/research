@@ -681,6 +681,48 @@ theorem eq_zero_of_isSoS_of_inner_unit_eq_zero
   rw [hf]
   exact Finset.sum_eq_zero fun i _ => by simp [hzero i]
 
+/-- **S4's core: on the cone, inner-product orthogonality IS Jordan orthogonality.**
+
+`⟪a,b⟫ = 0` with `a, b ≥ 0` forces `a ∘ b = 0`.  Resolve `a = ∑ λᵢ qᵢ`; each `λᵢ ≥ 0`
+(`nonneg_coeff_of_isSoS`) and each `⟪qᵢ, b⟫ ≥ 0` (`inner_idem_isSoS_nonneg`), so a vanishing total
+forces every product `λᵢ⟪qᵢ,b⟫` to vanish; where `λᵢ ≠ 0` that gives `⟪qᵢ,b⟫ = 0` and hence
+`qᵢ ∘ b = 0`, and where `λᵢ = 0` the term is already dead.
+
+★ **This is what makes S4 (symmetry of orthogonality) reachable**: the conclusion `⟪a,b⟫ = 0` is
+symmetric in `a` and `b` on its face, while `a ∘ b = 0` is symmetric because the product is. -/
+theorem mul_eq_zero_of_inner_eq_zero_of_isSoS
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hjordan : ∀ a b : J, m (m a b) (m a a) = m a (m b (m a a)))
+    (hfr : ∀ (k : ℕ) (f : Fin k → J), (∑ i, m (f i) (f i)) = 0 → ∀ i, f i = 0)
+    (hassoc : ∀ x y z : J, inner ℝ (m x y) z = inner ℝ y (m x z))
+    (e : J) (he : ∀ y : J, m e y = y)
+    {a b : J} (ha : IsSoS m a) (hb : IsSoS m b) (h : (inner ℝ a b : ℝ) = 0) : m a b = 0 := by
+  classical
+  obtain ⟨n, q, lam, hidem, horth, -, ha'⟩ :=
+    spectral_resolution_bilinear m hcomm hjordan hfr e he a
+  have hab : (inner ℝ a b : ℝ) = ∑ i, lam i * inner ℝ (q i) b := by
+    rw [ha', sum_inner]
+    exact Finset.sum_congr rfl fun i _ => real_inner_smul_left _ _ _
+  have hterm : ∀ i, (0 : ℝ) ≤ lam i * inner ℝ (q i) b := by
+    intro i
+    by_cases hqi : q i = 0
+    · rw [hqi, inner_zero_left, mul_zero]
+    · exact mul_nonneg (nonneg_coeff_of_isSoS hcomm hjordan hassoc hidem horth ha' ha hqi)
+        (inner_idem_isSoS_nonneg hcomm hjordan hassoc (hidem i) hb)
+  have hzero : ∀ i, lam i * inner ℝ (q i) b = 0 := fun i =>
+    (Finset.sum_eq_zero_iff_of_nonneg fun j _ => hterm j).mp (hab.symm.trans h) i
+      (Finset.mem_univ i)
+  have hmul : ∀ i, lam i • (m (q i) b) = 0 := by
+    intro i
+    by_cases hli : lam i = 0
+    · rw [hli, zero_smul]
+    · have hip : (inner ℝ (q i) b : ℝ) = 0 := (mul_eq_zero.mp (hzero i)).resolve_left hli
+      rw [mul_isSoS_eq_zero_of_inner_eq_zero hcomm hjordan hassoc (hidem i) hb hip, smul_zero]
+  rw [ha', map_sum, LinearMap.sum_apply]
+  refine Finset.sum_eq_zero fun i _ => ?_
+  rw [map_smul, LinearMap.smul_apply]
+  exact hmul i
+
 variable (m) in
 /-- **The bridge between the tree's two spellings of sharpness.**
 
