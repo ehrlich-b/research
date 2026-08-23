@@ -1078,6 +1078,43 @@ theorem exists_resolution_distinct (e : J) (he : ∀ y : J, e * y = y) (x : J) :
   · rw [hxd, ← Finset.sum_coe_sort S (fun t => t • d t)]
     exact (Equiv.sum_comp S.equivFin.symm (fun a : {y // y ∈ S} => (a : ℝ) • d (a : ℝ))).symm
 
+
+/-! ### `jsqrt`: the square root as a function
+
+`sqrt_sum_eq_of_resolutions` says the sum `∑ √λᵢ cᵢ` does not depend on which resolution produced
+it, and `exists_resolution_distinct` says one always exists.  Together those are exactly what a
+definition needs, so here it is: `jsqrt e he x` is *the* square root, not a choice.
+
+★ The `Classical.choose` in the definition is harmless precisely because of the well-definedness
+theorem — `jsqrt_eq_of_resolution` below shows the value agrees with *every* admissible
+resolution, so nothing depends on which one choice returns. -/
+
+/-- **The square root of `x`, as a function.** -/
+noncomputable def jsqrt (e : J) (he : ∀ y : J, e * y = y) (x : J) : J :=
+  ∑ i, Real.sqrt ((exists_resolution_distinct e he x).choose_spec.choose_spec.choose i) •
+    (exists_resolution_distinct e he x).choose_spec.choose i
+
+/-- **`jsqrt` agrees with every admissible resolution**, which is what makes the `Classical.choose`
+in its definition invisible. -/
+theorem jsqrt_eq_of_resolution (e : J) (he : ∀ y : J, e * y = y) (x : J)
+    {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c)
+    (hinj : Function.Injective lam) (hx : x = ∑ i, lam i • c i) :
+    jsqrt e he x = ∑ i, Real.sqrt (lam i) • c i := by
+  obtain ⟨hfam', -, hx', hinj'⟩ :=
+    (exists_resolution_distinct e he x).choose_spec.choose_spec.choose_spec
+  exact sqrt_sum_eq_of_resolutions hfam' hfam hinj' hinj (hx'.symm.trans hx)
+
+/-- **`jsqrt` squares back to `x`** whenever `x` has a resolution with nonnegative eigenvalues.
+
+Deriving that hypothesis from `0 ≤ x` is `EJA/Order.lean`'s `nonneg_coeff_of_isSoS`, which lives
+downstream of this file; the order-theoretic statement belongs there, not here. -/
+theorem jsqrt_mul_self (e : J) (he : ∀ y : J, e * y = y) (x : J)
+    {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c)
+    (hinj : Function.Injective lam) (hx : x = ∑ i, lam i • c i) (hnn : ∀ i, 0 ≤ lam i) :
+    jsqrt e he x * jsqrt e he x = x := by
+  rw [jsqrt_eq_of_resolution e he x hfam hinj hx, hx]
+  exact jsqrtOfResolution_mul_self hfam hnn
+
 end Split
 
 
