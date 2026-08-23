@@ -201,3 +201,45 @@ structural difference from koecher/spectral (both registered fine): those carry 
 `structure` carries SIX across TWO namespaces. `classification` (4 theorems, 4 namespaces) would
 likely hit the same wall. Full note in `~/scratch/palomar/queue.txt`. Bryan's call.
 
+## Canonicity chain — COMPLETE, nothing carried (all in `EJA/Spectral.lean`, all sorry-free)
+
+```
+coeff_eq_zero_of_sum_smul_eq_zero      coefficients pinned by their idempotents
+jeval_eq_zero_iff_of_resolution        annihilator readable from a resolution
+exists_idem_iff_forall_jann_eval       nonzero spectrum = common roots of jann  => function of x
+nonzero_spectrum_eq_of_resolutions     two resolutions share that spectrum  (hypothesis DISCHARGED)
+exists_resolution_distinct             distinct-eigenvalue resolutions exist
+idem_eq_jeval_lagrange                 idempotents are Lagrange polynomials in x
+lagrange_basis_congr                   interpolants agree across indexings
+idem_unique_of_resolutions             idempotents are unique
+sqrt_sum_eq_jeval                      sqrt x = jeval x of ONE polynomial
+quadJ / quadJ_unit                     the Jordan quadratic representation Q_a = 2 L_a^2 - L_{a^2}
+```
+
+**So `sqrt` is a function of `x`, not a choice.** That is what `SequentialProductOnEJA` needs and
+what `isSoS_iff_exists_sq` never gave (it only *exhibits* a root). Remaining for the inhabitant:
+define `a . b := quadJ (sqrt a) b` and verify S1-S7. Ordinary assembly, not a missing idea.
+
+★ The zero eigenvalue needs no special handling for the square root — `sqrt 0 = 0` deletes its
+term. Same structural fact forces the `lam k != 0` side condition on `idem_eq_jeval_lagrange` and
+the `t != 0` on `exists_idem_iff_forall_jann_eval`: `jeval` is `x.p(x)`, so the zero eigenvalue is
+invisible to it. One phenomenon, three appearances — not three limitations.
+
+## THREE near-duplications in one session. Read this before writing any lemma.
+
+1. `jsqrtOfResolution` duplicated `EJA/Order.lean`'s `isSoS_iff_exists_sq`.
+2. `isSharpOrderUnit_of_idem` collided with `EJA/OrderAuto.lean`'s `isSharp_of_idem` — a DIFFERENT
+   `IsSharp` (sums-of-squares spelling) that the file says nothing relates to the order-theoretic
+   one. `isSharpOrderUnit_of_sosSharp` is now that bridge.
+3. `quadJ` was nearly a duplicate of `Necessity.quadRep` — caught by grepping first. It is NOT:
+   `quadRep` is matrix conjugation through the vendored CFC, `HermitianMat`-only, and meaningless
+   over non-associative octonions. `EJA/AlbertCarrier.lean:119` already said so.
+
+★★ **STANDING RULE: grep for the STATEMENT SHAPE, not the name.** All three were under names no
+one would guess. `grep -n "^def \|^theorem \|^instance " <file>` — list declarations, do not
+guess identifiers. This is the rule `prop:central`'s row records validating itself on first use.
+
+★ Also: one theorem was written and DELETED rather than patched — `quadJ_of_mul_eq_zero` asserted
+`(a*a)*b = 0` from `a*b = 0`, which needs associativity a Jordan algebra does not have. Ship two
+correct lemmas over three with one false.
+
