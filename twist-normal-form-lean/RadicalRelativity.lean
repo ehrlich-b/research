@@ -616,6 +616,13 @@ import RadicalRelativity.PaperA.Statement
 import RadicalRelativity.PaperA.AuditPins
 import RadicalRelativity.PaperA.CertifiedConfiguration
 
+-- `prop:bridge` (row 10) on the concrete carriers, in the ONE direction the article
+-- consumes: matrix (equivalently Jordan-operator) commutation gives both
+-- standard-product compatibility and commuting quadratic representations.  The row stays
+-- pre-registered EXTERNAL -- neither converse is proved here, and nothing is proved at EJA
+-- generality -- but "no interior form, by design" was false.
+import RadicalRelativity.PaperA.CompatibilityBridge
+
 -- The EJA layer (ARC-9).  The Peirce decomposition at a single idempotent, built from
 -- Mathlib's `IsCommJordan` and nothing else: no spectral theorem, no formal reality, no
 -- finite dimension.  Not consumed by the paper's rows yet — it is the first half of (E2)
