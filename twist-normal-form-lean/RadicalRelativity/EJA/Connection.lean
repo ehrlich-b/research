@@ -382,6 +382,73 @@ theorem IsConnector.transfer {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ 
 
 end Connector
 
+/-! ## Transfer as an equivalence, and connectivity
+
+★ The transfer map is not merely a map: it is an involution, hence a linear **isomorphism**
+`V_{jk} ≃ V_{ik}`.  So a frame all of whose blocks are connected has all its off-diagonal blocks
+of the same dimension — the "coordinate algebra" does not depend on which block is read. -/
+
+section Transfer
+
+/-- `pᵢ + pⱼ ≠ 0` for `i ≠ j`: pair it against `pᵢ`. -/
+theorem pair_ne_zero (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) :
+    F.p i + F.p j ≠ 0 := by
+  intro h
+  have := congrArg (fun z : J => (inner ℝ z (F.p i) : ℝ)) h
+  simp only [inner_add_left, inner_p_p_of_ne F (Ne.symm hij), add_zero, inner_zero_left] at this
+  exact absurd this (ne_of_gt (inner_p_self_pos F i))
+
+/-- A connector is nonzero. -/
+theorem IsConnector.ne_zero {F : JordanFrame J n} {i j : Fin n} (hij : i ≠ j) {c : J}
+    (hc : IsConnector F i j c) : c ≠ 0 := by
+  intro h
+  have hsq := hc.sq
+  rw [h, zero_mul'] at hsq
+  exact pair_ne_zero F hij hsq.symm
+
+/-- **The transfer map as a linear equivalence `V_{jk} ≃ V_{ik}`.**  Both directions are the
+same map, read at the two index orders; `connMap_connMap` is both inverse laws. -/
+def connEquiv {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k)
+    {c : J} (hc : IsConnector F i j c) :
+    ↥(frameBlockRaw F j k) ≃ₗ[ℝ] ↥(frameBlockRaw F i k) where
+  toFun y := ⟨connMap c y, connMap_mem hij hjk hik hc y.2⟩
+  map_add' y z := Subtype.ext (by simp only [Submodule.coe_add, map_add])
+  map_smul' r y := Subtype.ext (by simp only [SetLike.val_smul, map_smul, RingHom.id_apply])
+  invFun z := ⟨connMap c z, connMap_mem (Ne.symm hij) hik hjk hc.symm z.2⟩
+  left_inv y := Subtype.ext (connMap_connMap hij hjk hik hc y.2)
+  right_inv z := Subtype.ext (connMap_connMap (Ne.symm hij) hik hjk hc.symm z.2)
+
+/-- **Connected blocks have the same dimension.** -/
+theorem finrank_frameBlockRaw_eq [FiniteDimensional ℝ J] {F : JordanFrame J n} {i j k : Fin n}
+    (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) {c : J} (hc : IsConnector F i j c) :
+    Module.finrank ℝ ↥(frameBlockRaw F j k) = Module.finrank ℝ ↥(frameBlockRaw F i k) :=
+  (connEquiv hij hjk hik hc).finrank_eq
+
+/-- **Connectivity is transitive.**  A connector on `(i,j)` and one on `(j,k)` produce one on
+`(i,k)`; this is `IsConnector.transfer` stated as the graph-theoretic fact the simplicity
+argument consumes.  ★ What is *not* proved anywhere in this tree is the other half of that
+argument — that a **simple** `J` has every block nonzero. -/
+theorem exists_isConnector_trans [FiniteDimensional ℝ J] {F : JordanFrame J n} {i j k : Fin n}
+    (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k)
+    (h₁ : ∃ c : J, IsConnector F i j c) (h₂ : ∃ d : J, IsConnector F j k d) :
+    ∃ e : J, IsConnector F i k e := by
+  obtain ⟨c, hc⟩ := h₁
+  obtain ⟨d, hd⟩ := h₂
+  exact ⟨connMap c d, IsConnector.transfer hij hjk hik hc hd⟩
+
+/-- A block is nonzero exactly when it has a connector. -/
+theorem exists_isConnector_iff [FiniteDimensional ℝ J] (F : JordanFrame J n) {i j : Fin n}
+    (hij : i ≠ j) :
+    (∃ c : J, IsConnector F i j c) ↔ frameBlockRaw F i j ≠ ⊥ := by
+  constructor
+  · rintro ⟨c, hc⟩ hbot
+    exact hc.ne_zero hij ((Submodule.eq_bot_iff _).mp hbot c hc.mem)
+  · intro hbot
+    obtain ⟨x, hx, hx0⟩ := (Submodule.ne_bot_iff _).mp hbot
+    exact exists_isConnector F hij hx hx0
+
+end Transfer
+
 /-! ## The square coefficient as a quadratic form
 
 The coefficient of `x ∘ x` on `V_{ij}` is pinned by the inner product, so it is a genuine
