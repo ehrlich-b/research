@@ -778,3 +778,9 @@ import RadicalRelativity.EJA.AlbertCarrier
 -- here.  Substrate; it moves no row.
 import RadicalRelativity.Composition.Defs
 import RadicalRelativity.Composition.Instances
+-- The Cayley-Dickson doubling, done INSIDE a composition algebra rather than as a new type.
+-- For a composition subalgebra A of C and a unit vector u orthogonal to A, the three rules
+-- a(bu) = (ba)u, (au)b = (ab*)u and (au)(bu) = -(b*a) hold, so A + Au is closed.  ★ They hold
+-- with NO associativity hypothesis on A, which relocates where Hurwitz's dimension bound comes
+-- from: not from closure, but from the norm.  Substrate; it moves no row.
+import RadicalRelativity.Composition.Doubling
