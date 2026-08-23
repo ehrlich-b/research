@@ -7,6 +7,7 @@ import RadicalRelativity.RankTwo.Bloch
 import RadicalRelativity.Necessity.FrameConstancy
 import RadicalRelativity.Hermitian.CfcSqrtContinuous
 import RadicalRelativity.Necessity.OrderUnitS2
+import RadicalRelativity.PaperA.CertifiedConfiguration
 
 set_option linter.style.longLine false
 
@@ -723,8 +724,10 @@ linked, and a reader combining them would have concluded more than was proved.  
 is in the `twistSeq` encoding, which is the one row 30 uses.
 
 ★ Scope, stated so it is not overread: this proves the product is not **literally** any constant
-twist product.  The article's clause (iii) is stronger — no pair `(Φ, t)` with `Φ` a unital order
-automorphism conjugates it to a constant twist — and that stronger form is not proved here. -/
+twist product.  The article's clause (iii) is stronger — no pair `(Φ, t)` with `Φ` a Jordan
+automorphism conjugates it to a constant twist.  ★ **That stronger form is now proved**, at the
+end of this file: `not_exists_jordanAuto_const_twist`.  The sentence that stood here ended "and
+that stronger form is not proved here", and it is corrected rather than deleted. -/
 
 /-- **The twist product separates its parameter**, on the diagonal family with a freely chosen
 spectral gap.  The gap is chosen so the phase difference is exactly `π`, which is why no `2π`
@@ -1533,5 +1536,177 @@ theorem qubit_classification_up_to_effects :
   refine n2Sp_inj_on_effects (fun a b ha hb => ?_)
   rw [← ht a b ha hb]
   exact sp_eq_n2Sp_on_effects P hS2 hb a ha
+
+end RankTwo
+
+/-! ## `thm:qubit-boundary` clause (iii) in the article's `(Φ, t)`-conjugation form
+
+The separation above says the `τ` family is not *literally* a constant twist product.  The
+article asks for more: no **Jordan automorphism** `Φ` of `V` and constant `t` satisfy
+`a · b = Φ⁻¹(Φ(a) ∘_t Φ(b))` on effects.
+
+The article's own proof supplies the route — "the unital Jordan automorphisms of `M_2^{sa}` are
+`X ↦ UXU*` and `X ↦ UXᵀU*` … the conjugations preserve the block orientation (hence `t`) and the
+transpose reverses it (hence `t ↦ −t`)".  Both halves are in the tree already:
+`Necessity.orderAuto_classification` is the classification (with **no rank hypothesis**, so it is
+available at `N = 2`), `Necessity.twistSeq_adU_mat` transports the twist through a conjugation
+unchanged, and `Necessity.transposeMap_twistSeq` flips its sign.  So each branch collapses to the
+literal statement `not_forall_effects_tau_eq_twistSeq` already refutes, at `t` and at `−t`
+respectively.
+
+What was genuinely missing is the bridge from the article's word to the tree's: the classification
+is stated for unital **order** automorphisms, and the tree's only implication ran the wrong way
+(`orderAuto_preservesJordan`: order ⟹ Jordan).  Taking the order reading as the hypothesis would
+have made the theorem *weaker* than the article's, not stronger.  So the missing direction is
+proved here — a Jordan automorphism preserves the cone because the cone is the set of Jordan
+squares (`nonneg_iff_exists_symmMul`) — and `preservesJordan_iff_orderAuto` records that the two
+readings then coincide, which retires the question of which one clause (iii) is about.
+
+`Φ` is required linear, Jordan-multiplicative and **surjective**; over a finite-dimensional space
+surjectivity gives injectivity, so this is exactly the article's "automorphism", and `Φ⁻¹` can be
+eliminated from the statement by applying `Φ` to both sides.
+-/
+
+namespace Necessity
+
+section JordanOrder
+
+variable {N : ℕ}
+
+/-- **Nonnegative = Jordan square.**  `√x` is the witness one way; `y ∘ y = yᴴy` is positive
+semidefinite the other. -/
+theorem nonneg_iff_exists_symmMul {x : HermitianMat (Fin N) ℂ} :
+    0 ≤ x ↔ ∃ y : HermitianMat (Fin N) ℂ, y.symmMul y = x := by
+  constructor
+  · intro hx
+    refine ⟨x.cfc Real.sqrt, ?_⟩
+    ext1
+    rw [HermitianMat.symmMul_self, HermitianMat.cfcSqrt_mul_self hx]
+  · rintro ⟨y, rfl⟩
+    rw [HermitianMat.zero_le_iff]
+    have h : (y.symmMul y).mat = y.matᴴ * y.mat := by
+      rw [HermitianMat.symmMul_self, y.H]
+    rw [h]
+    exact Matrix.posSemidef_conjTranspose_mul_self _
+
+/-- A Jordan homomorphism maps the positive cone into itself. -/
+theorem preservesJordan_nonneg {Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ}
+    (hJ : PreservesJordan Φ) {x : HermitianMat (Fin N) ℂ} (hx : 0 ≤ x) : 0 ≤ Φ x := by
+  obtain ⟨y, rfl⟩ := nonneg_iff_exists_symmMul.mp hx
+  rw [hJ]
+  exact nonneg_iff_exists_symmMul.mpr ⟨Φ y, rfl⟩
+
+/-- **A surjective Jordan endomorphism is bijective and its inverse is Jordan.**  Surjectivity
+gives injectivity because `H_N(ℂ)` is finite dimensional over `ℝ`. -/
+theorem exists_inverse_preservesJordan
+    {Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ}
+    (hJ : PreservesJordan Φ) (hsurj : Function.Surjective Φ) :
+    ∃ Ψ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ,
+      PreservesJordan Ψ ∧ (∀ x, Ψ (Φ x) = x) ∧ (∀ x, Φ (Ψ x) = x) := by
+  have hinj : Function.Injective Φ := LinearMap.injective_iff_surjective.mpr hsurj
+  let e : HermitianMat (Fin N) ℂ ≃ₗ[ℝ] HermitianMat (Fin N) ℂ :=
+    LinearEquiv.ofBijective Φ ⟨hinj, hsurj⟩
+  refine ⟨e.symm.toLinearMap, fun x y => ?_, fun x => e.symm_apply_apply x,
+    fun x => e.apply_symm_apply x⟩
+  refine hinj ?_
+  show Φ (e.symm (x.symmMul y)) = Φ ((e.symm x).symmMul (e.symm y))
+  rw [hJ]
+  show e (e.symm (x.symmMul y)) = (e (e.symm x)).symmMul (e (e.symm y))
+  rw [e.apply_symm_apply, e.apply_symm_apply, e.apply_symm_apply]
+
+/-- **A Jordan automorphism is unital.**  `Φ 1` is a unit for the image, and the image is
+everything. -/
+theorem preservesJordan_unital
+    {Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ}
+    (hJ : PreservesJordan Φ) (hsurj : Function.Surjective Φ) : Φ 1 = 1 := by
+  obtain ⟨z, hz⟩ := hsurj 1
+  calc Φ 1 = (Φ 1).symmMul 1 := (HermitianMat.symmMul_one _).symm
+    _ = (Φ 1).symmMul (Φ z) := by rw [hz]
+    _ = Φ ((1 : HermitianMat (Fin N) ℂ).symmMul z) := (hJ _ _).symm
+    _ = Φ z := by rw [HermitianMat.one_symmMul]
+    _ = 1 := hz
+
+/-- **A surjective Jordan automorphism of `H_N(ℂ)` is an order automorphism.** -/
+theorem jordanAuto_orderAuto
+    {Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ}
+    (hJ : PreservesJordan Φ) (hsurj : Function.Surjective Φ) :
+    ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y := by
+  obtain ⟨Ψ, hJΨ, hΨΦ, hΦΨ⟩ := exists_inverse_preservesJordan hJ hsurj
+  intro x y
+  constructor
+  · intro hxy
+    have h := preservesJordan_nonneg hJ (sub_nonneg.mpr hxy)
+    rw [map_sub] at h
+    exact sub_nonneg.mp h
+  · intro hxy
+    have h := preservesJordan_nonneg hJΨ (sub_nonneg.mpr hxy)
+    rw [map_sub, hΨΦ, hΨΦ] at h
+    exact sub_nonneg.mp h
+
+/-- **The article's automorphism classification.**  Every surjective Jordan automorphism of
+`H_N(ℂ)` is `Ad_U` or `Ad_U ∘ ᵀ` for a unitary `U` — the article's "the unital Jordan
+automorphisms of `M_2^{sa}` are `X ↦ UXU*` and `X ↦ UXᵀU*`", at every `N`. -/
+theorem jordanAuto_classification
+    {Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ}
+    (hJ : PreservesJordan Φ) (hsurj : Function.Surjective Φ) :
+    ∃ U : Matrix (Fin N) (Fin N) ℂ, Uᴴ * U = 1 ∧
+      (Φ = unitaryConj U ∨ Φ = (unitaryConj U).comp (transposeMap (n := Fin N))) :=
+  orderAuto_classification Φ (jordanAuto_orderAuto hJ hsurj)
+    (preservesJordan_unital hJ hsurj) hsurj
+
+/-- **The two readings of "automorphism" coincide on `H_N(ℂ)`.**  For a unital surjective
+linear map, preserving the Jordan product and being an order automorphism are the same
+condition: `jordanAuto_orderAuto` is one direction and `orderAuto_preservesJordan` (Wigner
+rigidity) the other.  So the article's "Jordan automorphism" hypothesis and the manifest's
+"unital order automorphism" summary describe one class, and clause (iii) below may be read
+either way. -/
+theorem preservesJordan_iff_orderAuto
+    {Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ}
+    (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ) :
+    PreservesJordan Φ ↔ ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y :=
+  ⟨fun hJ => jordanAuto_orderAuto hJ hsurj,
+    fun hΦ => orderAuto_preservesJordan Φ hΦ hunital hsurj⟩
+
+end JordanOrder
+
+end Necessity
+
+namespace RankTwo
+open HermitianMat
+
+/-- **`thm:qubit-boundary` clause (iii)**, in the article's `(Φ, t)`-conjugation form. -/
+theorem not_exists_jordanAuto_const_twist :
+    ¬ ∃ (Φ : HermitianMat (Fin 2) ℂ →ₗ[ℝ] HermitianMat (Fin 2) ℂ) (t : ℝ),
+        Necessity.PreservesJordan Φ ∧ Function.Surjective Φ ∧
+          ∀ a b : HermitianMat (Fin 2) ℂ, IsEffect a → IsEffect b →
+            Φ (n2Sp tauModuliRP2 a b) = HermitianMat.twistSeq t (Φ a) (Φ b) := by
+  rintro ⟨Φ, t, hJ, hsurj, hconj⟩
+  obtain ⟨U, hU, hcls⟩ := Necessity.jordanAuto_classification hJ hsurj
+  have hU' : U * Uᴴ = 1 := mul_eq_one_comm.mp hU
+  have hconv : ∀ x : HermitianMat (Fin 2) ℂ, Necessity.unitaryConj U x = Necessity.adU U x :=
+    fun _ => rfl
+  rcases hcls with rfl | rfl
+  · refine not_forall_effects_tau_eq_twistSeq t (fun a b ha hb => ?_)
+    have h := hconj a b ha hb
+    rw [hconv, hconv, hconv, Necessity.twistSeq_adU_mat t hU hU'] at h
+    have h2 := congrArg (Necessity.adU Uᴴ) h
+    rwa [Necessity.adU_cancel hU, Necessity.adU_cancel hU] at h2
+  · refine not_forall_effects_tau_eq_twistSeq (-t) (fun a b ha hb => ?_)
+    have h := hconj a b ha hb
+    simp only [LinearMap.comp_apply] at h
+    rw [hconv, hconv, hconv, Necessity.twistSeq_adU_mat t hU hU'] at h
+    have h2 := congrArg (Necessity.adU Uᴴ) h
+    rw [Necessity.adU_cancel hU, Necessity.adU_cancel hU] at h2
+    have h3 := congrArg Necessity.transposeMap h2
+    rwa [Necessity.transposeMap_involutive, Necessity.transposeMap_twistSeq,
+      Necessity.transposeMap_involutive, Necessity.transposeMap_involutive] at h3
+
+/-- Non-vacuity: the existential that clause (iii) denies is inhabited. -/
+theorem exists_jordanAuto_const_twist_of_twistSeq (s : ℝ) :
+    ∃ (Φ : HermitianMat (Fin 2) ℂ →ₗ[ℝ] HermitianMat (Fin 2) ℂ) (t : ℝ),
+        Necessity.PreservesJordan Φ ∧ Function.Surjective Φ ∧
+          ∀ a b : HermitianMat (Fin 2) ℂ, IsEffect a → IsEffect b →
+            Φ (HermitianMat.twistSeq s a b) = HermitianMat.twistSeq t (Φ a) (Φ b) :=
+  ⟨LinearMap.id, s, fun _ _ => rfl, Function.surjective_id, fun _ _ _ _ => rfl⟩
 
 end RankTwo
