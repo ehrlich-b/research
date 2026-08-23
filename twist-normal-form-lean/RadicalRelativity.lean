@@ -649,6 +649,17 @@ import RadicalRelativity.EJA.Spectral
 -- in `EJA.Order`'s Euclidean section, each of which takes associativity of the AMBIENT inner
 -- product as a hypothesis, is inapplicable inside it.  Substrate; it moves no row.
 import RadicalRelativity.EJA.TraceForm
+-- Koecher / Alfsen-Shultz.  On a finite-dimensional formally real Jordan algebra a unital LINEAR
+-- order isomorphism of the cone of squares is a Jordan automorphism: idempotents are the sharp
+-- elements of the order, `Phi` transports sharpness in both directions, orthogonality of the image
+-- family is recovered from completeness, and polarisation turns preservation of squares into
+-- preservation of the product.  Pairs against `EJA.TraceForm`'s form throughout, so it applies
+-- inside `MasterTheorem.Interface`'s `ComparisonSetup`, whose ambient inner product is unrelated to
+-- its Jordan product.  This is the CLASSICAL theorem, not van Imhoff-Roelands' JB-generality
+-- version, which concludes linearity instead of assuming it.  It discharges
+-- `WallCertificates/eja-gated.lean`'s gate (E3) and it moves no row -- rows 16 and 17 do not consume
+-- `Theta_jordan` at all, and row 14 has three clauses of which this closes one.
+import RadicalRelativity.EJA.OrderAuto
 -- The order structure.  `EJA.Order` puts an `OrderUnitSpace` on a Euclidean Jordan algebra,
 -- with the cone of sums of squares as the positive cone; order-unit boundedness is read off
 -- `EJA.Spectral`'s resolution.  It is the enabling layer for rows 13 and 16 — before it,
