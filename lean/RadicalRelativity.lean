@@ -64,6 +64,7 @@ import RadicalRelativity.JacobsonGR
 -- Paper 7: h_3(O) → SM Gauge Group (SCAFFOLD)
 import RadicalRelativity.Octonions
 import RadicalRelativity.OctonionNucleus
+import RadicalRelativity.OctonionTrace
 import RadicalRelativity.Albert
 import RadicalRelativity.NonComposability
 import RadicalRelativity.UniverseAlgebra
