@@ -24,12 +24,48 @@ concrete carrier.  Grouping them keeps the shared evidence in one place instead 
 
 PER-ROW STATUS AND GAP
 
-  row 3 `def:sp`.  Encoded as `SequentialProductOn` / `SequentialProduct`.  The gap is
-    presentational but real: effect-closure is carried as the CODOMAIN condition `sp_effect` rather
-    than as one of the article's seven clauses, so the Lean definition is not clause-for-clause the
-    article's.  Closing it means restating the article's seven clauses verbatim and proving the two
-    definitions equivalent.  Cheap, purely bookkeeping, and it would move a row.  ATTACK THIS FIRST
-    in this file — it is the highest ratio of row-movement to difficulty anywhere in the manifest.
+  row 3 `def:sp`.  ★★★ **REWRITTEN 2026-08-22.  THE RESIDUE THIS ENTRY DESCRIBED IS BUILT, AND ITS
+    "ATTACK THIS FIRST" RECOMMENDATION WOULD NOW COST A READER A DAY REBUILDING IT.**  The entry read:
+    "Encoded as `SequentialProductOn` / `SequentialProduct`.  The gap is presentational but real:
+    effect-closure is carried as the CODOMAIN condition `sp_effect` rather than as one of the
+    article's seven clauses, so the Lean definition is not clause-for-clause the article's.  Closing
+    it means restating the article's seven clauses verbatim and proving the two definitions
+    equivalent.  Cheap, purely bookkeeping, and it would move a row.  ATTACK THIS FIRST in this file
+    — it is the highest ratio of row-movement to difficulty anywhere in the manifest."
+    **Every object it names now exists**, in namespace `PaperA` in
+    `RadicalRelativity/RankTwo/Sufficiency.lean`, all Lean-core axiom-clean (`#print axioms`,
+    2026-08-22):
+      * `EffectSequentialProduct` (:1761) — the article's definition over `PaperA.Effect V`, with the
+        operation typed `Effect V → Effect V → Effect V`, so **effect-closure is the codomain exactly
+        as `main.tex:367` types it** rather than a clause.  Fields: S1 `add_right`, S3 `unit_left`,
+        S4 `zero_symm`, S5 `assoc_of_compatible`, S6 `compatible_ortho` + `compatible_add`, S7
+        `compatible_op`.
+      * `restrictSp` (:1796) and `extendSp` (:1852), built on `extendByZero` (:1830), with
+        `restrictSp_extendSp` an **equality of structures** and `extendSp_restrictSp_on_effects`
+        agreement on the effects; `restrictSp_eq_iff` (:1923) is the extensionality this needs.
+    ★★ **The 08-10 correction recorded further down this file was RIGHT, and is what the tree
+    built.**  It said the two definitions "cannot be an isomorphism of products — by the same `badP`
+    mechanism that killed row 35's onto half, extension is not unique, so the honest target is
+    agreement on effect × effect".  That is precisely the asymmetric pair above, and
+    `restrictSp_badP` (:1969) is `badP` landing on the correct side of it.  A certificate got a
+    negative structural fact right and it survived into the design; that is the best moment in this
+    file and it must not be lost in a rewrite.
+    ★★★ **WHAT ACTUALLY BLOCKS THE ROW NOW IS S2, ALONE, and it is a missing OBJECT rather than a
+    missing proof.**  `EffectSequentialProduct` carries S1 and S3–S7; the article lists S2 —
+    continuity in the **order-unit** norm — as a clause of `def:sp`, and it cannot be a field at
+    abstract generality because `OrderUnitSpace` carries its norm as independent structure that is
+    not the order-unit norm.  Making it a field needs an abstract `ouNorm`; the only `ouNorm` in the
+    tree is `HermitianMat.ouNorm` (`Hermitian/OrderUnit.lean`), and on that concrete carrier the gap
+    is already closed by `Necessity.firstArgContinuousOu_iff`.  Verified at source 2026-08-22:
+    `grep -rn 'ouNorm' RadicalRelativity/` → **114 hits across 5 files of 171** (22:54 EDT; the
+    denominator is rising, re-run rather than trust it)
+    (`Hermitian/OrderUnit.lean`, `Hermitian/Sequential.lean`, `Necessity/OrderUnitS2.lean`,
+    `Necessity/ThetaIsometry.lean`, and one prose line in `SequentialProduct.lean`), with **exactly
+    one definition site**, `Hermitian/OrderUnit.lean:133`, typed `HermitianMat n 𝕜 → ℝ`.
+    ★ **The transferable bit is about the recommendation, not the row.**  "Highest ratio of
+    row-movement to difficulty" was a *ranking*, and a ranking decays silently: the row it ranked
+    first got most of the way done elsewhere in the tree, and nothing in this file could tell.  A
+    certificate should price a row against the tree, not rank it against other rows.
 
   row 5 `lem:span`.  Spanning and extensionality are PROVED at the `OrderUnitSpace` interface
     (`span_isEffect_eq_top`, `linearMap_eq_of_eq_on_effects`), with the proof using order-unit
@@ -97,12 +133,22 @@ so the ARC-7 block below is provenance only.
     from a functional-calculus scaling identity.  An axiom the tree already has, applied at a
     degenerate argument, replaced a lemma about the construction.
 
-  row 3 `def:sp` — attacked this arc; see the block at `extendByZero` below.  Net: the restriction
+  row 3 `def:sp` — attacked in ARC-8; see the block at `extendByZero` below.  Net: the restriction
     direction is trivial, the extension direction has a canonical construction now in this file (and
     already in the tree, instantiated, as `Necessity.badP`), and the row's real cost is **transcribing
     the article's seven clauses over the effect subtype** — statement size, not proof difficulty.
     Deliberately not `sorry`-ed without `main.tex:363-392` open, for the reason row 22 and row 36(i)
     illustrate.
+    ★★★ **SETTLED 2026-08-22 AND THE ESTIMATE HELD EXACTLY.**  The transcription was done — in the
+    tree, not here — as `PaperA.EffectSequentialProduct` with `restrictSp`/`extendSp`
+    (`RankTwo/Sufficiency.lean:1761` ff.), and it is statement size: the structure's eight fields are
+    the `SequentialProductOn` fields with the guards discharged by the subtype, and every proof in
+    `restrictSp` is a `show`/`rw` pair.  ★ The decision not to `sorry` it without `main.tex` open was
+    also right for its stated reason — the article types the operation on the effects
+    (`main.tex:367`), and a transcription from memory would have written effect-closure as a clause,
+    which is the very defect the row records.  **This is the one row in this file where the price,
+    the reason, and the refusal to guess were all correct**; see row 3's rewritten entry above for
+    what is left, which is S2 and only S2.
     ★★ ONE CORRECTION, 2026-08-10 (refutation review): the row-3 block promises an "equivalence" of the
     two definitions.  **It cannot be an isomorphism of products** — by the same `badP` mechanism that
     killed row 35's onto half, extension is **not unique**, so the honest target is agreement on
@@ -266,61 +312,43 @@ theorem spCone_right_exists (P : SequentialProductOn V) :
       ∀ μ : ℝ, SequentialProductOn.IsConeNorm v μ → f a v = μ • P.sp a (μ⁻¹ • v) := by
   sorry
 
-/-! ### Row 3 `def:sp` — the cheapest row in the manifest, and it is bookkeeping
+/-! ### Row 3 `def:sp` — BUILT IN THE TREE 2026-08-22; this section's declarations are removed
 
-The article's definition lists effect-closure as a clause; `SequentialProductOn` carries it as the
-codomain condition `sp_effect`.  The gap is an equivalence between the article's clause-for-clause
-definition and the tree's structure.  Stated below in the direction that matters (the tree's
-structure satisfies the article's clauses, read as a conjunction). -/
+★★★ **EVERYTHING THIS SECTION CONTAINED NOW EXISTS IN NAMESPACE `PaperA` IN
+`RadicalRelativity/RankTwo/Sufficiency.lean`, AND KEEPING A LOCAL COPY WOULD HAVE SENT A READER TO
+REBUILD IT.**  The declarations that stood here were `def_sp_clauses` (three of the article's clauses
+read off the structure's fields, proved), `extendByZero` and `extendByZero_apply`.  In the tree:
+`PaperA.EffectSequentialProduct` (`:1761`), `PaperA.restrictSp` (`:1796`), `PaperA.extendByZero`
+(`:1830`), `PaperA.extendSp` (`:1852`), with `restrictSp_extendSp`, `extendSp_restrictSp_on_effects`,
+`restrictSp_eq_iff` and `restrictSp_badP`.  All Lean-core axiom-clean, checked 2026-08-22.
 
-/-- **GAP — `def:sp` clause-for-clause.**  Not deep; it is the statement that has never been
-written.  ★ Flagged in this certificate as the single highest row-movement-per-unit-effort item
-remaining in the manifest. -/
-theorem def_sp_clauses (P : SequentialProductOn V) :
-    (∀ a b c : V, IsEffect a → IsEffect b → IsEffect c → b + c ≤ ousUnit →
-        P.sp a (b + c) = P.sp a b + P.sp a c)
-      ∧ (∀ a : V, IsEffect a → P.sp ousUnit a = a)
-      ∧ (∀ a b : V, IsEffect a → IsEffect b → IsEffect (P.sp a b)) := by
-  exact ⟨fun a b c ha hb hc hbc => P.sp_add_right ha hb hc hbc,
-    fun a ha => P.sp_unit_left ha,
-    fun a b ha hb => P.sp_effect ha hb⟩
+**The two findings this section recorded both held, and they are the reason it is worth reading at
+all:**
 
-/-- The extension-by-zero of an operation defined only on the effects.  ★ This is the object row 3's
-packaging turns on, and it is `badP`'s template (`Necessity.badP` is exactly this construction for the
-twist product), so the totality of Lean's `sp` is **not** a strengthening of the article's definition:
-every total operation the axioms can see is an extension of an effect-domain one. -/
-noncomputable def extendByZero {V : Type*} [OrderUnitSpace V]
-    (op : {a : V // IsEffect a} → {a : V // IsEffect a} → {a : V // IsEffect a}) : V → V → V :=
-  fun a b =>
-    letI := Classical.dec (IsEffect a ∧ IsEffect b)
-    if h : IsEffect a ∧ IsEffect b then ((op ⟨a, h.1⟩ ⟨b, h.2⟩ : {a : V // IsEffect a}) : V) else 0
+* **The price was right and it was about STATEMENT SIZE, not difficulty.**  "The honest cost of this
+  row is writing the article's seven clauses out over the effect subtype — roughly thirty lines of
+  *statement* — and not any proof difficulty.  Every clause is the corresponding
+  `SequentialProductOn` field with the guards discharged by the subtype."  That is exactly what
+  `EffectSequentialProduct` and `restrictSp` are.  It also correctly predicted that the *extension*
+  direction needed a construction and that `Necessity.badP` was already that construction
+  instantiated — `PaperA.restrictSp_badP` is `badP` landing in the finished frame.
 
-theorem extendByZero_apply {V : Type*} [OrderUnitSpace V]
-    (op : {a : V // IsEffect a} → {a : V // IsEffect a} → {a : V // IsEffect a})
-    {a b : V} (ha : IsEffect a) (hb : IsEffect b) :
-    extendByZero op a b = ((op ⟨a, ha⟩ ⟨b, hb⟩ : {a : V // IsEffect a}) : V) := by
-  rw [extendByZero, dif_pos ⟨ha, hb⟩]
+* ★★ **The 08-10 correction — "it cannot be an isomorphism of products; the honest target is
+  agreement on effect × effect" — was the load-bearing one.**  Extension is not unique (`badP`), so
+  no bijection exists, and the tree's pair is asymmetric for that reason: `restrictSp_extendSp` is an
+  **equality of structures** in one direction and `extendSp_restrictSp_on_effects` is agreement on
+  the effects in the other, which is the most that can be true because the axioms are
+  `IsEffect`-guarded and cannot see off the effects.  A certificate that talks a later builder out of
+  a theorem that does not exist has paid for itself.
 
-/-! ★★ **ROW 3's ATTACK EVIDENCE, 2026-08-10 (ARC-8 8.6), and the finding is about STATEMENT SIZE not
-difficulty.**  The row's residue is "the article's eight clauses as a structure, plus restriction and
-extension maps".  Attempted this arc.  What the attempt found:
-  * the RESTRICTION direction is trivial (`P.sp` restricted to the effect subtype, well defined by
-    `sp_effect`);
-  * the EXTENSION direction has a canonical construction, `extendByZero` above, and it is already in
-    the tree in instantiated form as `Necessity.badP`;
-  * so the honest cost of this row is **writing the article's seven clauses out over the effect
-    subtype** — roughly thirty lines of *statement* — and not any proof difficulty.  Every clause is
-    the corresponding `SequentialProductOn` field with the guards discharged by the subtype.
-★ That is a materially different price from "restate the definition", which is how a prose price would
-have read it, and different again from the earlier note here that called row 3 "the single highest
-row-movement-per-unit-effort item remaining" — true in effort, but the effort is transcription.
-★ **Deliberately NOT written as a `sorry` here**, because a thirty-line statement transcribed without
-the article open in front of me is exactly how row 22's FALSE gap and row 36(i)'s VACUOUS gap were
-produced in this directory.  The next pass should have `main.tex:363-392` open. -/
-/-- ★ Note what just happened: three of the article's clauses are NOT gaps — they compile above
-with no `sorry`, straight from the structure's fields.  What is missing is only the *packaging* of
-the article's list as a single definition plus the equivalence.  A prose price for row 3 would very
-likely have said "restate the definition", hiding that most of it is already there. -/
-example : True := trivial
+★ **What is NOT closed, and it is one clause: S2.**  See row 3's entry in the header block.  The
+article lists S2 as a clause of `def:sp`; `EffectSequentialProduct` cannot carry it at abstract
+generality because the tree's only `ouNorm` is `HermitianMat`-typed.  ★ Note what that does to the
+old recommendation: the row's *residue* is now smaller and *harder* than the residue this section
+priced.  Transcription was cheap and is done; the missing object is not transcription.
+
+★ **Deliberately no `sorry` is left here.**  An abstract `ouNorm` is a definition to write, not a
+proposition to prove, and this directory's rule is that a gap statement must be strong enough that
+proving it would move the row.  There is no proposition here whose proof would move row 3. -/
 
 end WallCertificate

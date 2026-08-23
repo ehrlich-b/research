@@ -91,8 +91,15 @@ correction, and neither correction moved a decision.
 
 **`thm:albert` is not blocked on octonions, and the claim that it was got retracted.** The
 octonions are absent from *Mathlib* but they are **built** in this project, at
-`~/repos/research/lean/RadicalRelativity/Octonions.lean`: 0 sorries, same toolchain v4.28.0, compiles clean, and its
-one computational input `nucleus(𝕆) = ℝ` is **proved** (`Octonion.nucleus_real`, Lean-core axioms).
+`~/repos/research/lean/RadicalRelativity/Octonions.lean`: 0 sorries, and its one computational input
+`nucleus(𝕆) = ℝ` is **proved** — `Octonion.nucleus_real` (`OctonionNucleus.lean:61`), which prints
+`[propext, Classical.choice, Quot.sound]`, checked by running `#print axioms` against that project
+on **2026-08-22**. ★ **The toolchain stamp on this sentence said "same toolchain v4.28.0" and both
+projects have since moved**: `lean/lean-toolchain` and `twist-normal-form-lean/lean-toolchain` now
+both read `leanprover/lean4:v4.33.0`, so the *claim* "same toolchain" survives the bump while the
+version it named did not. A version number written into a sentence whose point is "these two agree"
+is the part that breaks agreement; check the two `lean-toolchain` files, which is one command and
+cannot go stale.
 That file is out-of-tree, so it does not change the coverage count — but the row's obstruction is
 the Albert-algebra equational machinery (`ALBERT-KERNEL-MEMO.md` rescoped it to "weeks of equational
 algebra" on 2026-08-04), never the octonions. This distinction was asserted wrongly once and
@@ -107,7 +114,31 @@ dimension bound, both Lean-core. (The claim "ℝ is the only clean row" is false
 
 ## Ceiling arithmetic, restated with these six removed
 
-36 rows − 6 external = **30 interior**, which is the ceiling. A realistic ceiling is **26–28**, once
-`lem:simple-bridge` is read as ~3/4 cited (its own certificate prices it per clause) and the ℍ row
-is priced honestly. As of this date the interior count is 10 FORMALIZED, so the interior remainder
-is 16–18 rows, every one of which now carries a dated certificate in this directory.
+36 rows − 6 external = **30 interior**, which is the hard ceiling. A realistic ceiling is **26–28**,
+once `lem:simple-bridge` is read as ~3/4 cited (its own certificate prices it per clause) and the ℍ
+row is priced honestly.
+
+**Derived 2026-08-22 22:53 EDT** by running `STATEMENT-MANIFEST.md`'s own census script (the fenced
+`python3` block in that file's header) and subtracting the six rows of the table above:
+
+| | |
+| --- | --- |
+| whole manifest | 16 FORMALIZED / 18 PARTIAL / 2 ABSENT = 36 |
+| the six external rows | 0 FORMALIZED (rows 1, 10, 14, 21 PARTIAL; rows 2, 4 ABSENT) |
+| interior | **16 FORMALIZED / 14 PARTIAL**, of 30 |
+| remainder to the hard ceiling | **14 rows** — 3, 5, 8, 9, 12, 13, 15, 16, 17, 18, 20, 22, 26, 31 |
+| remainder to the realistic 26–28 | **10–12 rows** |
+
+Every one of those 14 carries a dated certificate in this directory: 3/5/8/9/12/13 in
+`abstract-tier.lean`, 15/22/26/31 in `frame-geometry.lean`, 16/17 in `eja-gated.lean`, 18 in
+`differential-trio.lean`, 20 in `thm-quaternionic.lean`.
+
+★★★ **THE LINE THIS REPLACES WAS UNDATED AND STALE BY SIX ROWS**, in the one file whose job is to
+hold the ceiling arithmetic. It read: "As of this date the interior count is 10 FORMALIZED, so the
+interior remainder is 16–18 rows, every one of which now carries a dated certificate in this
+directory." "As of this date" pointed at the file header's 2026-08-09; twelve days of promotions
+went past it. ★★ **Re-derive this table, do not edit its numbers.** The census moved four times on
+2026-08-22 alone and was still being corrected while this paragraph was written — the demotion of
+row 31 and the promotion of row 10 both landed that evening, the second of them minutes before this
+table was derived — so any figure here is a measurement with a timestamp, not a fact about the
+project.

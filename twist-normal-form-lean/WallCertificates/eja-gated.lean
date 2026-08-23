@@ -317,9 +317,31 @@ ABSENCE CLAIMS AND THEIR SCOPE
       where I FIRST saw the identifier, not from the declaration list of every file that mentions it.
       The project's standing first move exists for exactly this, and I skipped it inside my own
       certificate.
-  * "Mathlib has no EJA/Jordan layer": consistent with the 2026-07-19 landscape scout (memory
-      `lean-formalization-landscape`); NOT re-verified against Mathlib v4.28.0 in this arc, and
-      flagged as such rather than asserted.
+  * ~~"Mathlib has no EJA/Jordan layer"~~ — ★★★ **HALF FALSE, SPLIT AND RE-VERIFIED 2026-08-22
+      against Mathlib v4.33.0, the version this tree actually builds against.**  The claim was
+      flagged here as "consistent with the 2026-07-19 landscape scout, NOT re-verified" — the flag
+      was honest and the claim was still wrong, because it was two claims wearing one sentence.
+      **THE JORDAN HALF IS FALSE.**  `Mathlib/Algebra/Jordan/Basic.lean` (244 lines, 12 top-level
+      declarations) supplies the classes `IsJordan` (:82) and `IsCommJordan` (:90), three instances
+      and seven lemmas including `commute_lmul_rmul` and
+      `two_nsmul_lie_lmul_lmul_add_eq_lie_lmul_lmul_add`; `Mathlib/Algebra/Ring/IsFormallyReal.lean`
+      supplies formal reality.  **And this tree does not merely coexist with them — it imports and
+      uses them**: `IsCommJordan` is an instance binder in `EJA/Pattern.lean:49`, `EJA/Frame.lean:97`
+      and `EJA/Order.lean`, discharged concretely at `EJA/ConcreteInstance.lean:84` via
+      `IsCommJordan.lmul_comm_rmul_rmul`; `IsFormallyReal` is a binder in `EJA/Spectral.lean:216`
+      and is instantiated by `EJA/Spectral.lean:556`.  So Mathlib's Jordan layer is load-bearing in
+      this development, in files this certificate's own gate statements import.
+      **THE EJA HALF SURVIVES**, with a denominator: `grep -rl 'EuclideanJordan\|JordanFrame'` over
+      Mathlib v4.33.0 → **0 files of 8311**.  There is no Euclidean Jordan algebra, no Jordan frame,
+      no Peirce decomposition and no Jordan spectral theory upstream, which is what gates (E1) and
+      (E2) are about.
+      ★★ **The defect was in the SCOPE WORD, not the evidence.**  "EJA/Jordan" collapsed a true
+      absence (EJA) and a false one (Jordan) into a single unverifiable phrase, and the flag
+      "NOT re-verified" then protected both halves equally.  ★ It was also contradicted from inside
+      this directory: `WallCertificates/eja-order.lean` — last written 19 minutes after this file, on
+      2026-08-22 — records the `RadicalRelativity.EJA` order layer built directly on the Mathlib
+      classes this sentence said were absent.  **A neighbouring certificate is not a place a stale
+      claim can hide.**
 
 NOT imported from RadicalRelativity/.
 -/
@@ -588,7 +610,28 @@ its axioms are exactly `[propext, Classical.choice, Quot.sound]`.
     the FK rules.  What the tree has is the decomposition at a **single** idempotent
     (`EJA/Peirce.lean:292`, `exists_peirce_decomposition`) and a **pairwise** split
     (`EJA/Block.lean:96`, `exists_block_split`).  The assembled direct sum over a frame is a
-    declaration that does not exist — declaration lists of all 15 `EJA/*.lean` files, 2026-08-22.
+    declaration that does not exist — declaration lists of **every** `EJA/*.lean` file, re-swept
+    2026-08-22 22:51 EDT, when `ls RadicalRelativity/EJA/*.lean | wc -l` was **19**.
+    ★★★ **THE SCOPE WAS WRITTEN AS "all 15" AND IS WRONG AT EVERY MOMENT SINCE — 16 EARLIER THE SAME
+    EVENING, 19 AT THE RE-SWEEP.**  `EJA/Order.lean`, then `Class.lean`, `PeirceSubalgebra.lean` and
+    `Rank.lean` landed after the number was written down.  **Do not re-pin a literal count here.**
+    Re-run the sweep: `grep -n '^def \|^theorem \|^structure \|^instance \|^abbrev \|^class '
+    RadicalRelativity/EJA/*.lean`, which is this project's standing first move, and read the
+    declaration list rather than the file count.
+    ★★ **THE FINDING SURVIVES ALL THREE COUNTS, and the newest files sharpen rather than weaken it.**
+    `Rank.lean:97` now declares a `JordanFrame` structure and `PeirceSubalgebra.lean` builds the
+    Peirce one- and zero-subalgebras as carriers with EJA instances — so the *vocabulary* for the
+    frame-level statement has arrived — while the assembled `J = ⊕_{i≤j} J_{ij}` over a frame still
+    has no declaration.  What exists is the decomposition at a **single** idempotent
+    (`EJA/Peirce.lean:292`), a **pairwise** split (`EJA/Block.lean:96`), and now the subalgebras and
+    the frame; the sum over a frame is not among them.  Independently confirmed by
+    `EJA/Pattern.lean`'s own closing note, which says the constraints proved there "say what the
+    summands can be, not that every element decomposes into them" and names
+    `J = ⊕_{i ≤ j} J_{ij}` as still unbuilt.
+    ★ **A count inside the scope of an absence claim decays faster than the claim it scopes.**  This
+    one decayed three times in one evening while its conclusion did not move once, and a reader
+    checking "15" against `ls` would have had to decide unaided whether the missed files were the
+    ones that mattered.  State the sweep, not the census.
     "GATE (E2) is discharged" and "(E2) is done" are different sentences, and only the first is
     true. -/
 theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (H : JBPremises C)

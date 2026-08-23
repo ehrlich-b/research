@@ -48,15 +48,39 @@ ATTACK EVIDENCE
   attacked before any row that needs new mathematics.
 
 ABSENCE CLAIMS AND THEIR SCOPE
-  * "no `U(2) -> CP^1` or `U(2) -> RP^2` map exists in the tree":
-      grep -rn 'unitaryGroup.*QubitFrame\|QubitFrame.*unitaryGroup\|frameRay' RadicalRelativity/
-      -> no hits, whole first-party tree including Vendor/, 2026-08-09.
-  * "`RankTwo/` builds `tauModuliRP2 : C(RP2, R)` only for the CONCRETE tau family, not for an
-    arbitrary product": `RankTwo/Bloch.lean:340` defines it from `tauRVec`, a formula on vectors;
-      grep -c 'SequentialProductOn' RadicalRelativity/RankTwo/*.lean  -> 0 in every file.
-    (This same grep was, in ARC-5, used to support a WRONGER claim — that the classification map
-    did not exist at all — when in fact its input lives in `Necessity/`.  Directory-scoped absence
-    claims have misfired here before; the scope is stated so this one can be checked.)
+
+★★★ **BOTH ABSENCE CLAIMS IN THIS FILE ARE REFUTED, 2026-08-22, AND EACH IS REFUTED BY RE-RUNNING
+ITS OWN RECORDED PATTERN.**  They were written 2026-08-09 and the row closed the same day; the
+header was rewritten and this block was not.  That is the exact failure this directory names in
+`prop-n2-sufficiency.lean` — "when a row closes, its certificate's ABSENCE CLAIMS are the part most
+likely to survive stale" — written there on 2026-08-10 and standing uncorrected here for the twelve
+days since.
+
+  * ~~"no `U(2) -> CP^1` or `U(2) -> RP^2` map exists in the tree"~~ — **FALSE.**  Recorded scope:
+      `grep -rn 'unitaryGroup.*QubitFrame\|QubitFrame.*unitaryGroup\|frameRay' RadicalRelativity/`,
+      "no hits, whole first-party tree including Vendor/, 2026-08-09".
+    Re-run 2026-08-22 22:54 EDT, same pattern, same scope: **1 hit, in 1 file of 171**, and it is the
+    map itself — `def colFrame (U : Matrix.unitaryGroup (Fin 2) ℂ) : QubitFrame`,
+    `RankTwo/Sufficiency.lean:612`, `QubitFrame` being `ℂP¹`.  The `U(2) → ℝP²` map is
+    `RankTwo.frameRP2` (`:1177`), defined as `blochFrame (colFrame U)`, and it is proved continuous
+    (`:1180`), surjective (`:1183`) and a quotient map (`:1186`).  ★ The pattern was fine; the claim
+    was simply not re-run after the row that needed it closed.
+
+  * ~~"`RankTwo/` builds `tauModuliRP2 : C(RP2, R)` only for the CONCRETE tau family, not for an
+    arbitrary product"~~ — **FALSE ON BOTH ITS GREP AND ITS SUBSTANCE.**  Recorded scope:
+      `grep -c 'SequentialProductOn' RadicalRelativity/RankTwo/*.lean` → "0 in every file".
+    Re-run 2026-08-22 22:54 EDT: **29 in `RankTwo/Sufficiency.lean`**, 0 in the other seven `RankTwo/`
+    files, so the denominator is 1 of 8 and the grep demonstrably saw data.  And the substantive
+    claim is false independently of the grep:
+    `RankTwo.n2QubitModuli (P) (hS2) : C(RP2, ℝ)` (`RankTwo/Sufficiency.lean:1212`) is the moduli
+    map for an **arbitrary** norm-continuous S1–S7 product, axiom-clean, and **this certificate's own
+    body cites it twice** — at `exists_rp2_moduli` and in the note above it.  ★★ So the file
+    contradicted itself across two screens: the closure record names the object, the evidence block
+    denies it exists.  A certificate's prose and its evidence fail independently, and the evidence is
+    the half nobody re-reads.
+    (The ARC-5 note attached to this claim still stands as history: this same grep was once used to
+    support a WRONGER claim — that the classification map did not exist at all — when its input lives
+    in `Necessity/`.  Directory-scoped absence claims have now misfired here twice.)
 
 ★★ REFUTED IN PART, 2026-08-09, SAME DAY, BY THE CHECKPOINT-1 COLD REVIEW.  Recorded here rather
 than rewritten away, because the whole point of this directory is that certificates are falsifiable

@@ -33,8 +33,26 @@ lake env lean WallCertificates/eja-spectral.lean     # expect: NO warnings, NO `
 | the same in `ComparisonSetup`'s bilinear-map vocabulary | `RadicalRelativity.EJA.spectral_resolution_bilinear` | `EJA/Spectral.lean` |
 | **`gate_E1_spectral` itself** | `WallCertificate.gate_E1_spectral` | `WallCertificates/eja-gated.lean` |
 
-`AxiomAudit.lean` census PASS at 167 modules, custom axioms exactly `[]`; every declaration
-above prints `[propext, Classical.choice, Quot.sound]`.
+`AxiomAudit.lean` census PASS with custom axioms exactly `[]` at the 2026-08-22 discharge; every
+declaration above prints `[propext, Classical.choice, Quot.sound]`.
+
+★★★ **THE MODULE COUNT IS DELIBERATELY NOT REPEATED HERE ANY LONGER.**  This line read "census PASS
+at 167 modules" and was wrong on the day it was written and wronger since.  Two things:
+  * **167 was the wrong denominator even then.**  167 is the number of `.lean` files *under*
+    `RadicalRelativity/`; the census counts *modules*, and `AxiomAudit.lean:140` prepends the root
+    module `RadicalRelativity` before comparing against its frozen manifest.  The two numbers are
+    both correct about different things and differ by one, which is exactly why the slip survived: a
+    reader who checks by `find RadicalRelativity -name '*.lean' | wc -l` gets the file count back and
+    concludes the line is right.
+  * **And the number moves.**  Between 21:30 and 22:51 EDT on 2026-08-22 the audit's frozen manifest
+    went from 168 names to **172** as `EJA/Order.lean`, `Class.lean`, `PeirceSubalgebra.lean` and
+    `Rank.lean` landed.  A literal count copied into a certificate is stale the next time a module is
+    added, and nothing in the certificate can notice.
+★ **The audit prints its own denominator.**  Read it from `AxiomAudit.lean`'s PASS message rather
+than from here: `lake env lean AxiomAudit.lean` reports the tracked module count together with the
+custom-axiom list, and the module-manifest gate fails loudly if the two disagree.  The claim that
+matters for this certificate — custom axioms exactly `[]` and Lean-core closures on the declarations
+above — is independent of how many modules there are.
 
 ## The route that worked, against the route this file predicted
 

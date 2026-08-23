@@ -61,12 +61,30 @@ WHAT IS IN THE TREE
   * `HermitianMat.twistSequentialProduct` — all seven axioms for CONSTANT t (row 28, FORMALIZED).
     This is the machinery row 30 must generalize, and the generalization is where the difficulty is
     (below), not in re-doing the constant case.
-  * `RankTwo.tauModuliRP2 : C(RP2, R)` and the tau family under `thm:qubit-boundary` (row 31):
-    parts (i) and (iii) plus the cocycle, for ONE concrete frame-dependent t.  So a frame-dependent
-    product IS constructed in the tree — but for a specific t, with the bundled S1-S7 verification
-    itself still open (row 31).
+  * `RankTwo.tauModuliRP2 : C(RP2, R)` and the tau family under `thm:qubit-boundary` (row 31).
+    ★★★ **THIS BULLET IS REWRITTEN 2026-08-22 AND ITS OLD FORM WAS STALE IN BOTH DIRECTIONS.**  It
+    read: "parts (i) and (iii) plus the cocycle, for ONE concrete frame-dependent t.  So a
+    frame-dependent product IS constructed in the tree — but for a specific t, with the bundled
+    S1-S7 verification itself still open (row 31)."
+    (a) **The bundled S1-S7 verification is NOT open.**  It closed in ARC-8: row 30 holds for an
+        arbitrary `t : C(RP2, R)` — `RankTwo.n2SequentialProduct` with
+        `n2SequentialProduct_firstArgContinuous` for S2 — and `tauModuliRP2` is one such `t`, so
+        clause (ii) of row 31 comes out by instantiation.  Reading this bullet as live work would
+        send someone to redo row 30 at a single parameter.
+    (b) **"Parts (i) and (iii) are proved" is too strong on part (i).**  Clause (iii) is proved, and
+        in the article's stronger `(Phi, t)`-conjugation form
+        (`RankTwo.not_exists_jordanAuto_const_twist`, `RankTwo/Sufficiency.lean:1680`, axiom-clean).
+        Part (i) has two halves; its coherence-action half — the rotation on `W_n` at the ordered
+        frame — is part of the article's statement and is not in the tree, which is why row 31 is
+        PARTIAL rather than FORMALIZED as of 2026-08-22.  That half is row 31's whole residue and it
+        is priced in `WallCertificates/frame-geometry.lean`, not here.
+    ★ **Nothing in (a) or (b) touches row 30**, which is what this certificate is for.  The bullet
+    exists only to say that a frame-dependent product exists in the tree, and it does — for an
+    arbitrary `t`, which is more than the bullet claimed.
   * rows 32/33 are FORMALIZED as of 2026-08-09 (`exists_n2FrameTwist_bound`,
-    `continuous_n2FrameTwist`); row 34's remaining gap has its own certificate.
+    `continuous_n2FrameTwist`); row 34 is FORMALIZED as of 2026-08-09 (ARC-8 block 8.1(d)) —
+    `RankTwo.n2QubitModuli P hS2 : C(RP2, R)` — and its certificate is now a record of that closure
+    rather than of a gap.
 
 WHERE THE DIFFICULTY ACTUALLY IS — and it is NOT "seven axioms again"
   For constant t, every axiom is a computation with ONE twist factor.  For frame-dependent t the
@@ -220,7 +238,12 @@ covers.**
 ★★ **Name the three defect kinds together, because the tests that catch them are different.**
   * FALSE — row 22's `lem:orientation` statement: refutable by counterexample.
   * VACUOUS — row 36(i)'s `exists_peirce_exchange`: provable, moves nothing.  Caught by the
-    inert-hypothesis test applied to the *gap*.
+    inert-hypothesis test applied to the *gap*.  ★ **Update 2026-08-22: that statement had a FOURTH
+    defect the taxonomy did not name — it was about the WRONG OBJECT** (an atom relabelling, which
+    `main.tex:1990-1994` explicitly excludes from the article's hypothesis), and row 36(i) closed
+    without it.  The two inert hypotheses were evidence of that, not only of weakness; the test that
+    would have caught it is reading the article's own definition of the hypothesis.  Full record in
+    `WallCertificates/frame-geometry.lean`.
   * SELF-DEFEATING — this one: an ingredient whose truth kills its own conclusion.  Caught by
     neither of the above.  **The test is: assume the gap statement and check it does not contradict
     the row it feeds.**  One step, and it would have caught this immediately.

@@ -52,8 +52,22 @@ never see it, so its `sorry` cannot reach the census. Verify:
 
 ```
 grep -rn "^import.*WallCertificates" RadicalRelativity/ RadicalRelativity.lean   # expect no hits
-grep -n "lean_lib" lakefile.toml                                                 # expect one
+grep -n "defaultTargets" lakefile.toml                                           # expect RadicalRelativity
 ```
+
+★ **The second line read `grep -n "lean_lib" lakefile.toml # expect one` until 2026-08-22, and it
+returned 7.** `README.md:44-52` had already caught and repaired this exact decay — the isolation
+claim rested on the lakefile declaring one `lean_lib`, which stopped being true when the Palomar
+Challenge/Solution libraries were added — and the fix did not reach this file. By the README's own
+standard, *"a verification recipe that reports failure on a healthy tree is worse than none: it
+trains the reader to ignore it"*, so the recipe is brought into line with it here.
+★★ The substance is unchanged, and the argument for it is the **import closure**, not a library
+count: `defaultTargets` is `RadicalRelativity`; no module under `RadicalRelativity/` imports this
+directory (0 hits at 2026-08-22, and every in-tree occurrence of the string `WallCertificates` is
+prose inside a docstring); and none of the six Comparator libraries does either. So neither
+`lake build` nor `AxiomAudit.lean` ever elaborates these files.
+★ **A repair applied in one file is not applied to a directory.** The README fixed the recipe where
+it found it and nothing swept the sibling that carried the same three words.
 
 Compile deliberately:
 
