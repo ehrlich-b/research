@@ -57,13 +57,25 @@ counterpart here: they unbundle `jordanBilinG`'s `LinearMap` structure to get `a
 `toMul`.  The collision is **definitional**: `albert_commMagma_toMul_eq` below is `rfl`, both
 structures having `h3O.jordanMul` as their multiplication.
 
-★ What that costs, measured rather than argued.  With this module imported,
-`#synth Mul h3O` returns `instEuclideanJordanAlgebraH3O.toMul` — the class instance outranks
-the `CommMagma` — and `#synth IsCommJordan h3O` still returns `h3O.instIsCommJordan`, the
-instance `Albert/Jordan.lean` declares over the *other* `Mul`.  That those two compose at all
-is the measurement: instance search accepted `h3O.instIsCommJordan` against the class's `toMul`,
-which it can only do because the two `Mul`s are defeq.  `EuclideanJordanAlgebra.instIsCommJordan`
-is therefore shadowed on `h3O` and nothing depends on which of the two is found.
+★ What that costs, measured rather than argued.  With this module imported the four searches
+split, and they split *across* the two structures:
+
+| search | returns |
+| --- | --- |
+| `Mul h3O` | `instEuclideanJordanAlgebraH3O.toMul` |
+| `CommMagma h3O` | `h3O.instCommMagma` |
+| `IsCommJordan h3O` | `h3O.instIsCommJordan` |
+| `NonUnitalNonAssocCommRing h3O` | `EuclideanJordanAlgebra.instNonUnitalNonAssocCommRing` |
+
+★ Note what that table does *not* say.  Mathlib's `IsCommJordan` is declared `[CommMagma A]`,
+not `[Mul A]`, so the third row is settled by the second and involves no comparison with the
+first — an earlier version of this paragraph read the two together as evidence that instance
+search had checked the two `Mul`s against each other, and that inference was wrong.  What
+actually exercises the defeq is writing a statement whose `*` comes from row 1 and proving it
+with a term whose type comes from row 2, which is `albert_isCommJordan_through_class` below.
+That it elaborates is the measurement: the two structures are interchangeable in use, not merely
+`rfl`-equal on paper, and `EuclideanJordanAlgebra.instIsCommJordan` is shadowed on `h3O` without
+consequence.
 
 ★ Two things this does *not* claim.  It is not claimed that the collision is invisible: a proof
 that pinned the `Mul` instance by name rather than by its product would notice.  And it is not
@@ -94,8 +106,10 @@ the one `Albert/Inner.lean` builds its `NormedAddCommGroup` on top of.
 **square roots** and the quadratic representation `Q_{√a}` do **not** become available on
 `h₃(𝕆)`.  They are not part of the `EJA/` layer — listing every `def` and `abbrev` in
 `RadicalRelativity/EJA/*.lean` on 2026-08-23 turns up no Jordan square root and no quadratic
-representation, and the only `sqrt` occurring anywhere in `EJA/` is `Real.sqrt`, inside three
-proofs in `EJA/Order.lean`.  ★ The tree *does* have both, and an earlier version of this
+representation, and outside this docstring the only `sqrt` occurring in any `EJA/` module is
+`Real.sqrt`, in the proofs of exactly two of them, `EJA/Order.lean`'s `IsSoS.smul` and
+`isSoS_iff_exists_sq` (an earlier version of this sentence said three).
+★ The tree *does* have both, and an earlier version of this
 paragraph wrongly said it did not: `Necessity.quadRep` is `Q_{√a}` and the square root is the
 vendored continuous functional calculus (`a.cfc Real.sqrt`), with the quaternionic restriction
 in `Hermitian/QuatQuadRep.lean`.  Both are stated over `HermitianMat`, not over the class, so
@@ -175,6 +189,16 @@ instance search returns cannot change a statement.  See the module docstring for
 and does not claim. -/
 theorem albert_commMagma_toMul_eq :
     (h3O.instCommMagma).toMul = (instEuclideanJordanAlgebraH3O).toMul := rfl
+
+/-- ★ **The two `Mul` structures are interchangeable in use, not merely `rfl`-equal on paper.**
+The statement's `*` is the one a `Mul h3O` search returns — the class's `toMul`; the proof
+term's type is stated over the `CommMagma` an `IsCommJordan h3O` search returns —
+`Albert/Jordan.lean`'s `h3O.instCommMagma`.  Elaborating this is what actually checks the two
+against each other; the `#synth` table in the module docstring does not, and said so only after
+a first draft claimed otherwise. -/
+theorem albert_isCommJordan_through_class (a b : h3O) :
+    (a * b) * (a * a) = a * (b * (a * a)) :=
+  IsCommJordan.lmul_comm_rmul_rmul a b
 
 /-! ## Nontriviality -/
 
