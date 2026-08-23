@@ -651,6 +651,41 @@ theorem exists_mul_self_eq_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsO
 end Calculus
 
 
+omit [IsCommJordan J] in
+/-- **Coefficients over an orthogonal idempotent family are pinned by the element.**  Pairing with
+`cₖ` isolates the `k`-th coefficient, so a vanishing combination has vanishing coefficients at
+every nonzero member.  (At a *zero* member the coefficient is genuinely free — `0 • 0 = 1 • 0` —
+which is why the nonvanishing hypothesis is there and cannot be dropped.) -/
+theorem coeff_eq_zero_of_sum_smul_eq_zero {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {a : Fin n → ℝ} (h : (∑ i, a i • c i) = 0) {k : Fin n} (hk : c k ≠ 0) : a k = 0 := by
+  have hmul : (∑ i, a i • c i) * c k = a k • c k := by
+    rw [Finset.sum_mul, Finset.sum_eq_single k]
+    · rw [smul_mul_assoc, hfam.idem k]
+    · intro j _ hjk
+      rw [smul_mul_assoc, hfam.orth j k hjk, smul_zero]
+    · intro hcon
+      exact absurd (Finset.mem_univ k) hcon
+  rw [h, zero_mul] at hmul
+  exact (smul_eq_zero.mp hmul.symm).resolve_right hk
+
+/-- **The annihilator of `x` is read off its resolution.**  `p` annihilates `x` exactly when
+`λᵢ·p(λᵢ)` vanishes at every idempotent that is actually present.
+
+This is what makes the eigenvalue list a function of `x` rather than of the resolution: `jann x`
+is defined from `x` alone, and this identifies it with a condition on the `λᵢ`. -/
+theorem jeval_eq_zero_iff_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    (lam : Fin n → ℝ) (p : Polynomial ℝ) :
+    jeval (∑ i, lam i • c i) p = 0 ↔ ∀ i, c i ≠ 0 → lam i * p.eval (lam i) = 0 := by
+  rw [jeval_of_resolution hfam]
+  constructor
+  · intro h i hi
+    exact coeff_eq_zero_of_sum_smul_eq_zero hfam h hi
+  · intro h
+    refine Finset.sum_eq_zero fun i _ => ?_
+    by_cases hi : c i = 0
+    · rw [hi, smul_zero]
+    · rw [h i hi, zero_smul]
+
 /-- **The idempotents of a distinct-eigenvalue resolution are polynomials in `x`.**
 
 With the eigenvalues distinct, Lagrange interpolation produces a real polynomial that is
