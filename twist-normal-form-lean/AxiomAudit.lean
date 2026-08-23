@@ -22,7 +22,7 @@ Six layers, all enforced by elaborating this file
    declaration exists in the tracked tree — any stray `axiom`
    in any tracked module fails; and
    (c) **source coverage + frozen manifest**: the set of `RadicalRelativity`
-   modules on disk equals the set imported here *and* equals a pinned 179-name
+   modules on disk equals the set imported here *and* equals a pinned 183-name
    manifest, so a new unimported module, a removed root import, a name-colliding
    source path, or a coordinated module+import deletion (which preserves
    `disk == imported`) fails, closing both the "invisible module" and the
@@ -142,7 +142,7 @@ run_cmd do
     (env.header.moduleNames.toList.filter (fun m => (`RadicalRelativity).isPrefixOf m)).eraseDups
   -- (c2) frozen expected-module manifest.  `disk == imported` alone is preserved
   -- by deleting a module AND its sole root import together (both sets shrink
-  -- equally), so the tracked surface is additionally pinned to this exact 179-name
+  -- equally), so the tracked surface is additionally pinned to this exact 183-name
   -- list: any coordinated deletion, replacement (a count-preserving swap), or
   -- addition fails against `expectedMods`.
   let expectedMods : List Name :=
@@ -324,7 +324,11 @@ run_cmd do
      `RadicalRelativity.Vendor.Wigner.WignerRigidity,
      `RadicalRelativity.Octonions,
      `RadicalRelativity.OctonionNucleus,
-     `RadicalRelativity.OctonionTrace]
+     `RadicalRelativity.OctonionTrace,
+     `RadicalRelativity.Albert.Carrier,
+     `RadicalRelativity.Albert.Mul,
+     `RadicalRelativity.Albert.Inner,
+     `RadicalRelativity.Albert.Jordan]
   let missExpDisk := expectedMods.filter (fun m => !diskMods.contains m)
   let extraDisk   := diskMods.filter (fun m => !expectedMods.contains m)
   let missExpImp  := expectedMods.filter (fun m => !importedMods.contains m)
@@ -335,7 +339,7 @@ run_cmd do
   let onlyImported := importedMods.filter (fun m => !diskMods.contains m)
   if !onlyDisk.isEmpty || !onlyImported.isEmpty then
     throwError m!"Module-coverage gate FAILED. On disk but not imported (unimported source): {onlyDisk}. Imported but absent from disk (removed source / stale build): {onlyImported}"
-  logInfo m!"Census PASS: {diskMods.length} tracked RadicalRelativity modules (== frozen 179-name manifest), custom axioms exactly {citedAxioms}, every tracked persisted declaration's closure ⊆ {allowed}"
+  logInfo m!"Census PASS: {diskMods.length} tracked RadicalRelativity modules (== frozen 183-name manifest), custom axioms exactly {citedAxioms}, every tracked persisted declaration's closure ⊆ {allowed}"
 
 /-! ## Layer 2: exact-closure sentinels
 

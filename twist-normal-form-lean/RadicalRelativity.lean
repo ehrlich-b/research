@@ -711,3 +711,23 @@ import RadicalRelativity.EJA.HermitianCarrier
 import RadicalRelativity.Octonions
 import RadicalRelativity.OctonionNucleus
 import RadicalRelativity.OctonionTrace
+
+-- The Albert algebra `h₃(𝕆)`, ported from the source tree's `RadicalRelativity/Albert/`.
+-- `Albert.Carrier` supplies the 27-dimensional real vector space of hermitian 3x3 octonionic
+-- matrices, together with the `AddCommGroup`/`Module ℝ` classes on `Octonion` that
+-- `Octonions` itself does not carry and the Euclidean form `octIp`; `Albert.Mul` builds the
+-- Jordan product `a ∘ b = ½(ab + ba)` in coordinates and bundles it as
+-- `jordanBilinO : h3O →ₗ[ℝ] h3O →ₗ[ℝ] h3O`, proving `hcomm` and `jordan_unit`;
+-- `Albert.Inner` builds the trace form `⟪a, b⟫ = Tr(a ∘ b)`, its `NormedAddCommGroup` and
+-- `InnerProductSpace ℝ` instances, and the Euclidean hypothesis `hassoc`; `Albert.Jordan`
+-- proves the Jordan identity `(a ∘ b) ∘ a² = a ∘ (b ∘ a²)` and installs Mathlib's
+-- `IsCommJordan h3O`, and states formal reality in the sum-of-squares shape.  The five
+-- arguments `EJA.Order`'s `orderUnitSpaceOfBilinear` takes are therefore all available for
+-- `h₃(𝕆)`.
+-- ★ Substrate; it moves no row.  In particular row 21 `thm:albert` is NOT discharged by
+-- this: that row says an arbitrary S1--S7 product on `h₃(𝕆)` must be Lüders, and these four
+-- modules build the carrier and its algebraic structure, not a statement about products on it.
+import RadicalRelativity.Albert.Carrier
+import RadicalRelativity.Albert.Mul
+import RadicalRelativity.Albert.Inner
+import RadicalRelativity.Albert.Jordan
