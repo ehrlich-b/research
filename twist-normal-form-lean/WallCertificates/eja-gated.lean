@@ -143,6 +143,12 @@ marked, because the retraction is the content)
                            concrete carrier.  The residue is the SECOND half: `[0,q]` spans the Peirce
                            subalgebra `J₂(q)`.  GATE (E2) — ★ now DISCHARGED, see below; the row
                            stays WITHDRAWN on its own non-EJA ball clause.
+                           ★★ **AND "GATE (E2)" NEVER NAMED THIS RESIDUE — corrected 2026-08-22.**
+                           A spanning statement about `[0,q]` and `J₂(q)` is not among the gate's
+                           three conjuncts (`aOf_scalarOn`, `block_mem_J2`, `simDiag_opCommute`), so
+                           "now DISCHARGED" discharges something this row does not ask for.  No
+                           status arithmetic moves — the row is WITHDRAWN on the ball clause either
+                           way — but a reader tallying residues against the gate mis-tallies.
   row 6  [WITHDRAWN — see above; clause (ii) is already abstract, and the cited theorem was the wrong one] `lem:homog` — clause (i) (additive + order bounded ⟹ unique positive linear extension)
                            is `Necessity.seqLeftMul` in-tree; clause (ii) `(λa)·b = λ(a·b)` is in-tree
                            on the concrete carrier (ARC-8: `HermitianMat.twistSeq_smul_left`, obtained
@@ -176,6 +182,14 @@ marked, because the retraction is the content)
                            statements (Θ_r preserves each block; L_{a(r)} is block-diagonal).
                            GATE (E2) — ★ now DISCHARGED, see below; the row stays WITHDRAWN on its
                            own non-EJA `Stab(F)°` clause.
+                           ★★ **SAME CORRECTION AS ROW 5, 2026-08-22**: "Θ_r preserves each block"
+                           and "L_{a(r)} is block-diagonal" are not among the gate's three conjuncts
+                           either, so the discharge does not reach this residue.  Row stays
+                           WITHDRAWN on the `Stab(F)°` clause regardless; the mis-tally is the
+                           correction.  ★ Two rows, one habit: **"GATE (Ek)" was written as a label
+                           for "the EJA-ish part", not as a claim that the gate's conjuncts cover the
+                           residue** — and once the gate became a theorem, the label started paying
+                           out discharges to rows it had never covered.
   row 16 `lem:coalescence` — ★ BOTH CLAUSES ARE ALREADY PROVED AT THE INTERFACE'S OWN ABSTRACT
                            GENERALITY (`MasterTheorem.CoalescenceSetup.coalescence_J2q` and
                            `coalescence_block`), and instantiated on the concrete carrier.  There is
@@ -217,8 +231,18 @@ marked, because the retraction is the content)
                            scoped to the stated reason, and moving a terminal state is a campaign
                            decision.  Recorded so that it gets decided rather than inherited.
                            ★ (E2) IS still DISCHARGED (see below: `gate_E2_peirce` is a proved
-                           theorem via `EJA/InterfaceInstance.lean`'s `toCoalescenceSetup`) — that
-                           half of the 2026-08-20 update stands; only "(E3) ALONE" falls.
+                           theorem, from `EJA/InterfaceInstance.lean`'s `EJAComparison` fields
+                           `aOfScalar'` / `blockMem'` / `simDiag'`) — that half of the 2026-08-20
+                           update stands; only "(E3) ALONE" falls.  ★★ **But read the gate's
+                           2026-08-22 "WHAT IS STILL NOT BUILT" paragraph before leaning on that
+                           discharge for THIS row**: the gate's existentially-bound `J2`/`ScalarOn`
+                           make its conclusion equivalent to a Peirce-free sentence, so it certifies
+                           clause (1) of this row and **not** clause (2), `coalescence_J2q` — the
+                           clause the complex globalization actually consumes.  The strong statement
+                           is proved in `InterfaceInstance.lean`; it is the certificate that is
+                           weak.  ★ (This line said "via `toCoalescenceSetup`" until 2026-08-22 — a
+                           misattribution copied from the gate's own docstring rather than from the
+                           proof term.  Copying a citation is not checking it.)
   row 17 `lem:homomorphism` — the hyperplane clause closed in ARC-6.  GATE (E3) alone, as row 16.
                            ★ **BUT ROW 17 IS NOT WHOLLY EJA-GATED and its listing here overstates**:
                            `DiagonalHomSetup`'s `ρ`, `ρ_skew`, `dχAdd`, `dχAdd_cont` and
@@ -402,7 +426,15 @@ theorem gate_E1_spectral [FiniteDimensional ℝ J] (C : ComparisonSetup J) (H : 
 Formerly recorded as gating rows 5 and 15 (both since WITHDRAWN on non-EJA clauses) and the FK half
 of rows 16/17.  It gates nothing now: correctly stated, it is a theorem, proved below from
 `EJA/InterfaceInstance.lean`.  The three `CoalescenceSetup` fields that carried Faraut–Korányi are
-produced rather than carried. -/
+produced rather than carried.
+
+★★★ **TWO SCOPE WARNINGS ON THIS HEADING, 2026-08-22 — read the theorem's "WHAT IS STILL NOT BUILT"
+paragraph before quoting it.**  (a) **"the Peirce decomposition" overstates what exists**: the tree
+has the decomposition at a single idempotent and a pairwise split; the frame-level `⊕_{i≤j} J_{ij}`
+is not a declaration anywhere.  (b) **The theorem below certifies less than this heading suggests**:
+its `J2`/`ScalarOn` are existentially bound, and the conclusion is provably equivalent to a sentence
+with no Peirce vocabulary in it, so it certifies row 16's clause (1) and not clause (2).  Both are
+established, not suspected. -/
 
 /-- **FORMERLY GATE (E2) — the Peirce decomposition and its Faraut–Korányi rules; NOW A THEOREM.**
 
@@ -477,7 +509,37 @@ tree-facing ingredients.
   hypothesis set of the repaired statement is exactly `EJAComparison`'s: `JBPremises.jordan_identity`
   supplies `jordan_id`, and `hp_idem`/`hp_orth`/`hp_sum`/`haOf` are `p_idem`/`p_orth`/`p_sum`/`aOf_eq`
   verbatim.  So `EJA/InterfaceInstance.lean`'s `toCoalescenceSetup` discharges all three conjuncts at
-  the interface's own abstract generality, and the `sorry` is gone.
+  the interface's own abstract generality, and the `sorry` is gone.  [★ Two corrections to this
+  sentence follow immediately below: "exactly" is false, and `toCoalescenceSetup` is the wrong
+  declaration.]
+  ★★★ **"EXACTLY `EJAComparison`'s" IS FALSE — IT IS A STRICT SUPERSET, AND THE DIFFERENCE MIS-PRICES
+  THE AXIOMATIZATION.  Machine-checked 2026-08-22.**  `structure EJAComparison` requires `jordan_id`,
+  `p_idem`, `p_orth`, `aOf_eq`, `p_sum` and NOTHING ELSE — no finite dimension, no formal reality, no
+  cone of squares.  The statement below carries three hypotheses on top of those: `[FiniteDimensional
+  ℝ J]`, `JBPremises.formally_real` and `JBPremises.nonneg_iff_squares`.  **All three are inert.**  The
+  identical proof term elaborates with all three deleted, keeping only the Jordan identity — checked
+  by elaborating it, `#print axioms` giving `[propext, Classical.choice, Quot.sound]`, no `sorryAx`.
+  ★★ **The consequence is a pricing fact, not a bookkeeping one: (E2) needs the JORDAN IDENTITY ALONE.**
+  Two of the three JB-algebra premises this file was built to introduce are not required for it.
+  `EJA-DIVIDEND.md`'s ARC-9 header already knew this ("(E2) at a given idempotent needs the Jordan
+  identity and the invertibility of `2`; nothing else"); the gate statement never caught up, and
+  `[FiniteDimensional ℝ J]`'s own inertness note sits two paragraphs above this sentence,
+  contradicting it.  ★ Same defect kind as the `[FiniteDimensional ℝ J]` note itself records: **a
+  hypothesis copied for symmetry rather than for need** — and then a claim of exactness written over
+  the copy without elaborating it once.
+  ★ **Nit in the same sentence, and it propagated:** the proof does **not** go through
+  `toCoalescenceSetup`.  It applies `E.aOfScalar'`, `E.blockMem'` and `E.simDiag'` directly (read the
+  `exact` below).  `toCoalescenceSetup` is a *different* declaration that bundles those same three
+  fields into a `CoalescenceSetup`; naming it here reads as though the gate needed the bundle.
+  ★ **Scope of that nit, checked against the diff rather than asserted (2026-08-22):** it lives in
+  this file only, twice — here and in the row-16 line above, where the 2026-08-22 correction pass
+  carried it forward while rewriting the sentence around it.  **`STATEMENT-MANIFEST.md` and
+  `EJA-DIVIDEND.md` are NOT sites of it**: their `toCoalescenceSetup` mentions are about
+  `EJAComparison` producing a `CoalescenceSetup` on `H_N(ℂ)`, which is exactly what that declaration
+  does.  ★★ The first draft of this correction said the misattribution had reached the manifest too;
+  `git show` on the pass's own commit shows it had not.  **A correction that names extra victims is
+  still a false claim, and it is the kind that gets believed** — the reader has no reason to re-check
+  a self-accusation.
   ★ **CONSEQUENCE FOR THE ROWS, propagated below: (E2) is DISCHARGED and rows 16/17 are gated by (E3)
   ALONE.**  `STATEMENT-MANIFEST.md` already said this on 08-13; this file did not, and the two
   contradicted each other at HEAD for a week — in the file that teaches "fix the row, not just the
@@ -491,7 +553,44 @@ tree-facing ingredients.
   ★ And the stated *reason* for the weakening no longer holds: `Real.exp` is available —
   `EJA/InterfaceInstance.lean` imports `Mathlib.Analysis.SpecialFunctions.Exp` and uses exactly that
   form.  **A hypothesis weakened for an import-convenience reason, with the weakening's cost
-  mis-assessed in the same sentence that recorded it.** -/
+  mis-assessed in the same sentence that recorded it.**
+
+★★★ **WHAT IS STILL NOT BUILT, AND WHAT A READER MUST NOT CONCLUDE (added 2026-08-22).**  `gate_E1`
+below carries a paragraph of exactly this shape, separating "the gate is discharged" from "(E1) is
+done".  (E2) had none, and needs the identical one — more urgently, because (E2) is the gate whose
+*statement* is weaker than its name.  Nothing here retracts the theorem: it is true, sorry-free, and
+its axioms are exactly `[propext, Classical.choice, Quot.sound]`.
+
+  * **THE STATEMENT CERTIFIES LESS THAN THE PROOF PROVES, and the gap is structural.**  `J2` and
+    `ScalarOn` are **existentially bound and free in the statement**.  They are pinned to real
+    definitions only inside the *proof* — and the statement is what a reader audits.  Machine-checked
+    2026-08-22, in both directions: the conclusion below is **equivalent** to the single sentence
+
+      `∀ r i j b, r i = r j → IsBlockElt C.jordan C.p i j b → OpCommute C.jordan (C.aOf r) b`
+
+    (forward by instantiating the three conjuncts; backward by taking `J2 := IsBlockElt …` and
+    `ScalarOn i j a := ∃ r, r i = r j ∧ a = C.aOf r`, the minimal witnesses conjuncts 1 and 2 force).
+    **That sentence contains no Peirce decomposition, no `J₂(q)`, and no scalar-on-range vocabulary at
+    all.**  So this gate certifies the FK input to row 16's clause (1) — `coalescence_block` — and
+    **does not certify clause (2)**, `coalescence_J2q`, which quantifies over an arbitrary `a` scalar
+    on `range(q)` and an arbitrary `b ∈ J₂(q)`.
+    ★★ **The strong version genuinely IS proved — in `EJA/InterfaceInstance.lean`, where `ScalarOn'`
+    and `J2'` are definitions with real extensions.  The certificate under-certifies its own tree.**
+    ★★★ **Transferable rule, and it is the third lesson this one statement has taught: AN EXISTENTIAL
+    OVER THE PREDICATES CANNOT CERTIFY ANYTHING ABOUT THE INTENDED PREDICATES.**  The existential was
+    the right repair for the original *falsity* (it removed the free universally-quantified predicate
+    variables) and the wrong *shape for evidence*.  Certifying FK vocabulary requires the predicates
+    **defined and universally quantified**, not guessed at existentially.  The antitonicity analysis
+    twice recorded above is the same fact seen from the falsity side; this is it seen from the
+    evidence side.
+  * **THE FRAME-LEVEL PEIRCE DECOMPOSITION IS NOT BUILT.**  The section header calls (E2) "the Peirce
+    decomposition" and `EJA-DIVIDEND.md` scopes it as `J = ⊕_{i≤j} J_{ij}` over a Jordan frame with
+    the FK rules.  What the tree has is the decomposition at a **single** idempotent
+    (`EJA/Peirce.lean:292`, `exists_peirce_decomposition`) and a **pairwise** split
+    (`EJA/Block.lean:96`, `exists_block_split`).  The assembled direct sum over a frame is a
+    declaration that does not exist — declaration lists of all 15 `EJA/*.lean` files, 2026-08-22.
+    "GATE (E2) is discharged" and "(E2) is done" are different sentences, and only the first is
+    true. -/
 theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (H : JBPremises C)
     (hp_idem : ∀ i, C.jordan (C.p i) (C.p i) = C.p i)
     (hp_orth : ∀ i j, i ≠ j → C.jordan (C.p i) (C.p j) = 0)
