@@ -659,3 +659,17 @@ import RadicalRelativity.EJA.PeirceSubalgebra
 -- independent, so a frame's cardinality is bounded by the dimension.  Frame conjugacy is NOT
 -- proved and is not needed -- see the module docstring.  Substrate; it moves no row.
 import RadicalRelativity.EJA.Rank
+
+-- The octonion algebra and its trace form (infrastructure for the Albert branch).
+-- `Octonions` builds `𝕆` as `Fin 8 → ℝ` with the Fano-plane table and proves the
+-- composition-algebra facts component-wise (alternativity, `N(ab) = N(a)N(b)`, the three
+-- Moufang identities, `conj_mul`, `mul_conj`); `OctonionNucleus` proves `nucleus 𝕆 = ℝ`;
+-- `OctonionTrace` proves the trace form `⟨x, y⟩ = re (x ȳ)` is symmetric, *associative*,
+-- and positive definite -- the hypothesis the `EJA` layer needs before it can apply to
+-- `h₃(𝕆)`.  The source tree carried three custom `axiom` declarations alongside these
+-- (Hurwitz's classification, `Aut(𝕆) = G₂`, `S⁶ = G₂/SU(3)`, the latter two `True`
+-- placeholders); nothing consumed them and they were dropped rather than ported, so this
+-- tree still carries no custom axioms.  Substrate; it moves no row.
+import RadicalRelativity.Octonions
+import RadicalRelativity.OctonionNucleus
+import RadicalRelativity.OctonionTrace

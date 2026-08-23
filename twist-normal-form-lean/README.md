@@ -12,8 +12,8 @@ but see Provenance: some of the code is third-party, vendored in.
 
 ## Provenance — first-party vs vendored
 
-Of the tree's 50,965 lines, **12,499 are third-party code vendored verbatim**
-(pinned, Apache 2.0, per-file copyright headers retained). ★ Counts as of 2026-08-22;
+Of the tree's 55,328 lines, **12,499 are third-party code vendored verbatim**
+(pinned, Apache 2.0, per-file copyright headers retained). ★ Counts as of 2026-08-22 23:10 EDT;
 reproduce with `find RadicalRelativity RadicalRelativity.lean -name '*.lean' -exec cat {} + | wc -l`
 and the same over `RadicalRelativity/Vendor`. The first figure read 41,135 for three arcs after it
 stopped being true, and went stale again the same day it was corrected, which is why the command is
@@ -93,10 +93,12 @@ earlier version of this file said it was. `H_n(ℍ)`: the carrier exists here
 reason, so the row runs through the embedding `H_n(ℍ) ↪ H_2n(ℂ)`; on that route the single
 named gap is the **transfer** — that an S1--S7 product on the quaternionic carrier forces
 `Θ_r = id` — and not quaternionic Wigner rigidity. `H₃(𝕆)`: the octonions are **not** missing
-from every prover; they were built in the sibling development
-(`~/repos/research/lean/RadicalRelativity/Octonions.lean`, zero `sorry`), and that claim was
-retracted on 2026-08-08. What is absent is an `H₃(𝕆)` carrier *in this tree* and the
-Albert-branch work above it. `THEOREM-MAP.md` is the governing ledger for
+from every prover; they were built in the sibling development, and that claim was
+retracted on 2026-08-08. ★ As of 2026-08-22 they are no longer only in the sibling
+development: `Octonions.lean`, `OctonionNucleus.lean` and `OctonionTrace.lean` are **in this
+tree** (see "Octonion substrate" below), so the algebra, `nucleus 𝕆 = ℝ`, and the associative
+trace form are all machine-checked here. What is still absent is an `H₃(𝕆)` carrier and the
+Albert-branch work above it; the row has not moved. `THEOREM-MAP.md` is the governing ledger for
 what is and is not verified; read it before reading any row here as a claim.
 
 ## Axiom audit
@@ -149,6 +151,24 @@ They are copied so this project stands alone; they are **not** paper content.
 | `RadicalRelativity/LocalTomography.lean`    | composite / local-tomography structures |
 | `RadicalRelativity/SpinFactor.lean`         | spin-factor algebraic-core instance (S2 not yet claimed) |
 
+### Octonion substrate (copied from the parent development, 2026-08-22)
+
+Landed for the Albert branch. **No paper module depends on these and no manifest row
+moved when they landed**; they are tracked here only so the census audits them on the
+same terms as everything else.
+
+| Module | Role |
+| --- | --- |
+| `RadicalRelativity/Octonions.lean`       | `𝕆` as `Fin 8 → ℝ` with the Fano-plane table: alternativity, `N(ab) = N(a)N(b)`, the three Moufang identities, `conj_mul`, `mul_conj`, and `non_associative` |
+| `RadicalRelativity/OctonionNucleus.lean` | `nucleus 𝕆 = ℝ·1`, by the finite Cayley-table check |
+| `RadicalRelativity/OctonionTrace.lean`   | the trace form `⟨x, y⟩ = re (x ȳ)` is symmetric, **associative**, and positive definite — the hypothesis the `EJA` layer needs before it can apply to `h₃(𝕆)` |
+
+The parent development carries three custom `axiom` declarations alongside these
+(Hurwitz's classification, `Aut(𝕆) = G₂`, `S⁶ = G₂/SU(3)`, the latter two `True`
+placeholders). Nothing consumed them; they were **dropped rather than ported**, so the
+census still reports custom axioms exactly `[]`. `Albert.lean` and `F4.lean` from the
+parent development did not land: they carry `sorry`s and further custom axioms.
+
 ### Paper modules
 
 **Twist normal form**
@@ -184,9 +204,10 @@ implication quantified over the §2 interface fields. See "Axiom audit" above an
 - `RadicalRelativity/Selection/TwistIsotropy.lean`
 
 **The rest of the tree** — where the two unconditional rows actually live. The
-lists above are the abstract layer only; they are a small minority of the 165
-modules under `RadicalRelativity/` (166 tracked declaration-bearing modules, counting the
-root aggregator), so the map is completed by directory rather than by file.
+lists above are the abstract layer only; they are a small minority of the 174
+modules under `RadicalRelativity/` (175 tracked declaration-bearing modules, counting the
+root aggregator; measured 2026-08-22 23:10 EDT, and the audit prints its own denominator —
+read that rather than this), so the map is completed by directory rather than by file.
 ★ Reproduce every count in the table with
 `for d in EJA Hermitian Necessity RankTwo PaperA Wigner Vendor; do echo "$d $(find RadicalRelativity/$d -name '*.lean' | wc -l)"; done`
 — these numbers went stale **four** times, the third within the same session that corrected
@@ -196,11 +217,11 @@ and this tree changes faster than the prose describing it:
 
 | Directory | Modules | Role |
 | --- | --- | --- |
-| `RadicalRelativity/EJA/` | 15 | **the EJA layer (ARC-9, 2026-08-12; extended 2026-08-22)** — Jordan-algebra theory whose only Jordan input is Mathlib's `IsCommJordan` (plus the real scalars, which are load-bearing: the Peirce layer divides by `2` and Albert's theorem needs every integer invertible): the Peirce decomposition at an idempotent with its Faraut–Korányi multiplication rules, orthogonal idempotent families and the three FK facts `CoalescenceSetup` carries as citations, **Albert's power-associativity theorem**, formal reality and the absence of nilpotents, the one-generator subalgebra, and **the single-element spectral theorem** (`EJA/Spectral.lean`, 2026-08-22 — unit-free, with a complete form taking the unit as a hypothesis, live on `HermitianMat d 𝕜`, and carried into the interface's bilinear-map vocabulary). ★ This is (E2) of `EJA-DIVIDEND.md` and the resolution half of (E1); **no manifest row depends on it yet**, and none moved when it landed. Row 13's residue is the spectral *inverse*, which is a functional calculus on the resolution and is not built |
+| `RadicalRelativity/EJA/` | 19 | **the EJA layer (ARC-9, 2026-08-12; extended 2026-08-22)** — Jordan-algebra theory whose only Jordan input is Mathlib's `IsCommJordan` (plus the real scalars, which are load-bearing: the Peirce layer divides by `2` and Albert's theorem needs every integer invertible): the Peirce decomposition at an idempotent with its Faraut–Korányi multiplication rules, orthogonal idempotent families and the three FK facts `CoalescenceSetup` carries as citations, **Albert's power-associativity theorem**, formal reality and the absence of nilpotents, the one-generator subalgebra, and **the single-element spectral theorem** (`EJA/Spectral.lean`, 2026-08-22 — unit-free, with a complete form taking the unit as a hypothesis, live on `HermitianMat d 𝕜`, and carried into the interface's bilinear-map vocabulary). ★ This is (E2) of `EJA-DIVIDEND.md` and the resolution half of (E1); **no manifest row depends on it yet**, and none moved when it landed. Row 13's residue is the spectral *inverse*, which is a functional calculus on the resolution and is not built |
 | `RadicalRelativity/Hermitian/` | 13 | the concrete carrier `HermitianMat n 𝕜`: order-unit layer, extreme effects = projections, twist family, CFC continuity, sequential-product instances, and the two v4.33 migration modules (`RCLikeGeneral`, `OperatorInstances`) described in `RadicalRelativity/Vendor/VENDOR.md` |
 | `RadicalRelativity/Necessity/` | 76 | the two flagship rows end to end — comparison-map instances, the ℂ twist extraction and its globalization, the ℝ rigidity, the Kadison discharges, and the capstones `complex_classification_unconditional` / `real_classification` |
 | `RadicalRelativity/RankTwo/` | 8 | rank-two moduli space, complementation/descent to `ℝP²`, separation, and the frame-dependent twist product with the classification correspondence (`n2SequentialProduct`, `n2QubitModuli`, `qubit_classification_up_to_effects`). ★ This cell said "the classification *map* is absent" until 2026-08-12; it was built 2026-08-09. The correspondence is a bijection **up to agreement on effects** — the article's literal "onto the products" is refuted for this encoding (`not_exists_moduli_of_badP`), so read `THEOREM-MAP.md` §1 before reading this as the article's corollary |
-| `RadicalRelativity/PaperA/` | 3 | frozen statement shapes plus the certification that the two proved rows meet them |
+| `RadicalRelativity/PaperA/` | 4 | frozen statement shapes plus the certification that the two proved rows meet them |
 | `RadicalRelativity/Wigner/` | 1 | first-party finite-dimensional real, non-bijective Wigner theorem (see Provenance) |
 | `RadicalRelativity/Vendor/` | 25 | vendored third-party islands (see Provenance) |
 
