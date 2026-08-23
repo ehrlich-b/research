@@ -518,6 +518,71 @@ theorem spectral_resolution_complete (e : J) (he : ∀ y : J, e * y = y) (x : J)
   · rw [Fin.sum_univ_castSucc]
     simpa using hx
 
+
+/-! ## The evaluation identity on a resolution
+
+`jeval x p` is morally `x·p(x)` (its `n`-th term is `p.coeff n • jpow x n` and `jpow x n` is
+`x^{n+1}`).  On a spectral resolution `x = ∑ᵢ λᵢ cᵢ` over an orthogonal idempotent family it
+therefore collapses to `∑ᵢ λᵢ·p(λᵢ) cᵢ`, which is the shape a functional calculus is built on.
+
+`STATEMENT-MANIFEST.md` row 13 records this identity as absent from the tree; it is proved here.
+It is *not* a functional calculus on its own — that additionally needs the resolution to be
+canonical, which nothing here supplies. -/
+
+section Calculus
+
+variable {J : Type*} [NonUnitalNonAssocCommRing J] [IsCommJordan J] [Module ℝ J]
+  [IsScalarTower ℝ J J]
+
+omit [IsCommJordan J] in
+/-- Scalars pull out of both factors of a Jordan product. -/
+theorem smul_mul_smul_eq (a b : ℝ) (x y : J) : (a • x) * (b • y) = (a * b) • (x * y) := by
+  have h2 : x * (b • y) = b • (x * y) := by
+    rw [mul_comm x (b • y), smul_mul_assoc, mul_comm y x]
+  rw [smul_mul_assoc, h2, smul_smul]
+
+omit [IsCommJordan J] in
+/-- **Powers on a resolution.**  On an orthogonal idempotent family the `k`-th Jordan power of
+`∑ᵢ λᵢ cᵢ` is `∑ᵢ λᵢ^{k+1} cᵢ`: cross terms die by orthogonality, diagonal terms collapse by
+idempotence. -/
+theorem jpow_sum_smul_of_orthIdem {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    (lam : Fin n → ℝ) (k : ℕ) :
+    jpow (∑ i, lam i • c i) k = ∑ i, (lam i) ^ (k + 1) • c i := by
+  induction k with
+  | zero => simp
+  | succ k ih =>
+      rw [jpow_succ, ih, Finset.sum_mul_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [Finset.sum_eq_single i]
+      · rw [smul_mul_smul_eq, hfam.idem i]
+        congr 1
+        ring
+      · intro j _ hji
+        rw [smul_mul_smul_eq, hfam.orth i j (Ne.symm hji), smul_zero]
+      · intro h
+        exact absurd (Finset.mem_univ i) h
+
+/-- **The evaluation identity on a resolution.**  `jeval x p = ∑ᵢ λᵢ·p(λᵢ) cᵢ`.
+
+The `λᵢ` factor in front of `p(λᵢ)` is not a slip: `jeval` is `x·p(x)`, not `p(x)`, because the
+ambient algebra is not assumed unital and `jpow x 0 = x`. -/
+theorem jeval_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    (lam : Fin n → ℝ) (p : Polynomial ℝ) :
+    jeval (∑ i, lam i • c i) p = ∑ i, (lam i * p.eval (lam i)) • c i := by
+  induction p using Polynomial.induction_on' with
+  | add p q hp hq =>
+      rw [map_add, hp, hq, ← Finset.sum_add_distrib]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [← add_smul, Polynomial.eval_add, mul_add]
+  | monomial m a =>
+      rw [jeval_monomial, jpow_sum_smul_of_orthIdem hfam, Finset.smul_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [smul_smul, Polynomial.eval_monomial]
+      congr 1
+      ring
+
+end Calculus
+
 end Split
 
 
