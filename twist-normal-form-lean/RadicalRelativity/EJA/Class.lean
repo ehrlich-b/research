@@ -304,6 +304,44 @@ theorem quadJ_eq_peirceOne {c : J} (hc : c * c = c) : quadJ c = peirceOne c := b
   ext y
   rw [quadJ_apply, peirceOne_apply, hc]
 
+/-- **The square root of an idempotent is itself.**  Via the two-element resolution
+`c = 1·c + 0·(1−c)`, whose family `{c, 1−c}` is orthogonal idempotent and complete, and whose
+eigenvalues `{1, 0}` are distinct and nonnegative. -/
+theorem jsqrt_idem [FiniteDimensional ℝ J] {c : J} (hc : c * c = c) :
+    jsqrt 1 EuclideanJordanAlgebra.one_mul c = c := by
+  have hc1 : c * (1 : J) = c := by
+    rw [mul_comm]; exact EuclideanJordanAlgebra.one_mul c
+  have horth : c * ((1 : J) - c) = 0 := by rw [mul_sub, hc1, hc, sub_self]
+  have horth' : ((1 : J) - c) * c = 0 := by rw [mul_comm]; exact horth
+  have hone : ((1 : J) - c) * ((1 : J) - c) = 1 - c := by
+    rw [sub_mul, EuclideanJordanAlgebra.one_mul, horth, sub_zero]
+  have hfam : IsOrthIdemFamily ![c, (1 : J) - c] := by
+    refine ⟨fun i => ?_, fun i j hij => ?_⟩
+    · fin_cases i
+      · simpa using hc
+      · simpa using hone
+    · fin_cases i <;> fin_cases j
+      · exact absurd rfl hij
+      · simpa using horth
+      · simpa using horth'
+      · exact absurd rfl hij
+  have hinj : Function.Injective ![(1 : ℝ), 0] := by
+    intro i j h
+    fin_cases i <;> fin_cases j <;> simp_all
+  have hres : c = ∑ i, ![(1 : ℝ), 0] i • ![c, (1 : J) - c] i := by
+    rw [Fin.sum_univ_two]
+    simp
+  rw [jsqrt_eq_of_resolution 1 EuclideanJordanAlgebra.one_mul c hfam hinj hres, Fin.sum_univ_two]
+  simp
+
+/-- **The Lüders map, concretely.**  At a *sharp* effect the candidate product is the Peirce-1
+projection: `c · b = Q_{√c} b = Q_c b = P₁(c) b`.
+
+This is the operation the article is about, appearing on the nose. -/
+theorem quadJ_jsqrt_idem [FiniteDimensional ℝ J] {c : J} (hc : c * c = c) (b : J) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul c) b = peirceOne c b := by
+  rw [jsqrt_idem hc, quadJ_eq_peirceOne hc]
+
 /-! ## S4 for the candidate sequential product
 
 `a · b := Q_{√a} b`.  This section proves **S4, symmetry of orthogonality**: `a · b = 0` implies
