@@ -292,6 +292,18 @@ theorem quadJ_jsqrt_one [FiniteDimensional ℝ J] {a : J} {n : ℕ} {c : Fin n �
   exact jsqrt_mul_self 1 EuclideanJordanAlgebra.one_mul a hfam hinj ha hnn
 
 
+/-- **At an idempotent, the quadratic representation IS the Peirce-1 projection.**
+
+`Q_c = 2L_c² − L_{c²}` and `P₁(c) = 2L_c² − L_c` are the same operator once `c² = c`.
+
+★ This is the bridge between `quadJ` and the Peirce layer the tree already carries in depth, and
+it is what makes the candidate product concrete at a **sharp** effect: since `√c = c` for an
+idempotent, `c · b = Q_{√c} b = P₁(c) b`, which is the Lüders map.  (That `√c = c` is not proved
+here — it needs the two-element resolution `c = 1·c + 0·(1−c)`.) -/
+theorem quadJ_eq_peirceOne {c : J} (hc : c * c = c) : quadJ c = peirceOne c := by
+  ext y
+  rw [quadJ_apply, peirceOne_apply, hc]
+
 /-! ## S4 for the candidate sequential product
 
 `a · b := Q_{√a} b`.  This section proves **S4, symmetry of orthogonality**: `a · b = 0` implies
