@@ -188,4 +188,199 @@ theorem block_sq_act (F : JordanFrame J n) {i j k : Fin n} (hij : i ≠ j) (hjk 
   simp only [mul_zero, mul_smul_comm, hpjy, hxxy, _root_.mul_comm (x * y) x] at H
   linear_combination (norm := module) -H
 
+/-! ## Consequences of the square rule -/
+
+section SquareConsequences
+
+/-- Pairing `x ∘ x = a • (pᵢ + pⱼ)` against `pᵢ`. -/
+theorem sq_coeff_left (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {x : J}
+    (hx : x ∈ frameBlockRaw F i j) {a : ℝ} (hxx : x * x = a • (F.p i + F.p j)) :
+    a * (inner ℝ (F.p i) (F.p i) : ℝ) = (2 : ℝ)⁻¹ * (inner ℝ x x : ℝ) := by
+  have h := inner_sq_p_of_mem F hij hx
+  rw [hxx] at h
+  simp only [real_inner_smul_left, inner_add_left, inner_p_p_of_ne F (Ne.symm hij)] at h
+  linarith [h]
+
+/-- Pairing `x ∘ x = a • (pᵢ + pⱼ)` against `pⱼ`. -/
+theorem sq_coeff_right (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {x : J}
+    (hx : x ∈ frameBlockRaw F i j) {a : ℝ} (hxx : x * x = a • (F.p i + F.p j)) :
+    a * (inner ℝ (F.p j) (F.p j) : ℝ) = (2 : ℝ)⁻¹ * (inner ℝ x x : ℝ) := by
+  have hx' : x ∈ frameBlockRaw F j i := (frameBlockRaw_comm F i j) ▸ hx
+  have h := inner_sq_p_of_mem F (Ne.symm hij) hx'
+  rw [hxx] at h
+  simp only [real_inner_smul_left, inner_add_left, inner_p_p_of_ne F hij] at h
+  linarith [h]
+
+/-- A block element whose square vanishes is itself zero — positive-definiteness, not
+formal reality. -/
+theorem eq_zero_of_sq_coeff_zero (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {x : J}
+    (hx : x ∈ frameBlockRaw F i j) (hxx : x * x = (0 : ℝ) • (F.p i + F.p j)) : x = 0 := by
+  have h := sq_coeff_left F hij hx hxx
+  rw [zero_mul] at h
+  have h0 : (inner ℝ x x : ℝ) = 0 := by linarith [h]
+  exact inner_self_eq_zero (𝕜 := ℝ) |>.mp h0
+
+/-- **`⟪pᵢ, pᵢ⟫ = ⟪pⱼ, pⱼ⟫` as soon as `V_{ij}` contains a nonzero element.**
+
+The two pairings of `x ∘ x = a • (pᵢ + pⱼ)` both return `½‖x‖²`, so `a τᵢ = a τⱼ`, and `a ≠ 0`
+because `a τᵢ = ½‖x‖² > 0`.  This is what makes the coordinate norm form below unambiguous:
+the normalisation constant is the same at every index a connection reaches. -/
+theorem inner_p_eq_of_sq (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {x : J}
+    (hx : x ∈ frameBlockRaw F i j) {a : ℝ} (hxx : x * x = a • (F.p i + F.p j)) (ha : a ≠ 0) :
+    (inner ℝ (F.p i) (F.p i) : ℝ) = (inner ℝ (F.p j) (F.p j) : ℝ) :=
+  mul_left_cancel₀ ha ((sq_coeff_left F hij hx hxx).trans (sq_coeff_right F hij hx hxx).symm)
+
+end SquareConsequences
+
+/-! ## The composition law on the blocks
+
+★ This is the result the coordinate algebra is built out of: the blocks compose, so a
+normalised element of `V_{ij}` acts on `V_{jk}` as an isometry up to the scalar `a`. -/
+
+section Composition
+
+variable [FiniteDimensional ℝ J]
+
+omit [FiniteDimensional ℝ J] in
+/-- **`‖x ∘ y‖² = (a/4)‖y‖²`** for `x ∈ V_{ij}`, `y ∈ V_{jk}`: `block_sq_act` paired against
+`y` through the associativity of the inner product. -/
+theorem inner_mul_self_of_block (F : JordanFrame J n) {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k)
+    (hik : i ≠ k) {x y : J} (hx : x ∈ frameBlockRaw F i j) (hy : y ∈ frameBlockRaw F j k)
+    {a : ℝ} (hxx : x * x = a • (F.p i + F.p j)) :
+    (inner ℝ (x * y) (x * y) : ℝ) = a / 4 * (inner ℝ y y : ℝ) := by
+  rw [inner_assoc x y (x * y), block_sq_act F hij hjk hik hx hy hxx, real_inner_smul_right]
+
+/-- **The composition law.**  For `x ∈ V_{ij}` and `y ∈ V_{jk}` with `x ∘ x = a • (pᵢ + pⱼ)` and
+`y ∘ y = b • (pⱼ + p_k)`, the product `2 (x ∘ y) ∈ V_{ik}` satisfies
+
+  `(2 (x ∘ y)) ∘ (2 (x ∘ y)) = (a b) • (pᵢ + p_k)`.
+
+So the coefficient of the square — the norm form of the coordinate algebra — is multiplicative
+under the doubled product `x ⊙ y = 2 (x ∘ y)`.  Everything is bookkeeping around
+`block_sq_act` except the identification `τᵢ = τⱼ`, which `inner_p_eq_of_sq` supplies. -/
+theorem block_mul_sq (F : JordanFrame J n) {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k)
+    (hik : i ≠ k) {x y : J} (hx : x ∈ frameBlockRaw F i j) (hy : y ∈ frameBlockRaw F j k)
+    {a b : ℝ} (hxx : x * x = a • (F.p i + F.p j)) (hyy : y * y = b • (F.p j + F.p k)) :
+    ((2 : ℝ) • (x * y)) * ((2 : ℝ) • (x * y)) = (a * b) • (F.p i + F.p k) := by
+  rcases eq_or_ne a 0 with ha | ha
+  · subst ha
+    have hx0 : x = 0 := eq_zero_of_sq_coeff_zero F hij hx hxx
+    rw [hx0, zero_mul']
+    simp
+  have hz : (2 : ℝ) • (x * y) ∈ frameBlockRaw F i k :=
+    Submodule.smul_mem _ _ (frameBlockRaw_mul_middle F hij hjk hik hx hy)
+  obtain ⟨c, hc, hcspec⟩ := exists_sq_smul F hik hz
+  have hτ : (inner ℝ (F.p i) (F.p i) : ℝ) = (inner ℝ (F.p j) (F.p j) : ℝ) :=
+    inner_p_eq_of_sq F hij hx hxx ha
+  have hyn : b * (inner ℝ (F.p j) (F.p j) : ℝ) = (2 : ℝ)⁻¹ * (inner ℝ y y : ℝ) :=
+    sq_coeff_left F hjk hy hyy
+  have hzn : (inner ℝ ((2 : ℝ) • (x * y)) ((2 : ℝ) • (x * y)) : ℝ)
+      = a * (inner ℝ y y : ℝ) := by
+    rw [real_inner_smul_left, real_inner_smul_right,
+      inner_mul_self_of_block F hij hjk hik hx hy hxx]
+    ring
+  rw [hzn] at hcspec
+  have hτi : (0 : ℝ) < inner ℝ (F.p i) (F.p i) := inner_p_self_pos F i
+  have hcab : c = a * b := by
+    have h1 : c * (inner ℝ (F.p i) (F.p i) : ℝ) = a * b * (inner ℝ (F.p i) (F.p i) : ℝ) := by
+      linear_combination hcspec - a * hyn - a * b * hτ
+    exact mul_right_cancel₀ (ne_of_gt hτi) h1
+  rw [hc, hcab]
+
+end Composition
+
+/-! ## Connectors
+
+A **connector** for the pair `(i, j)` is an element `c ∈ V_{ij}` with `c ∘ c = pᵢ + pⱼ`: a
+square root of the rank-two idempotent inside the block.  It exists exactly when the block is
+nonzero, and `y ↦ 2 (c ∘ y)` is then an involutive linear isomorphism `V_{jk} ≃ V_{ik}`. -/
+
+section Connector
+
+/-- A square root of `pᵢ + pⱼ` inside `V_{ij}`. -/
+def IsConnector (F : JordanFrame J n) (i j : Fin n) (c : J) : Prop :=
+  c ∈ frameBlockRaw F i j ∧ c * c = F.p i + F.p j
+
+theorem IsConnector.mem {F : JordanFrame J n} {i j : Fin n} {c : J} (h : IsConnector F i j c) :
+    c ∈ frameBlockRaw F i j := h.1
+
+theorem IsConnector.sq {F : JordanFrame J n} {i j : Fin n} {c : J} (h : IsConnector F i j c) :
+    c * c = F.p i + F.p j := h.2
+
+theorem IsConnector.sq' {F : JordanFrame J n} {i j : Fin n} {c : J} (h : IsConnector F i j c) :
+    c * c = (1 : ℝ) • (F.p i + F.p j) := by rw [h.sq, one_smul]
+
+/-- A connector is symmetric in its two indices. -/
+theorem IsConnector.symm {F : JordanFrame J n} {i j : Fin n} {c : J} (h : IsConnector F i j c) :
+    IsConnector F j i c :=
+  ⟨(frameBlockRaw_comm F i j) ▸ h.mem, by rw [h.sq, add_comm]⟩
+
+variable [FiniteDimensional ℝ J]
+
+/-- **A nonzero block has a connector.**  Normalise: `x ∘ x = a • (pᵢ + pⱼ)` with `a > 0`, and
+`c := a^{-1/2} • x` has `c ∘ c = pᵢ + pⱼ`. -/
+theorem exists_isConnector (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {x : J}
+    (hx : x ∈ frameBlockRaw F i j) (hx0 : x ≠ 0) : ∃ c : J, IsConnector F i j c := by
+  obtain ⟨a, ha, haspec⟩ := exists_sq_smul F hij hx
+  have hxx : (0 : ℝ) < inner ℝ x x := real_inner_self_pos.mpr hx0
+  have hτi : (0 : ℝ) < inner ℝ (F.p i) (F.p i) := inner_p_self_pos F i
+  have hapos : 0 < a := by nlinarith [haspec, hxx, hτi]
+  refine ⟨(Real.sqrt a)⁻¹ • x, Submodule.smul_mem _ _ hx, ?_⟩
+  rw [smul_mul, mul_smul_comm, ha, smul_smul, smul_smul]
+  have hcoef : (Real.sqrt a)⁻¹ * (Real.sqrt a)⁻¹ * a = 1 := by
+    have hs : Real.sqrt a * Real.sqrt a = a := Real.mul_self_sqrt hapos.le
+    have hs0 : Real.sqrt a ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hapos)
+    field_simp
+    linarith [hs]
+  rw [hcoef, one_smul]
+
+/-- **`c ∘ (c ∘ y) = ¼ • y` for a connector `c` on `(i, j)` and `y ∈ V_{jk}`** — `block_sq_act`
+at `a = 1`. -/
+theorem IsConnector.act {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k)
+    (hik : i ≠ k) {c : J} (hc : IsConnector F i j c) {y : J} (hy : y ∈ frameBlockRaw F j k) :
+    c * (c * y) = (4 : ℝ)⁻¹ • y := by
+  have h := block_sq_act F hij hjk hik hc.mem hy hc.sq'
+  rw [h]; norm_num
+
+omit [FiniteDimensional ℝ J] in
+/-- The transfer map `y ↦ 2 (c ∘ y)` attached to a connector. -/
+def connMap (c : J) : J →ₗ[ℝ] J := (2 : ℝ) • jmulₗ J c
+
+@[simp] theorem connMap_apply (c y : J) : connMap c y = (2 : ℝ) • (c * y) := rfl
+
+/-- The transfer map carries `V_{jk}` into `V_{ik}`. -/
+theorem connMap_mem {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k)
+    (hik : i ≠ k) {c : J} (hc : IsConnector F i j c) {y : J} (hy : y ∈ frameBlockRaw F j k) :
+    connMap c y ∈ frameBlockRaw F i k :=
+  Submodule.smul_mem _ _ (frameBlockRaw_mul_middle F hij hjk hik hc.mem hy)
+
+/-- **The transfer map is an involution on `V_{jk}`.**  Applying it twice multiplies by
+`4 c ∘ (c ∘ ·) = 1`.  Note the two applications run in opposite directions, `V_{jk} → V_{ik}`
+and then `V_{ik} → V_{jk}`, so the hypothesis is used at both index orders. -/
+theorem connMap_connMap {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k)
+    (hik : i ≠ k) {c : J} (hc : IsConnector F i j c) {y : J} (hy : y ∈ frameBlockRaw F j k) :
+    connMap c (connMap c y) = y := by
+  rw [connMap_apply, connMap_apply, mul_smul_comm, smul_smul,
+    IsConnector.act hij hjk hik hc hy, smul_smul]
+  norm_num
+
+/-- **The transfer map preserves the square coefficient.**  If `y ∘ y = b • (pⱼ + p_k)` then
+`(2 (c ∘ y)) ∘ (2 (c ∘ y)) = b • (pᵢ + p_k)` — `block_mul_sq` at `a = 1`. -/
+theorem connMap_sq {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k)
+    (hik : i ≠ k) {c : J} (hc : IsConnector F i j c) {y : J} (hy : y ∈ frameBlockRaw F j k)
+    {b : ℝ} (hyy : y * y = b • (F.p j + F.p k)) :
+    connMap c y * connMap c y = b • (F.p i + F.p k) := by
+  have h := block_mul_sq F hij hjk hik hc.mem hy hc.sq' hyy
+  rw [connMap_apply, h, _root_.one_mul]
+
+/-- The transfer map carries connectors to connectors: `V_{jk} ∋ d ↦ 2 (c ∘ d)` is a connector
+for `(i, k)`. -/
+theorem IsConnector.transfer {F : JordanFrame J n} {i j k : Fin n} (hij : i ≠ j) (hjk : j ≠ k)
+    (hik : i ≠ k) {c d : J} (hc : IsConnector F i j c) (hd : IsConnector F j k d) :
+    IsConnector F i k (connMap c d) :=
+  ⟨connMap_mem hij hjk hik hc hd.mem, by
+    rw [connMap_sq hij hjk hik hc hd.mem hd.sq', one_smul]⟩
+
+end Connector
+
 end RadicalRelativity.EJA
