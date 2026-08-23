@@ -73,3 +73,11 @@ import RadicalRelativity.ObserverInterface
 import RadicalRelativity.GaugeGroup
 import RadicalRelativity.Chirality
 import RadicalRelativity.RhoJ
+
+-- Albert algebra, landing-grade rebuild (Layer 1): the 27-dimensional carrier, the Jordan
+-- product as a bundled bilinear map, and the trace form with the Euclidean hypothesis
+-- `hassoc`. Separate from the older expository RadicalRelativity.Albert, which is left alone.
+-- The Jordan identity is deliberately absent; nothing here assumes it.
+import RadicalRelativity.Albert.Carrier
+import RadicalRelativity.Albert.Mul
+import RadicalRelativity.Albert.Inner
