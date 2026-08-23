@@ -542,25 +542,34 @@ theorem smul_mul_smul_eq (a b : ℝ) (x y : J) : (a • x) * (b • y) = (a * b)
   rw [smul_mul_assoc, h2, smul_smul]
 
 omit [IsCommJordan J] in
+/-- **Elements spanned by one orthogonal idempotent family multiply coefficientwise.**  The
+workhorse: cross terms die by orthogonality, diagonal terms collapse by idempotence.  Everything
+else in this section is a corollary. -/
+theorem sum_smul_mul_sum_smul_of_orthIdem {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    (a b : Fin n → ℝ) :
+    (∑ i, a i • c i) * (∑ i, b i • c i) = ∑ i, (a i * b i) • c i := by
+  rw [Finset.sum_mul_sum]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Finset.sum_eq_single i]
+  · rw [smul_mul_smul_eq, hfam.idem i]
+  · intro j _ hji
+    rw [smul_mul_smul_eq, hfam.orth i j (Ne.symm hji), smul_zero]
+  · intro h
+    exact absurd (Finset.mem_univ i) h
+
+omit [IsCommJordan J] in
 /-- **Powers on a resolution.**  On an orthogonal idempotent family the `k`-th Jordan power of
-`∑ᵢ λᵢ cᵢ` is `∑ᵢ λᵢ^{k+1} cᵢ`: cross terms die by orthogonality, diagonal terms collapse by
-idempotence. -/
+`∑ᵢ λᵢ cᵢ` is `∑ᵢ λᵢ^{k+1} cᵢ`. -/
 theorem jpow_sum_smul_of_orthIdem {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
     (lam : Fin n → ℝ) (k : ℕ) :
     jpow (∑ i, lam i • c i) k = ∑ i, (lam i) ^ (k + 1) • c i := by
   induction k with
   | zero => simp
   | succ k ih =>
-      rw [jpow_succ, ih, Finset.sum_mul_sum]
+      rw [jpow_succ, ih, sum_smul_mul_sum_smul_of_orthIdem hfam]
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [Finset.sum_eq_single i]
-      · rw [smul_mul_smul_eq, hfam.idem i]
-        congr 1
-        ring
-      · intro j _ hji
-        rw [smul_mul_smul_eq, hfam.orth i j (Ne.symm hji), smul_zero]
-      · intro h
-        exact absurd (Finset.mem_univ i) h
+      congr 1
+      ring
 
 /-- **The evaluation identity on a resolution.**  `jeval x p = ∑ᵢ λᵢ·p(λᵢ) cᵢ`.
 
@@ -580,6 +589,55 @@ theorem jeval_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily
       rw [smul_smul, Polynomial.eval_monomial]
       congr 1
       ring
+
+
+/-! ### Inverses and square roots on a resolution
+
+`STATEMENT-MANIFEST.md` row 13 records that "no declaration produces an inverse".  These do, on a
+resolution.  Both are `def`s over an explicitly given resolution rather than functions of the
+element: the resolution `spectral_resolution_complete` produces is existential, and nothing in
+the tree yet makes it canonical, so `jinvOfResolution c lam` is *an* inverse relative to `(c, lam)`
+and `jsqrtOfResolution c lam` *a* square root, not "the" one.  Canonicity is a separate result and
+is not claimed here. -/
+
+/-- The inverse of `∑ᵢ λᵢ cᵢ` relative to the resolution `(c, lam)`: invert the eigenvalues. -/
+noncomputable def jinvOfResolution {n : ℕ} (c : Fin n → J) (lam : Fin n → ℝ) : J :=
+  ∑ i, (lam i)⁻¹ • c i
+
+omit [IsCommJordan J] in
+/-- **An inverse, produced.**  If no eigenvalue vanishes and the family is complete for `e`, then
+`jinvOfResolution` is a two-sided inverse of `∑ᵢ λᵢ cᵢ` for `e` (two-sided is one-sided here: the
+algebra is commutative). -/
+theorem mul_jinvOfResolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hlam : ∀ i, lam i ≠ 0) {e : J} (hsum : (∑ i, c i) = e) :
+    (∑ i, lam i • c i) * jinvOfResolution c lam = e := by
+  rw [jinvOfResolution, sum_smul_mul_sum_smul_of_orthIdem hfam, ← hsum]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [mul_inv_cancel₀ (hlam i), one_smul]
+
+/-- A square root of `∑ᵢ λᵢ cᵢ` relative to the resolution `(c, lam)`: take roots of the
+eigenvalues. -/
+noncomputable def jsqrtOfResolution {n : ℕ} (c : Fin n → J) (lam : Fin n → ℝ) : J :=
+  ∑ i, Real.sqrt (lam i) • c i
+
+omit [IsCommJordan J] in
+/-- **A square root, produced.**  Needs the eigenvalues nonnegative, which is where the order
+enters; `Real.sqrt` is junk-valued below zero and the identity fails there. -/
+theorem jsqrtOfResolution_mul_self {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hlam : ∀ i, 0 ≤ lam i) :
+    jsqrtOfResolution c lam * jsqrtOfResolution c lam = ∑ i, lam i • c i := by
+  rw [jsqrtOfResolution, sum_smul_mul_sum_smul_of_orthIdem hfam]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Real.mul_self_sqrt (hlam i)]
+
+omit [IsCommJordan J] in
+/-- **Existence form.**  An element carrying a resolution with nonnegative eigenvalues has a
+square root.  Deriving the hypothesis from `0 ≤ x` in the order of `EJA/Order.lean` is a separate
+step and is not done here. -/
+theorem exists_mul_self_eq_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hlam : ∀ i, 0 ≤ lam i) {x : J} (hx : x = ∑ i, lam i • c i) :
+    ∃ s : J, s * s = x :=
+  ⟨jsqrtOfResolution c lam, by rw [jsqrtOfResolution_mul_self hfam hlam, hx]⟩
 
 end Calculus
 
