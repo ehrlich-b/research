@@ -713,6 +713,46 @@ theorem idem_eq_jeval_lagrange {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFam
   · intro h
     exact absurd (Finset.mem_univ k) h
 
+/-- **The nonzero spectrum is a function of the element, not of the resolution.**
+
+A nonzero `t` carries a present idempotent in *some* resolution of `x` exactly when every
+annihilator of `x` vanishes at `t`.  The right-hand side mentions only `x`, so any two resolutions
+of the same element expose the same nonzero eigenvalues.
+
+Backwards is the substantive direction: `∏ (X − λᵢ)` over the present nonzero eigenvalues
+annihilates `x` — at a zero eigenvalue the `λᵢ` factor of `jeval` kills the term, and at a nonzero
+one the product does — so it must vanish at `t`, forcing `t` to be one of them.
+
+★ Zero is excluded and must be: `jeval` is `x·p(x)`, so the zero eigenvalue is invisible to every
+annihilator and cannot be detected this way. -/
+theorem exists_idem_iff_forall_jann_eval {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    (lam : Fin n → ℝ) {t : ℝ} (ht : t ≠ 0) :
+    (∃ i, c i ≠ 0 ∧ lam i = t) ↔ ∀ p ∈ jann (∑ i, lam i • c i), p.eval t = 0 := by
+  classical
+  constructor
+  · rintro ⟨i, hci, rfl⟩ p hp
+    have hzero := (jeval_eq_zero_iff_of_resolution hfam lam p).mp (mem_jann.mp hp) i hci
+    exact (mul_eq_zero.mp hzero).resolve_left ht
+  · intro h
+    set S : Finset (Fin n) := Finset.univ.filter (fun i => c i ≠ 0 ∧ lam i ≠ 0) with hS
+    set q : Polynomial ℝ := ∏ i ∈ S, (X - C (lam i)) with hq
+    have hqann : q ∈ jann (∑ i, lam i • c i) := by
+      rw [mem_jann]
+      refine (jeval_eq_zero_iff_of_resolution hfam lam q).mpr fun i hci => ?_
+      by_cases hli : lam i = 0
+      · rw [hli, zero_mul]
+      · have hiS : i ∈ S := Finset.mem_filter.mpr ⟨Finset.mem_univ i, hci, hli⟩
+        have hev : q.eval (lam i) = 0 := by
+          rw [hq, Polynomial.eval_prod]
+          exact Finset.prod_eq_zero hiS (by simp)
+        rw [hev, mul_zero]
+    have hqt : q.eval t = 0 := h q hqann
+    rw [hq, Polynomial.eval_prod] at hqt
+    obtain ⟨i, hiS, hi0⟩ := Finset.prod_eq_zero_iff.mp hqt
+    refine ⟨i, (Finset.mem_filter.mp hiS).2.1, ?_⟩
+    simp only [Polynomial.eval_sub, Polynomial.eval_X, Polynomial.eval_C, sub_eq_zero] at hi0
+    exact hi0.symm
+
 /-- **A Lagrange basis polynomial depends only on the set of nodes, not on how they are indexed.**
 
 `Lagrange.basis s v i = ∏_{j ≠ i} basisDivisor (v i) (v j)`, so two injective indexings with the
