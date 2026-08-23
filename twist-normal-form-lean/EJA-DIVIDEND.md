@@ -166,7 +166,7 @@ does not fire the ARC-8 orders' skip condition. That condition is *literally zer
 axiomatization removes part of the residue on **nine** rows. **The pre-registered program decision —
 the EJA axiomatization happens before Paper A submits — stands, and this pass did not reopen it.**
 It also moves no manifest row's status word and changes no coverage count; the counts remain
-12 FORMALIZED / 19 PARTIAL / 5 ABSENT.
+12 FORMALIZED / 19 PARTIAL / 5 ABSENT. ★★ STALE AS OF 2026-08-23 — the census is now **16 FORMALIZED / 17 PARTIAL / 3 ABSENT**, seven moves later. This file must never restate the count: `STATEMENT-MANIFEST.md` carries the one census line, derived by script from the row table.
 
 ★★★ **What the retraction IS, in one sentence: this file was pricing the wrong axis.** Its three
 gates (E1) (E2) (E3) are all Jordan-algebraic, and what rows 13, 16 and 17 are blocked on is **order

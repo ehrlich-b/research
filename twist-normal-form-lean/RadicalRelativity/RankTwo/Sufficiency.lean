@@ -1522,9 +1522,16 @@ from `C(ℝP², ℝ)` onto the norm-continuous S1–S7 products on `H_2(ℂ)` **
 distinct parameters differ on some pair of effects, and every such product agrees on effects with
 `∘_t` for exactly one `t`.
 
-★ The "up to agreement on effects" is not a weakening for convenience — it is forced.  The article's
-literal "onto the products" is false for this encoding (`not_exists_moduli_of_badP`), because every
-`SequentialProductOn` axiom is `IsEffect`-guarded and so cannot see the operation off the effects. -/
+★ The "up to agreement on effects" is not a weakening for convenience.  The article's literal
+"onto the products" is false for this encoding (`not_exists_moduli_of_badP`), because every
+`SequentialProductOn` axiom is `IsEffect`-guarded and so cannot see the operation off the effects.
+★★ CORRECTED 2026-08-23: this docstring said the hedge was **forced** and that it was "the only
+form the axioms can support".  That is FALSE as of tonight's `PaperA` layer.  `restrictSp` /
+`extendSp` (`:1794`, `:1852`) with `restrictSp_extendSp` an equality of structures give the
+article's own object — an operation on `Effect V` — and `restrictSp_n2_bijective` states the
+bijection there, at the encoding `def:sp` (`main.tex:367`) and `rem:moduli` (`main.tex:1417`)
+actually use.  `badP` was a counterexample to this development's totality convention, never to the
+article's corollary.  The same false phrase stood in `THEOREM-MAP.md:75` and is struck there. -/
 theorem qubit_classification_up_to_effects :
     (∀ t₁ t₂ : C(RP2, ℝ),
         (∀ a b : HermitianMat (Fin 2) ℂ, IsEffect a → IsEffect b → n2Sp t₁ a b = n2Sp t₂ a b) →

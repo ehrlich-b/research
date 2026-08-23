@@ -199,7 +199,7 @@ three rows are blocked on **order structure** — `SequentialProductOn` is decla
 `[OrderUnitSpace V]` (`SequentialProduct.lean:244`) and `RadicalRelativity/EJA/` contains zero
 occurrences of `OrderUnitSpace` and zero of `IsEffect`, measured per file across all 15 files. ★ **This
 does NOT fire the do-it-unless-it-does-literally-nothing test** (nine rows still move in part) and it
-changes no status word and no coverage count; the census stays 12 FORMALIZED / 19 PARTIAL / 5 ABSENT.
+changes no status word and no coverage count; the census stood at 12 FORMALIZED / 19 PARTIAL / 5 ABSENT **when this block was written**. ★ It is 16 / 17 / 3 as of 2026-08-23; a dated arc record states the count of its own moment and must say so.
 Read `EJA-DIVIDEND.md`'s "The decision, on this evidence" before quoting any verdict from this
 paragraph.
 
