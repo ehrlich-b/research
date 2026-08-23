@@ -659,6 +659,13 @@ import RadicalRelativity.EJA.PeirceSubalgebra
 -- independent, so a frame's cardinality is bounded by the dimension.  Frame conjugacy is NOT
 -- proved and is not needed -- see the module docstring.  Substrate; it moves no row.
 import RadicalRelativity.EJA.Rank
+-- Existence of a Jordan frame.  Every finite-dimensional Euclidean Jordan algebra with `1 != 0`
+-- carries one, by induction on the dimension down the Peirce decomposition of a nontrivial
+-- idempotent.  The load-bearing step is `J_2(d) subset J_2(c)` for `d` an idempotent of
+-- `J_2(c)`, which the induction needs to transfer primitivity out of the subalgebra and which
+-- was in no earlier module.  The frame's cardinality is NOT claimed to be the rank.
+-- Substrate; it moves no row.
+import RadicalRelativity.EJA.FrameExists
 
 -- The octonion algebra and its trace form (infrastructure for the Albert branch).
 -- `Octonions` builds `𝕆` as `Fin 8 → ℝ` with the Fano-plane table and proves the
