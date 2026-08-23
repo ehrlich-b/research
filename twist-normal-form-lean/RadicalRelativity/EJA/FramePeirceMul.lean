@@ -33,7 +33,7 @@ single-idempotent rules **except** `V_{ij} ∘ V_{ij} ⊆ ℝ∙pᵢ + ℝ∙p�
 unpriced: `eigen_half_mul_half` gives the projection identity, but *pinning the two coefficients*
 was expected to need the trace form, and no in-tree lemma had been matched to that step.
 
-**The trace form is not used.**  The step is two lines of completeness.  For `x, y ∈ V_{ij}` put
+**The trace form is not used.**  The step is the frame's completeness.  For `x, y ∈ V_{ij}` put
 `z := x ∘ y`.  Every `p_k` with `k ∉ {i,j}` kills both factors, so `eigen_zero_mul_zero` kills
 `z`; hence
 
@@ -81,17 +81,20 @@ Everything *before* the `Primitive` section runs on `F.orthIdem` and `F.complete
 ★ `rank J = n` is **not** available and nothing here is a step towards it — `dim V_{ii} = 1` is a
 statement about one block of a frame carried as data, not about the rank of `J`.
 
-★ `EJA/FramePeirce.lean`'s docstring says the class has no carrier and that nothing in the tree
-exhibits an object its theorems apply to.  That was true when it was written and is **no longer
-true**: `EJA/HermitianCarrier.lean` supplies `instEuclideanJordanAlgebraHermitianMat`, an
-`EuclideanJordanAlgebra (HermitianMat n 𝕜)` conditional only on `[Fintype n] [DecidableEq n]
-[RCLike 𝕜]` and not on any ambient instance, and `hermitian_exists_jordanFrame` puts a Jordan
-frame on it.  So the theorems below have a live carrier and a live frame.
+★ **There is a carrier and a named frame**, so the theorems below are not statements about an
+empty class: `EJA/HermitianCarrier.lean` supplies `instEuclideanJordanAlgebraHermitianMat` and
+`diagJordanFrame : JordanFrame (HermitianMat n ℂ) (Fintype.card n)`.  **Nothing below has been
+instantiated on it** — that is a live, cheap follow-up, not a claim about what is possible.
 
-What is still absent there is anything *explicit*: `hermitian_exists_jordanFrame` is an existence
-statement obtained from `EJA/FrameExists.lean`, no file exhibits the matrix-unit frame
-`(e₁₁, …, eₙₙ)`, and the cardinality `k` of the frame it produces is not identified with
-`card n`.  Nothing below has been instantiated on the carrier.
+★ Do not quote this paragraph for the carrier's state; read `EJA/HermitianCarrier.lean`.  Three
+successive drafts of these two sentences were false within hours of being written — first "the
+class has no carrier", then "no frame is exhibited", then "primitivity of the diagonal matrix
+units is not proved" — each one accurate when written and overtaken by a commit the same night.
+The durable part is the one below.
+
+★ `rank J = n` is not proved for **any** frame, `diagJordanFrame` included: `EJA/Rank.lean`
+bounds a frame's cardinality by the rank and by the dimension, and nothing anywhere converts
+`dim V_{ii} = 1` into a statement about `rank J`.
 -/
 
 noncomputable section
