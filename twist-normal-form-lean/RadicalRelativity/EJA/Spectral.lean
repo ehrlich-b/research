@@ -650,6 +650,57 @@ theorem exists_mul_self_eq_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsO
 
 end Calculus
 
+
+/-- **A resolution with distinct eigenvalues.**  Merging the idempotents that share an eigenvalue
+leaves an orthogonal idempotent family, still complete for `e`, whose coefficients are injective.
+
+This is the first step toward a **canonical** resolution, which is what the tree actually lacks.
+Without distinctness the same element has many resolutions, differing in how a repeated eigenvalue
+is split among idempotents, so no function of `x` alone can be read off one — which is exactly why
+`jinvOfResolution` and `jsqrtOfResolution` above are relative to a resolution rather than functions
+of the element, and why `SequentialProductOnEJA` still has no inhabitant. -/
+theorem exists_resolution_distinct (e : J) (he : ∀ y : J, e * y = y) (x : J) :
+    ∃ (n : ℕ) (c : Fin n → J) (lam : Fin n → ℝ),
+      IsOrthIdemFamily c ∧ (∑ i, c i) = e ∧ x = ∑ i, lam i • c i ∧
+        Function.Injective lam := by
+  classical
+  obtain ⟨m, q, mu, hfam, hsum, hx⟩ := spectral_resolution_complete e he x
+  set S : Finset ℝ := Finset.image mu Finset.univ with hSdef
+  set d : ℝ → J := fun t => ∑ i ∈ Finset.univ.filter (fun i => mu i = t), q i with hddef
+  have hmaps : ∀ i ∈ (Finset.univ : Finset (Fin m)), mu i ∈ S := fun i _ =>
+    Finset.mem_image_of_mem mu (Finset.mem_univ i)
+  have hdidem : ∀ t, d t * d t = d t := fun t => hfam.sum_idem _
+  have hdorth : ∀ t u, t ≠ u → d t * d u = 0 := by
+    intro t u htu
+    rw [hddef]
+    simp only
+    rw [Finset.sum_mul_sum]
+    refine Finset.sum_eq_zero fun i hi => Finset.sum_eq_zero fun j hj => ?_
+    refine hfam.orth i j ?_
+    rintro rfl
+    exact htu (((Finset.mem_filter.mp hi).2).symm.trans (Finset.mem_filter.mp hj).2)
+  have hdsum : (∑ t ∈ S, d t) = e := by
+    rw [hddef]
+    simp only
+    rw [Finset.sum_fiberwise_of_maps_to hmaps]
+    exact hsum
+  have hxd : x = ∑ t ∈ S, t • d t := by
+    rw [hx, ← Finset.sum_fiberwise_of_maps_to hmaps (fun i => mu i • q i)]
+    refine Finset.sum_congr rfl fun t _ => ?_
+    rw [hddef]
+    simp only
+    rw [Finset.smul_sum]
+    exact Finset.sum_congr rfl fun i hi => by rw [(Finset.mem_filter.mp hi).2]
+  have hinj : Function.Injective (fun k : Fin S.card => ((S.equivFin.symm k : ℝ))) := by
+    intro k l hkl
+    exact S.equivFin.symm.injective (Subtype.ext hkl)
+  refine ⟨S.card, fun k => d ((S.equivFin.symm k : ℝ)), fun k => ((S.equivFin.symm k : ℝ)),
+    ⟨fun k => hdidem _, fun k l hkl => hdorth _ _ fun h => hkl (hinj h)⟩, ?_, ?_, hinj⟩
+  · rw [← hdsum, ← Finset.sum_coe_sort S d]
+    exact Equiv.sum_comp S.equivFin.symm (fun a : {y // y ∈ S} => d (a : ℝ))
+  · rw [hxd, ← Finset.sum_coe_sort S (fun t => t • d t)]
+    exact (Equiv.sum_comp S.equivFin.symm (fun a : {y // y ∈ S} => (a : ℝ) • d (a : ℝ))).symm
+
 end Split
 
 
