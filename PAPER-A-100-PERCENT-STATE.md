@@ -364,3 +364,27 @@ on 2026-08-23. Route new work upward.
 declarations the way their section headers suggest. Two theorems had to be relocated after being
 written above their dependencies. Grep for the dependency's line number before choosing an anchor.
 
+## S5-S7: the obstruction, VERIFIED at source (2026-08-23)
+
+S5 (compatible associativity) and S7 (multiplicativity of compatibility) turn on the **fundamental
+formula** `Q_{Q_a b} = Q_a Q_b Q_a`, and S6 on the same operator-commutation theory.
+
+**Mathlib does not have it.** Checked rather than assumed, because this manifest has been burned by
+unverified "Mathlib lacks X" claims before:
+
+* `Mathlib/Algebra/Jordan/Basic.lean` is the ONLY Jordan-algebra file. It carries `IsJordan`
+  (`lmul_comm_rmul`, `lmul_lmul_comm_rmul`, `lmul_comm_rmul_rmul`) and `IsCommJordan`, and nothing
+  else — no quadratic representation, no fundamental formula, no Peirce theory.
+* Every other Mathlib file matching "Jordan" is unrelated: `Order/JordanHolder`,
+  `LinearAlgebra/JordanChevalley`, `GroupTheory/GroupAction/Jordan`,
+  `MeasureTheory/VectorMeasure/Decomposition/Jordan{,Sub}`,
+  `Algebra/Lie/AdjointAction/JordanChevalley`.
+* Zero hits for "quadratic representation", "fundamental formula", "Macdonald", "Shirshov"
+  anywhere in Mathlib (the files that DO match "fundamental" are `RingTheory/Lasker`,
+  `IsPrimary`, `AssociatedPrime`, `Artinian` — unrelated senses of the word).
+
+So S5-S7 require building the fundamental formula in-tree, from `IsCommJordan` plus the Peirce
+layer. That is a genuine multi-day theorem, not an assembly, and it is the honest price of rows 13
+and 16. ★ Do NOT extrapolate from how fast S4 went: S4 consumed no Jordan identity beyond what
+`inner_mul_self_nonneg_of_idem` already used.
+
