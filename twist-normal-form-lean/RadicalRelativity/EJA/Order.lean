@@ -437,6 +437,45 @@ theorem mul_eq_zero_of_inner_mul_self_eq_zero
   have eh : peirceHalf c y = 0 := inner_self_eq_zero.mp (keyh.trans hzh)
   rw [hsplit, e1, eh, smul_zero, add_zero]
 
+/-- **Orthogonality to an idempotent, on the cone, is Jordan orthogonality.**
+
+If `b` is a sum of squares and pairs to zero with an idempotent `c`, then `c ∘ b = 0` outright.
+Each square contributes `⟪L_c fᵢ, fᵢ⟫ ≥ 0`, so a vanishing total forces every term to vanish,
+`mul_eq_zero_of_inner_mul_self_eq_zero` turns each into `c ∘ fᵢ = 0`, and `J₀(c)` being a
+subalgebra (`eigen_zero_mul_zero`) carries that to the squares. -/
+theorem mul_isSoS_eq_zero_of_inner_eq_zero
+    (hcomm : ∀ x y : J, m x y = m y x)
+    (hjordan : ∀ a b : J, m (m a b) (m a a) = m a (m b (m a a)))
+    (hassoc : ∀ x y z : J, inner ℝ (m x y) z = inner ℝ y (m x z))
+    {c : J} (hc : m c c = c) {b : J} (hb : IsSoS m b)
+    (h : (inner ℝ c b : ℝ) = 0) : m c b = 0 := by
+  letI : NonUnitalNonAssocCommRing J := ringOfBilinear m hcomm
+  letI : IsCommJordan J := ⟨hjordan⟩
+  letI : IsScalarTower ℝ J J := ⟨fun r x y => smul_bilinear m r x y⟩
+  have hc' : c * c = c := hc
+  obtain ⟨k, f, hf⟩ := hb
+  have hstep : ∀ i, (inner ℝ c (m (f i) (f i)) : ℝ) = inner ℝ (m c (f i)) (f i) := by
+    intro i
+    calc inner ℝ c (m (f i) (f i))
+        = inner ℝ (m (f i) (f i)) c := real_inner_comm _ _
+      _ = inner ℝ (f i) (m (f i) c) := hassoc (f i) (f i) c
+      _ = inner ℝ (f i) (m c (f i)) := by rw [hcomm (f i) c]
+      _ = inner ℝ (m c (f i)) (f i) := real_inner_comm _ _
+  have hnn : ∀ i, (0 : ℝ) ≤ inner ℝ (m c (f i)) (f i) := fun i =>
+    inner_mul_self_nonneg_of_idem hcomm hjordan hassoc hc (f i)
+  have hsum : (∑ i, (inner ℝ (m c (f i)) (f i) : ℝ)) = 0 := by
+    rw [← h, hf, inner_sum]
+    exact (Finset.sum_congr rfl fun i _ => hstep i).symm
+  have hzero : ∀ i, (c * f i : J) = 0 := by
+    intro i
+    refine mul_eq_zero_of_inner_mul_self_eq_zero hcomm hjordan hassoc hc ?_
+    exact (Finset.sum_eq_zero_iff_of_nonneg fun j _ => hnn j).mp hsum i (Finset.mem_univ i)
+  show (c * b : J) = 0
+  rw [hf]
+  show (c * ∑ i, (f i * f i) : J) = 0
+  rw [Finset.mul_sum]
+  exact Finset.sum_eq_zero fun i _ => eigen_zero_mul_zero hc' (hzero i) (hzero i)
+
 /-- **A sum of squares has nonnegative spectral coefficients.**
 
 Pairing against `q k` reads the coefficient off — the idempotents are pairwise orthogonal for
