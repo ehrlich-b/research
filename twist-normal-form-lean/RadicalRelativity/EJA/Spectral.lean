@@ -624,6 +624,19 @@ theorem quadJ_unit {e : J} (he : ∀ y : J, e * y = y) (a : J) : quadJ a e = a *
   rw [quadJ_apply, mul_comm a e, he, mul_comm (a * a) e, he]
   module
 
+/-- **`Q_e` is the identity.**  With `√e = e`, this is S3 (unitality) for the candidate product
+`a · b = Q_{√a} b`, discharged outright. -/
+theorem quadJ_unit_left {e : J} (he : ∀ y : J, e * y = y) (b : J) : quadJ e b = b := by
+  rw [quadJ_apply]
+  simp only [he]
+  module
+
+/-- **S1 (additivity in the acted-on argument) is free**, because `quadJ a` is a linear map by
+construction.  Recorded as a named theorem rather than left implicit, so that the claim
+"S1 and S3 fall out" is checkable rather than asserted. -/
+theorem quadJ_add (a b d : J) : quadJ a (b + d) = quadJ a b + quadJ a d :=
+  map_add _ _ _
+
 /-! ### Inverses and square roots on a resolution
 
 `STATEMENT-MANIFEST.md` row 13 records that "no declaration produces an inverse".  These do, on a
