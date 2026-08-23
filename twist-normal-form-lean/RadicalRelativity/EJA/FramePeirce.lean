@@ -72,13 +72,16 @@ to `ℝ ∙ pᵢ`: that is the next module's `dim V_{ii} = 1`, and it is not pro
 carried as data.  See `EJA/Rank.lean`'s module docstring.  Do not read
 `frameBlock_isInternal` as a statement about the rank.
 
-★ **No carrier.**  The only `EuclideanJordanAlgebra` instances in the tree are
-`EJA/PeirceSubalgebra.lean`'s two, and both are *conditional* on an ambient
-`[EuclideanJordanAlgebra J]`.  Nothing in the tree exhibits a base model of the class, so
-nothing here demonstrates that a `JordanFrame J n` exists for any concrete `J` — only
-`EJA/FrameExists.lean`'s conditional existence.  The theorems below are not vacuous as
-*statements* (they are universally quantified over the class, and their proofs are ordinary
-Jordan algebra), but the tree does not yet contain a single object they apply to.
+★ **The carrier arrived after this file — this paragraph used to say the opposite.**  As
+written on 2026-08-23 it recorded that the only `EuclideanJordanAlgebra` instances in the tree
+were `EJA/PeirceSubalgebra.lean`'s two, both *conditional* on an ambient
+`[EuclideanJordanAlgebra J]`, so that nothing exhibited a base model and the results below
+applied to no concrete algebra.  That was true when written and is **false now**:
+`EJA/HermitianCarrier.lean`'s `instEuclideanJordanAlgebraHermitianMat` makes
+`HermitianMat n 𝕜` an instance for every `RCLike 𝕜`, and its `hermitian_exists_jordanFrame`
+and `hermitian_frameBlock_isInternal` (both under `[Nonempty n]`, which is what `1 ≠ 0` needs)
+are `exists_jordanFrame` and `frameBlock_isInternal` read on that carrier.  So the theorems
+below are statements about a live object, not only about an unwitnessed class.
 
 ## Scope
 
