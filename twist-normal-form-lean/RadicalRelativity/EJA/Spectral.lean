@@ -713,6 +713,45 @@ theorem idem_eq_jeval_lagrange {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFam
   · intro h
     exact absurd (Finset.mem_univ k) h
 
+/-- **A Lagrange basis polynomial depends only on the set of nodes, not on how they are indexed.**
+
+`Lagrange.basis s v i = ∏_{j ≠ i} basisDivisor (v i) (v j)`, so two injective indexings with the
+same image and the same distinguished node give literally the same product.  Stated here because
+uniqueness of a spectral resolution needs to compare interpolants built over two different index
+types. -/
+theorem lagrange_basis_congr {n m : ℕ} {v : Fin n → ℝ} {w : Fin m → ℝ}
+    (hv : Function.Injective v) (hw : Function.Injective w)
+    (himg : Finset.image v Finset.univ = Finset.image w Finset.univ)
+    {i : Fin n} {j : Fin m} (hij : v i = w j) :
+    Lagrange.basis Finset.univ v i = Lagrange.basis Finset.univ w j := by
+  classical
+  have hstep : ∀ {k : ℕ} (u : Fin k → ℝ), Function.Injective u → ∀ a : Fin k,
+      Lagrange.basis Finset.univ u a
+        = ∏ t ∈ (Finset.image u Finset.univ).erase (u a), Lagrange.basisDivisor (u a) t := by
+    intro k u hu a
+    rw [Lagrange.basis, show (Finset.image u Finset.univ).erase (u a)
+        = (Finset.univ.erase a).image u from (Finset.image_erase hu Finset.univ a).symm,
+      Finset.prod_image (fun p _ q _ h => hu h)]
+  rw [hstep v hv i, hstep w hw j, hij, himg]
+
+/-- **Uniqueness of a resolution's idempotents.**  Two distinct-eigenvalue resolutions of the same
+element, over the same eigenvalue set, assign the same idempotent to a shared nonzero eigenvalue.
+
+Both idempotents are `jeval x` of the *same* interpolant — the element is the same by hypothesis
+and the interpolant is the same by `lagrange_basis_congr` — so they are equal for the reason the
+canonicity argument wants: neither is a choice. -/
+theorem idem_unique_of_resolutions {n m : ℕ} {c : Fin n → J} {d : Fin m → J}
+    (hc : IsOrthIdemFamily c) (hd : IsOrthIdemFamily d)
+    {lc : Fin n → ℝ} {ld : Fin m → ℝ}
+    (hinjc : Function.Injective lc) (hinjd : Function.Injective ld)
+    (himg : Finset.image lc Finset.univ = Finset.image ld Finset.univ)
+    (hx : (∑ i, lc i • c i) = ∑ j, ld j • d j)
+    {k : Fin n} {l : Fin m} (hkl : lc k = ld l) (hk : lc k ≠ 0) :
+    c k = d l := by
+  have hk' : ld l ≠ 0 := hkl ▸ hk
+  rw [← idem_eq_jeval_lagrange hc hinjc k hk, ← idem_eq_jeval_lagrange hd hinjd l hk', hx, hkl,
+    lagrange_basis_congr hinjc hinjd himg hkl]
+
 /-- **A resolution with distinct eigenvalues.**  Merging the idempotents that share an eigenvalue
 leaves an orthogonal idempotent family, still complete for `e`, whose coefficients are injective.
 
