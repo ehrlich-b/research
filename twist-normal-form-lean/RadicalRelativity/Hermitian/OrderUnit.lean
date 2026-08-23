@@ -23,8 +23,10 @@ the master chain, and defines the order-unit norm.
 * `HermitianMat.le_norm_smul_one` / `neg_norm_smul_one_le` — order-unit boundedness
   with the explicit witness `r = ‖a‖` (Frobenius), both sides.
 * `HermitianMat.le_zero_of_forall_le_smul_one` — the **full Archimedean property**
-  over ℂ (the abstract class's `archimedean` field is only order-unit boundedness;
-  this is the genuinely stronger statement, recorded here concretely).
+  at every `RCLike 𝕜` (the abstract class's `archimedean` field is only order-unit
+  boundedness; this is the genuinely stronger statement, recorded here concretely).
+  Restated for the abstract predicate as `isArchimedean`, and in the textbook
+  ℕ-form as `isArchNat`, both also at `𝕜`.
 * `instance : OrderUnitSpace (HermitianMat n 𝕜)` — unit `1`, Loewner order,
   Frobenius norm.  Under this instance `OrderUnitSpace.IsEffect a` is
   *definitionally* `0 ≤ a ∧ a ≤ 1` (`isEffect_iff`), so the vendored effect-interval
@@ -34,10 +36,10 @@ the master chain, and defines the order-unit norm.
   Frobenius norm; introducing a second bundled norm would create an instance clash
   (LEDGER 1.1).  Attainment of the infimum (`neg_ouNorm_smul_one_le`,
   `le_ouNorm_smul_one`) comes from closedness of the PSD cone
-  (`HermitianMat.isClosed_nonneg`, vendored), not from eigenvalue bookkeeping,
-  so everything except the Archimedean statement and the eigenvalue bounds is
-  uniform in `RCLike 𝕜`.
-* `HermitianMat.eigenvalues_mem_Icc_of_effect` — effects have spectrum in `[0,1]` (ℂ).
+  (`HermitianMat.isClosed_nonneg`, vendored), not from eigenvalue bookkeeping.
+  Everything in this file is uniform in `RCLike 𝕜` — the Archimedean statement and
+  the eigenvalue bounds included; this line used to except those two, and did not.
+* `HermitianMat.eigenvalues_mem_Icc_of_effect` — effects have spectrum in `[0,1]`.
 
 The norm-equivalence discharge `ouNorm ≍ ‖·‖` (THEOREM-MAP's S2 literal-fidelity
 caveat, LEDGER 1.4) is the final section: `ouNorm_le_norm` and
@@ -68,7 +70,7 @@ theorem exists_nonneg_le_smul_one (a : HermitianMat n 𝕜) :
     ∃ r : ℝ, 0 ≤ r ∧ a ≤ r • 1 :=
   ⟨‖a‖, norm_nonneg a, le_norm_smul_one a⟩
 
-/-- **The full Archimedean property** of the Loewner order on `H_n(ℂ)`: an element
+/-- **The full Archimedean property** of the Loewner order on `H_n(𝕜)`: an element
 below every positive multiple of the unit is nonpositive.  (The `archimedean` field
 of `OrderUnitSpace` is only order-unit boundedness; this is the stronger condition,
 proved here via the eigenvalue characterization of `a ≤ ε • 1`.) -/
@@ -110,7 +112,7 @@ theorem isCompact_setOf_isEffect :
     IsCompact {a : HermitianMat n 𝕜 | OrderUnitSpace.IsEffect a} :=
   unitInterval_IsCompact
 
-/-- Effects have eigenvalues in `[0,1]` (ℂ). -/
+/-- Effects have eigenvalues in `[0,1]` (𝕜). -/
 theorem eigenvalues_mem_Icc_of_effect {a : HermitianMat n 𝕜}
     (h0 : 0 ≤ a) (h1 : a ≤ 1) (i : n) :
     a.H.eigenvalues i ∈ Set.Icc (0 : ℝ) 1 :=

@@ -25,8 +25,10 @@ and outer products carry different numbers.
 `α·𝟙 + n·σ`, and its unordered spectral frame *is* the `ℝP²` point of its Bloch axis `n`.  Two
 Hermitian matrices commute exactly when their Bloch axes are parallel — and that is an
 elementary computation, not a spectral argument: the three components of `n_a × n_b` are the
-`(0,0)` and `(0,1)` entries of the commutator.  So "compatible ⟹ same frame ⟹ same parameter"
-comes out of `blochHerm_parallel_of_commute`, with no eigenvectors and no simultaneous
+`(0,0)` and `(0,1)` entries of the commutator.  **Only the `⟹` direction is formalized here**,
+which is all this file consumes: `blochHerm_parallel_of_commute` takes `Commute` as a hypothesis,
+and nothing below derives `Commute` from parallel axes.  So "compatible ⟹ same frame ⟹ same
+parameter" comes out of that lemma, with no eigenvectors and no simultaneous
 diagonalization.
 
 The remaining structure is a reduction: in any occurrence of the product, the parameter may be

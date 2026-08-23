@@ -67,21 +67,21 @@ three kinds, and only the first is conditional on §2:
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
 | `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; S2 holds in the carried norm AND (ε–δ, `twistSeq_continuousAt_ouNorm`) in the order-unit norm — the norm caveat is discharged for this row | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
 | `prop:n2-sufficiency` — **the whole row**, for an arbitrary `t : C(ℝP², ℝ)`: S1, S3–S7 *and* S2, with the operation pinned to `t` at the tree's own `blochFrame` of the effect's frame | `RankTwo.n2SequentialProduct`, `RankTwo.n2SequentialProduct_firstArgContinuous`, `RankTwo.exists_sequentialProduct_of_continuous_moduli`, `RankTwo.n2Sp_eq_twistSeq_at_frame` | `RankTwo/Sufficiency.lean` |
-| S2's analytic input — joint continuity of the twist product in (parameter, matrix) over the effects, and joint continuity of `√x·c(s·log x)` where the squeeze at `x = 0` is uniform in `s` | `RankTwo.continuousOn_twistSeq_joint`, `RankTwo.continuousOn_twistFactor_joint`, `RankTwo.continuous_sqrt_mul_bounded_joint`, `RankTwo.exists_n2Tau_bound`, `RankTwo.continuousOn_n2Tau` | `RankTwo/Sufficiency.lean` |
+| S2's analytic input, **two different statements under one heading**. (a) Joint continuity of the twist factor and the twist product in (parameter, matrix) **over the effects** — the domain is literally `Set.univ ×ˢ {a \| OrderUnitSpace.IsEffect a}` — together with joint continuity of `√x·c(s·log x)` where the squeeze at `x = 0` is uniform in `s`: `continuousOn_twistFactor_joint`, `continuousOn_twistSeq_joint`, `continuous_sqrt_mul_bounded_joint`. (b) Two facts about the **parameter** `n2Tau`, which are neither joint nor over the effects: `continuousOn_n2Tau` is `ContinuousOn (n2Tau t) {a \| blochHerm a ≠ 0}`, i.e. continuity **off the scalars**, and `exists_n2Tau_bound` is boundedness (`∃ K ≥ 0, ∀ a, \|n2Tau t a\| ≤ K`, from compactness of `ℝP²`), which the old wording did not mention at all. ★ Split 2026-08-22; the (b) pair had been standing under (a)'s description | `RankTwo.continuousOn_twistSeq_joint`, `RankTwo.continuousOn_twistFactor_joint`, `RankTwo.continuous_sqrt_mul_bounded_joint`, `RankTwo.exists_n2Tau_bound`, `RankTwo.continuousOn_n2Tau` | `RankTwo/Sufficiency.lean` |
 | `lem:n2-descent` — the frame parameter of an arbitrary norm-continuous product as a continuous, bounded element of `C(ℝP², ℝ)`; the presentation map `U(2) → ℝP²` is a quotient map (compact → Hausdorff) | `RankTwo.n2QubitModuli`, `RankTwo.continuous_n2ModuliRP2`, `RankTwo.exists_n2QubitModuli_bound`, `RankTwo.sp_eq_twistSeq_n2QubitModuli`, `RankTwo.isQuotientMap_frameRP2` | `RankTwo/Sufficiency.lean` |
 | **the totality obstruction** — `badP` is an S1–S7 + S2 product with the same moduli function as a twist product and a different `.sp`, so "bijection ONTO the products as `.sp` functions" is FALSE for this encoding; the target is products up to agreement on effects | `RankTwo.not_exists_moduli_of_badP`, `RankTwo.moduli_collide`, `RankTwo.badP_sp_differs` | `RankTwo/Sufficiency.lean` |
-| the products agree at every spectral first argument (the `n2Sp` bridge, not the constant-parameter one) | `RankTwo.sp_eq_n2Sp_of_moduli` | `RankTwo/Sufficiency.lean` |
+| the products agree at the **positive-definite effects in spectral presentation** (the `n2Sp` bridge, not the constant-parameter one). ★ Rescoped 2026-08-22 from "at every spectral first argument": `sp_eq_n2Sp_of_moduli`'s first argument is `Ad_U (diagFamily r)` under `hr : ∀ i, r i ≤ 0`, so its eigenvalues are `exp (r i) ∈ (0,1]` — singular first arguments are excluded, and so are positive-definite matrices with an eigenvalue above `1` — and its second argument carries `IsEffect`. The singular half is the row below's separate cite | `RankTwo.sp_eq_n2Sp_of_moduli` | `RankTwo/Sufficiency.lean` |
 | `cor:qubit-classification`, **the parameter-level bijection** — forward map injective, and every norm-continuous product determines a unique moduli function; round trip is the identity. ★ **Agreement on effects at SINGULAR first arguments is now PROVED (2026-08-12, ARC-9 block 9.1)** — this cell said it was not; the naive "onto" reading is still refuted above, and that is what keeps the row PARTIAL | `RankTwo.qubit_classification`, `RankTwo.exists_unique_qubitModuli`, `RankTwo.n2QubitModuli_n2SequentialProduct` | `RankTwo/Sufficiency.lean` |
 | `cor:qubit-classification` **up to agreement on effects** — the bijection in the only form the `IsEffect`-guarded axioms can support: distinct parameters differ on a pair of effects, and every norm-continuous S1–S7 product agrees on effects with `∘_t` for exactly one `t`. ★ The singular half is `prop:singular` (`Necessity.sp_eq_on_effects_of_eq_on_posDef`, rank-free, in-tree since `LEDGER.md` 2.9) applied to the spectral presentation of a positive-definite effect | `RankTwo.sp_eq_n2Sp_on_effects`, `RankTwo.n2Sp_inj_on_effects`, `RankTwo.qubit_classification_up_to_effects` | `RankTwo/Sufficiency.lean` |
 | the ray-to-projection dictionary the descent runs on — the first spectral projection is the rank-one projection of the first column; equal rays give equal projections, complementary rays complementary ones | `RankTwo.frameMap_eq_rankOne_firstCol`, `RankTwo.frameMap_eq_of_colFrame_eq`, `RankTwo.frameMap_eq_one_sub_of_colFrame_eq_ortho`, `RankTwo.nsq_firstCol` | `RankTwo/Sufficiency.lean` |
-| commutation criterion at rank two — two Hermitian `2×2` matrices commute iff their Bloch axes are parallel, hence carry the same `ℝP²` frame point | `RankTwo.blochHerm_parallel_of_commute`, `RankTwo.blochPoint_eq_of_commute`, `RankTwo.n2Tau_eq_of_commute` | `RankTwo/Sufficiency.lean` |
+| commutation criterion at rank two, **one direction only** — *commuting* Hermitian `2×2` matrices have parallel Bloch axes, hence carry the same `ℝP²` frame point and the same parameter. ★ Rewritten 2026-08-22; the cell said "commute **iff**" and the tree has no converse. All three declarations take `Commute` as a **hypothesis**, and no declaration derives `Commute` from parallel axes: of 186 non-`.lake` `.lean` files exactly one names `blochHerm` (92 lines), and the only `Commute`-*producing* lemma there, `commute_of_n2Sp_comm`, runs off commutation of the product, not off the Bloch picture (2026-08-22). ★ Two of the three also carry a **nonvanishing** hypothesis `blochHerm ≠ 0` that this cell used to omit, and it is not decorative: `blochHerm a = 0` is the scalar case, branched separately through `n2Tau_of_eq_zero` and `exists_smul_one_of_blochHerm_eq_zero` | `RankTwo.blochHerm_parallel_of_commute`, `RankTwo.blochPoint_eq_of_commute`, `RankTwo.n2Tau_eq_of_commute` | `RankTwo/Sufficiency.lean` |
 | `thm:qubit-boundary`(iii) **at the EFFECTS** — the article's `τ` family agrees with no constant twist product on the effects. ★ CITE THIS ONE; the entry-probe siblings separate the total extensions, because their witness is not an effect when the parameter difference has the other sign | `RankTwo.not_forall_effects_tau_eq_twistSeq`, `RankTwo.not_forall_effects_eq_twistSeq` | `RankTwo/Sufficiency.lean` |
 | **the Faraut–Korányi fields of `CoalescenceSetup`, DERIVED** (ARC-9) — an interface told its frame is a frame produces a `CoalescenceSetup` in which `simDiag_opCommute`, `aOf_scalarOn` and `block_mem_J2` are proved; and the paper's own `Necessity.comparisonSetup` is such an interface. ★ This does **not** close row 16: `Θ_fix` and `Θ_jordan` remain cited, so the row rests on them as before | `RadicalRelativity.EJA.EJAComparison.toCoalescenceSetup`, `RadicalRelativity.EJA.ejaComparison` | `EJA/InterfaceInstance.lean`, `EJA/ConcreteInstance.lean` |
 | **Albert's power-associativity theorem** (ARC-9) — `x^{m+1} ∘ x^{n+1} = x^{m+n+2}` in any real commutative Jordan algebra, and the one-generator subalgebra is associative. ★ Not a paper statement: (E1) infrastructure, carried here because `THEOREM-MAP.md` is the tree's honesty ledger and this is the tree's largest new theorem | `RadicalRelativity.EJA.jpow_mul_jpow`, `RadicalRelativity.EJA.jspan_assoc` | `EJA/PowerAssoc.lean`, `EJA/Subalgebra.lean` |
 | **(E1), the single-element spectral theorem** (ARC-9, 2026-08-22) — every element of a finite-dimensional formally real Jordan algebra is a real combination of pairwise-orthogonal idempotents drawn from the subalgebra it generates, with no unit assumed; and, with a unit carried as an ordinary hypothesis, of a family summing to it. Both are instantiated on the paper's own carrier `HermitianMat d 𝕜`, and carried into `ComparisonSetup`'s bundled-bilinear-map vocabulary through `EJA/Bridge.lean`, which **discharges `WallCertificates/eja-gated.lean`'s `gate_E1_spectral`** (that file's `sorry` count 2 → 1; only (E3) remains). ★ **No manifest row moves.** Row 13's residue is the spectral *inverse* — a functional calculus built ON the resolution — and no **continuous** functional calculus exists at EJA generality (a polynomial one does: `EJA.jeval x p = ∑ₙ p.coeff n • x^{n+1}`, `EJA/Spectral.lean`:97, and `x ↦ x⁻¹` is not polynomial; `Spectral.lean`'s own scope note says "nothing here is a functional calculus"); primitivity is likewise not proved, so these families are not shown to be Jordan *frames* | `RadicalRelativity.EJA.spectral_resolution`, `RadicalRelativity.EJA.spectral_resolution_complete`, `RadicalRelativity.EJA.spectral_resolution_bilinear`, `RadicalRelativity.EJA.hermitian_spectral_resolution_complete` | `EJA/Spectral.lean` |
 | `prop:n2-sufficiency`'s S2 **in the article's order-unit norm** | `RankTwo.n2SequentialProduct_firstArgContinuousOu` | `RankTwo/Sufficiency.lean` |
 | `thm:qubit-boundary`(iii) in the `twistSeq` encoding, entry-probe form — separates the total extensions; see the effect-level statement above | `RankTwo.exists_n2Sp_tau_ne_twistSeq`, `RankTwo.exists_n2Sp_ne_twistSeq_of_nonconstant`, `RankTwo.exists_twistSeq_diagFamily_ne`, `RankTwo.surjective_colFrame` | `RankTwo/Sufficiency.lean` |
-| `prop:stabilizers` ℂ row — the frame stabilizer in `U(n)` is exactly the diagonal torus `T^n` (diagonality plus unimodular diagonal entries). ★ The article's *identity component* `T^{n-1}` — the quotient by the globally-acting phase — is NOT stated; its content is `torusU_block` | `Necessity.offdiag_eq_zero_of_fixes_frameProj`, `Necessity.normSq_diag_eq_one_of_fixes_frameProj` | `Necessity/FrameConstancy.lean` |
+| `prop:stabilizers` ℂ row — the frame stabilizer in `U(n)` and the diagonal torus `T^n`, **both inclusions, cited separately since 2026-08-22** (the cell said "is exactly" while citing only ⊆). **⊆**: a unitary fixing every `frameProj` is diagonal with unimodular diagonal entries — `offdiag_eq_zero_of_fixes_frameProj`, `normSq_diag_eq_one_of_fixes_frameProj`, both taking the fixing property as hypothesis. **⊇**: `torusU t r = diag(e^{i t r_k})` is unitary (`torusU_unitary`) and fixes every frame projection (`torusU_fixes_frameProj`), packaged with the block action as `stabilizer_group_action_complex`. ★ Scope on ⊇: it is proved for the tree's *exponential parametrization* `torusU`; "every unimodular diagonal unitary is a `torusU`" is not stated — 0 of the 7 declarations in `TorusAction.lean` is an existence or surjectivity statement (2026-08-22). ★ The article's *identity component* `T^{n-1}` — the quotient by the globally-acting phase — is NOT stated; its content is `torusU_block` | `Necessity.offdiag_eq_zero_of_fixes_frameProj`, `Necessity.normSq_diag_eq_one_of_fixes_frameProj`, `Necessity.stabilizer_group_action_complex`, `Necessity.torusU_fixes_frameProj` | `Necessity/FrameConstancy.lean`, `Necessity/TorusAction.lean` |
 | `prop:stabilizers` — the same, at **every `RCLike` field**, so the ℝ row's elementwise content too (over ℝ the entries are `±1`). ★ The identity-component clauses (`{1}`, `T^{n-1}`) are connectedness statements and are NOT proved | `Necessity.offdiag_eq_zero_of_fixes_frameProjG`, `Necessity.normSq_diag_eq_one_of_fixes_frameProjG` | `Necessity/RealRigidity.lean` |
 | `lem:normality`, compatibility clause — compatibility passes to limits of effect sequences. ★ Needs S2, unlike the convergence clause | `Necessity.compatible_of_tendsto` | `Necessity/LeftMultiplication.lean` |
 | `thm:quaternionic`, **sufficiency only** — the Lüders product on `H_n(ℍ)` as an S1, S3–S7 sequential product on the symplectic-fixed carrier, identified with `Q_{√a}`. ★ The row's own statement is the NECESSITY direction (`Θ_r = id` for an arbitrary product) and is NOT proved | `HermitianMat.quatLuders`, `HermitianMat.quatSp_eq_quatQuadRep` | `Hermitian/QuatQuadRep.lean` |
@@ -574,26 +574,65 @@ Census-tracked, closure = Lean core only (★ the "49-module manifest" that stoo
 2026-08-22, stale by more than a hundred: the manifest's size lives in `AxiomAudit.lean` — 168
 at this edit — and is not restated here):
 
+★ **What this section covers, and what it does not — quantified 2026-08-22, because as written it
+was unfalsifiable.** `RadicalRelativity/Hermitian/` holds **13 modules and 181 declarations**
+(counting `theorem`/`lemma`/`def`/`instance`/`abbrev`/`structure` at line start, with three
+docstring false positives removed by hand). The five bullets below describe five of those modules
+— `OrderUnit.lean` (31 declarations), `ExtremeEffects.lean` (12), `Twist.lean` (21),
+`Resolution.lean` (15), `Sequential.lean` (22), **101 in total** — and each bullet names a handful
+of declarations as landmarks; a bullet is a description of a module, never a census of it. Of the
+remaining eight modules, `QuatQuadRep.lean` (17) is covered by the `thm:quaternionic` row in §1.
+The other **seven appear nowhere in this file** — `Symplectic.lean` (38), `CommutantHermitian.lean`
+(8), `OperatorInstances.lean` (5), `RCLikeGeneral.lean` (5), `CfcPoly.lean` (4),
+`CfcSqrtContinuous.lean` (2), `SqrtMul.lean` (1), 63 declarations, 0 mentions of any of those seven
+names in `THEOREM-MAP.md` against 6 modules that do appear (2026-08-22). They are **deliberately
+out of scope here, not missing from the tree**: this section describes the carrier modules the
+paper rows run through. ★ Read the imprecision correctly: the statement-level sweep that produced
+this count reports resolving every prose claim in the five bullets to a real declaration, with
+none untieable. The section understated its own scope; it did not describe declarations that are
+not there.
+
 - `RadicalRelativity/Hermitian/OrderUnit.lean` — `OrderUnitSpace (HermitianMat n 𝕜)`
   instance over the vendored carrier (parents = the existing vendored instances; the
   abstract `OrderUnitSpace.IsEffect` becomes *definitionally* the Loewner unit
   interval, so `Effect (HermitianMat n ℂ)` is the intended effect space and the
   vendored compactness applies verbatim); order-unit boundedness with explicit
-  witness `r = ‖a‖`; the **full Archimedean property** over ℂ (strictly stronger
-  than the class's order-unit-boundedness field); the order-unit norm `ouNorm` as
+  witness `r = ‖a‖`; the **full Archimedean property at every `RCLike 𝕜`** —
+  `le_zero_of_forall_le_smul_one`, and `isArchimedean` / `isArchNat` in the file's
+  `Archimedean` section — strictly stronger than the class's
+  order-unit-boundedness field, which is only `∃ r ≥ 0, a ≤ r • 1` (this file
+  supplies it as `archimedean := exists_nonneg_le_smul_one`). ★ Corrected
+  2026-08-22: this read "over ℂ". `OrderUnit.lean` is a single
+  `variable {𝕜 : Type*} [RCLike 𝕜]` block, none of the three declarations is
+  ℂ-gated, and `isArchNat` was not listed here at all; the file's own docstrings
+  carried the same stale ℂ and are fixed with this edit. The "strictly stronger
+  than the class's field" half was right and is kept. Then: the order-unit norm
+  `ouNorm` as
   an unbundled def with attainment, minimality, negation/triangle, definiteness,
   and the two-sided carried-norm comparison `ouNorm ≤ ‖·‖ ≤ √(card n) · ouNorm`
   (LEDGER 1.4, via `abs_eigenvalues_le_ouNorm`).
 - `RadicalRelativity/Hermitian/ExtremeEffects.lean` — extreme points of the effect
-  interval are exactly the projections `p ^ 2 = p`: projections-are-extreme is
-  `RCLike`-uniform (quadratic-form kernel pinch), the converse is proved over ℂ
-  through the vendored CFC (perturbation by `± min(x, 1-x)`), and the ℂ join is
-  `mem_extremePoints_iff_isProjection`.  This is M3's bridge 1 input
+  interval are exactly the projections `p ^ 2 = p`, **and both directions are
+  `RCLike`-uniform**: projections-are-extreme by the quadratic-form kernel pinch
+  (`IsProjection.mem_extremePoints`), the converse
+  (`isProjection_of_mem_extremePoints`) CFC-natively through the vendored
+  functional calculus (perturbation by `± min(x, 1-x)`), and the join
+  `mem_extremePoints_iff_isProjection` at `𝕜` too.  ★ Corrected 2026-08-22: this
+  said the converse "is proved over ℂ" and called the join "the ℂ join".  The
+  file is one `variable {𝕜 : Type*} [RCLike 𝕜]` block with **no `section` blocks
+  and no ℂ specialization anywhere** — it contains zero occurrences of `ℂ` — and
+  its own docstring already said "over any `RCLike` field: fully CFC-native", so
+  the staleness was here and not in the Lean.  The cost of the old wording was
+  work, not soundness: it would have scheduled an ℝ side that is already done.
+  This is M3's bridge 1 input
   (order-automorphisms preserve extreme effects, hence projections).
 - `RadicalRelativity/Hermitian/Twist.lean` — the twist definition (LEDGER 1.2,
   pair-of-real-cfc route): `twistFactor a t` is `a^{1/2+it}` built from two real
-  functional-calculus components (the paper's `0^{1/2±it} = 0` convention holds
-  definitionally); `twistSeq t a b := b.conj (twistFactor a t)`; proved:
+  functional-calculus components (the paper's `0^{1/2±it} = 0` convention is the
+  value of those components at `x = 0`, and it holds because `√0 = 0` — Mathlib's
+  `Real.sqrt_zero`, a lemma proved `by simp [Real.sqrt]`, not `rfl`; ★ this read
+  "holds definitionally" until 2026-08-22, a nit that changes no substance);
+  `twistSeq t a b := b.conj (twistFactor a t)`; proved:
   `(a^{1/2+it})ᴴ = a^{1/2-it}`, `X·Xᴴ = Xᴴ·X = a` on `0 ≤ a`, both unit laws,
   positivity, S1-additivity and monotonicity in the second argument, effect
   closure, and the `t = 0` Lüders specialization.
@@ -611,7 +650,11 @@ at this edit — and is not restated here):
   normality trick at general twist), the converse rides the vendored
   `Commute.cfc_right`; the two-variable law `(ab)^{1/2+it} = a^{1/2+it}·b^{1/2+it}`
   on commuting positives via the joint resolution `P_μ·Q_ν` and the resolution
-  lemma, with the scalar character law handling zero eigenvalues definitionally;
+  lemma, with the scalar character law handling zero eigenvalues by an explicit
+  case split rather than by unfolding (`twist_cos_mul` / `twist_sin_mul` open with
+  `rcases eq_or_lt_of_le hμ with rfl | _` and discharge the `μ = 0` branch with
+  `simp`; ★ this read "definitionally" until 2026-08-22, a nit that changes no
+  substance);
   S5–S7 from these; S2 as *global* norm continuity of `a ↦ a &ₜ b` (squeeze at the
   spectral origin); and the packaged `twistSequentialProductCore` /
   `twistSequentialProduct` per twist parameter `t`.
@@ -959,7 +1002,7 @@ What the tree already had, unread:
 | Article clause | Lean | Note |
 | --- | --- | --- |
 | `Θ` a continuous homomorphism on the negative orthant | `Necessity.thetaUnit_mul`, `thetaUnit_zero`, `continuous_thetaUnit_val` | |
-| extends to `χ : (ℝⁿ,+) → Stab(F)°` | `Necessity.chiTilde` (**constructed**), `chiTilde_add`, `chiTilde_of_nonpos` | Built by the article's *own* canonical decomposition `sᵢ(x) = min(xᵢ,0)` — literally `r ⊓ 0` |
+| extends to `χ : (ℝⁿ,+) → Stab(F)°` | `Necessity.chiTilde` (**constructed**), `chiTilde_add`, `chiTilde_of_nonpos`, **`chiTilde_fixes_frameProj`** | Built by the article's *own* canonical decomposition `sᵢ(x) = min(xᵢ,0)` — literally `r ⊓ 0`. ★ **Fourth citation added 2026-08-22, and it is the one that earns the word "Stab".** The first three say nothing whatever about the frame: `chiTilde` lands in `(HermitianMat n ℂ →L[ℝ] HermitianMat n ℂ)ˣ`, the unit group of the endomorphism algebra, and `chiTilde_add` / `chiTilde_of_nonpos` are the homomorphism law and the orthant collapse. `chiTilde_fixes_frameProj` (`Necessity/TwistIdentification.lean:54`) is what puts `χ̃(r)` in the stabilizer, and it needs `hS2` alone — no `hjord`. ★ The `°` is still not covered: the tree names no identity component, working with `blockSkewSubmodule` and `dChiStab` instead (see item 2 of the status list below, and `WallCertificates/eja-gated.lean`'s own note on this clause) |
 | real-linear differential `dχ` | `Necessity.chiTilde_eq_exp` (`∃!` linear `D` with `χ̃ = exp ∘ D`), `dChi`, `chiTilde_eq_exp_dChi` | **Proved, not imported.** The article argues "a continuous homomorphism of f.d. Lie groups is smooth"; Lean routes through `multiParameter_eq_exp` instead, so no Lie theory enters, and it needs only *line* continuity where the article assumes joint |
 | `dχ` lands in `𝔰𝔱𝔞𝔟(F)`, acting skewly on each block | `Necessity.dChi_mem_blockSkew` into `blockSkewSubmodule` (whose membership *is* block-skewness), `dChi_block_skew`, `dChiStab` | This is what makes `T_ij ∈ 𝔰𝔬(V_ij)` automatic rather than a further obligation |
 | `ρ_ij(dχ(r)) = (rᵢ − rⱼ) T_ij`, single `T_ij` | **the one genuinely missing clause** | Now proved, below |
@@ -972,39 +1015,93 @@ What the tree already had, unread:
 phrasing — `rhoChi` with **`rhoChi_eq_smul_generator` : `ρ_ij(dχ(r)) = (rᵢ − rⱼ) • ρ_ij(dχ(eᵢ))`**.
 Closure `[propext, Classical.choice, Quot.sound]` on each.
 
-★ **Self-probes run on this block (2026-08-08), the way the arc-5 review would have.** Three
-passed and one found a defect in my own work. PASSED: `OrderUnitSpace.IsArchimedean` **is
-inhabited** — `HermitianMat n ℂ` satisfies it via
-`HermitianMat.le_zero_of_forall_le_smul_one` — so the abstract tier is not vacuous, which was
-the one failure mode that would have made the two FORMALIZED claims worthless; the abstract
-`sp_smul_left` and `spCone_of_isEffect` both instantiate on a real product on `H_N(ℂ)`, so
-their hypotheses are simultaneously satisfiable. FOUND: **`rhoChi_eq_smul_generator`'s
-`i ≠ j` hypothesis is INERT** — `rhoField` is `0` on the diagonal, so at `i = j` both sides
-vanish. `rhoChi_eq_smul_generator_all` now states the identity unconditionally. Same defect
-class as `lem:adjacent` last arc; caught here before a reviewer had to.
+★ **The hypotheses this whole section runs under, stated here because it never stated them
+(clause added 2026-08-22).** Sixteen of its declarations carry **both** `hS2 :
+P.FirstArgContinuous` **and** `hjord : ThetaPreservesJordan P`: `thetaUnit_mul`, `chiTilde_add`,
+`chiTilde_eq_exp`, `dChi`, `chiTilde_eq_exp_dChi`, `dChi_mem_blockSkew`, `dChi_block_skew`,
+`dChiStab`, `dChi_kills_corner`, `tvalLm_of_diag_eq`, `tvalCoef`, `tvalLm_eq_coef_mul`,
+`dChiEntry_eq_mul_generator`, `rhoChi`, `rhoChi_eq_smul_generator` (and `_all`),
+`rhoField_dChi_coalesced`.  Of the rest, `chiTilde` / `chiTilde_of_nonpos` /
+`chiTilde_fixes_frameProj` need `hS2` alone and `blockHerm_cornerJ2` needs neither.
+★★ **This is presentation, not soundness, and it must NOT be read as "conditional on an unproved
+import".**  `hjord` **is a theorem of this tree**: `Necessity.thetaPreservesJordan_of_S2` derives
+it from S1–S7 + S2 alone, and the discharge is not hypothetical — `Necessity/FrameConstancy.lean`
+feeds `thetaPreservesJordan_of_S2 P hS2` straight into `tvalLm` and `dChi_kills_corner` at
+`:465`–`:495`.  An earlier draft of this very clause called these results conditional on an
+unproved import; its own author retracted it after checking the tree, and that is why this
+paragraph spells the discharge out.
 
-ALSO PASSED — **`n2FrameTwist_mul_diagonal` is non-vacuous**: it applies to
-`diag(i, 1) ∈ U(2)`, which is proved unitary and proved *not* the identity, so the theorem
-asserts something about a real diagonal-phase change rather than being trivially about `1`.
-(A vacuous fibre theorem would have left the `U(2) → S²` gap open while looking closed — the
-precise failure the arc-5 review taught us to probe for.)
+★ **The one thing that does not close — recorded, not guessed (2026-08-22).**
+`thetaPreservesJordan_of_S2` (`Necessity/KadisonDischarge.lean:529`) is stated on
+`HermitianMat (Fin N) ℂ` under `variable {N : ℕ}`, while every declaration above lives at
+`{n : Type*} [Fintype n] [DecidableEq n]`.  So `hjord` is discharged **at `n = Fin N`**, which is
+where the consumers of these results sit, and is **not** discharged at a general index type,
+because the tree contains no transport along `n ≃ Fin (Fintype.card n)`: `Fintype.equivFin`
+appears in exactly 2 of the 142 first-party non-`Vendor` `.lean` files
+(`Hermitian/CommutantHermitian.lean`, `EJA/Spectral.lean`), in neither case moving a
+`SequentialProductOn` or a `ThetaPreservesJordan` between index types, and `equivFin` appears **0**
+times across the 76 files of `RadicalRelativity/Necessity/` (2026-08-22).  Writing that transport
+is real, bounded work that nobody has done; it must not be assumed to exist.
 
-ALSO PASSED — **`cfc_transpose`'s load-bearing algebraic step, computed on a concrete
-non-symmetric Hermitian matrix.** For `A = [[1, i], [−i, 1]]`: `A` is Hermitian, `A ≠ Aᵀ` (so
-nothing here is vacuous), entrywise conjugation of `A` **equals** `Aᵀ` by entrywise
-computation, `conjMatStarAlg A ≠ A` (so the star-algebra hom is not secretly the identity), and
-the general `transpose_eq_conj_of_isHermitian` agrees with that computation at `A`. This was
-the one claim in the arc I had argued rather than computed; it now checks out. The remaining
-trust in `cfc_transpose` sits on Mathlib's `StarAlgHomClass.map_cfc`, which is where it
-belongs.
+★ **Self-probes run on this block (2026-08-08), the way the arc-5 review would have.** They
+passed, and one found a defect in my own work. ★★ **Reread and relabelled 2026-08-22, and the
+relabelling is the point: most of what follows was a *scratch run in a throwaway file*, not a
+declaration, and this section was presenting scratch runs as standing evidence.** A run is
+evidence about the hour it ran in; only a declaration is evidence about the tree. Of the four
+concrete probes below, **three have no persisted witness at all** — the `diag(i,1) ∈ U(2)`
+non-vacuity witness, the `A = [[1,i],[−i,1]]` computation behind `cfc_transpose`, and the crown
+probe — and the fourth needs none, because it is definition unrolling. Each item now says which
+it is, and where a persisted substitute exists that substitute is cited instead of the run.
 
-ALSO PASSED — **the sign in `n2Readout_eq`, checked three independent ways** (this was the
-claim in the arc I had argued rather than computed, and a sign error here would have poisoned
-the banked route to `lem:n2-bounded`). (1) The **crown probe re-run**:
-`n2FrameTwist (twistProductOn t) hS2 U = t` at *every* frame `U` — so the frame function
-returns the known parameter, with no sign or factor error. (2) `basePt x` computed entrywise is
-`diag(e^{−x}, 1)`, not `diag(1, e^{−x})` or `diag(e^{x}, 1)`. (3) Hence the ordered log-ratio
-`r₀ − r₁` is `−x`, which is exactly the sign `n2Readout_eq`'s `exp(−(t·x)·I)` carries.
+**PASSED, and persisted.** `OrderUnitSpace.IsArchimedean` **is inhabited**, so the abstract tier
+is not vacuous — the one failure mode that would have made the two FORMALIZED claims worthless.
+The 2026-08-08 witness was `HermitianMat.le_zero_of_forall_le_smul_one`; the tree now carries the
+statement itself as `HermitianMat.isArchimedean` (`Hermitian/OrderUnit.lean:307`), and at every
+`RCLike 𝕜` rather than at ℂ. The abstract tier is *consumed* on the paper's carrier by
+declarations too, not by a run: `Necessity/PseudoInverse.lean:312` and `:341` feed
+`HermitianMat.isArchimedean` into `spCone_eq` / `spConeRight_eq` for a real product on `H_n(ℂ)`.
+
+**FOUND, and persisted as a theorem.** `rhoChi_eq_smul_generator`'s `i ≠ j` hypothesis is
+**INERT** — `rhoField` is `0` on the diagonal, so at `i = j` both sides vanish.
+`rhoChi_eq_smul_generator_all` now states the identity unconditionally. Same defect class as
+`lem:adjacent` last arc; caught here before a reviewer had to.
+
+**NOT PERSISTED — `n2FrameTwist_mul_diagonal`'s non-vacuity.** The run exhibited
+`diag(i, 1) ∈ U(2)`, unitary and not the identity, so the theorem is about a real diagonal-phase
+change rather than trivially about `1`. **That witness is not in the tree**: of the 6
+matrix-literal (`!![…]`) sites outside `.lake` none is it, and `Matrix.diagonal ![Complex.I, …]`
+has 0 sites outside `.lake` (2026-08-22). The concern is real — a vacuous fibre theorem would have
+left the `U(2) → S²` gap open while looking closed, the precise failure the arc-5 review taught us
+to probe for — so what this cell records now is the open concern, not a discharged one.
+
+**NOT PERSISTED — `cfc_transpose`'s algebraic step on a concrete non-symmetric Hermitian
+matrix.** The run took `A = [[1, i], [−i, 1]]` and checked that `A` is Hermitian, `A ≠ Aᵀ` (so
+nothing was vacuous), that entrywise conjugation of `A` equals `Aᵀ`, that `conjMatStarAlg A ≠ A`
+(so the star-algebra hom is not secretly the identity), and that the general
+`transpose_eq_conj_of_isHermitian` agrees at `A`. **That matrix appears nowhere in the tree**:
+none of the 6 `!![…]` literals outside `.lake` is it (2026-08-22). What *is* in the tree is the
+general lemma — `Necessity.transpose_eq_conj_of_isHermitian`
+(`Necessity/ComplexRowUnconditional.lean:268`) feeding `cfc_transpose` (`:279`) — whose remaining
+trust sits on Mathlib's `StarAlgHomClass.map_cfc`, which is where it belongs. The run was a sanity
+check on that lemma, never part of its proof.
+
+**THE SIGN IN `n2Readout_eq`, restated by what is persisted.** A sign error here would have
+poisoned the banked route to `lem:n2-bounded`. Of the run's three legs:
+(1) the **crown probe** `n2FrameTwist (twistProductOn t) hS2 U = t` is **not in the tree** — 0 of
+the 127 non-`.lake` `n2FrameTwist` lines mention `twistProductOn` (2026-08-22) — but it has a
+**strictly stronger persisted substitute, and that is what to cite**:
+`Necessity.n2FrameTwist_unique_param` (`Necessity/FrameConstancy.lean:2475`) says
+`n2FrameTwist P hS2 U` is the **unique** real `t` at which `P.sp` agrees with `twistSeq t` at that
+frame, for an *arbitrary* `P`; and `Necessity.twistProductOn_sp t a b = HermitianMat.twistSeq t a b`
+holds by `rfl` (`Necessity/ComplexClassification.lean:52`), so the crown probe's conclusion is that
+uniqueness applied at `P := twistProductOn t`. Uniqueness for every `P` beats one evaluation at
+one `P`.
+(2) `basePt x` is `diag(e^{−x}, 1)` — not `diag(1, e^{−x})`, not `diag(e^{x}, 1)` — and this leg
+needs no run at all, because it is definition unrolling: `basePt x = diagFamily (x • axisSplit 0)`
+(`FrameConstancy.lean:747`), `axisSplit m k = if k = m then -1 else 0` (`:207`), and
+`diagFamily r = HermitianMat.diagonal ℂ (fun i => exp (r i))` (`DiagonalFamily.lean:42`).
+(3) Hence the ordered log-ratio `r₀ − r₁` is `−x`, which is exactly the sign `n2Readout_eq`'s
+`exp(−(t·x)·I)` carries.
 
 Where the article spans the hyperplane `{rᵢ = rⱼ}` by differences of coalesced orthant
 vectors, Lean takes the vanishing directly from the differentiated coalescence
