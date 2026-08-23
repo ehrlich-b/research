@@ -40,15 +40,19 @@ declarations, `grep -cE 'sorry|native_decide|^axiom '` returns `0` in each.
 | its composition law | `coordMul_sq` | **proved**, axioms `[]` |
 | `CoordAlg D` is a `NonAssocRing` and a `CompositionAlgebra` | `CoordAlg.instCompositionAlgebra` | **proved**, axioms `[]` |
 | `dim V_{ij} ∈ {1, 2, 4, 8}` | `CoordAlg.finrank_coordAlg` | **proved**, axioms `[]` |
+| `V_{ij} ≅ ℝ, ℂ, ℍ or 𝕆` as a composition algebra | `CoordAlg.classification_coordAlg` | **proved**, axioms `[]` |
 | a `CoordData` exists on `H_d(ℂ)` | `isConnector_offFrame`, `hermCoordData` | **proved**, axioms `[]` |
 | `J ≅ H_n(C)` | `jacobson_coordinatization` below | **`sorry` — this certificate** |
 | simple ⟹ every block nonzero | `simple_frame_connected` below | **`sorry` — this certificate** |
 | `n ≥ 4` forces the coordinate algebra associative | `coordAlg_assoc_of_four` below | **`sorry` — this certificate** |
 
-★ Note what the dimension theorem does **not** say. It gives membership in the Hurwitz list, not
-the identification: `dim V_{ij} = 2` for `H_d(ℂ)` is *not* proved, only `dim ∈ {1,2,4,8}`.
-Upgrading it needs the classification half of Hurwitz, which is a different certificate
-(`hurwitz-classification.lean`) and a different file's problem.
+★ **This table was written when only the dimension half of Hurwitz existed, and was overtaken the
+same morning.** `Composition/Classification.lean` landed the classification half, so
+`CoordAlg.classification_coordAlg` now says the block is isomorphic as a composition algebra to
+`ℝ`, `ℂ`, `ℍ` or `𝕆`, not merely of one of their dimensions. What still does **not** follow is
+*which* branch: `dim V_{ij} = 2` for `H_d(ℂ)` is not proved anywhere, and picking the branch needs
+a dimension computation on the block, not more Hurwitz. None of the three residues below moves on
+this.
 
 ## Residue 1 — `H_n(C)` does not exist as a type, and the vendored one cannot be reused
 

@@ -33,11 +33,14 @@ Together these are `IsConnector`, and three distinct indices assemble `hermCoord
 ## What that buys
 
 `finrank_frameBlockRaw_diagJordanFrame`: an off-diagonal block of the diagonal frame on `H_d(ℂ)`
-has real dimension `1`, `2`, `4` or `8`, whenever a third index exists.
+has real dimension `1`, `2`, `4` or `8`, whenever a third index exists.  And
+`classification_coordAlg_herm`: that block is isomorphic as a composition algebra to `ℝ`, `ℂ`,
+`ℍ` or `𝕆`.
 
-★ **It is `2`** — the block is `{a E_{kl} + ā E_{lk} : a ∈ ℂ}` — **and that is not proved here.**
-Only membership in the Hurwitz list is.  Sharpening it needs the classification half of Hurwitz
-(`WallCertificates/hurwitz-classification.lean`), not anything in this file.
+★ **It is `ℂ`** — the block is `{a E_{kl} + ā E_{lk} : a ∈ ℂ}` — **and that is not proved here.**
+Only membership in the list is.  Picking the branch needs the dimension of the block computed
+directly; the classification half of Hurwitz is already in tree
+(`Composition/Classification.lean`) and does not supply it.
 
 ## Scope
 
@@ -225,5 +228,19 @@ theorem finrank_frameBlockRaw_diagJordanFrame {k l m : Fin (Fintype.card d)} (hk
       Module.finrank ℝ ↥(frameBlockRaw (diagJordanFrame (n := d)) k l) = 4 ∨
       Module.finrank ℝ ↥(frameBlockRaw (diagJordanFrame (n := d)) k l) = 8 :=
   CoordAlg.finrank_frameBlockRaw_of_coordData (hermCoordData hkl hlm hkm)
+
+/-- **The classification, instantiated on `H_d(ℂ)`.**  The coordinate algebra of an off-diagonal
+block of the diagonal frame is isomorphic to `ℝ`, `ℂ`, `ℍ` or `𝕆`.
+
+★ It is `ℂ`, and this does not say so — see the module docstring. -/
+theorem classification_coordAlg_herm {k l m : Fin (Fintype.card d)} (hkl : k ≠ l) (hlm : l ≠ m)
+    (hkm : k ≠ m) :
+    (∃ f : CoordAlg (hermCoordData hkl hlm hkm) ≃ₗ[ℝ] ℝ, CompositionAlgebra.IsCompIso f) ∨
+      (∃ f : CoordAlg (hermCoordData hkl hlm hkm) ≃ₗ[ℝ] ℂ, CompositionAlgebra.IsCompIso f) ∨
+      (∃ f : CoordAlg (hermCoordData hkl hlm hkm) ≃ₗ[ℝ] Quaternion ℝ,
+        CompositionAlgebra.IsCompIso f) ∨
+      (∃ f : CoordAlg (hermCoordData hkl hlm hkm) ≃ₗ[ℝ] Octonion,
+        CompositionAlgebra.IsCompIso f) :=
+  CoordAlg.classification_coordAlg
 
 end RadicalRelativity.EJA

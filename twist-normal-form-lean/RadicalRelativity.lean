@@ -742,7 +742,10 @@ import RadicalRelativity.EJA.Connection
 -- connectors it needs, is then a TYPE (`CoordAlg`) carrying `NonAssocRing` and
 -- `CompositionAlgebra` instances, so `Composition.Hurwitz` applies to it and gives
 -- `finrank_coordAlg`: an off-diagonal block of a Jordan frame with three distinct indices and
--- connectors between them has real dimension 1, 2, 4 or 8.  ★ The full Jacobson isomorphism
+-- connectors between them has real dimension 1, 2, 4 or 8.  ★★ And since
+-- `Composition.Classification` landed, `classification_coordAlg`: that block is ISOMORPHIC as a
+-- composition algebra to R, C, H or O -- the composition-algebra half of Jordan-von
+-- Neumann-Wigner, on the Jordan-side object.  It does not say WHICH of the four.  ★ The full Jacobson isomorphism
 -- `J = H_n(C)` is NOT proved here, and `H_n(C)` does not exist in this tree as a type; the three
 -- residues -- the isomorphism, simple ==> connected, and n >= 4 ==> the coordinate algebra is
 -- associative -- are stated in Lean with a sorry at each in

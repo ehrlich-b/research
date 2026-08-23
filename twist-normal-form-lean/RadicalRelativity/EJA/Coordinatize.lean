@@ -4,7 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.EJA.Connection
-import RadicalRelativity.Composition.Hurwitz
+import RadicalRelativity.Composition.Classification
 
 set_option linter.style.longLine false
 
@@ -46,9 +46,13 @@ multiplies them.
 block regarded as an algebra through them.  It carries `NonAssocRing`, `Nontrivial`,
 `IsScalarTower ℝ`, `SMulCommClass ℝ` and — the point —
 `CompositionAlgebra`, whose norm form is the ambient inner product rescaled so the unit has norm
-one.  `RadicalRelativity/Composition/Hurwitz.lean` therefore applies, and gives
-`CoordAlg.finrank_coordAlg`: **an off-diagonal block of a Jordan frame with three distinct
-indices and connectors between them has real dimension `1`, `2`, `4` or `8`.**
+one.  `RadicalRelativity/Composition/` therefore applies, and gives two theorems about `J`:
+`CoordAlg.finrank_coordAlg`, **an off-diagonal block of a Jordan frame with three distinct
+indices and connectors between them has real dimension `1`, `2`, `4` or `8`**, and — since
+`Composition/Classification.lean` landed the classification half of Hurwitz —
+`CoordAlg.classification_coordAlg`, **that block is isomorphic as a composition algebra to `ℝ`,
+`ℂ`, `ℍ` or `𝕆`**.  That second one is the composition-algebra half of Jordan–von Neumann–Wigner,
+on the Jordan-side object.
 
 ★ The connectors are **data**, carried in `CoordData`; in particular `CoordData.hw` is a field
 rather than a derivation, so the algebra structure needs no dimension hypothesis.
@@ -63,9 +67,10 @@ a type.**  See `WallCertificates/jacobson-coordinatization.lean`, which states a
 residues — the isomorphism, simplicity ⟹ connectedness, and `n ≥ 4` ⟹ the coordinate algebra is
 associative — in Lean with a `sorry` at each.
 
-★ `finrank_coordAlg` gives membership in the Hurwitz list, **not** the identification of the
-algebra.  For `H_d(ℂ)` the block is two-dimensional; that is not proved anywhere, and would need
-the classification half of Hurwitz (`WallCertificates/hurwitz-classification.lean`).
+★ `classification_coordAlg` says the block is isomorphic to *one of* the four; it does not say
+**which**, and nothing here computes the dimension of a particular block.  For `H_d(ℂ)` the block
+is `ℂ`; that is not proved anywhere, and picking the branch needs a dimension computation on the
+block, not more Hurwitz.
 
 ★ The class is inhabited: `EJA/CoordinatizeWitness.lean` exhibits a `CoordData` on `H_d(ℂ)`.
 Nothing below is instantiated on the Albert carrier.
@@ -414,6 +419,22 @@ theorem finrank_coordAlg :
     Module.finrank ℝ (CoordAlg D) = 1 ∨ Module.finrank ℝ (CoordAlg D) = 2 ∨
       Module.finrank ℝ (CoordAlg D) = 4 ∨ Module.finrank ℝ (CoordAlg D) = 8 :=
   CompositionAlgebra.finrank_eq_one_or_two_or_four_or_eight
+
+/-- ★★ **The coordinate algebra is `ℝ`, `ℂ`, `ℍ` or `𝕆`.**
+
+Hurwitz's *classification*, applied to the coordinate algebra: the off-diagonal block of a Jordan
+frame with three distinct indices and connectors between them is, under the coordinate product,
+isomorphic as a composition algebra to one of the four division algebras.  This is the
+composition-algebra half of Jordan–von Neumann–Wigner, landed on the Jordan-side object.
+
+★ It does **not** say which of the four, and it does not produce the isomorphism
+`J ≅ H_n(C)`; see the scope note in the module docstring. -/
+theorem classification_coordAlg :
+    (∃ f : CoordAlg D ≃ₗ[ℝ] ℝ, CompositionAlgebra.IsCompIso f) ∨
+      (∃ f : CoordAlg D ≃ₗ[ℝ] ℂ, CompositionAlgebra.IsCompIso f) ∨
+      (∃ f : CoordAlg D ≃ₗ[ℝ] Quaternion ℝ, CompositionAlgebra.IsCompIso f) ∨
+      (∃ f : CoordAlg D ≃ₗ[ℝ] Octonion, CompositionAlgebra.IsCompIso f) :=
+  CompositionAlgebra.hurwitz_classification
 
 /-- The same, read as a statement about the block `V_{ij}` of `J`. -/
 theorem finrank_frameBlockRaw_of_coordData (D : CoordData J n) :
