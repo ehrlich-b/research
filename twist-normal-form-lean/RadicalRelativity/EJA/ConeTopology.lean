@@ -816,4 +816,72 @@ theorem opCommute_of_luders_comm {a b : J}
     exact sum_smul_mul_sum_smul_of_orthIdem hfam lam lam
   exact opCommute_of_resolution hfam hbres hhalf w
 
+
+/-- ★★★ **`prop:bridge`, the forward direction, at EJA generality.**
+
+Operator commutation gives a simultaneous resolution, on which both orders of the Lüders product
+are the same diagonal `∑ λₖμₖ qₖ`.  ★ The coefficients are trimmed to `0` at absent idempotents
+before `luders_of_resolution` is applied, because a *simultaneous* resolution need not have
+nonnegative coefficients where its idempotents vanish — only where they do not. -/
+theorem luders_comm_of_opCommute {a b : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (hab : ∀ w, a * (b * w) = b * (a * w)) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a := by
+  classical
+  obtain ⟨N, q, la, mu, hfam, hsum, hae, hbe⟩ :=
+    exists_simultaneous_resolution 1 EuclideanJordanAlgebra.one_mul hab
+  set la' : Fin N → ℝ := fun k => if q k = 0 then 0 else la k with hla'def
+  set mu' : Fin N → ℝ := fun k => if q k = 0 then 0 else mu k with hmu'def
+  have htrim : ∀ (f : Fin N → ℝ) (x : J), x = ∑ k, f k • q k →
+      x = ∑ k, (if q k = 0 then 0 else f k) • q k := by
+    intro f x hx
+    rw [hx]
+    refine Finset.sum_congr rfl fun k _ => ?_
+    by_cases h : q k = 0
+    · rw [h, smul_zero, smul_zero]
+    · rw [if_neg h]
+  have hae' : a = ∑ k, la' k • q k := htrim la a hae
+  have hbe' : b = ∑ k, mu' k • q k := htrim mu b hbe
+  have hnna : ∀ k, 0 ≤ la' k := by
+    intro k
+    by_cases h : q k = 0
+    · rw [hla'def]; simp [h]
+    · rw [hla'def]
+      simp only [if_neg h]
+      exact nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+        (fun i => hfam.idem i) (fun i j hij => hfam.orth i j hij) hae ha h
+  have hnnb : ∀ k, 0 ≤ mu' k := by
+    intro k
+    by_cases h : q k = 0
+    · rw [hmu'def]; simp [h]
+    · rw [hmu'def]
+      simp only [if_neg h]
+      exact nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+        (fun i => hfam.idem i) (fun i j hij => hfam.orth i j hij) hbe hb h
+  have hsqa : jsqrt 1 EuclideanJordanAlgebra.one_mul a = jsqrtOfResolution q la' :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul a hfam hae'
+  have hsqb : jsqrt 1 EuclideanJordanAlgebra.one_mul b = jsqrtOfResolution q mu' :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b hfam hbe'
+  rw [hsqa, hsqb]
+  conv_lhs => rw [hbe']
+  conv_rhs => rw [hae']
+  rw [luders_of_resolution hfam hnna mu', luders_of_resolution hfam hnnb la']
+  exact Finset.sum_congr rfl fun k _ => by rw [mul_comm]
+
+/-- ★★★ **`prop:bridge`'s standard-product leg, as an equivalence, at EJA generality.**
+
+For cone elements of a finite-dimensional Euclidean Jordan algebra,
+
+  `Q_{√a} b = Q_{√b} a  ↔  ⁅L_a, L_b⁆ = 0`,
+
+i.e. **standard-product compatibility is exactly Jordan operator commutation**.  This is the leg
+every one of the article's eight `prop:bridge` citations actually consumes, and the direction the
+row recorded as unproved is the `→`. -/
+theorem luders_comm_iff_opCommute {a b : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b) :
+    (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+        = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a)
+      ↔ ∀ w : J, a * (b * w) = b * (a * w) :=
+  ⟨fun h w => (opCommute_of_luders_comm ha hb h w).symm,
+   fun hab => luders_comm_of_opCommute ha hb hab⟩
+
 end RadicalRelativity.EJA
