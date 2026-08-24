@@ -397,4 +397,79 @@ theorem luders_continuousOn_isEffect (b : J) :
   rw [← effectSet_eq_setOf_isEffect]
   exact luders_continuousOn_fst b
 
+
+/-! ## Toward `prop:bridge` at EJA generality: the Peirce defect
+
+★★★ Rows 8, 16 and 21 all wait on S6, S7 and S5's own hypothesis for the Lüders product, and all
+three reduce to one implication — the converse half of `prop:bridge` (manifest row 10):
+
+  `Q_{√a} b = Q_{√b} a  ⟹  ⁅L_a, L_b⁆ = 0`.
+
+On the matrix carrier that implication is `Necessity`'s `commute_of_twistSeq_comm`, proved by a
+**Frobenius certificate**: expand `tr(C Cᴴ)` for `C = √b·a − a·√b` into four traces, show each
+equals `tr(b a²)` — one of them by the hypothesis — so the certificate vanishes and `C = 0`.
+
+★★ **That argument has an EJA transcription, and this section is its first half.**  The four
+matrix traces reassemble, in Jordan vocabulary, into the single scalar
+
+  `Φ(v, x) := ⟪v∘v, x∘x⟫ − ‖v∘x‖²`,
+
+and the hypothesis forces `Φ(√b, a) = 0` — that is `luders_comm_peirceDefect_eq_zero` below.
+The identity behind it is `⟪Q_v x, x⟫ = 2‖v∘x‖² − ⟪v∘v, x∘x⟫`, which is two applications of
+associativity of the trace form and nothing else.
+
+★★★ **What `Φ` is, and why the remaining half is the whole content.**  Writing `v = ∑ μₖ qₖ` for
+the spectral resolution and decomposing `x` into Peirce blocks `x_{kl}` of that family,
+
+  `Φ(v, x) = ∑_{k,l} ((μₖ − μₗ)² / 4) ‖x_{kl}‖²`,
+
+because `L_{v∘v} − L_v²` acts on the block `J_{kl}` by `(μₖ² + μₗ²)/2 − μₖμₗ = (μₖ − μₗ)²/2`.  So
+`Φ ≥ 0` always, and `Φ = 0` exactly when `x` is Peirce-diagonal for `v`'s spectral idempotents —
+which is exactly `⁅L_v, L_x⁆ = 0`.  **That equality case is the open half**; it needs the joint
+Peirce decomposition of an orthogonal idempotent family, not just of one idempotent.  It is
+recorded here rather than left implicit because the reduction above is the part that was not
+obvious, and it is now machine-checked. -/
+
+omit [FiniteDimensional ℝ J] in
+/-- `Q_u(u²) = (u²)²`, via the fundamental formula's `quadJ_sq` at the unit. -/
+theorem quadJ_self_sq (u : J) : quadJ u (u * u) = (u * u) * (u * u) := by
+  have h := quadJ_sq EuclideanJordanAlgebra.one_mul u (1 : J)
+  rw [quadJ_unit EuclideanJordanAlgebra.one_mul u,
+    quadJ_unit EuclideanJordanAlgebra.one_mul (u * u)] at h
+  exact h.symm
+
+omit [FiniteDimensional ℝ J] in
+/-- **The pairing identity behind the certificate**: `⟪Q_v x, x⟫ = 2‖v∘x‖² − ⟪v∘v, x∘x⟫`. -/
+theorem inner_quadJ_self (v x : J) :
+    (inner ℝ (quadJ v x) x : ℝ)
+      = 2 * (inner ℝ (v * x) (v * x) : ℝ) - (inner ℝ (v * v) (x * x) : ℝ) := by
+  rw [quadJ_apply, inner_sub_left, real_inner_smul_left,
+    EuclideanJordanAlgebra.inner_assoc v (v * x) x,
+    EuclideanJordanAlgebra.inner_assoc' (v * v) x x]
+
+/-- The **Peirce defect** of a pair: `Φ(v, x) = ⟪v∘v, x∘x⟫ − ‖v∘x‖²`. -/
+def peirceDefect (v x : J) : ℝ :=
+  (inner ℝ (v * v) (x * x) : ℝ) - (inner ℝ (v * x) (v * x) : ℝ)
+
+/-- ★★★ **Lüders compatibility kills the Peirce defect.**  This is the Frobenius certificate of
+the matrix proof, transcribed: the hypothesis is used exactly once, to identify `⟪Q_{√b} a, a⟫`
+with `⟪b, a∘a⟫`, and the pairing identity does the rest. -/
+theorem luders_comm_peirceDefect_eq_zero {a b : J}
+    (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (h : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+       = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a) :
+    peirceDefect (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a = 0 := by
+  set u := jsqrt 1 EuclideanJordanAlgebra.one_mul a with hudef
+  set v := jsqrt 1 EuclideanJordanAlgebra.one_mul b with hvdef
+  have hu : u * u = a := jsqrt_sq_of_isSoS ha
+  have hv : v * v = b := jsqrt_sq_of_isSoS hb
+  have hqa : quadJ u a = a * a := by rw [← hu, quadJ_self_sq u, hu]
+  have h1 : (inner ℝ (quadJ v a) a : ℝ) = inner ℝ b (a * a) := by
+    rw [← h, quadJ_inner_self_adjoint u b a, hqa]
+  have h2 := inner_quadJ_self v a
+  rw [h1, hv] at h2
+  unfold peirceDefect
+  rw [hv]
+  linarith
+
 end RadicalRelativity.EJA
