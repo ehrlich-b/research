@@ -491,3 +491,35 @@ family, so every remaining axiom becomes arithmetic on reals once that lands.
 
 ★ Every one of the three was found by trying to USE the thing, never by re-reading it.
 
+## NEXT, and it is now a port rather than a discovery: row 13's remaining half
+
+Row 13 asserts `a·a⁻¹ = 1` **for the unknown product as well as the standard one**. The standard
+half is proved (`luders_jsqrt_jinv`). The unknown half is `Necessity.sp_pseudoInv_eq_smul_one`
+(`Necessity/PseudoInverse.lean:126`), which exists only over `HermitianMat` — and its one
+non-portable dependency, the vdW 5.2 value law, **was ported to `OrderUnitSpace` generality on
+2026-08-24** (`RadicalRelativity/OrthFamily.lean`). So the blocker is gone.
+
+The concrete machinery and its abstract counterparts, all now available:
+
+| concrete (`PseudoInverse.lean`)            | abstract counterpart                                    |
+|---|---|
+| `b.eigFinset`                              | the image of `lam` from `exists_resolution_distinct`    |
+| `b.specProj μ`                             | the idempotents `c i` of that resolution                |
+| `hproj : (p i).IsProjection`               | `isSharpOrderUnit_of_idem` (proved 2026-08-23)          |
+| `horth : (p i).mat * (p j).mat = 0`        | **not needed** — the abstract law wants only `∑ p i ≤ 𝟙`|
+| `sp_orthFamily_value`                      | `SequentialProductOn.sp_orthFamily_value` (abstract)    |
+| `pseudoInvCoef b = ∏ μ ∈ eigFinset, μ`     | `∏ i, lam i` over the resolution's index                |
+| `pseudoInv b = ∑ (c/μ) • specProj μ`       | `∑ i, (coef / lam i) • c i`                             |
+
+★ The normalisation by `∏ lam i` is not cosmetic: it is what keeps the pseudo-inverse **inside the
+effect interval**, which every hypothesis of the value law needs. `pseudoInvCoef_le` (the coef is
+≤ every eigenvalue) is the lemma that does it, and it is pure real arithmetic — it should port
+unchanged.
+
+★★ Do NOT assume the abstract and concrete orthogonality hypotheses are interchangeable. The port
+deliberately replaced matrix orthogonality with `IsSharp` + one full-family bound, which is
+strictly weaker; `Necessity.isProjection_isSharp` proves the concrete side implies it, and **no
+converse is claimed**.
+
+If this port lands, row 13 has both halves and becomes the first row to move since row 5.
+
