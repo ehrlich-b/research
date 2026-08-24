@@ -131,4 +131,30 @@ theorem mat_cfc_polynomial (A : HermitianMat n 𝕜) (p : Polynomial ℝ) :
     rw [Algebra.smul_def]
     congr 1
 
+/-! ## Polynomials at a spectral projection
+
+★★★ Manifest **row 22**'s residue is that `a^{it}` acts on a spectral projection `q` of `a` by the
+scalar `λ^{it}` — the tree has it "only for the diagonal family".  The general statement factors
+through polynomials: `a * q = λ • q` propagates to powers, hence to `Polynomial.aeval`, and
+`mat_cfc_polynomial` above carries that to the functional calculus.  Since a matrix spectrum is
+finite, every continuous `f` agrees on it with a polynomial, which is what closes the gap. -/
+
+theorem pow_mul_of_eigen {M q : Matrix n n 𝕜} {μ : 𝕜} (h : M * q = μ • q) (k : ℕ) :
+    M ^ k * q = μ ^ k • q := by
+  induction k with
+  | zero => simp
+  | succ k ih =>
+    rw [pow_succ, Matrix.mul_assoc, h, Matrix.mul_smul, ih, smul_smul, pow_succ, mul_comm]
+
+/-- ★★★ **A polynomial in `M` acts on an eigenprojection by the polynomial's value.** -/
+theorem aeval_mul_of_eigen {M q : Matrix n n 𝕜} {μ : 𝕜} (h : M * q = μ • q)
+    (P : Polynomial 𝕜) : Polynomial.aeval M P * q = P.eval μ • q := by
+  induction P using Polynomial.induction_on' with
+  | add P Q hP hQ =>
+    rw [map_add, Matrix.add_mul, hP, hQ, Polynomial.eval_add, add_smul]
+  | monomial k c =>
+    rw [Polynomial.aeval_monomial, Polynomial.eval_monomial,
+      Algebra.algebraMap_eq_smul_one, Matrix.smul_mul, Matrix.one_mul, Matrix.smul_mul,
+      pow_mul_of_eigen h k, smul_smul]
+
 end HermitianMat
