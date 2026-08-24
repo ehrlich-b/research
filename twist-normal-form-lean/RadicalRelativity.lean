@@ -711,6 +711,15 @@ import RadicalRelativity.EJA.PseudoTransfer
 -- theorem proved for row 13.  Compactness is the input for continuity of the Jordan square root,
 -- i.e. for paper S2 of the Luders product -- the shared blocker of rows 8, 16 and 21.
 import RadicalRelativity.EJA.ConeTopology
+
+-- Row 14 (`prop:theta`), existence clause at ABSTRACT EJA generality: for an invertible effect
+-- `b` and any S1-S7+S2 product, `Theta_b := Q_sqrt(b)^{-1} . L_b` is a JORDAN AUTOMORPHISM with
+-- `L_b = Q_sqrt(b) . Theta_b`.  It is a linear equivalence because row 13's order reflection makes
+-- `L_b` injective (hence bijective in finite dimension) and `Q_sqrt(b)` is invertible at an
+-- invertible element; it is an ORDER isomorphism because `L_b` both preserves and reflects the
+-- cone; and `map_jordan_of_orderIso` (the Koecher / Alfsen-Shultz input, proved and unused until
+-- now) upgrades that to a Jordan automorphism.
+import RadicalRelativity.EJA.ThetaAbstract
 -- Peirce subalgebras.  `J2(c)` and `J0(c)` carry Euclidean Jordan structures of their own,
 -- with units `c` and `1 - c`; the vehicle is `Submodule` rather than `NonUnitalSubalgebra`, so
 -- no instance transfer is needed.  Substrate; it moves no row.
