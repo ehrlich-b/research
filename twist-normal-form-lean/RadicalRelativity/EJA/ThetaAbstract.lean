@@ -328,4 +328,148 @@ theorem theta_id_on_peirceTwo {a : J} {n : ℕ} {c : Fin n → J} {lam : Fin n �
   exact theta_fixes_of_opCommute hfam hsum ha hasos hacs hne P hS2 harch hae Θ hΘ hysos hyc
     (opCommute_scalarOn hq hdec ha₀ hy2)
 
+
+/-! ### From the effects of a Peirce block to the whole block
+
+★★★ `theta_fixes_of_opCommute` is stated on **effects**, and the elements of an off-diagonal
+Peirce block `V_{ij}` are not effects.  `Θ` is linear, so it is enough that every element of
+`J₂(q)` is a real combination of effects *lying in `J₂(q)`* — and it is, for a reason that needs
+no subalgebra theory: `Q_q` fixes `J₂(q)` pointwise, sends `1` to `q`, and preserves the cone, so
+it pushes an ambient Archimedean bound `−x ≤ t•1` into the block as `x + t•q ≥ 0`. -/
+
+/-- `Q_q` fixes the Peirce 2-space of `q` pointwise. -/
+theorem quadJ_idem_self {q x : J} (hq : q * q = q) (hx : q * x = x) : quadJ q x = x := by
+  rw [quadJ_apply, hx, hx, hq, hx]
+  module
+
+/-- ★★★ **Every element of `J₂(q)` is a real combination of two effects lying in `J₂(q)`.** -/
+theorem exists_effect_decomp_peirceTwo {q x : J} (hq : q * q = q) (hx : q * x = x) :
+    ∃ (s t : ℝ) (e : J), 0 < s ∧ 0 ≤ t ∧ IsSoS (jmulₗ J) e ∧
+      IsSoS (jmulₗ J) ((1 : J) - e) ∧ q * e = e ∧ x = s • e - t • q := by
+  obtain ⟨t, ht0, ht⟩ := exists_isSoS_smul_unit_sub (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan
+    jmulₗ_formallyReal (1 : J) jmulₗ_one_mul (-x)
+  -- `t•1 + x` is in the cone; push it into the block with `Q_q`
+  have hpos : IsSoS (jmulₗ J) (t • (1 : J) + x) := by
+    have : t • (1 : J) - -x = t • (1 : J) + x := by abel
+    rwa [this] at ht
+  have hQ : quadJ q (t • (1 : J) + x) = t • q + x := by
+    rw [map_add, map_smul, quadJ_unit EuclideanJordanAlgebra.one_mul, hq,
+      quadJ_idem_self hq hx]
+  have hblk : IsSoS (jmulₗ J) (t • q + x) := by rw [← hQ]; exact quadJ_isSoS q hpos
+  obtain ⟨s0, hs00, hs0⟩ := exists_isSoS_smul_unit_sub (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan
+    jmulₗ_formallyReal (1 : J) jmulₗ_one_mul (t • q + x)
+  refine ⟨s0 + 1, t, (s0 + 1)⁻¹ • (t • q + x), by linarith, ht0, ?_, ?_, ?_, ?_⟩
+  · exact IsSoS.smul (by positivity) hblk
+  · have hs : (0 : ℝ) < s0 + 1 := by linarith
+    have hrw : (1 : J) - (s0 + 1)⁻¹ • (t • q + x)
+        = (s0 + 1)⁻¹ • ((s0 + 1) • (1 : J) - (t • q + x)) := by
+      rw [smul_sub, smul_smul, inv_mul_cancel₀ hs.ne', one_smul]
+    have hbig : (s0 + 1) • (1 : J) - (t • q + x)
+        = (s0 • (1 : J) - (t • q + x)) + (1 : ℝ) • (1 : J) := by
+      rw [add_smul]; abel
+    rw [hrw, hbig]
+    exact IsSoS.smul (le_of_lt (inv_pos.mpr hs))
+      (IsSoS.add hs0 (IsSoS.smul zero_le_one (isSoS_of_idem (EuclideanJordanAlgebra.one_mul 1))))
+  · rw [mul_smul_comm, mul_add, mul_smul_comm, hq, hx]
+  · rw [smul_smul, mul_inv_cancel₀ (by linarith : s0 + 1 ≠ 0), one_smul]
+    abel
+
+
+omit [FiniteDimensional ℝ J] in
+theorem isSoS_one_sub_idem {q : J} (hq : q * q = q) : IsSoS (jmulₗ J) ((1 : J) - q) := by
+  refine isSoS_of_idem ?_
+  show ((1 : J) - q) * ((1 : J) - q) = (1 : J) - q
+  rw [sub_mul, mul_sub, mul_sub, EuclideanJordanAlgebra.one_mul,
+    EuclideanJordanAlgebra.one_mul, hq, mul_comm q (1 : J), EuclideanJordanAlgebra.one_mul]
+  abel
+
+/-- ★★★ **`lem:coalescence`, general clause, on the whole Peirce 2-space.**
+
+`Θ_a` is the identity on **all** of `J₂(q)`, not only on its effects: every element of the block
+is a real combination of two effects lying in the block, and `Θ` is linear. -/
+theorem theta_id_on_peirceTwo_all {a : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = 1) (ha : a = ∑ i, lam i • c i)
+    (hasos : IsSoS (jmulₗ J) a) (hacs : IsSoS (jmulₗ J) ((1 : J) - a))
+    (hne : ∀ i, c i ≠ 0 → lam i ≠ 0)
+    {q a₀ : J} {μ : ℝ} (hq : q * q = q) (hdec : a = μ • q + a₀) (ha₀ : q * a₀ = 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J) (hae : OrderUnitSpace.IsEffect a)
+        (Θ : J ≃ₗ[ℝ] J),
+        (∀ z : J, P.seqLeftMulAbs harch hae z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) (Θ z)) →
+        ∀ {y : J}, q * y = y → Θ y = y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hae Θ hΘ y hy
+  obtain ⟨s, t, e, hs, ht, hes, hec, hqe, hxe⟩ := exists_effect_decomp_peirceTwo hq hy
+  have hΘe : Θ e = e :=
+    theta_id_on_peirceTwo hfam hsum ha hasos hacs hne hq hdec ha₀ P hS2 harch hae Θ hΘ hes hec hqe
+  have hΘq : Θ q = q :=
+    theta_id_on_peirceTwo hfam hsum ha hasos hacs hne hq hdec ha₀ P hS2 harch hae Θ hΘ
+      (isSoS_of_idem hq) (isSoS_one_sub_idem hq) hq
+  rw [hxe, map_sub, map_smul, map_smul, hΘe, hΘq]
+
+
+/-! ### `lem:coalescence`, first clause: coalescing twist parameters -/
+
+/-- ★★★ **`lem:coalescence`, first clause.**  If the parameters agree at `i` and `j` — `f i = f j`
+— then `Θ` for `a = ∑ f k • pₖ` fixes the Peirce block `V_{ij}` pointwise.
+
+This is the general clause specialized to `q = pᵢ + pⱼ`: coalescing the two parameters is exactly
+what makes `a` scalar on `J₂(q)` with no Peirce 1-part, and `V_{ij} ⊆ J₂(q)` because an element
+halved by both `pᵢ` and `pⱼ` is fixed by their sum. -/
+theorem theta_id_on_frameBlock {N : ℕ} (F : JordanFrame J N) {f : Fin N → ℝ}
+    (hf0 : ∀ k, 0 < f k) (hf1 : ∀ k, f k ≤ 1) {i j : Fin N} (hij : i ≠ j) (hfij : f i = f j) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J)
+        (hae : OrderUnitSpace.IsEffect (∑ k, f k • F.p k)) (Θ : J ≃ₗ[ℝ] J),
+        (∀ z : J, P.seqLeftMulAbs harch hae z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (∑ k, f k • F.p k)) (Θ z)) →
+        ∀ {y : J}, y ∈ frameBlockRaw F i j → Θ y = y := by
+  classical
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hae Θ hΘ y hy
+  set a : J := ∑ k, f k • F.p k with hadef
+  set q : J := F.p i + F.p j with hqdef
+  have hq : q * q = q :=
+    add_idem_of_orthogonal (F.orthIdem.idem i) (F.orthIdem.idem j) (F.orthIdem.orth i j hij)
+  -- `a` is scalar on `J₂(q)` with the rest in `J₀(q)`
+  set rest : Finset (Fin N) := (Finset.univ.erase i).erase j with hrestdef
+  set a₀ : J := ∑ k ∈ rest, f k • F.p k with ha₀def
+  have hji : j ∈ Finset.univ.erase i := Finset.mem_erase.mpr ⟨Ne.symm hij, Finset.mem_univ j⟩
+  have hdec : a = f i • q + a₀ := by
+    rw [hadef, ← Finset.add_sum_erase _ _ (Finset.mem_univ i),
+      ← Finset.add_sum_erase _ _ hji, hqdef, smul_add, hfij, ha₀def, hrestdef]
+    abel
+  have ha₀ : q * a₀ = 0 := by
+    rw [ha₀def, Finset.mul_sum]
+    refine Finset.sum_eq_zero fun k hk => ?_
+    have hki : k ≠ i := (Finset.mem_erase.mp (Finset.mem_erase.mp hk).2).1
+    have hkj : k ≠ j := (Finset.mem_erase.mp hk).1
+    rw [mul_smul_comm, hqdef, add_mul, mul_comm (F.p i) (F.p k), mul_comm (F.p j) (F.p k),
+      F.orthIdem.orth k i hki, F.orthIdem.orth k j hkj, add_zero, smul_zero]
+  -- `V_{ij} ⊆ J₂(q)`
+  have hy2 : q * y = y := by
+    obtain ⟨h1, h2⟩ := (mem_frameBlockRaw_off hij).mp hy
+    rw [hqdef, add_mul, h1, h2]
+    module
+  -- cone data for `a`
+  have hasos : IsSoS (jmulₗ J) a := by
+    rw [hadef]
+    exact isSoS_sum _ _ fun k _ => isSoS_smul_idem (hf0 k).le (F.orthIdem.idem k)
+  have hacs : IsSoS (jmulₗ J) ((1 : J) - a) := by
+    have hrw : (1 : J) - a = ∑ k, (1 - f k) • F.p k := by
+      have hh := smul_unit_sub_eq F.complete hadef 1
+      rwa [one_smul] at hh
+    rw [hrw]
+    exact isSoS_sum _ _ fun k _ =>
+      isSoS_smul_idem (by linarith [hf1 k]) (F.orthIdem.idem k)
+  exact theta_id_on_peirceTwo_all F.orthIdem F.complete hadef hasos hacs
+    (fun k _ => (hf0 k).ne') hq hdec ha₀ P hS2 harch hae Θ hΘ hy2
+
 end RadicalRelativity.EJA
