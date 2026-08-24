@@ -754,4 +754,66 @@ theorem luders_comm_peirceHalf_eq_zero {a b : J}
   refine peirceHalf_eq_zero_of_blockDiagonal hsum fun l hl => ?_
   exact luders_comm_blockDiagonal ha hb h hfam hsum hv (fun hEq => hl (hinj hEq).symm)
 
+
+/-! ### `prop:bridge`, the converse, at EJA generality
+
+★★★ The vanishing half-part is already operator commutation.  If `peirceHalf c a = 0` then
+`a = P₁(c)a + P₀(c)a`, and `c` operator-commutes with each summand — with the `1`-part by
+`mul_comm_of_eigen_one`, with the `0`-part by `mul_comm_of_eigen_zero` — so with `a` by
+linearity.  Summing against the resolution transfers it from each `cₖ` to any element resolved
+by that family, and `b` and `√b` are both such elements. -/
+
+omit [FiniteDimensional ℝ J] in
+/-- **An element with no Peirce half-part operator-commutes with the idempotent.** -/
+theorem opCommute_of_peirceHalf_eq_zero {c a : J} (hc : c * c = c)
+    (hhalf : peirceHalf c a = 0) (w : J) : c * (a * w) = a * (c * w) := by
+  have hdec : peirceOne c a + peirceZero c a = a := by
+    have h := peirce_add_add' c a
+    rw [hhalf, add_zero] at h
+    exact h
+  have h1 := mul_comm_of_eigen_one hc (mul_peirceOne hc a) w
+  have h0 := mul_comm_of_eigen_zero hc (mul_peirceZero hc a) w
+  calc c * (a * w) = c * ((peirceOne c a + peirceZero c a) * w) := by rw [hdec]
+    _ = c * (peirceOne c a * w) + c * (peirceZero c a * w) := by rw [add_mul, mul_add]
+    _ = peirceOne c a * (c * w) + peirceZero c a * (c * w) := by rw [h1, h0]
+    _ = a * (c * w) := by rw [← add_mul, hdec]
+
+omit [FiniteDimensional ℝ J] in
+/-- **Transfer along a resolution**: anything with no half-part at every member of the family
+operator-commutes with every element the family resolves. -/
+theorem opCommute_of_resolution {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} {v a : J}
+    (hfam : IsOrthIdemFamily c) (hv : v = ∑ i, lam i • c i)
+    (hhalf : ∀ k, peirceHalf (c k) a = 0) (w : J) : v * (a * w) = a * (v * w) := by
+  rw [hv, Finset.sum_mul, Finset.sum_mul, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [smul_mul_assoc, smul_mul_assoc, mul_smul_comm,
+    opCommute_of_peirceHalf_eq_zero (hfam.idem k) (hhalf k) w]
+
+/-- ★★★ **`prop:bridge`, the converse direction, at EJA generality.**
+
+`Q_{√a} b = Q_{√b} a  ⟹  ⁅L_a, L_b⁆ = 0`.
+
+This is the implication the article's row 10 records as unproved, the one the matrix carrier gets
+from `commute_of_twistSeq_comm`, and the one S5, S6 and S7 for the Lüders product all reduce to.
+The route, all of it in this file: the Frobenius certificate kills the Peirce defect
+(`luders_comm_peirceDefect_eq_zero`); the block-projection identity `4L_pL_q` idempotent turns
+that into block-diagonality (`blockPairing_eq_zero_of_peirceDefect`); block-diagonality is the
+vanishing of the half-part (`peirceHalf_eq_zero_of_blockDiagonal`); and a vanishing half-part *is*
+operator commutation (`opCommute_of_peirceHalf_eq_zero`). -/
+theorem opCommute_of_luders_comm {a b : J}
+    (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (h : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+       = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a) (w : J) :
+    b * (a * w) = a * (b * w) := by
+  classical
+  obtain ⟨n, c, lam, hfam, hsum, hv, hinj⟩ :=
+    exists_resolution_distinct 1 EuclideanJordanAlgebra.one_mul
+      (jsqrt 1 EuclideanJordanAlgebra.one_mul b)
+  have hhalf : ∀ k, peirceHalf (c k) a = 0 := fun k =>
+    luders_comm_peirceHalf_eq_zero ha hb h hfam hsum hinj hv k
+  have hbres : b = ∑ i, (lam i * lam i) • c i := by
+    rw [← jsqrt_sq_of_isSoS hb, hv]
+    exact sum_smul_mul_sum_smul_of_orthIdem hfam lam lam
+  exact opCommute_of_resolution hfam hbres hhalf w
+
 end RadicalRelativity.EJA
