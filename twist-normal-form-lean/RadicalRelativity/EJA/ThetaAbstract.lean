@@ -995,4 +995,89 @@ theorem theta_twistElt_hom {N : ℕ} (F : JordanFrame J N) {r s : Fin N → ℝ}
     theta_comm F.orthIdem F.complete (hexp0 r) (hexp1 hr) (hexp0 s) (hexp1 hs)
       (hexpne r) (hexpne s) rfl rfl P hS2 harch her hes hers Θr Θs hΘrmul hΘsmul hΘr hΘs⟩
 
+
+/-! ## `Θ` as a definition
+
+★★★ `exists_theta` produces `Θ` existentially, which is enough for every *algebraic* clause but
+not for the analytic ones: continuity of `r ↦ Θ_r`, the identity component `Stab(F)°`, and the
+differential `dχ` all need `Θ` to be a **function of its data**.  This section names it.
+
+★ The construction is exactly the one `exists_theta` performs — `Q_{√b}⁻¹ ∘ L_b` — and
+`thetaOf_spec` re-derives that theorem's three conclusions for it, so nothing downstream has to
+choose between the two forms. -/
+
+/-- ★★★ **The twist automorphism, as a function of its data.**  `Θ_b := Q_{√b}⁻¹ ∘ L_b`. -/
+noncomputable def thetaOf {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = 1) (hb : b = ∑ i, lam i • c i)
+    (hbsos : IsSoS (jmulₗ J) b) (hcsos : IsSoS (jmulₗ J) ((1 : J) - b))
+    (hne : ∀ i, c i ≠ 0 → lam i ≠ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J) (_ : OrderUnitSpace.IsEffect b), J ≃ₗ[ℝ] J :=
+  fun P hS2 harch hbe =>
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    (LinearEquiv.ofBijective (P.seqLeftMulAbs harch hbe)
+      ⟨(sp_orderReflection hfam hsum hb hbsos hcsos hne P hS2 harch hbe).2,
+        (LinearMap.injective_iff_surjective
+          (f := P.seqLeftMulAbs harch hbe)).mp
+          (sp_orderReflection hfam hsum hb hbsos hcsos hne P hS2 harch hbe).2⟩).trans
+      (quadJSqrtEquiv hfam hsum hb hbsos hne).symm
+
+/-- ★★★ **`thetaOf` satisfies `prop:theta`'s three conclusions.**  Unitality, the Jordan-morphism
+property, and the defining identity `L_b = Q_{√b} ∘ Θ_b`. -/
+theorem thetaOf_spec {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = 1) (hb : b = ∑ i, lam i • c i)
+    (hbsos : IsSoS (jmulₗ J) b) (hcsos : IsSoS (jmulₗ J) ((1 : J) - b))
+    (hne : ∀ i, c i ≠ 0 → lam i ≠ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (hbe : OrderUnitSpace.IsEffect b),
+      thetaOf hfam hsum hb hbsos hcsos hne P hS2 harch hbe 1 = 1 ∧
+        (∀ x y : J, thetaOf hfam hsum hb hbsos hcsos hne P hS2 harch hbe (x * y)
+          = thetaOf hfam hsum hb hbsos hcsos hne P hS2 harch hbe x
+            * thetaOf hfam hsum hb hbsos hcsos hne P hS2 harch hbe y) ∧
+        ∀ z : J, P.seqLeftMulAbs harch hbe z
+          = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b)
+              (thetaOf hfam hsum hb hbsos hcsos hne P hS2 harch hbe z) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hbe
+  set Θ := thetaOf hfam hsum hb hbsos hcsos hne P hS2 harch hbe with hΘdef
+  set E := quadJSqrtEquiv hfam hsum hb hbsos hne with hEdef
+  have hΘval : ∀ z : J, Θ z = E.symm (P.seqLeftMulAbs harch hbe z) := fun _ => rfl
+  have hid : ∀ z : J, E (Θ z) = P.seqLeftMulAbs harch hbe z := fun z => by
+    rw [hΘval z, LinearEquiv.apply_symm_apply]
+  have hle : ∀ z : J, (0 : J) ≤ z ↔ IsSoS (jmulₗ J) z := by
+    intro z
+    rw [le_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul 0 z, sub_zero]
+  have hunit : Θ 1 = 1 := by
+    refine E.injective ?_
+    rw [hid, hEdef, quadJSqrtEquiv_apply, quadJ_unit EuclideanJordanAlgebra.one_mul,
+      jsqrt_sq_of_isSoS hbsos]
+    exact P.seqLeftMulAbs_one harch hbe
+  have horder : ∀ z : J, IsSoS mulLₗ z ↔ IsSoS mulLₗ (Θ z) := by
+    intro z
+    rw [← isSoS_jmulₗ_iff_mulLₗ, ← isSoS_jmulₗ_iff_mulLₗ]
+    constructor
+    · intro hz
+      have h2 : IsSoS (jmulₗ J) (P.seqLeftMulAbs harch hbe z) :=
+        (hle _).mp (P.seqLeftMulAbs_nonneg harch hbe ((hle z).mpr hz))
+      have hval : Θ z = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
+          (jinvOfResolution c lam)) (P.seqLeftMulAbs harch hbe z) := rfl
+      rw [hval]
+      exact quadJ_isSoS _ h2
+    · intro hz
+      have hLz : IsSoS (jmulₗ J) (P.seqLeftMulAbs harch hbe z) := by
+        rw [← hid z, hEdef, quadJSqrtEquiv_apply]
+        exact quadJ_isSoS _ hz
+      exact (hle z).mp
+        ((sp_orderReflection hfam hsum hb hbsos hcsos hne P hS2 harch hbe).1 z ((hle _).mpr hLz))
+  exact ⟨hunit, fun x y =>
+    map_jordan_of_orderIso EuclideanJordanAlgebra.one_mul Θ hunit horder x y,
+    fun z => (hid z).symm⟩
+
 end RadicalRelativity.EJA
