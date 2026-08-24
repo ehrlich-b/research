@@ -454,4 +454,57 @@ theorem luders_lowerInterval_surj {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin
   rw [← hsub]
   exact quadJ_isSoS _ hyb
 
+
+/-! ## `prop:pseudo-transfer`, assembled
+
+The article's proposition, in one statement.  Every conjunct is a theorem proved above; this
+exists so the row's content is a single checkable object rather than a reading of several. -/
+
+/-- **`prop:pseudo-transfer` (`main.tex:719-733`), at EJA generality.**
+
+For an invertible effect `b` — presented by a complete resolution with no vanishing eigenvalue at
+a present idempotent, and cone certificates for `b` and `1 − b` — with spectral inverse
+`b⁻¹ = ∑ᵢ λᵢ⁻¹cᵢ`:
+
+* `b·b⁻¹ = b⁻¹·b = 1` for **the unknown product** (any S1–S7 product with S2), and
+* the same for **the standard product**, and
+* `b` is **order preserving** for the unknown product — order reflection *and* lower-interval
+  surjectivity, which are the two clauses of van de Wetering's Definition 4.17 — and
+* likewise for the standard product.
+
+That is exactly the proposition's four assertions.  The last two are what supply the hypotheses
+of van de Wetering's Proposition 5.3 at every invertible effect, which is the use the article
+makes of it. -/
+theorem prop_pseudoTransfer {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = 1) (hb : b = ∑ i, lam i • c i)
+    (hbsos : IsSoS (jmulₗ J) b) (hcsos : IsSoS (jmulₗ J) ((1 : J) - b))
+    (hne : ∀ i, c i ≠ 0 → lam i ≠ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    -- the standard product: `b` and `b⁻¹` are mutually inverse under `Q`
+    (∀ z : J, quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b)
+        (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (jinvOfResolution c lam)) z) = z)
+    -- the standard product is order preserving: reflection, and onto the lower interval
+    ∧ (∀ y : J, IsSoS (jmulₗ J) (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) y)
+        → IsSoS (jmulₗ J) y)
+    ∧ (∀ y : J, IsSoS (jmulₗ J) y → IsSoS (jmulₗ J) (b - y) →
+        ∃ x : J, IsSoS (jmulₗ J) x ∧ IsSoS (jmulₗ J) ((1 : J) - x)
+          ∧ quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) x = y)
+    -- and for every unknown S1-S7 product with S2: the identity, and both order clauses
+    ∧ (∀ P : SequentialProductOn J, P.FirstArgContinuous →
+        (P.spCone (∑ i, (lam i)⁻¹ • c i) b = 1 ∧ P.spConeRight b (∑ i, (lam i)⁻¹ • c i) = 1)
+        ∧ (∀ (harch : OrderUnitSpace.IsArchimedean J) (hbe : OrderUnitSpace.IsEffect b),
+            (∀ x : J, 0 ≤ P.seqLeftMulAbs harch hbe x → 0 ≤ x)
+              ∧ Function.Injective (P.seqLeftMulAbs harch hbe))
+        ∧ (∀ y : J, IsSoS (jmulₗ J) y → IsSoS (jmulₗ J) (b - y) →
+            ∃ x : J, OrderUnitSpace.IsEffect x ∧ P.sp b x = y)) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  refine ⟨fun z => (quadJ_jsqrt_jinv_cancel hfam hsum hb hbsos hne z).1,
+    fun y hy => luders_reflectsNonneg hfam hsum hb hbsos hne hy,
+    fun y hy0 hyb => luders_lowerInterval_surj hfam hsum hb hbsos hne hy0 hyb,
+    fun P hS2 => ⟨sp_pseudoTransfer hfam hsum hb hbsos hcsos hne P hS2,
+      sp_orderReflection hfam hsum hb hbsos hcsos hne P hS2,
+      sp_lowerIntervalSurj hfam hsum hb hbsos hcsos hne P hS2⟩⟩
+
 end RadicalRelativity.EJA
