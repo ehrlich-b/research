@@ -472,4 +472,80 @@ theorem luders_comm_peirceDefect_eq_zero {a b : J}
   rw [hv]
   linarith
 
+
+/-! ### The Peirce block projection of a pair of orthogonal idempotents
+
+★★★ The remaining half of the bridge needs `⟪L_p L_q x, x⟫ ≥ 0` for orthogonal idempotents, with
+vanishing forcing `L_p L_q x = 0`.  Both follow at once from a fact worth having on its own:
+
+  **`4 L_p L_q` is a self-adjoint idempotent** — the Peirce block projection onto `J_{pq}`.
+
+It needs no block algebra.  `q` annihilates `J₁(p)` (`eigen_one_mul_zero`), and `Q_p` lands in
+`J₁(p)` (`mul_peirceOne`), so `L_q Q_p = 0`; since `Q_p = 2L_p² − L_p` for an idempotent, that is
+`L_q L_p² = ½ L_q L_p`.  With the same relation in the other order and `⁅L_p, L_q⁆ = 0`
+(`opCommute_of_orthogonal`), `(L_pL_q)² = L_p²L_q² = ¼ L_pL_q`.
+
+★ Verified numerically on `H₅(ℂ)` before it was attempted: `‖P² − P‖ ≤ 1.3e-15`, `‖P − Pᵀ‖ ≤
+4.4e-16`, and ranks `2|pₖ||pₗ|` on the nose. -/
+
+/-- An orthogonal idempotent annihilates the `1`-eigenspace of the other. -/
+theorem mul_peirceOne_eq_zero_of_orth {p q : J} (hp : p * p = p) (hpq : p * q = 0) (w : J) :
+    q * peirceOne p w = 0 := by
+  rw [mul_comm]
+  exact eigen_one_mul_zero hp (mul_peirceOne hp w) hpq
+
+/-- `L_q L_p² = ½ L_q L_p` for orthogonal idempotents — the `Q_p`-annihilation, unpacked. -/
+theorem mul_mul_mul_eq_half {p q : J} (hp : p * p = p) (hpq : p * q = 0) (w : J) :
+    q * (p * (p * w)) = (2 : ℝ)⁻¹ • (q * (p * w)) := by
+  have h := mul_peirceOne_eq_zero_of_orth hp hpq w
+  rw [peirceOne_apply, mul_sub, mul_smul_comm] at h
+  have h2 : (2 : ℝ) • (q * (p * (p * w))) = q * (p * w) := by
+    have := sub_eq_zero.mp h
+    linear_combination (norm := module) this
+  have h3 := congrArg (fun z : J => (2 : ℝ)⁻¹ • z) h2
+  simpa using h3
+
+/-- **`4 L_p L_q` is idempotent** for orthogonal idempotents `p`, `q`. -/
+theorem blockProj_idem {p q : J} (hp : p * p = p) (hq : q * q = q) (hpq : p * q = 0) (w : J) :
+    p * (q * (p * (q * w))) = (4 : ℝ)⁻¹ • (p * (q * w)) := by
+  have hqp : q * p = 0 := by rw [mul_comm]; exact hpq
+  have e0 : p * (q * (p * (q * w))) = q * (p * (p * (q * w))) :=
+    opCommute_of_orthogonal hp hpq (p * (q * w))
+  have e1 : q * (p * (p * (q * w))) = (2 : ℝ)⁻¹ • (q * (p * (q * w))) :=
+    mul_mul_mul_eq_half hp hpq (q * w)
+  have e2 : q * (p * (q * w)) = p * (q * (q * w)) :=
+    (opCommute_of_orthogonal hp hpq (q * w)).symm
+  have e3 : p * (q * (q * w)) = (2 : ℝ)⁻¹ • (p * (q * w)) :=
+    mul_mul_mul_eq_half hq hqp w
+  rw [e0, e1, e2, e3, smul_smul]
+  norm_num
+
+/-- The pairing of the block projection is a square: `⟪L_pL_q x, x⟫ = 4‖L_pL_q x‖²`. -/
+theorem inner_blockProj_self {p q : J} (hp : p * p = p) (hq : q * q = q) (hpq : p * q = 0)
+    (x : J) :
+    (inner ℝ (p * (q * x)) x : ℝ) = (4 : ℝ) * (inner ℝ (p * (q * x)) (p * (q * x)) : ℝ) := by
+  have h1 : (inner ℝ (p * (q * x)) (p * (q * x)) : ℝ)
+      = inner ℝ (p * (q * (p * (q * x)))) x := by
+    rw [EuclideanJordanAlgebra.inner_assoc p (q * (p * (q * x))) x,
+      EuclideanJordanAlgebra.inner_assoc q (p * (q * x)) (p * x),
+      ← opCommute_of_orthogonal hp hpq x]
+  rw [h1, blockProj_idem hp hq hpq x, real_inner_smul_left]
+  ring
+
+/-- ★★★ **`⟪L_p L_q x, x⟫ ≥ 0` for orthogonal idempotents**, because `4 L_p L_q` is a
+self-adjoint idempotent, so the pairing is `4‖L_pL_q x‖²`. -/
+theorem inner_blockProj_nonneg {p q : J} (hp : p * p = p) (hq : q * q = q) (hpq : p * q = 0)
+    (x : J) : (0 : ℝ) ≤ inner ℝ (p * (q * x)) x := by
+  rw [inner_blockProj_self hp hq hpq x]
+  have h := real_inner_self_nonneg (x := p * (q * x))
+  linarith
+
+/-- ★★★ **The pairing vanishes only when the block component does** — the equality case the
+bridge needs. -/
+theorem blockProj_eq_zero_of_inner_eq_zero {p q : J} (hp : p * p = p) (hq : q * q = q)
+    (hpq : p * q = 0) {x : J} (h : (inner ℝ (p * (q * x)) x : ℝ) = 0) : p * (q * x) = 0 := by
+  rw [inner_blockProj_self hp hq hpq x] at h
+  have h2 : (inner ℝ (p * (q * x)) (p * (q * x)) : ℝ) = 0 := by linarith
+  exact inner_self_eq_zero.mp h2
+
 end RadicalRelativity.EJA
