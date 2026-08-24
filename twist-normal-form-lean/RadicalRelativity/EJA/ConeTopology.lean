@@ -994,4 +994,77 @@ theorem bridge_tfae {a b : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J)
    ⟨fun h => opCommute_of_quadJ_comm ha hb h,
     fun h => quadJ_comm_of_opCommute_resolution h⟩⟩
 
+
+/-! ### The commutant of an idempotent is a subalgebra
+
+★★★ S7 for the Lüders product needs the operator-commutant of an element to be closed under the
+Jordan product.  At an *idempotent* that is short and needs no resolution at all: operator
+commutation with `p` is exactly the vanishing of the Peirce half-part, and the half-part of a
+product vanishes because `J₁∘J₁ ⊆ J₁`, `J₀∘J₀ ⊆ J₀` and `J₁∘J₀ = 0`. -/
+
+omit [FiniteDimensional ℝ J] in
+/-- **Operator commutation with an idempotent is the vanishing of the Peirce half-part.**  The
+forward direction is one evaluation: put `w := p` in the commutation. -/
+theorem opCommute_idem_iff_peirceHalf {p x : J} (hp : p * p = p) :
+    (∀ w, p * (x * w) = x * (p * w)) ↔ peirceHalf p x = 0 := by
+  constructor
+  · intro h
+    have hpp := h p
+    rw [hp, mul_comm x p] at hpp
+    rw [peirceHalf_apply, hpp, sub_self]
+  · intro h w
+    exact opCommute_of_peirceHalf_eq_zero hp h w
+
+omit [FiniteDimensional ℝ J] in
+/-- **The Peirce half-part of a product vanishes when both factors' do.** -/
+theorem peirceHalf_mul_eq_zero {p x y : J} (hp : p * p = p)
+    (hx : peirceHalf p x = 0) (hy : peirceHalf p y = 0) : peirceHalf p (x * y) = 0 := by
+  have hxd : peirceOne p x + peirceZero p x = x := by
+    have h := peirce_add_add' p x; rw [hx, add_zero] at h; exact h
+  have hyd : peirceOne p y + peirceZero p y = y := by
+    have h := peirce_add_add' p y; rw [hy, add_zero] at h; exact h
+  have h10 : peirceOne p x * peirceZero p y = 0 :=
+    eigen_one_mul_zero hp (mul_peirceOne hp x) (mul_peirceZero hp y)
+  have h01 : peirceZero p x * peirceOne p y = 0 := by
+    rw [mul_comm]
+    exact eigen_one_mul_zero hp (mul_peirceOne hp y) (mul_peirceZero hp x)
+  have hprod : x * y = peirceOne p x * peirceOne p y + peirceZero p x * peirceZero p y := by
+    calc x * y = (peirceOne p x + peirceZero p x) * (peirceOne p y + peirceZero p y) := by
+          rw [hxd, hyd]
+      _ = peirceOne p x * peirceOne p y + peirceZero p x * peirceZero p y := by
+          rw [add_mul, mul_add, mul_add, h10, h01]; abel
+  have h11 : p * (peirceOne p x * peirceOne p y) = peirceOne p x * peirceOne p y :=
+    eigen_one_mul_one hp (mul_peirceOne hp x) (mul_peirceOne hp y)
+  have h00 : p * (peirceZero p x * peirceZero p y) = 0 :=
+    eigen_zero_mul_zero hp (mul_peirceZero hp x) (mul_peirceZero hp y)
+  have hpxy : p * (x * y) = peirceOne p x * peirceOne p y := by
+    rw [hprod, mul_add, h11, h00, add_zero]
+  have hppxy : p * (p * (x * y)) = p * (x * y) := by rw [hpxy, h11]
+  rw [peirceHalf_apply, hppxy, sub_self]
+
+omit [FiniteDimensional ℝ J] in
+/-- ★★★ **The operator-commutant of an idempotent is closed under the Jordan product.** -/
+theorem opCommute_idem_mul {p x y : J} (hp : p * p = p)
+    (hx : ∀ w, p * (x * w) = x * (p * w)) (hy : ∀ w, p * (y * w) = y * (p * w)) (w : J) :
+    p * ((x * y) * w) = (x * y) * (p * w) :=
+  (opCommute_idem_iff_peirceHalf hp).mpr
+    (peirceHalf_mul_eq_zero hp ((opCommute_idem_iff_peirceHalf hp).mp hx)
+      ((opCommute_idem_iff_peirceHalf hp).mp hy)) w
+
+omit [FiniteDimensional ℝ J] in
+/-- The commutant of an idempotent is closed under the quadratic representation, since
+`Q_x y = 2 x∘(x∘y) − (x∘x)∘y` is built from products. -/
+theorem opCommute_idem_quadJ {p x y : J} (hp : p * p = p)
+    (hx : ∀ w, p * (x * w) = x * (p * w)) (hy : ∀ w, p * (y * w) = y * (p * w)) (w : J) :
+    p * (quadJ x y * w) = quadJ x y * (p * w) := by
+  have hhx := (opCommute_idem_iff_peirceHalf hp).mp hx
+  have hhy := (opCommute_idem_iff_peirceHalf hp).mp hy
+  refine (opCommute_idem_iff_peirceHalf hp).mpr ?_ w
+  rw [quadJ_apply]
+  have h1 : peirceHalf p (x * (x * y)) = 0 :=
+    peirceHalf_mul_eq_zero hp hhx (peirceHalf_mul_eq_zero hp hhx hhy)
+  have h2 : peirceHalf p ((x * x) * y) = 0 :=
+    peirceHalf_mul_eq_zero hp (peirceHalf_mul_eq_zero hp hhx hhx) hhy
+  rw [map_sub, map_smul, h1, h2, smul_zero, sub_zero]
+
 end RadicalRelativity.EJA
