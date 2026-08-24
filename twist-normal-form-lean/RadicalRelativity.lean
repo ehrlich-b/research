@@ -162,6 +162,13 @@ import RadicalRelativity.Necessity.FirstArgument
 -- and orthogonal projections annihilate in both orders (S4) and are compatible.
 import RadicalRelativity.Necessity.SharpEffects
 
+-- The 2.1d layer at ABSTRACT order-unit-space generality (row 13 unblocking): the vdW
+-- 5.2 value law and compatibility transfer for any `SequentialProductOn V`, with the
+-- concrete matrix-orthogonality hypothesis replaced by order-theoretic sharpness
+-- (`IsSharp`) plus the family bound `∑ pᵢ ≤ 𝟙`; pairwise orthogonality is derived.
+-- The concrete twins above stay in place; `isProjection_isSharp` bridges them.
+import RadicalRelativity.OrthFamily
+
 -- M2 necessity core, fourth unit (LEDGER 2.1e, vdW 4.19-4.20): the normalized
 -- spectral pseudo-inverse of a positive-definite effect, the cancellation
 -- L'_nu (L'_b x) = c x through S5 and the 2.1d value law, and the payoff:

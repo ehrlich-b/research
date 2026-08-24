@@ -108,6 +108,18 @@ theorem proj_pinch {p e : HermitianMat n 𝕜} (hp : p.IsProjection) (he : 0 ≤
         abel
     _ = 0 := by rw [k1, k2, add_zero]
 
+/-- Projections are sharp in the order-theoretic sense of `OrderUnitSpace.IsSharp` —
+the bridge showing the concrete hypotheses of this file imply the abstract ones of
+`RadicalRelativity/OrthFamily.lean` (together with `sum_proj_isProjection` for the
+family bound), so the abstract vdW 5.2 layer loses nothing on this carrier. -/
+theorem isProjection_isSharp {p : HermitianMat n 𝕜} (hp : p.IsProjection) :
+    IsSharp p := by
+  refine ⟨⟨hp.nonneg, ?_⟩, fun a ha h1 h2 => ?_⟩
+  · rw [HermitianMat.ousUnit_eq_one]
+    exact hp.le_one
+  · rw [HermitianMat.ousUnit_eq_one] at h2
+    exact proj_pinch hp ha.1 h1 h2
+
 /-! ## Projections under the unknown product -/
 
 variable (P : SequentialProductOn (HermitianMat n 𝕜))
