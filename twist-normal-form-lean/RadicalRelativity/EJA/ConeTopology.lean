@@ -884,4 +884,114 @@ theorem luders_comm_iff_opCommute {a b : J} (ha : IsSoS (jmulₗ J) a) (hb : IsS
   ⟨fun h w => (opCommute_of_luders_comm ha hb h w).symm,
    fun hab => luders_comm_of_opCommute ha hb hab⟩
 
+
+/-! ### The `Q` leg of `prop:bridge` -/
+
+omit [FiniteDimensional ℝ J] in
+/-- Anything resolved by an orthogonal idempotent family has no Peirce half-part at any member. -/
+theorem peirceHalf_eq_zero_of_resolution {n : ℕ} {c : Fin n → J} {nu : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) {y : J} (hy : y = ∑ i, nu i • c i) (k : Fin n) :
+    peirceHalf (c k) y = 0 := by
+  classical
+  have hky : c k * y = nu k • c k := by
+    rw [hy, Finset.mul_sum]
+    rw [Finset.sum_eq_single k (fun l _ hl => by
+      rw [mul_smul_comm, hfam.orth k l (Ne.symm hl), smul_zero])
+      (fun hk => absurd (Finset.mem_univ k) hk)]
+    rw [mul_smul_comm, hfam.idem k]
+  have hkky : c k * (c k * y) = c k * y := by
+    rw [hky, mul_smul_comm, hfam.idem k]
+  rw [peirceHalf_apply, hkky, sub_self]
+
+omit [FiniteDimensional ℝ J] in
+/-- **Two elements resolved by the same family operator-commute.** -/
+theorem opCommute_of_shared_resolution' {n : ℕ} {c : Fin n → J} {la mu : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) {x y : J} (hx : x = ∑ i, la i • c i)
+    (hy : y = ∑ i, mu i • c i) (w : J) : x * (y * w) = y * (x * w) :=
+  opCommute_of_resolution hfam hx (peirceHalf_eq_zero_of_resolution hfam hy) w
+
+omit [FiniteDimensional ℝ J] in
+/-- **`⁅Q_a, Q_b⁆ = 0` from the four operator commutations.**  Expanding `Q = 2L² − L_{·²}`, every
+term of `Q_a Q_b w` matches a term of `Q_b Q_a w` after moving the factors past each other. -/
+theorem quadJ_comm_of_opCommute {a b : J}
+    (hab : ∀ w, a * (b * w) = b * (a * w))
+    (ha2b : ∀ w, (a * a) * (b * w) = b * ((a * a) * w))
+    (hab2 : ∀ w, a * ((b * b) * w) = (b * b) * (a * w))
+    (ha2b2 : ∀ w, (a * a) * ((b * b) * w) = (b * b) * ((a * a) * w)) (w : J) :
+    quadJ a (quadJ b w) = quadJ b (quadJ a w) := by
+  have t1 : a * (a * (b * (b * w))) = b * (b * (a * (a * w))) := by
+    calc a * (a * (b * (b * w))) = a * (b * (a * (b * w))) := by rw [hab (b * w)]
+      _ = b * (a * (a * (b * w))) := by rw [hab (a * (b * w))]
+      _ = b * (a * (b * (a * w))) := by rw [hab w]
+      _ = b * (b * (a * (a * w))) := by rw [hab (a * w)]
+  have t2 : a * (a * ((b * b) * w)) = (b * b) * (a * (a * w)) := by
+    calc a * (a * ((b * b) * w)) = a * ((b * b) * (a * w)) := by rw [hab2 w]
+      _ = (b * b) * (a * (a * w)) := by rw [hab2 (a * w)]
+  have t3 : (a * a) * (b * (b * w)) = b * (b * ((a * a) * w)) := by
+    calc (a * a) * (b * (b * w)) = b * ((a * a) * (b * w)) := by rw [ha2b (b * w)]
+      _ = b * (b * ((a * a) * w)) := by rw [ha2b w]
+  simp only [quadJ_apply, mul_sub, mul_smul_comm, smul_sub, smul_mul_assoc]
+  rw [t1, t2, t3, ha2b2 w]
+  module
+
+
+/-- **`⁅L_a,L_b⁆ = 0 ⟹ ⁅Q_a,Q_b⁆ = 0`** at EJA generality, via the simultaneous resolution. -/
+theorem quadJ_comm_of_opCommute_resolution {a b : J}
+    (hab : ∀ w, a * (b * w) = b * (a * w)) (w : J) :
+    quadJ a (quadJ b w) = quadJ b (quadJ a w) := by
+  obtain ⟨N, q, la, mu, hfam, hsum, hae, hbe⟩ :=
+    exists_simultaneous_resolution 1 EuclideanJordanAlgebra.one_mul hab
+  have ha2 : a * a = ∑ k, (la k * la k) • q k := by
+    rw [hae]; exact sum_smul_mul_sum_smul_of_orthIdem hfam la la
+  have hb2 : b * b = ∑ k, (mu k * mu k) • q k := by
+    rw [hbe]; exact sum_smul_mul_sum_smul_of_orthIdem hfam mu mu
+  exact quadJ_comm_of_opCommute
+    (fun v => opCommute_of_shared_resolution' hfam hae hbe v)
+    (fun v => opCommute_of_shared_resolution' hfam ha2 hbe v)
+    (fun v => opCommute_of_shared_resolution' hfam hae hb2 v)
+    (fun v => opCommute_of_shared_resolution' hfam ha2 hb2 v) w
+
+/-- **`⁅Q_a,Q_b⁆ = 0 ⟹ ⁅L_a,L_b⁆ = 0`** for cone elements.  Evaluating at the unit turns the
+hypothesis into Lüders compatibility of `a²` and `b²`; the converse bridge then commutes those,
+and `a`, `b` are their square roots, hence resolved by the same family. -/
+theorem opCommute_of_quadJ_comm {a b : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (h : ∀ w, quadJ a (quadJ b w) = quadJ b (quadJ a w)) (w : J) :
+    a * (b * w) = b * (a * w) := by
+  have h1 : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (a * a)) (b * b)
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (b * b)) (a * a) := by
+    rw [jsqrt_mul_self_of_isSoS ha, jsqrt_mul_self_of_isSoS hb]
+    have hu := h (1 : J)
+    rwa [quadJ_unit EuclideanJordanAlgebra.one_mul b,
+      quadJ_unit EuclideanJordanAlgebra.one_mul a] at hu
+  have h2 : ∀ v, (a * a) * ((b * b) * v) = (b * b) * ((a * a) * v) := fun v =>
+    (opCommute_of_luders_comm (isSoS_mul_self a) (isSoS_mul_self b) h1 v).symm
+  obtain ⟨N, q, la, mu, hfam, hsum, hae, hbe⟩ :=
+    exists_simultaneous_resolution 1 EuclideanJordanAlgebra.one_mul h2
+  have ha' : a = ∑ k, Real.sqrt (la k) • q k := by
+    rw [← jsqrt_mul_self_of_isSoS ha]
+    exact jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul (a * a) hfam hae
+  have hb' : b = ∑ k, Real.sqrt (mu k) • q k := by
+    rw [← jsqrt_mul_self_of_isSoS hb]
+    exact jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul (b * b) hfam hbe
+  exact opCommute_of_shared_resolution' hfam ha' hb' w
+
+/-- ★★★ **`prop:bridge` in full, at EJA generality.**
+
+For cone elements of a finite-dimensional Euclidean Jordan algebra the article's three conditions
+are equivalent:
+
+  `Q_{√a} b = Q_{√b} a  ↔  ⁅Q_a, Q_b⁆ = 0  ↔  ⁅L_a, L_b⁆ = 0`
+
+— **standard-product compatibility is exactly Jordan operator commutation**, with the quadratic
+representation in the middle. -/
+theorem bridge_tfae {a b : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b) :
+    ((quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+        = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a)
+      ↔ ∀ w : J, a * (b * w) = b * (a * w))
+    ∧ ((∀ w : J, quadJ a (quadJ b w) = quadJ b (quadJ a w))
+      ↔ ∀ w : J, a * (b * w) = b * (a * w)) :=
+  ⟨luders_comm_iff_opCommute ha hb,
+   ⟨fun h => opCommute_of_quadJ_comm ha hb h,
+    fun h => quadJ_comm_of_opCommute_resolution h⟩⟩
+
 end RadicalRelativity.EJA
