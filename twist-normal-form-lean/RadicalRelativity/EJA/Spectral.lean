@@ -637,6 +637,26 @@ construction.  Recorded as a named theorem rather than left implicit, so that th
 theorem quadJ_add (a b d : J) : quadJ a (b + d) = quadJ a b + quadJ a d :=
   map_add _ _ _
 
+/-- **The quadratic representation acts coefficientwise on a shared resolution:**
+`Q_{∑ aᵢcᵢ} (∑ bᵢcᵢ) = ∑ aᵢ²bᵢ cᵢ`.
+
+Both terms of `Q_x y = 2·x(xy) − x²y` collapse to `∑ aᵢ²bᵢ cᵢ` by coefficientwise multiplication,
+and `2 − 1 = 1` leaves one copy.  This is the concrete face of the quadratic representation, and
+it is what makes `Q` computable on the spectral side: squaring the subscript's eigenvalues,
+leaving the argument's alone. -/
+theorem quadJ_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    (a b : Fin n → ℝ) :
+    quadJ (∑ i, a i • c i) (∑ i, b i • c i) = ∑ i, (a i * a i * b i) • c i := by
+  have hxy : (∑ i, a i • c i) * (∑ i, b i • c i) = ∑ i, (a i * b i) • c i :=
+    sum_smul_mul_sum_smul_of_orthIdem hfam a b
+  have hx2 : (∑ i, a i • c i) * (∑ i, a i • c i) = ∑ i, (a i * a i) • c i :=
+    sum_smul_mul_sum_smul_of_orthIdem hfam a a
+  rw [quadJ_apply, hxy, hx2, sum_smul_mul_sum_smul_of_orthIdem hfam,
+    sum_smul_mul_sum_smul_of_orthIdem hfam]
+  have hassoc : ∀ i, a i * (a i * b i) = a i * a i * b i := fun i => (mul_assoc _ _ _).symm
+  simp only [hassoc, two_smul]
+  abel
+
 /-! ### Inverses and square roots on a resolution
 
 `STATEMENT-MANIFEST.md` row 13 records that "no declaration produces an inverse".  These do, on a
@@ -660,6 +680,20 @@ theorem mul_jinvOfResolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamil
   rw [jinvOfResolution, sum_smul_mul_sum_smul_of_orthIdem hfam, ← hsum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [mul_inv_cancel₀ (hlam i), one_smul]
+
+/-- **`Q_x` sends the inverse to the element**: `Q_x (x⁻¹) = x` on a resolution with no vanishing
+eigenvalue.  Coefficientwise this is `λ²·λ⁻¹ = λ`.
+
+★ This is the first identity of the pseudo-inverse chain that `STATEMENT-MANIFEST.md` row 13
+(`prop:pseudo-transfer`) is waiting on, and it is the shape the article's `Q_{√a}` argument uses
+with `a` invertible. -/
+theorem quadJ_jinvOfResolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hlam : ∀ i, lam i ≠ 0) :
+    quadJ (∑ i, lam i • c i) (jinvOfResolution c lam) = ∑ i, lam i • c i := by
+  rw [jinvOfResolution, quadJ_of_resolution hfam]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  congr 1
+  field_simp
 
 /-- A square root of `∑ᵢ λᵢ cᵢ` relative to the resolution `(c, lam)`: take roots of the
 eigenvalues.
