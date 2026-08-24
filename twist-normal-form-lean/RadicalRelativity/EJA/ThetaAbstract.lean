@@ -1188,4 +1188,51 @@ theorem thetaOf_twistElt_apply {N : ℕ} (F : JordanFrame J N) {r : Fin N → �
   rw [this]
   rfl
 
+
+/-- ★★★ **`Θ` depends continuously on the twist parameter**, as an operator-valued map.
+
+Off the closed form `Θ_ρ = Q_{√a(−ρ)} ∘ L_{a(ρ)}`: the coefficient family `ρ ↦ ∑ e^{−ρₖ/2}pₖ` is
+continuous, `v ↦ Q_v` is operator-continuous (`continuous_toCLM_quadJ`), `a ↦ L_a` is
+operator-continuous on the effects (`continuousOn_toCLM_seqLeftMulAbs`, i.e. paper S2 upgraded),
+and composition of continuous linear maps is continuous. -/
+theorem continuous_toCLM_thetaOf_twistElt {N : ℕ} (F : JordanFrame J N)
+    {X : Type} [TopologicalSpace X] (ρ : X → (Fin N → ℝ)) (hρ : Continuous ρ)
+    (hρ0 : ∀ x k, ρ x k ≤ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J)
+      (hae : ∀ x, OrderUnitSpace.IsEffect (twistElt F (ρ x))),
+      Continuous fun x => LinearMap.toContinuousLinearMap
+        (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ x) = _)
+          (twistElt_isSoS F (ρ x)) (twistElt_compl_isSoS F (hρ0 x))
+          (fun k _ => (Real.exp_pos (ρ x k)).ne') P hS2 harch (hae x)).toLinearMap := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hae
+  -- the coefficient element of the inverse square root
+  have hv : Continuous fun x => ∑ k, Real.sqrt (Real.exp (-(ρ x k))) • F.p k := by
+    refine continuous_finsetSum _ fun k _ => ?_
+    exact ((Real.continuous_sqrt.comp (Real.continuous_exp.comp
+      (((continuous_apply k).comp hρ).neg))).smul continuous_const)
+  -- the left multiplication
+  have hg : Continuous fun x => twistElt F (ρ x) := by
+    refine continuous_finsetSum _ fun k _ => ?_
+    exact ((Real.continuous_exp.comp ((continuous_apply k).comp hρ)).smul continuous_const)
+  have hL := continuousOn_toCLM_seqLeftMulAbs P hS2 harch (fun x => twistElt F (ρ x)) hg hae
+  -- assemble
+  have hrw : (fun x => LinearMap.toContinuousLinearMap
+      (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ x) = _)
+        (twistElt_isSoS F (ρ x)) (twistElt_compl_isSoS F (hρ0 x))
+        (fun k _ => (Real.exp_pos (ρ x k)).ne') P hS2 harch (hae x)).toLinearMap)
+      = fun x => (LinearMap.toContinuousLinearMap
+          (quadJ (∑ k, Real.sqrt (Real.exp (-(ρ x k))) • F.p k))).comp
+        (LinearMap.toContinuousLinearMap (P.seqLeftMulAbs harch (hae x))) := by
+    funext x
+    refine ContinuousLinearMap.ext fun z => ?_
+    exact thetaOf_twistElt_apply F (hρ0 x) P hS2 harch (hae x) z
+  rw [hrw]
+  exact (isBoundedBilinearMap_comp (𝕜 := ℝ) (E := J) (F := J) (G := J)).continuous.comp
+    ((continuous_toCLM_quadJ.comp hv).prodMk hL)
+
 end RadicalRelativity.EJA
