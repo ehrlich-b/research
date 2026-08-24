@@ -96,4 +96,47 @@ theorem sp_pseudoTransfer {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → �
   rw [hb]
   exact P.spCone_specInv_both harch hS2 hsharp hsum hpos hle1
 
+/-- **Order reflection and injectivity of the left multiplication (vdW 4.19) at EJA
+generality** (resolution-relative, like `sp_pseudoTransfer` above): for an effect `b`
+with a complete resolution whose eigenvalues do not vanish at nonzero idempotents, and
+any S1–S7+S2 sequential product on the constructed order, the linear extension
+`seqLeftMulAbs` of `x ↦ b ◦' x` reflects positivity and is injective.
+
+The two quantified proofs are both inhabited — `harch` by `isArchimedean_ofBilinear`
+(constructed inside `sp_pseudoTransfer`), `hbe` by `(isEffect_ofBilinear b).mpr
+⟨hbsos, hcsos⟩` — and by proof irrelevance `seqLeftMulAbs` does not depend on which
+proofs are supplied, so the universal quantification is the usable form, not a vacuity.
+Every abstract hypothesis is discharged by the same names as in `sp_pseudoTransfer`. -/
+theorem sp_orderReflection {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = 1) (hb : b = ∑ i, lam i • c i)
+    (hbsos : IsSoS (jmulₗ J) b) (hcsos : IsSoS (jmulₗ J) ((1 : J) - b))
+    (hne : ∀ i, c i ≠ 0 → lam i ≠ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ P : SequentialProductOn J, P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J) (hbe : OrderUnitSpace.IsEffect b),
+        (∀ x : J, 0 ≤ P.seqLeftMulAbs harch hbe x → 0 ≤ x) ∧
+          Function.Injective (P.seqLeftMulAbs harch hbe) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hbe
+  have hsharp : ∀ i ∈ Finset.univ, OrderUnitSpace.IsSharp (c i) := fun i _ =>
+    isSharpOrderUnit_of_idem (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      jmulₗ_inner_assoc (1 : J) jmulₗ_one_mul (hfam.idem i)
+  have hpos : ∀ i ∈ Finset.univ, c i ≠ 0 → 0 < lam i := fun i _ hci =>
+    (nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+      (fun k => hfam.idem k) (fun k l hkl => hfam.orth k l hkl) hb hbsos hci).lt_of_ne
+      (Ne.symm (hne i hci))
+  have hb1' : (1 : J) - b = ∑ i, ((1 : ℝ) - lam i) • c i := by
+    have h := smul_unit_sub_eq hsum hb 1
+    rwa [one_smul] at h
+  have hle1 : ∀ i ∈ Finset.univ, c i ≠ 0 → lam i ≤ 1 := by
+    intro i _ hci
+    have h := nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+      (fun k => hfam.idem k) (fun k l hkl => hfam.orth k l hkl) hb1' hcsos hci
+    linarith
+  subst hb
+  exact ⟨fun x hx => P.seqLeftMulAbs_reflectsNonneg harch hS2 hsharp hsum hpos hle1 hbe hx,
+    P.seqLeftMulAbs_injective harch hS2 hsharp hsum hpos hle1 hbe⟩
+
 end RadicalRelativity.EJA

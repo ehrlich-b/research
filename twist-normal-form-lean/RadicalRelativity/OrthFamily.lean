@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.SequentialProduct
+import RadicalRelativity.Necessity.OrderUnitS2
 import Mathlib.Data.Fintype.BigOperators
 
 set_option linter.style.longLine false
@@ -670,5 +671,98 @@ theorem spCone_specInv_both (harch : IsArchimedean V) (hS2 : P.FirstArgContinuou
       P.spConeRight (∑ i ∈ s, lam i • c i) (∑ i ∈ s, (lam i)⁻¹ • c i) = 𝟙 :=
   ⟨P.spCone_specInv_eq_one harch hS2 hsharp hsum hpos hle1,
     P.spConeRight_specInv_eq_one harch hS2 hsharp hsum hpos hle1⟩
+
+/-! ### Order reflection and injectivity of the left multiplication (vdW 4.19)
+
+Port of the payoff layer of `Necessity/PseudoInverse.lean` — the linear-map cancellation
+`L'_ν ∘ L'_b = co·id` (`Necessity.seqLeftMul_pseudoInv_comp`), order reflection
+(`Necessity.seqLeftMul_reflectsNonneg`, vdW 4.19) and injectivity
+(`Necessity.seqLeftMul_injective`) of the left multiplication by an invertible effect —
+at the same resolution-relative hypotheses as the pseudo-inverse layer above.  The left
+multiplication is `seqLeftMulAbs`, `Necessity/OrderUnitS2.lean`'s `lem:homog`(i) linear
+extension (whence this file's import of that module); its agreement with the product on
+effects (`seqLeftMulAbs_apply_effect`) and its positivity (`seqLeftMulAbs_nonneg`)
+replace the concrete `seqLeftMul_apply_effect` / `seqLeftMul_nonneg`, and the extension
+from effects to all of `V` is `lem:span`'s extensionality clause
+(`linearMap_eq_of_eq_on_effects`), exactly as in the concrete proof.
+
+One hypothesis-shape difference beyond the section's standard three: `seqLeftMulAbs`
+carries its effect-hood proof *in the statement*, so the effect-hood of `b` (and, in the
+cancellation, of `ν`) appears as an explicit hypothesis rather than as an inline derived
+term as in the concrete statements.  Both are derivable from the resolution data by
+`isEffect_sum_smul_of_ne`; by proof irrelevance the statements do not depend on which
+proof the caller supplies.  In the reflection and injectivity theorems the normalization
+`co` is internal, produced by `exists_pseudoInvCoef`. -/
+
+/-- **The linear-map cancellation `L'_ν ∘ L'_b = co·id`** at abstract order-unit-space
+generality: abstract twin of `Necessity.seqLeftMul_pseudoInv_comp`, extended from the
+effects by `lem:span`'s extensionality clause. -/
+theorem seqLeftMulAbs_pseudoInv_comp (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1)
+    {co : ℝ} (hco0 : 0 ≤ co) (hco1 : co ≤ 1) (hcole : ∀ i ∈ s, c i ≠ 0 → co ≤ lam i)
+    (hν : IsEffect (∑ i ∈ s, (co / lam i) • c i))
+    (hb : IsEffect (∑ i ∈ s, lam i • c i)) :
+    (seqLeftMulAbs P harch hν).comp (seqLeftMulAbs P harch hb) = co • LinearMap.id := by
+  refine linearMap_eq_of_eq_on_effects _ _ fun e he => ?_
+  simp only [LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply]
+  rw [seqLeftMulAbs_apply_effect P harch hb he,
+    seqLeftMulAbs_apply_effect P harch hν (P.sp_effect hb he)]
+  exact P.sp_pseudoInv_cancel harch hS2 hsharp hsum hpos hle1 hco0 hco1 hcole he
+
+/-- **Order reflection (vdW 4.19) at abstract order-unit-space generality**: the left
+multiplication by an effect whose sharp resolution has strictly positive eigenvalues at
+nonzero members reflects positivity.  Abstract twin of
+`Necessity.seqLeftMul_reflectsNonneg`. -/
+theorem seqLeftMulAbs_reflectsNonneg (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1)
+    (hb : IsEffect (∑ i ∈ s, lam i • c i)) {x : V}
+    (hx : (0 : V) ≤ seqLeftMulAbs P harch hb x) : (0 : V) ≤ x := by
+  obtain ⟨co, hco0, hco1, hcole⟩ := exists_pseudoInvCoef hpos hle1
+  have hce : ∀ i ∈ s, IsEffect (c i) := fun i hi => (hsharp i hi).1
+  have hν : IsEffect (∑ i ∈ s, (co / lam i) • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => div_nonneg hco0.le (hpos i hi hne).le)
+      (fun i hi hne => (div_le_one (hpos i hi hne)).mpr (hcole i hi hne))
+  have h1 : (0 : V) ≤ seqLeftMulAbs P harch hν (seqLeftMulAbs P harch hb x) :=
+    seqLeftMulAbs_nonneg P harch hν hx
+  have h2 : seqLeftMulAbs P harch hν (seqLeftMulAbs P harch hb x) = co • x := by
+    have h := congrArg (fun f : V →ₗ[ℝ] V => f x)
+      (P.seqLeftMulAbs_pseudoInv_comp harch hS2 hsharp hsum hpos hle1 hco0.le hco1 hcole hν hb)
+    simpa using h
+  rw [h2] at h1
+  have hrepr : x = co⁻¹ • (co • x) := by
+    rw [smul_smul, inv_mul_cancel₀ hco0.ne', one_smul]
+  rw [hrepr]
+  exact smul_nonneg' (inv_nonneg.mpr hco0.le) h1
+
+/-- **Injectivity** of the abstract left multiplication for an effect whose sharp
+resolution has strictly positive eigenvalues at nonzero members.  Abstract twin of
+`Necessity.seqLeftMul_injective`. -/
+theorem seqLeftMulAbs_injective (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1)
+    (hb : IsEffect (∑ i ∈ s, lam i • c i)) :
+    Function.Injective (seqLeftMulAbs P harch hb) := by
+  obtain ⟨co, hco0, hco1, hcole⟩ := exists_pseudoInvCoef hpos hle1
+  have hce : ∀ i ∈ s, IsEffect (c i) := fun i hi => (hsharp i hi).1
+  have hν : IsEffect (∑ i ∈ s, (co / lam i) • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => div_nonneg hco0.le (hpos i hi hne).le)
+      (fun i hi hne => (div_le_one (hpos i hi hne)).mpr (hcole i hi hne))
+  intro x y hxy
+  have hcomp : ∀ z : V, seqLeftMulAbs P harch hν (seqLeftMulAbs P harch hb z) = co • z := by
+    intro z
+    have h := congrArg (fun f : V →ₗ[ℝ] V => f z)
+      (P.seqLeftMulAbs_pseudoInv_comp harch hS2 hsharp hsum hpos hle1 hco0.le hco1 hcole hν hb)
+    simpa using h
+  have hc := congrArg (seqLeftMulAbs P harch hν) hxy
+  rw [hcomp x, hcomp y] at hc
+  have h := congrArg (fun v : V => co⁻¹ • v) hc
+  simpa [smul_smul, inv_mul_cancel₀ hco0.ne'] using h
 
 end SequentialProductOn
