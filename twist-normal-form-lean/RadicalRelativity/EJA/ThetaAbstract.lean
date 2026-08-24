@@ -1722,4 +1722,90 @@ theorem twistChi_eq_twistTheta {N : ℕ} (F : JordanFrame J N) :
     twistTheta_congr F P hS2 harch hv (vPart_nonpos r) (fun k => le_rfl),
     twistTheta_zero F P hS2 harch, inv_one, mul_one]
 
+
+/-! ## Toward the differential: the Peirce-block action
+
+★★★ The remaining clause of `lem:homomorphism` is `ρ_{ij}(dχ(r)) = (rᵢ−rⱼ)T_{ij}`.  Its four
+ingredients are: **(a)** the block action `ρ_{ij}` as a named map; **(b)** that `ρ_{ij}∘χ` is
+trivial on the coalescence hyperplane `rᵢ = rⱼ`; **(c)** existence of the differential; and
+**(d)** the linear-algebra step that a linear map vanishing on `{rᵢ = rⱼ}` is `(rᵢ−rⱼ)·T`.
+
+(a) and (b) are built here.  ★ (b) is manifest **row 16** (`lem:coalescence`) restated in the
+wrapper's vocabulary, which is what makes it available to the differential argument at all. -/
+
+/-- **The Peirce-block action** of a frame-stabilising Jordan automorphism: its restriction to
+`V_{ij}`. -/
+def blockAction {N : ℕ} (F : JordanFrame J N) {i j : Fin N} (Θ : J ≃ₗ[ℝ] J)
+    (h : ∀ x ∈ frameBlockRaw F i j, Θ x ∈ frameBlockRaw F i j) :
+    frameBlockRaw F i j →ₗ[ℝ] frameBlockRaw F i j where
+  toFun x := ⟨Θ (x : J), h x x.2⟩
+  map_add' x y := by ext; simp
+  map_smul' c x := by ext; simp
+
+@[simp]
+theorem blockAction_coe {N : ℕ} (F : JordanFrame J N) {i j : Fin N} (Θ : J ≃ₗ[ℝ] J)
+    (h : ∀ x ∈ frameBlockRaw F i j, Θ x ∈ frameBlockRaw F i j)
+    (x : frameBlockRaw F i j) : ((blockAction F Θ h x : frameBlockRaw F i j) : J) = Θ (x : J) :=
+  rfl
+
+/-- ★★★ **`lem:coalescence` in the wrapper's vocabulary**: if the twist parameters agree at `i`
+and `j` then `Θ_r` is the identity on `V_{ij}`. -/
+theorem twistTheta_id_on_frameBlock {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0)
+      {i j : Fin N}, i ≠ j → r i = r j →
+      ∀ {x : J}, x ∈ frameBlockRaw F i j → twistTheta F P hS2 harch r hr x = x := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r hr i j hij hrij x hx
+  refine theta_id_on_frameBlock F (fun k => Real.exp_pos (r k))
+    (fun k => Real.exp_le_one_iff.mpr (hr k)) hij (by rw [hrij]) P hS2 harch
+    (isEffect_twistElt F hr) _ ?_ hx
+  exact twistTheta_spec F P hS2 harch r hr
+
+/-- ★★★ **The block action is trivial on the coalescence hyperplane.** -/
+theorem blockAction_twistTheta_eq_id {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0)
+      {i j : Fin N} (hij : i ≠ j) (hrij : r i = r j)
+      (h : ∀ x ∈ frameBlockRaw F i j, twistTheta F P hS2 harch r hr x ∈ frameBlockRaw F i j),
+      blockAction F (twistTheta F P hS2 harch r hr) h = LinearMap.id := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r hr i j hij hrij h
+  refine LinearMap.ext fun x => ?_
+  refine Subtype.ext ?_
+  rw [blockAction_coe]
+  exact twistTheta_id_on_frameBlock F P hS2 harch r hr hij hrij x.2
+
+
+/-- ★★★ **Ingredient (d): a linear map vanishing on the coalescence hyperplane is
+`(rᵢ − rⱼ)·T`.**
+
+This is what turns `lem:coalescence` into the *shape* of the differential the article asserts.
+The decomposition is explicit: `r = ((rᵢ−rⱼ)/2)·δ + s` with `δ = e_i − e_j` and `s` on the
+hyperplane, so `T = ½·D δ` and it does not depend on `r`. -/
+theorem exists_smul_of_vanishing_on_diag {W : Type*} [AddCommGroup W] [Module ℝ W] {N : ℕ}
+    {i j : Fin N} (hij : i ≠ j) (D : (Fin N → ℝ) →ₗ[ℝ] W)
+    (h : ∀ r : Fin N → ℝ, r i = r j → D r = 0) :
+    ∃ T : W, ∀ r : Fin N → ℝ, D r = (r i - r j) • T := by
+  classical
+  set δ : Fin N → ℝ := fun k => if k = i then 1 else if k = j then -1 else 0 with hδ
+  have hδi : δ i = 1 := by rw [hδ]; simp
+  have hδj : δ j = -1 := by rw [hδ]; simp [Ne.symm hij]
+  refine ⟨(2 : ℝ)⁻¹ • D δ, fun r => ?_⟩
+  have hs : D (r - ((r i - r j) / 2) • δ) = 0 := by
+    refine h _ ?_
+    simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hδi, hδj]
+    ring
+  have hlin : D r - ((r i - r j) / 2) • D δ = 0 := by
+    rw [← map_smul, ← map_sub]; exact hs
+  have heq : D r = ((r i - r j) / 2) • D δ := sub_eq_zero.mp hlin
+  rw [heq, smul_smul]
+  congr 1
+
 end RadicalRelativity.EJA
