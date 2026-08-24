@@ -5,6 +5,7 @@ Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.EJA.Order
 import RadicalRelativity.EJA.Pattern
+import RadicalRelativity.EJA.Fundamental
 
 set_option linter.style.longLine false
 
@@ -397,5 +398,67 @@ theorem quadJ_jsqrt_zero_symm [FiniteDimensional ℝ J] {a b : J}
         (fun k => hfamB.idem k) (fun k l hkl => hfamB.orth k l hkl) hb' hb hdi
     exact jsqrt_mul_self' 1 EuclideanJordanAlgebra.one_mul b hfamB hinjB hb' hnnB
   rw [quadJ_apply, hsq, mul_zero, smul_zero, hbb, hb0, sub_zero]
+
+/-! ## S5 for the candidate sequential product, under operator commutation
+
+`a · b := Q_{√a} b`.  **S5 is compatible associativity**: for compatible `a`, `b`,
+`(a · b) · c = a · (b · c)` for every `c`.
+
+★ **The hypothesis here is operator commutation** `∀ w, a ∘ (b ∘ w) = b ∘ (a ∘ w)`, **not** the
+sequential-product compatibility `a · b = b · a` the axiom is usually stated with.  Bridging
+compatibility to operator commutation is a separate result — `STATEMENT-MANIFEST.md` row 10,
+proved only on the concrete carrier — and it is neither assumed nor discharged here.  What this
+theorem does prove: on any operator-commuting pair of cone elements the candidate product is
+associative in the S5 pattern, with the burden carried by `quadJ_mul_of_opCommute`
+(`Q_{x∘y} = Q_x Q_y` for operator-commuting `x, y`) applied at `x = √a`, `y = √b`, once
+`√(a·b) = √a ∘ √b` is read off the shared resolution. -/
+
+/-- **S5 — compatible associativity — for `a · b = Q_{√a} b`, under operator commutation:**
+`(a · b) · c = a · (b · c)` for cone elements `a`, `b` with `⁅L_a, L_b⁆ = 0` and arbitrary `c`.
+
+The steps, each on the shared resolution `a = ∑ λₖqₖ`, `b = ∑ μₖqₖ`
+(`exists_simultaneous_resolution`): the cone pins `λ, μ ≥ 0` wherever `qₖ ≠ 0`
+(`nonneg_coeff_of_isSoS`); `√` acts coefficientwise even though the shared coefficients need
+not be distinct (`jsqrt_eq_of_resolution'`); so `a · b = ∑ λₖμₖ qₖ` and
+`√(a·b) = ∑ √λₖ√μₖ qₖ = √a ∘ √b`; and `√a, √b` operator-commute
+(`opCommute_of_shared_resolution`), so `quadJ_mul_of_opCommute` splits `Q_{√a∘√b}`. -/
+theorem quadJ_jsqrt_assoc_of_opCommute [FiniteDimensional ℝ J] {a b : J}
+    (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (hab : ∀ w, a * (b * w) = b * (a * w)) (z : J) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
+        (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b)) z
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a)
+          (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) z) := by
+  classical
+  obtain ⟨N, q, lam, mu, hfam, hsum, ha', hb'⟩ :=
+    exists_simultaneous_resolution 1 EuclideanJordanAlgebra.one_mul hab
+  have hlam : ∀ k, q k ≠ 0 → 0 ≤ lam k := fun k hk =>
+    nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+      (fun i => hfam.idem i) (fun i j hij => hfam.orth i j hij) ha' ha hk
+  have hsa : jsqrt 1 EuclideanJordanAlgebra.one_mul a = ∑ k, Real.sqrt (lam k) • q k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul a hfam ha'
+  have hsb : jsqrt 1 EuclideanJordanAlgebra.one_mul b = ∑ k, Real.sqrt (mu k) • q k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b hfam hb'
+  have hQab : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+      = ∑ k, (lam k * mu k) • q k := by
+    rw [hsa, hb', quadJ_of_resolution hfam]
+    refine Finset.sum_congr rfl fun k _ => ?_
+    by_cases hk : q k = 0
+    · rw [hk, smul_zero, smul_zero]
+    · rw [Real.mul_self_sqrt (hlam k hk)]
+  have hsab : jsqrt 1 EuclideanJordanAlgebra.one_mul
+        (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b)
+      = jsqrt 1 EuclideanJordanAlgebra.one_mul a
+          * jsqrt 1 EuclideanJordanAlgebra.one_mul b := by
+    rw [jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul _ hfam hQab,
+      hsa, hsb, sum_smul_mul_sum_smul_of_orthIdem hfam]
+    refine Finset.sum_congr rfl fun k _ => ?_
+    by_cases hk : q k = 0
+    · rw [hk, smul_zero, smul_zero]
+    · rw [Real.sqrt_mul (hlam k hk)]
+  rw [hsab]
+  exact quadJ_mul_of_opCommute EuclideanJordanAlgebra.one_mul
+    (opCommute_of_shared_resolution hfam (fun k => Real.sqrt (lam k))
+      (fun k => Real.sqrt (mu k)) hsa hsb) z
 
 end RadicalRelativity.EJA

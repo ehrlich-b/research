@@ -1206,6 +1206,71 @@ theorem jsqrt_eq_of_resolution (e : J) (he : ∀ y : J, e * y = y) (x : J)
     (exists_resolution_distinct e he x).choose_spec.choose_spec.choose_spec
   exact sqrt_sum_eq_of_resolutions hfam' hfam hinj' hinj (hx'.symm.trans hx)
 
+/-- **`jsqrt` agrees with every resolution, injectivity not required.**  Idempotents sharing a
+coefficient merge into the fibers of the coefficient map — the same coalescing
+`exists_resolution_distinct` performs — and the merged resolution has distinct coefficients, so
+`jsqrt_eq_of_resolution` reads `jsqrt` off it.  `√` takes one value per fiber, so the merged sum
+un-merges into the stated one.  ★ No sign condition and no completeness enter: members sharing
+a *negative* coefficient land in one fiber, where `Real.sqrt`'s junk value is at least taken
+consistently.
+
+This matters because shared resolutions are generally not injective: `exists_simultaneous_resolution`
+refines blocks independently, so distinct blocks may repeat a coefficient, and
+`jsqrt_eq_of_resolution` cannot read those. -/
+theorem jsqrt_eq_of_resolution' (e : J) (he : ∀ y : J, e * y = y) (x : J)
+    {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c)
+    (hx : x = ∑ i, lam i • c i) :
+    jsqrt e he x = ∑ i, Real.sqrt (lam i) • c i := by
+  classical
+  set S : Finset ℝ := Finset.image lam Finset.univ with hSdef
+  set d : ℝ → J := fun t => ∑ i ∈ Finset.univ.filter (fun i => lam i = t), c i with hddef
+  have hmaps : ∀ i ∈ (Finset.univ : Finset (Fin n)), lam i ∈ S := fun i _ =>
+    Finset.mem_image_of_mem lam (Finset.mem_univ i)
+  have hdidem : ∀ t, d t * d t = d t := fun t => hfam.sum_idem _
+  have hdorth : ∀ t u, t ≠ u → d t * d u = 0 := by
+    intro t u htu
+    rw [hddef]
+    simp only
+    rw [Finset.sum_mul_sum]
+    refine Finset.sum_eq_zero fun i hi => Finset.sum_eq_zero fun j hj => ?_
+    refine hfam.orth i j ?_
+    rintro rfl
+    exact htu (((Finset.mem_filter.mp hi).2).symm.trans (Finset.mem_filter.mp hj).2)
+  have hunfiber : ∀ g : ℝ → ℝ,
+      (∑ t ∈ S, ∑ i ∈ Finset.univ.filter (fun i => lam i = t), g t • c i)
+        = ∑ i, g (lam i) • c i := by
+    intro g
+    rw [← Finset.sum_fiberwise_of_maps_to hmaps (fun i => g (lam i) • c i)]
+    refine Finset.sum_congr rfl fun t _ => Finset.sum_congr rfl fun i hi => ?_
+    rw [(Finset.mem_filter.mp hi).2]
+  have hxd : x = ∑ t ∈ S, t • d t := by
+    rw [hx, ← hunfiber (fun t => t)]
+    refine Finset.sum_congr rfl fun t _ => ?_
+    rw [hddef]
+    simp only
+    rw [Finset.smul_sum]
+  have hinj : Function.Injective (fun k : Fin S.card => ((S.equivFin.symm k : ℝ))) := by
+    intro k l hkl
+    exact S.equivFin.symm.injective (Subtype.ext hkl)
+  have hdfam : IsOrthIdemFamily (fun k : Fin S.card => d ((S.equivFin.symm k : ℝ))) :=
+    ⟨fun k => hdidem _, fun k l hkl => hdorth _ _ fun h => hkl (hinj h)⟩
+  have hxres : x = ∑ k : Fin S.card,
+      ((S.equivFin.symm k : ℝ)) • d ((S.equivFin.symm k : ℝ)) := by
+    rw [hxd, ← Finset.sum_coe_sort S (fun t => t • d t)]
+    exact (Equiv.sum_comp S.equivFin.symm (fun a : {y // y ∈ S} => (a : ℝ) • d (a : ℝ))).symm
+  rw [jsqrt_eq_of_resolution e he x hdfam hinj hxres]
+  calc (∑ k : Fin S.card, Real.sqrt ((S.equivFin.symm k : ℝ)) • d ((S.equivFin.symm k : ℝ)))
+      = ∑ t ∈ S, Real.sqrt t • d t := by
+        rw [← Finset.sum_coe_sort S (fun t => Real.sqrt t • d t)]
+        exact Equiv.sum_comp S.equivFin.symm
+          (fun a : {y // y ∈ S} => Real.sqrt (a : ℝ) • d (a : ℝ))
+    _ = ∑ i, Real.sqrt (lam i) • c i := by
+        rw [← hunfiber Real.sqrt]
+        refine Finset.sum_congr rfl fun t _ => ?_
+        rw [hddef]
+        simp only
+        rw [Finset.smul_sum]
+
 /-- **`jsqrt` squares back to `x`** whenever `x` has a resolution with nonnegative eigenvalues.
 
 Deriving that hypothesis from `0 ≤ x` is `EJA/Order.lean`'s `nonneg_coeff_of_isSoS`, which lives
@@ -1456,6 +1521,38 @@ theorem opCommute_of_shared_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrt
   rw [ha, hb, key la mu, key mu la, Finset.sum_comm]
   refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
   rw [hccw y x, mul_comm (la y) (mu x)]
+
+omit [IsFormallyReal J] [Module.Finite ℝ J] in
+/-- **Quadratic representations of elements diagonal in one orthogonal idempotent family
+commute.**  `Q_a = 2L_a² − L_{a²}`, and `a²`, `b²` are again diagonal in the family
+(`sum_smul_mul_sum_smul_of_orthIdem`), so all four multiplication operators in sight commute
+pairwise (`opCommute_of_shared_resolution`) and each monomial of `Q_a Q_b` rearranges one
+factor at a time.  Like the operator commutation it rests on, this needs neither formal
+reality, nor finite dimension, nor completeness of the family. -/
+theorem quadJ_comm_of_shared_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {a b : J} (la mu : Fin n → ℝ) (ha : a = ∑ i, la i • c i) (hb : b = ∑ i, mu i • c i)
+    (z : J) : quadJ a (quadJ b z) = quadJ b (quadJ a z) := by
+  have ha2 : a * a = ∑ i, (la i * la i) • c i := by
+    rw [ha, sum_smul_mul_sum_smul_of_orthIdem hfam]
+  have hb2 : b * b = ∑ i, (mu i * mu i) • c i := by
+    rw [hb, sum_smul_mul_sum_smul_of_orthIdem hfam]
+  have hab : ∀ w, a * (b * w) = b * (a * w) :=
+    opCommute_of_shared_resolution hfam la mu ha hb
+  have hab2 : ∀ w, a * (b * b * w) = b * b * (a * w) :=
+    opCommute_of_shared_resolution hfam la (fun i => mu i * mu i) ha hb2
+  have ha2b : ∀ w, a * a * (b * w) = b * (a * a * w) := fun w =>
+    (opCommute_of_shared_resolution hfam mu (fun i => la i * la i) hb ha2 w).symm
+  have ha2b2 : ∀ w, a * a * (b * b * w) = b * b * (a * a * w) :=
+    opCommute_of_shared_resolution hfam (fun i => la i * la i) (fun i => mu i * mu i) ha2 hb2
+  have k1 : a * (a * (b * (b * z))) = b * (b * (a * (a * z))) := by
+    rw [hab (b * z), hab (a * (b * z)), hab z, hab (a * z)]
+  have k2 : a * (a * (b * b * z)) = b * b * (a * (a * z)) := by
+    rw [hab2 z, hab2 (a * z)]
+  have k3 : a * a * (b * (b * z)) = b * (b * (a * a * z)) := by
+    rw [ha2b (b * z), ha2b z]
+  have k4 : a * a * (b * b * z) = b * b * (a * a * z) := ha2b2 z
+  simp only [quadJ_apply, mul_sub, mul_smul_comm', smul_sub, smul_smul]
+  linear_combination (norm := module) (4 : ℝ) • k1 - (2 : ℝ) • k2 - (2 : ℝ) • k3 + k4
 
 end Split
 

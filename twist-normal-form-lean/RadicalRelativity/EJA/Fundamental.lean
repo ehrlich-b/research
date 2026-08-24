@@ -898,4 +898,102 @@ theorem quadJ_jsqrt_sq [IsFormallyReal J] [Module.Finite ℝ J] {e : J}
   have hsq : jsqrt e he a * jsqrt e he a = a := jsqrt_mul_self' e he a hfam hinj ha hnn
   rw [← quadJ_sq he (jsqrt e he a) z, hsq]
 
+/-! ## `Q_{x∘y} = Q_x Q_y` for operator-commuting elements
+
+The multiplicative law of the quadratic representation on a commuting pair.  For general `x, y`
+it is false — `Q` is not multiplicative — and the hypothesis `⁅L_x, L_y⁆ = 0` is exactly what
+rescues it.  The route: operator-commuting elements share a resolution
+(`exists_simultaneous_resolution`), on which `Q_{√x} y = x∘y` when `x`'s coefficients are
+nonnegative; the fundamental formula turns that into
+`Q_{x∘y} = Q_{Q_{√x}y} = Q_{√x} Q_y Q_{√x}`, the shared diagonal commutes the `Q`s
+(`quadJ_comm_of_shared_resolution`), and `quadJ_sq` reassembles `Q_{√x}Q_{√x} = Q_x`.  A
+general `x` need not have nonnegative coefficients and need not be a square — but `x + t·e` is
+for large `t`, and `Q_{x+t·e}` is *affine* in `t` on both sides of the identity once the `t²`
+terms are seen to agree (`quadJ_add_smul_apply`), so two admissible values of `t` pin the
+constant term.  No positivity hypothesis survives into the statement. -/
+
+/-- **Expansion of `Q` along a scalar shift**: `Q_{u+t·v}` in powers of `t`, elementwise.  Pure
+bilinear bookkeeping — no Jordan identity enters beyond what `quadJ`'s own signature carries. -/
+theorem quadJ_add_smul_apply (u v : J) (t : ℝ) (z : J) :
+    quadJ (u + t • v) z
+      = quadJ u z
+        + t • ((2 : ℝ) • (u * (v * z)) + (2 : ℝ) • (v * (u * z)) - (2 : ℝ) • (u * v * z))
+        + (t * t) • quadJ v z := by
+  simp only [quadJ_apply, add_mul, mul_add, smul_mul_assoc, mul_smul_comm', smul_add, smul_sub,
+    smul_smul, mul_comm v u]
+  module
+
+/-- **`Q_{x∘y} = Q_x ∘ Q_y` for operator-commuting `x`, `y`** — the multiplicative law of the
+quadratic representation on a commuting pair, elementwise.
+
+★ The hypothesis is doing real work: for non-commuting `x, y` the identity fails (numerically:
+on random 4×4 real symmetric pairs the two sides differ at order 1), and every use of it below
+routes through the shared resolution it buys.
+
+★ Formal reality and finite dimension enter only through `exists_simultaneous_resolution`; the
+identity itself consumes them nowhere else. -/
+theorem quadJ_mul_of_opCommute [IsFormallyReal J] [Module.Finite ℝ J] {e : J}
+    (he : ∀ y : J, e * y = y) {x y : J}
+    (h : ∀ w, x * (y * w) = y * (x * w)) (z : J) :
+    quadJ (x * y) z = quadJ x (quadJ y z) := by
+  classical
+  obtain ⟨N, q, lam, mu, hfam, hsum, hx, hy⟩ := exists_simultaneous_resolution e he h
+  -- the nonnegative-coefficient case: `∑ f k • q k` is the square of `∑ √(f k) • q k`, and the
+  -- fundamental formula does the rest
+  have hcase : ∀ f : Fin N → ℝ, (∀ k, 0 ≤ f k) →
+      quadJ ((∑ k, f k • q k) * y) z = quadJ (∑ k, f k • q k) (quadJ y z) := by
+    intro f hf
+    have hwres : jsqrtOfResolution q f = ∑ i, Real.sqrt (f i) • q i := rfl
+    have hww : jsqrtOfResolution q f * jsqrtOfResolution q f = ∑ k, f k • q k :=
+      jsqrtOfResolution_mul_self hfam hf
+    have hQwy : quadJ (jsqrtOfResolution q f) y = (∑ k, f k • q k) * y := by
+      rw [hy, jsqrtOfResolution, quadJ_of_resolution hfam,
+        sum_smul_mul_sum_smul_of_orthIdem hfam]
+      exact Finset.sum_congr rfl fun k _ => by rw [Real.mul_self_sqrt (hf k)]
+    calc quadJ ((∑ k, f k • q k) * y) z
+        = quadJ (quadJ (jsqrtOfResolution q f) y) z := by rw [hQwy]
+      _ = quadJ (jsqrtOfResolution q f) (quadJ y (quadJ (jsqrtOfResolution q f) z)) :=
+          quadJ_quadJ_quadJ _ y z
+      _ = quadJ (jsqrtOfResolution q f) (quadJ (jsqrtOfResolution q f) (quadJ y z)) := by
+          rw [quadJ_comm_of_shared_resolution hfam mu (fun k => Real.sqrt (f k)) hy hwres]
+      _ = quadJ (jsqrtOfResolution q f * jsqrtOfResolution q f) (quadJ y z) :=
+          (quadJ_sq he _ _).symm
+      _ = quadJ (∑ k, f k • q k) (quadJ y z) := by rw [hww]
+  -- shifting `x` by `t·e` shifts every coefficient by `t`
+  have hshift : ∀ t : ℝ, x + t • e = ∑ k, (lam k + t) • q k := by
+    intro t
+    rw [hx, ← hsum, Finset.smul_sum, ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun k _ => (add_smul (lam k) t (q k)).symm
+  -- both sides of the shifted identity are affine in `t`: the `t²` terms agree and cancel
+  have hkey : ∀ t : ℝ, (∀ k, 0 ≤ lam k + t) →
+      quadJ (x * y) z
+          + t • ((2 : ℝ) • (x * y * (y * z)) + (2 : ℝ) • (y * (x * y * z))
+              - (2 : ℝ) • (x * y * y * z))
+        = quadJ x (quadJ y z)
+          + t • ((2 : ℝ) • (x * (e * quadJ y z)) + (2 : ℝ) • (e * (x * quadJ y z))
+              - (2 : ℝ) • (x * e * quadJ y z)) := by
+    intro t ht
+    have h0 : quadJ ((x + t • e) * y) z = quadJ (x + t • e) (quadJ y z) := by
+      rw [hshift t]
+      exact hcase (fun k => lam k + t) ht
+    rw [add_mul, smul_mul_assoc, he y, quadJ_add_smul_apply (x * y) y t z,
+      quadJ_add_smul_apply x e t (quadJ y z), quadJ_unit_left he] at h0
+    exact add_right_cancel h0
+  -- two admissible shifts pin the constant term
+  set T : ℝ := ∑ j, |lam j| with hTdef
+  have h1 : ∀ k, 0 ≤ lam k + T := by
+    intro k
+    have hk : |lam k| ≤ T :=
+      Finset.single_le_sum (fun j _ => abs_nonneg (lam j)) (Finset.mem_univ k)
+    have := neg_abs_le (lam k)
+    linarith
+  have hTnn : 0 ≤ T := Finset.sum_nonneg fun j _ => abs_nonneg _
+  have h2 : ∀ k, 0 ≤ lam k + 2 * T := by
+    intro k
+    have := h1 k
+    linarith
+  have k1 := hkey T h1
+  have k2 := hkey (2 * T) h2
+  linear_combination (norm := module) (2 : ℝ) • k1 - k2
+
 end RadicalRelativity.EJA
