@@ -704,6 +704,13 @@ import RadicalRelativity.EJA.Class
 -- machine check that the abstract layer's guarded hypotheses are dischargeable from
 -- the cone (`nonneg_coeff_of_isSoS` on `b` and on `1 - b`).
 import RadicalRelativity.EJA.PseudoTransfer
+
+-- Self-duality of the Euclidean Jordan cone (`x >= 0` iff it pairs nonnegatively with the whole
+-- cone), and its two consequences the tree could not state before: the cone is CLOSED, and the
+-- effect interval is COMPACT.  The forward direction runs on `quadJ_isSoS`, the cone-preservation
+-- theorem proved for row 13.  Compactness is the input for continuity of the Jordan square root,
+-- i.e. for paper S2 of the Luders product -- the shared blocker of rows 8, 16 and 21.
+import RadicalRelativity.EJA.ConeTopology
 -- Peirce subalgebras.  `J2(c)` and `J0(c)` carry Euclidean Jordan structures of their own,
 -- with units `c` and `1 - c`; the vehicle is `Submodule` rather than `NonUnitalSubalgebra`, so
 -- no instance transfer is needed.  Substrate; it moves no row.
