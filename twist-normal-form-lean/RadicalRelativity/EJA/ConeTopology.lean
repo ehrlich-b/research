@@ -1353,4 +1353,61 @@ theorem ludersSequentialProduct_isConvexSigmaSEA :
   exact (SequentialProductOn.firstArgContinuousOu_iff_firstArgContinuous _ harch).mpr
     ludersSequentialProduct_firstArgContinuous
 
+
+/-! ## Operator-valued continuity of `Q` and of the unknown product
+
+★★★ These are the two continuity statements the identity-component argument for `Θ_r` needs
+(manifest rows 15 and 17).  Both go through `Normality.continuous_toCLM_of_basis`: a family of
+endomorphisms of a finite-dimensional space is operator-continuous as soon as it is continuous on
+one basis.  For `Q` any basis will do; for the unknown product the basis must consist of
+**effects**, because that is where paper S2 applies — `exists_effect_basis` supplies one. -/
+
+/-- **`v ↦ Q_v` is continuous into the operator space.** -/
+theorem continuous_toCLM_quadJ :
+    Continuous fun v : J => LinearMap.toContinuousLinearMap (quadJ v) :=
+  continuous_toCLM_of_basis (Module.finBasis ℝ J) _
+    fun i => continuous_quadJ_left (Module.finBasis ℝ J i)
+
+/-- ★★★ **The unknown product's left multiplication is operator-continuous in its first
+argument**, along any continuous family of effects.  This is paper S2 upgraded from pointwise to
+operator form.
+
+★ No basis of effects has to be *constructed*: continuity of `x ↦ L_{g x} v` holds at effects by
+S2, the property is stable under linear combinations because `L` is linear in `v`, and the effects
+span — so it holds at every `v`, and then any basis feeds `continuous_toCLM_of_basis`. -/
+theorem continuousOn_toCLM_seqLeftMulAbs :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J) {X : Type} [TopologicalSpace X]
+        (g : X → J), Continuous g →
+        ∀ (hge : ∀ x, OrderUnitSpace.IsEffect (g x)),
+        Continuous fun x => LinearMap.toContinuousLinearMap
+          (P.seqLeftMulAbs harch (hge x)) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch X _ g hg hge
+  have hbase : ∀ v : J, OrderUnitSpace.IsEffect v →
+      Continuous fun x => P.seqLeftMulAbs harch (hge x) v := by
+    intro v hv
+    have hval : (fun x => P.seqLeftMulAbs harch (hge x) v) = fun x => P.sp (g x) v := by
+      funext x; exact P.seqLeftMulAbs_apply_effect harch (hge x) hv
+    rw [hval]
+    exact (hS2 hv).comp_continuous hg (fun x => hge x)
+  have hspan : ∀ v ∈ Submodule.span ℝ {a : J | OrderUnitSpace.IsEffect a},
+      Continuous fun x => P.seqLeftMulAbs harch (hge x) v := by
+    intro v hv
+    induction hv using Submodule.span_induction with
+    | mem w hw => exact hbase w hw
+    | zero => simpa using continuous_const
+    | add w₁ w₂ _ _ h₁ h₂ =>
+        simp only [map_add]
+        exact h₁.add h₂
+    | smul r w _ h =>
+        simp only [map_smul]
+        exact h.const_smul r
+  have hall : ∀ v : J, Continuous fun x => P.seqLeftMulAbs harch (hge x) v := fun v =>
+    hspan v (by rw [OrderUnitSpace.span_isEffect_eq_top]; trivial)
+  exact continuous_toCLM_of_basis (Module.finBasis ℝ J) _ fun i => hall _
+
 end RadicalRelativity.EJA
