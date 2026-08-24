@@ -178,6 +178,16 @@ import RadicalRelativity.OrthFamily
 -- actually needed, since it moves the FIRST argument.
 import RadicalRelativity.Normality
 
+-- Row 12 (`prop:central`), the RESTRICTION half -- the one direction that cell recorded as still
+-- open (assembly `SequentialProductOn.prod` and the componentwise formula were already built).
+-- An ARBITRARY product on `V x W` restricts to S1-S7 products on each summand.  The engine is
+-- non-coupling: `0 <= a & b <= a` squeezes the off-summand component of a product of
+-- summand-supported effects to zero.  Two fields need real work -- `sp_unit_left`, because the
+-- sum's unit is `(1,1)` and the summand needs `(1,0)` (OrthFamily's new S2-free
+-- `sp_sharp_value_le`), and `compatible_ortho`, because `1 - (b,0) = (1-b,1)`; taking the
+-- complement of `(b,0) + (0,1)` instead lands on `(1-b,0)` exactly.
+import RadicalRelativity.DirectSumRestrict
+
 -- M2 necessity core, fourth unit (LEDGER 2.1e, vdW 4.19-4.20): the normalized
 -- spectral pseudo-inverse of a positive-definite effect, the cancellation
 -- L'_nu (L'_b x) = c x through S5 and the 2.1d value law, and the payoff:

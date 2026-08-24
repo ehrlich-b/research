@@ -141,6 +141,14 @@ theorem isEffect_sum_smul {ι : Type*} {s : Finset ι} {p : ι → V}
         smul_le_smul_of_le_of_nonneg (hlam1 i hi) (hp i hi).1
     _ = p i := one_smul ℝ (p i)
 
+
+/-- **The complement of a sharp effect is sharp.**  The defining condition is symmetric under
+`p ↦ 𝟙 - p`, since `𝟙 - (𝟙 - p) = p`. -/
+theorem IsSharp.compl {p : V} (hp : IsSharp p) : IsSharp ((𝟙 : V) - p) := by
+  refine ⟨hp.1.ortho, fun z hz hz1 hz2 => ?_⟩
+  rw [sub_sub_cancel] at hz2
+  exact hp.2 z hz hz2 hz1
+
 end OrderUnitSpace
 
 /-! ## Sharp effects under an unknown product, order-theoretically -/
@@ -273,6 +281,175 @@ theorem sp_sum_left_of_comm {c : V} (hc : IsEffect c) {ι : Type*}
     P.sp (∑ i ∈ s, g i) c = ∑ i ∈ s, P.sp (g i) c := by
   rw [P.sp_comm_sum hc hg hall hcomm, P.sp_sum_right hc hg hall]
   exact Finset.sum_congr rfl fun i hi => (hcomm i hi).symm
+
+
+/-- ★★★ **The S2-free half of the vdW 5.2 value law**: a sharp effect acts as the identity on
+everything below it — `p ◦' b = b` whenever `p` is sharp and `b ≤ p`.
+
+★ **No S2, and no spectral family**, unlike `sp_orthFamily_value` below, which needs both.  The
+proof splits `𝟙 = p + (𝟙 - p)` in the *first* argument, which S1 does not licence on its own: it
+goes through `sp_sum_left_of_comm`, whose compatibility hypotheses are discharged for free —
+`𝟙 - p` against `b` because they are order-orthogonal (`sp_comm_sharp_orth`), and then `p`
+against `b` by `compatible_ortho` applied to that.  Since `(𝟙 - p) ◦' b = 0`, the two-term sum
+collapses to `p ◦' b = 𝟙 ◦' b = b`. -/
+theorem sp_sharp_value_le {p b : V} (hp : IsSharp p) (hb : IsEffect b) (hle : b ≤ p) :
+    P.sp p b = b := by
+  classical
+  have hpe : IsEffect p := hp.1
+  have hq_sharp : IsSharp ((𝟙 : V) - p) := IsSharp.compl hp
+  have hqe : IsEffect ((𝟙 : V) - p) := hq_sharp.1
+  have hqb : ((𝟙 : V) - p) + b ≤ 𝟙 := by
+    have h := OrderUnitSpace.add_le_add_left b p hle ((𝟙 : V) - p)
+    have he : ((𝟙 : V) - p) + p = 𝟙 := by abel
+    rwa [he] at h
+  have hqb0 : P.sp ((𝟙 : V) - p) b = 0 := P.sp_sharp_orth hq_sharp hb hqb
+  have hbq0 : P.sp b ((𝟙 : V) - p) = 0 := P.sp_sharp_orth' hq_sharp hb hqb
+  have hcomm_p : P.sp p b = P.sp b p := by
+    have h := P.compatible_ortho hb hqe (by rw [hbq0, hqb0])
+    rw [sub_sub_cancel] at h
+    exact h.symm
+  have hg : ∀ i ∈ (Finset.univ : Finset (Fin 2)), IsEffect (![p, (𝟙 : V) - p] i) := by
+    intro i _; fin_cases i
+    · simpa using hpe
+    · simpa using hqe
+  have hsum : (∑ i ∈ (Finset.univ : Finset (Fin 2)), ![p, (𝟙 : V) - p] i) = (𝟙 : V) := by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    abel
+  have hall : (∑ i ∈ (Finset.univ : Finset (Fin 2)), ![p, (𝟙 : V) - p] i) ≤ 𝟙 := by
+    rw [hsum]
+  have hcomm : ∀ i ∈ (Finset.univ : Finset (Fin 2)),
+      P.sp (![p, (𝟙 : V) - p] i) b = P.sp b (![p, (𝟙 : V) - p] i) := by
+    intro i _; fin_cases i
+    · simpa using hcomm_p
+    · simpa using hqb0.trans hbq0.symm
+  have key := P.sp_sum_left_of_comm hb hg hall hcomm
+  rw [hsum, Fin.sum_univ_two, P.sp_unit_left hb] at key
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at key
+  rw [hqb0, add_zero] at key
+  exact key.symm
+
+
+/-- **The dual of `sp_sharp_value_le`**: an effect below a sharp effect is *fixed by it on the
+right too* — `x ◦' p = x` whenever `p` is sharp and `x ≤ p`.
+
+Where `sp_sharp_value_le` had to split the first argument, this one splits the *second*, which
+is plain S1: `x = x ◦' 𝟙 = x ◦' p + x ◦' (𝟙 - p)` and the last term vanishes because `x` is
+order-orthogonal to `𝟙 - p`. -/
+theorem sp_le_sharp_right {p x : V} (hp : IsSharp p) (hx : IsEffect x) (hle : x ≤ p) :
+    P.sp x p = x := by
+  have hpe : IsEffect p := hp.1
+  have hqe : IsEffect ((𝟙 : V) - p) := hpe.ortho
+  have hq_sharp : IsSharp ((𝟙 : V) - p) := IsSharp.compl hp
+  have hqx : ((𝟙 : V) - p) + x ≤ 𝟙 := by
+    have h := OrderUnitSpace.add_le_add_left x p hle ((𝟙 : V) - p)
+    have he : ((𝟙 : V) - p) + p = 𝟙 := by abel
+    rwa [he] at h
+  have hxq0 : P.sp x ((𝟙 : V) - p) = 0 := P.sp_sharp_orth' hq_sharp hx hqx
+  have hps : p + ((𝟙 : V) - p) = (𝟙 : V) := by abel
+  have hsplit := P.sp_add_right hx hpe hqe (le_of_eq hps)
+  rw [hps, P.sp_unit_right hx, hxq0, add_zero] at hsplit
+  exact hsplit.symm
+
+/-- ★★★ **A sharp effect reads off the component of any effect that splits across it.**
+
+If `x ≤ p` and `y` is order-orthogonal to `p`, then for the effect `x + y`
+
+  `(x + y) ◦' p = x = p ◦' (x + y)`
+
+for *any* S1–S7 product.  ★ In particular `x + y` and `p` are **compatible** — and this is
+proved, not imported: `x` is compatible with `p` because both `x ◦' p` and `p ◦' x` equal `x`
+(`sp_le_sharp_right` and `sp_sharp_value_le`), `y` is compatible with `p` because both products
+vanish (S4 on order-orthogonality), and `sp_sum_left_of_comm` then splits the first argument.
+
+★★ This is what makes the central decomposition of a direct sum unconditional: `p = (𝟙, 0)`
+splits every effect of `V × W` in exactly this way, so no bridge hypothesis or vdW 5.2 citation
+is needed to know that an unknown product commutes with the central units. -/
+theorem sp_sharp_split_left {p x y : V} (hp : IsSharp p) (hx : IsEffect x) (hy : IsEffect y)
+    (hxp : x ≤ p) (hyp : p + y ≤ 𝟙) (hxy : x + y ≤ 𝟙) :
+    P.sp (x + y) p = x := by
+  classical
+  have hpe : IsEffect p := hp.1
+  have hg : ∀ i ∈ (Finset.univ : Finset (Fin 2)), IsEffect (![x, y] i) := by
+    intro i _; fin_cases i
+    · simpa using hx
+    · simpa using hy
+  have hsum : (∑ i ∈ (Finset.univ : Finset (Fin 2)), ![x, y] i) = x + y := by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+  have hall : (∑ i ∈ (Finset.univ : Finset (Fin 2)), ![x, y] i) ≤ 𝟙 := by rw [hsum]; exact hxy
+  have hcomm : ∀ i ∈ (Finset.univ : Finset (Fin 2)),
+      P.sp (![x, y] i) p = P.sp p (![x, y] i) := by
+    intro i _; fin_cases i
+    · simpa using
+        (P.sp_le_sharp_right hp hx hxp).trans (P.sp_sharp_value_le hp hx hxp).symm
+    · simpa using
+        (P.sp_sharp_orth' hp hy hyp).trans (P.sp_sharp_orth hp hy hyp).symm
+  have key := P.sp_sum_left_of_comm hpe hg hall hcomm
+  rw [hsum, Fin.sum_univ_two] at key
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at key
+  rw [P.sp_le_sharp_right hp hx hxp, P.sp_sharp_orth' hp hy hyp, add_zero] at key
+  exact key
+
+/-- The right-hand companion of `sp_sharp_split_left`, which is plain S1. -/
+theorem sp_sharp_split_right {p x y : V} (hp : IsSharp p) (hx : IsEffect x) (hy : IsEffect y)
+    (hxp : x ≤ p) (hyp : p + y ≤ 𝟙) (hxy : x + y ≤ 𝟙) :
+    P.sp p (x + y) = x := by
+  have h := P.sp_add_right hp.1 hx hy hxy
+  rw [P.sp_sharp_value_le hp hx hxp, P.sp_sharp_orth hp hy hyp, add_zero] at h
+  exact h
+
+/-- **Compatibility with a sharp effect that splits the argument — derived, not assumed.** -/
+theorem sp_sharp_split_comm {p x y : V} (hp : IsSharp p) (hx : IsEffect x) (hy : IsEffect y)
+    (hxp : x ≤ p) (hyp : p + y ≤ 𝟙) (hxy : x + y ≤ 𝟙) :
+    P.sp (x + y) p = P.sp p (x + y) :=
+  (P.sp_sharp_split_left hp hx hy hxp hyp hxy).trans
+    (P.sp_sharp_split_right hp hx hy hxp hyp hxy).symm
+
+/-! ## The article's `n`-ary central decomposition, with the citations discharged
+
+★★★ `MasterTheorem.Central.central_decomposition` proves `a ◦' b = ∑_α (π_α a) ◦' (π_α b)` for a
+general finite central family, but takes three facts as **hypotheses** on the cited
+bridge/vdW-5.2 surface: that `a` is compatible with each central unit `e_α`, that
+`a ◦' e_α = π_α a`, and that `e_α ◦' (π_α b) = π_α b`.  All three are **theorems** once the
+family members are known to be *sharp* and the decomposition splits `a` across each of them,
+which is what a central decomposition is.  The version below therefore carries no citation: its
+hypotheses are order-theoretic statements about the family, and the bridge facts are derived
+inside the proof. -/
+
+/-- ★★★ **`prop:central`, main formula, with the bridge hypotheses discharged.**
+
+The three imports `central_decomposition` carries are proved here instead:
+`sp_sharp_split_left`/`_right` give both `a ◦' e_α = π_α a` and `e_α ◦' a = π_α a` (hence the
+compatibility S5 needs), and `sp_sharp_value_le` gives `e_α ◦' (π_α b) = π_α b`.  What is assumed
+is only what "central decomposition" means: each `e_α` sharp, each component below its own unit,
+and the rest of `a` order-orthogonal to `e_α`. -/
+theorem sp_central_decomposition {m : ℕ} (e : Fin m → V) (π : Fin m → V → V)
+    {a b : V} (ha : IsEffect a) (hb : IsEffect b)
+    (hsharp : ∀ α, IsSharp (e α))
+    (hπa_eff : ∀ α, IsEffect (π α a)) (hπb_eff : ∀ α, IsEffect (π α b))
+    (hπa_le : ∀ α, π α a ≤ e α) (hπb_le : ∀ α, π α b ≤ e α)
+    (hrest_eff : ∀ α, IsEffect (a - π α a))
+    (hrest_orth : ∀ α, e α + (a - π α a) ≤ 𝟙)
+    (hdecomp : b = ∑ β, π β b) :
+    P.sp a b = ∑ α, P.sp (π α a) (π α b) := by
+  classical
+  have hball : (∑ β, π β b) ≤ (𝟙 : V) := by rw [← hdecomp]; exact hb.2
+  conv_lhs => rw [hdecomp]
+  rw [P.sp_sum_right ha (fun i _ => hπb_eff i) hball]
+  refine Finset.sum_congr rfl fun α _ => ?_
+  have hsum : π α a + (a - π α a) = a := by abel
+  have hxy : π α a + (a - π α a) ≤ 𝟙 := by rw [hsum]; exact ha.2
+  have hproj := P.sp_sharp_split_left (hsharp α) (hπa_eff α) (hrest_eff α) (hπa_le α)
+    (hrest_orth α) hxy
+  have hprojR := P.sp_sharp_split_right (hsharp α) (hπa_eff α) (hrest_eff α) (hπa_le α)
+    (hrest_orth α) hxy
+  rw [hsum] at hproj hprojR
+  have hunit : P.sp (e α) (π α b) = π α b :=
+    P.sp_sharp_value_le (hsharp α) (hπb_eff α) (hπb_le α)
+  have hS5 := P.sp_assoc_of_compatible ha (hsharp α).1 (hπb_eff α) (hproj.trans hprojR.symm)
+  rw [hunit, hproj] at hS5
+  exact hS5
 
 /-! ## The vdW 5.2 value law and compatibility transfer -/
 
