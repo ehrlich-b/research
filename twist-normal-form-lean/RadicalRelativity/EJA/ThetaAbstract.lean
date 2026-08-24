@@ -916,6 +916,9 @@ the value.  Combined with `theta_mul` this is the homomorphism clause `Θ_{r+s} 
 def twistElt {N : ℕ} (F : JordanFrame J N) (r : Fin N → ℝ) : J :=
   ∑ k, Real.exp (r k) • F.p k
 
+theorem twistElt_eq {N : ℕ} (F : JordanFrame J N) (r : Fin N → ℝ) :
+    twistElt F r = ∑ k, Real.exp (r k) • F.p k := rfl
+
 theorem twistElt_isSoS {N : ℕ} (F : JordanFrame J N) (r : Fin N → ℝ) :
     IsSoS (jmulₗ J) (twistElt F r) :=
   isSoS_sum _ _ fun k _ => isSoS_smul_idem (Real.exp_pos _).le (F.orthIdem.idem k)
@@ -923,7 +926,7 @@ theorem twistElt_isSoS {N : ℕ} (F : JordanFrame J N) (r : Fin N → ℝ) :
 theorem twistElt_compl_isSoS {N : ℕ} (F : JordanFrame J N) {r : Fin N → ℝ}
     (hr : ∀ k, r k ≤ 0) : IsSoS (jmulₗ J) ((1 : J) - twistElt F r) := by
   have hrw : (1 : J) - twistElt F r = ∑ k, (1 - Real.exp (r k)) • F.p k := by
-    have hh := smul_unit_sub_eq F.complete (rfl : twistElt F r = ∑ k, Real.exp (r k) • F.p k) 1
+    have hh := smul_unit_sub_eq F.complete (twistElt_eq F r) 1
     rwa [one_smul] at hh
   rw [hrw]
   refine isSoS_sum _ _ fun k _ => isSoS_smul_idem ?_ (F.orthIdem.idem k)
@@ -1169,7 +1172,7 @@ theorem thetaOf_twistElt_apply {N : ℕ} (F : JordanFrame J N) {r : Fin N → �
     ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
       (harch : OrderUnitSpace.IsArchimedean J)
       (hae : OrderUnitSpace.IsEffect (twistElt F r)) (z : J),
-      thetaOf F.orthIdem F.complete (rfl : twistElt F r = ∑ k, Real.exp (r k) • F.p k) (twistElt_isSoS F r)
+      thetaOf F.orthIdem F.complete (twistElt_eq F r) (twistElt_isSoS F r)
           (twistElt_compl_isSoS F hr) (fun k _ => (Real.exp_pos (r k)).ne')
           P hS2 harch hae z
         = quadJ (∑ k, Real.sqrt (Real.exp (-r k)) • F.p k)
@@ -1177,7 +1180,7 @@ theorem thetaOf_twistElt_apply {N : ℕ} (F : JordanFrame J N) {r : Fin N → �
   letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
     (1 : J) jmulₗ_one_mul
   intro P hS2 harch hae z
-  have hval : thetaOf F.orthIdem F.complete (rfl : twistElt F r = ∑ k, Real.exp (r k) • F.p k) (twistElt_isSoS F r)
+  have hval : thetaOf F.orthIdem F.complete (twistElt_eq F r) (twistElt_isSoS F r)
       (twistElt_compl_isSoS F hr) (fun k _ => (Real.exp_pos (r k)).ne') P hS2 harch hae z
       = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
           (jinvOfResolution F.p (fun k => Real.exp (r k)))) (P.seqLeftMulAbs harch hae z) := rfl
@@ -1204,7 +1207,7 @@ theorem continuous_toCLM_thetaOf_twistElt {N : ℕ} (F : JordanFrame J N)
       (harch : OrderUnitSpace.IsArchimedean J)
       (hae : ∀ x, OrderUnitSpace.IsEffect (twistElt F (ρ x))),
       Continuous fun x => LinearMap.toContinuousLinearMap
-        (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ x) = ∑ k, Real.exp (ρ x k) • F.p k)
+        (thetaOf F.orthIdem F.complete (twistElt_eq F (ρ x))
           (twistElt_isSoS F (ρ x)) (twistElt_compl_isSoS F (hρ0 x))
           (fun k _ => (Real.exp_pos (ρ x k)).ne') P hS2 harch (hae x)).toLinearMap := by
   letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
@@ -1222,7 +1225,7 @@ theorem continuous_toCLM_thetaOf_twistElt {N : ℕ} (F : JordanFrame J N)
   have hL := continuousOn_toCLM_seqLeftMulAbs P hS2 harch (fun x => twistElt F (ρ x)) hg hae
   -- assemble
   have hrw : (fun x => LinearMap.toContinuousLinearMap
-      (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ x) = ∑ k, Real.exp (ρ x k) • F.p k)
+      (thetaOf F.orthIdem F.complete (twistElt_eq F (ρ x))
         (twistElt_isSoS F (ρ x)) (twistElt_compl_isSoS F (hρ0 x))
         (fun k _ => (Real.exp_pos (ρ x k)).ne') P hS2 harch (hae x)).toLinearMap)
       = fun x => (LinearMap.toContinuousLinearMap
@@ -1255,8 +1258,7 @@ theorem theta_mem_stabFrame_connectedComponent {N : ℕ} (F : JordanFrame J N) {
       (harch : OrderUnitSpace.IsArchimedean J)
       (hae : ∀ t : ℝ, OrderUnitSpace.IsEffect (twistElt F ((max 0 (min 1 t)) • r))),
       LinearMap.toContinuousLinearMap
-        (thetaOf F.orthIdem F.complete (rfl : twistElt F ((max 0 (min 1 (1:ℝ))) • r)
-            = ∑ k, Real.exp (((max 0 (min 1 (1:ℝ))) • r) k) • F.p k)
+        (thetaOf F.orthIdem F.complete (twistElt_eq F ((max 0 (min 1 (1:ℝ))) • r))
           (twistElt_isSoS F _) (twistElt_compl_isSoS F (fun k => by
             have h1 : (0:ℝ) ≤ max 0 (min 1 (1:ℝ)) := le_max_left _ _
             have := mul_nonpos_of_nonneg_of_nonpos h1 (hr k)
@@ -1272,7 +1274,7 @@ theorem theta_mem_stabFrame_connectedComponent {N : ℕ} (F : JordanFrame J N) {
   have hρc : Continuous ρ :=
     (continuous_const.max (continuous_const.min continuous_id)).smul continuous_const
   set γ : ℝ → (J →L[ℝ] J) := fun t => LinearMap.toContinuousLinearMap
-    (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ t) = ∑ k, Real.exp (ρ t k) • F.p k)
+    (thetaOf F.orthIdem F.complete (twistElt_eq F (ρ t))
       (twistElt_isSoS F (ρ t)) (twistElt_compl_isSoS F (hρ0 t))
       (fun k _ => (Real.exp_pos (ρ t k)).ne') P hS2 harch (hae t)).toLinearMap with hγdef
   have hγc : Continuous γ :=
@@ -1297,10 +1299,10 @@ theorem theta_mem_stabFrame_connectedComponent {N : ℕ} (F : JordanFrame J N) {
       exact F.complete
     show LinearMap.toContinuousLinearMap _ z = z
     rw [show LinearMap.toContinuousLinearMap
-        (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ 0) = ∑ k, Real.exp (ρ 0 k) • F.p k)
+        (thetaOf F.orthIdem F.complete (twistElt_eq F (ρ 0))
           (twistElt_isSoS F (ρ 0)) (twistElt_compl_isSoS F (hρ0 0))
           (fun k _ => (Real.exp_pos (ρ 0 k)).ne') P hS2 harch (hae 0)).toLinearMap z
-        = thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ 0) = ∑ k, Real.exp (ρ 0 k) • F.p k)
+        = thetaOf F.orthIdem F.complete (twistElt_eq F (ρ 0))
           (twistElt_isSoS F (ρ 0)) (twistElt_compl_isSoS F (hρ0 0))
           (fun k _ => (Real.exp_pos (ρ 0 k)).ne') P hS2 harch (hae 0) z from rfl]
     rw [thetaOf_twistElt_apply F (hρ0 0) P hS2 harch (hae 0) z, hq,
@@ -1314,5 +1316,85 @@ theorem theta_mem_stabFrame_connectedComponent {N : ℕ} (F : JordanFrame J N) {
     rintro _ ⟨t, rfl⟩; exact hγmem t
   have hid : ContinuousLinearMap.id ℝ J ∈ Set.range γ := ⟨0, hγ0⟩
   exact hconn.subset_connectedComponentIn hid hsub ⟨1, rfl⟩
+
+
+/-! ## A uniform wrapper for `Θ` on the twist family
+
+★★★ Every statement above carries `Θ`'s six proof arguments explicitly, which makes composing
+them across *different* parameters awkward: `Θ` at `a(r)·a(s)` and `Θ` at `a(r+s)` are the same
+map, but only after transporting an effect proof along `sp_twistElt`.  `seqLeftMulAbs_congr`
+does that transport once — the elements are what differ, the proofs are irrelevant — and
+`twistTheta` packages the rest, so `Θ` becomes a function of the parameter alone. -/
+
+theorem isEffect_twistElt {N : ℕ} (F : JordanFrame J N) {r : Fin N → ℝ} (hr : ∀ k, r k ≤ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    OrderUnitSpace.IsEffect (twistElt F r) :=
+  (isEffect_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul _).mpr ⟨twistElt_isSoS F r, twistElt_compl_isSoS F hr⟩
+
+/-- **Transport of the left-multiplication along an equality of effects.**  Proofs are irrelevant;
+only the element matters. -/
+theorem seqLeftMulAbs_congr :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (harch : OrderUnitSpace.IsArchimedean J) {a : J}
+      (ha : OrderUnitSpace.IsEffect a) {b : J}, a = b →
+      ∀ (hb : OrderUnitSpace.IsEffect b),
+        P.seqLeftMulAbs harch ha = P.seqLeftMulAbs harch hb := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  rintro P harch a ha b rfl hb
+  rfl
+
+/-- ★★★ **`Θ` on the twist family, as a function of the parameter alone.** -/
+noncomputable def twistTheta {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ), (∀ k, r k ≤ 0) → J ≃ₗ[ℝ] J :=
+  fun P hS2 harch r hr =>
+    thetaOf F.orthIdem F.complete (twistElt_eq F r)
+      (twistElt_isSoS F r) (twistElt_compl_isSoS F hr)
+      (fun k _ => (Real.exp_pos (r k)).ne') P hS2 harch (isEffect_twistElt F hr)
+
+/-- The defining identity for the wrapper. -/
+theorem twistTheta_spec {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0) (z : J),
+      P.seqLeftMulAbs harch (isEffect_twistElt F hr) z
+        = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F r))
+            (twistTheta F P hS2 harch r hr z) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r hr z
+  exact (thetaOf_spec F.orthIdem F.complete
+    (twistElt_eq F r) (twistElt_isSoS F r)
+    (twistElt_compl_isSoS F hr) (fun k _ => (Real.exp_pos (r k)).ne') P hS2 harch
+    (isEffect_twistElt F hr)).2.2 z
+
+/-- **`Θ` on the twist family is determined by its defining identity.** -/
+theorem twistTheta_unique {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0)
+      (Θ : J → J),
+      (∀ z, P.seqLeftMulAbs harch (isEffect_twistElt F hr) z
+        = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F r)) (Θ z)) →
+      ∀ z, Θ z = twistTheta F P hS2 harch r hr z := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r hr Θ hΘ z
+  refine (quadJSqrtEquiv F.orthIdem F.complete
+    (twistElt_eq F r) (twistElt_isSoS F r)
+    (fun k _ => (Real.exp_pos (r k)).ne')).injective ?_
+  show quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F r)) (Θ z)
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F r))
+        (twistTheta F P hS2 harch r hr z)
+  rw [← hΘ z]
+  exact twistTheta_spec F P hS2 harch r hr z
 
 end RadicalRelativity.EJA
