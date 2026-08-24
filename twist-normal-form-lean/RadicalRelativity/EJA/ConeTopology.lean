@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.EJA.PseudoTransfer
+import Mathlib.Analysis.Calculus.FDeriv.Bilinear
 
 set_option linter.style.longLine false
 
@@ -199,5 +200,201 @@ theorem jsqrt_mul_self_of_isSoS {s : J} (hs : IsSoS (jmulₗ J) s) :
 theorem eq_of_mul_self_eq_of_isSoS {s t : J} (hs : IsSoS (jmulₗ J) s) (ht : IsSoS (jmulₗ J) t)
     (h : s * s = t * t) : s = t := by
   rw [← jsqrt_mul_self_of_isSoS hs, h, jsqrt_mul_self_of_isSoS ht]
+
+
+/-! ## Continuity of the Jordan product
+
+The Jordan product is a bilinear map between finite-dimensional normed spaces, hence continuous;
+the tree had no statement of this, because nothing before needed a topology on `J` beyond the one
+its `NormedAddCommGroup` supplies.  The route through `LinearMap.toContinuousLinearMap` is the
+short one: it is a *linear equivalence* on a finite-dimensional domain, so composing it with
+`jmulₗ` gives a linear map into a normed space, which `LinearMap.continuous_of_finiteDimensional`
+makes continuous, and evaluation of continuous linear maps is a bounded bilinear map. -/
+
+theorem continuous_jmul : Continuous (fun p : J × J => p.1 * p.2) := by
+  have hB : Continuous (fun x : J => LinearMap.toContinuousLinearMap (jmulₗ J x)) :=
+    LinearMap.continuous_of_finiteDimensional
+      ((LinearMap.toContinuousLinearMap : (J →ₗ[ℝ] J) ≃ₗ[ℝ] (J →L[ℝ] J)).toLinearMap.comp
+        (jmulₗ J))
+  exact isBoundedBilinearMap_apply.continuous.comp
+    ((hB.comp continuous_fst).prodMk continuous_snd)
+
+theorem _root_.Continuous.jmul {α : Type*} [TopologicalSpace α] {f g : α → J}
+    (hf : Continuous f) (hg : Continuous g) : Continuous (fun x => f x * g x) :=
+  continuous_jmul.comp (hf.prodMk hg)
+
+theorem continuous_jmul_self : Continuous (fun x : J => x * x) :=
+  Continuous.jmul continuous_id continuous_id
+
+/-- `quadJ` is continuous in its first argument. -/
+theorem continuous_quadJ_left (b : J) : Continuous (fun v : J => quadJ v b) := by
+  have h : (fun v : J => quadJ v b) = fun v : J => (2 : ℝ) • (v * (v * b)) - (v * v) * b := by
+    funext v; rw [quadJ_apply]
+  rw [h]
+  exact ((continuous_id.jmul (continuous_id.jmul continuous_const)).const_smul (2 : ℝ)).sub
+    (continuous_jmul_self.jmul continuous_const)
+
+
+/-! ## Continuity of the Jordan square root, and paper S2 for the Lüders product
+
+★★★ The square root is not given by a formula that could be differentiated or estimated — `jsqrt`
+is defined through a *chosen* spectral resolution — so continuity cannot be read off its
+definition.  The argument is the classical one and it is exactly why compactness was proved
+above: squaring is a continuous bijection of the (compact) effect interval onto itself, and a
+continuous bijection from a compact space to a Hausdorff space is a homeomorphism, so its inverse
+— the square root — is continuous. -/
+
+/-- Every coefficient of an effect's resolution is at most one, at the idempotents present. -/
+theorem resolution_coeff_le_one {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = (1 : J)) {x : J}
+    (hx : x = ∑ i, lam i • c i) (hx1 : IsSoS (jmulₗ J) (1 - x)) {k : Fin n} (hk : c k ≠ 0) :
+    lam k ≤ 1 := by
+  have hrep : (1 : J) - x = ∑ i, (1 - lam i) • c i := by
+    rw [hx, ← hsum, ← Finset.sum_sub_distrib]
+    exact Finset.sum_congr rfl fun i _ => by rw [sub_smul, one_smul]
+  have h := nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+    (fun i => hfam.idem i) (fun i j hij => hfam.orth i j hij) hrep hx1 hk
+  linarith
+
+omit [FiniteDimensional ℝ J] in
+theorem isSoS_mul_self (x : J) : IsSoS (jmulₗ J) (x * x) :=
+  ⟨1, fun _ => x, by simp⟩
+
+/-- The square of an effect is an effect. -/
+theorem mul_self_mem_effectSet {x : J} (hx : x ∈ effectSet J) : x * x ∈ effectSet J := by
+  classical
+  obtain ⟨hx0, hx1⟩ := hx
+  obtain ⟨n, c, lam, hfam, hsum, hxr, hinj⟩ :=
+    exists_resolution_distinct 1 EuclideanJordanAlgebra.one_mul x
+  have hnn : ∀ i, c i ≠ 0 → 0 ≤ lam i := fun i hci =>
+    nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+      (fun k => hfam.idem k) (fun k l hkl => hfam.orth k l hkl) hxr hx0 hci
+  have hle : ∀ i, c i ≠ 0 → lam i ≤ 1 := fun i hci =>
+    resolution_coeff_le_one hfam hsum hxr hx1 hci
+  refine ⟨isSoS_mul_self x, ?_⟩
+  have hsq : x * x = ∑ i, (lam i * lam i) • c i := by
+    rw [hxr]; exact sum_smul_mul_sum_smul_of_orthIdem hfam lam lam
+  have hrep : (1 : J) - x * x = ∑ i, (1 - lam i * lam i) • c i := by
+    rw [hsq, ← hsum, ← Finset.sum_sub_distrib]
+    exact Finset.sum_congr rfl fun i _ => by rw [sub_smul, one_smul]
+  rw [hrep]
+  refine isSoS_sum _ _ fun i _ => ?_
+  by_cases hci : c i = 0
+  · rw [hci, smul_zero]; exact isSoS_zero
+  · exact isSoS_smul_idem (by nlinarith [hnn i hci, hle i hci]) (hfam.idem i)
+
+/-- The square root of an effect is an effect. -/
+theorem jsqrt_mem_effectSet {x : J} (hx : x ∈ effectSet J) :
+    jsqrt 1 EuclideanJordanAlgebra.one_mul x ∈ effectSet J := by
+  classical
+  obtain ⟨hx0, hx1⟩ := hx
+  obtain ⟨n, c, lam, hfam, hsum, hxr, hinj⟩ :=
+    exists_resolution_distinct 1 EuclideanJordanAlgebra.one_mul x
+  have hnn : ∀ i, c i ≠ 0 → 0 ≤ lam i := fun i hci =>
+    nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+      (fun k => hfam.idem k) (fun k l hkl => hfam.orth k l hkl) hxr hx0 hci
+  have hle : ∀ i, c i ≠ 0 → lam i ≤ 1 := fun i hci =>
+    resolution_coeff_le_one hfam hsum hxr hx1 hci
+  rw [jsqrt_eq_of_resolution 1 EuclideanJordanAlgebra.one_mul x hfam hinj hxr]
+  constructor
+  · refine isSoS_sum _ _ fun i _ => ?_
+    exact isSoS_smul_idem (Real.sqrt_nonneg _) (hfam.idem i)
+  · have hrep : (1 : J) - ∑ i, Real.sqrt (lam i) • c i
+        = ∑ i, (1 - Real.sqrt (lam i)) • c i := by
+      rw [← hsum, ← Finset.sum_sub_distrib]
+      exact Finset.sum_congr rfl fun i _ => by rw [sub_smul, one_smul]
+    rw [hrep]
+    refine isSoS_sum _ _ fun i _ => ?_
+    by_cases hci : c i = 0
+    · rw [hci, smul_zero]; exact isSoS_zero
+    · refine isSoS_smul_idem ?_ (hfam.idem i)
+      have h1 : Real.sqrt (lam i) ≤ 1 := by
+        rw [show (1 : ℝ) = Real.sqrt 1 by simp]
+        exact Real.sqrt_le_sqrt (hle i hci)
+      linarith
+
+/-- `jsqrt` squares back on the cone. -/
+theorem jsqrt_sq_of_isSoS {x : J} (hx : IsSoS (jmulₗ J) x) :
+    jsqrt 1 EuclideanJordanAlgebra.one_mul x * jsqrt 1 EuclideanJordanAlgebra.one_mul x = x := by
+  obtain ⟨n, c, lam, hfam, -, hxr, hinj⟩ :=
+    exists_resolution_distinct 1 EuclideanJordanAlgebra.one_mul x
+  exact jsqrt_mul_self' 1 EuclideanJordanAlgebra.one_mul x hfam hinj hxr
+    (fun i hci => nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+      (fun k => hfam.idem k) (fun k l hkl => hfam.orth k l hkl) hxr hx hci)
+
+/-- ★★★ **The Jordan square root is continuous on the effect interval.** -/
+theorem continuousOn_jsqrt :
+    ContinuousOn (jsqrt 1 EuclideanJordanAlgebra.one_mul) (effectSet J) := by
+  have : CompactSpace ↥(effectSet J) := isCompact_iff_compactSpace.mp isCompact_effectSet
+  set sq : ↥(effectSet J) → ↥(effectSet J) :=
+    fun x => ⟨x.1 * x.1, mul_self_mem_effectSet x.2⟩ with hsqdef
+  set rt : ↥(effectSet J) → ↥(effectSet J) :=
+    fun x => ⟨jsqrt 1 EuclideanJordanAlgebra.one_mul x.1, jsqrt_mem_effectSet x.2⟩ with hrtdef
+  have hleft : Function.LeftInverse rt sq := fun x =>
+    Subtype.ext (jsqrt_mul_self_of_isSoS x.2.1)
+  have hright : Function.RightInverse rt sq := fun x =>
+    Subtype.ext (jsqrt_sq_of_isSoS x.2.1)
+  have hsqc : Continuous sq :=
+    Continuous.subtype_mk (continuous_jmul_self.comp continuous_subtype_val) _
+  have hrtc : Continuous rt :=
+    (Continuous.homeoOfEquivCompactToT2 (f := (⟨sq, rt, hleft, hright⟩ : _ ≃ _)) hsqc).symm.continuous
+  rw [continuousOn_iff_continuous_restrict]
+  exact continuous_subtype_val.comp hrtc
+
+
+/-! ## Paper S2 for the Lüders product
+
+★★★ `def:sp`'s cell recorded that S2 "cannot be a field at abstract generality without an
+order-unit norm the tree lacks", and `EJA/Class.lean` carries S1, S3, S4 and S5 for the candidate
+product `a · b = Q_{√a} b` with S2 untouched.  This is S2: the map `a ↦ Q_{√a} b` is continuous on
+the effects, for every effect `b`. -/
+
+theorem mem_effectSet_iff_isEffect {a : J} :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    a ∈ effectSet J ↔ OrderUnitSpace.IsEffect a := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  constructor
+  · rintro ⟨h0, h1⟩
+    refine ⟨?_, h1⟩
+    show IsSoS (jmulₗ J) (a - 0)
+    rwa [sub_zero]
+  · rintro ⟨h0, h1⟩
+    refine ⟨?_, h1⟩
+    have h0' : IsSoS (jmulₗ J) (a - 0) := h0
+    rwa [sub_zero] at h0'
+
+theorem effectSet_eq_setOf_isEffect :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    effectSet J = {a : J | OrderUnitSpace.IsEffect a} := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  ext a
+  exact mem_effectSet_iff_isEffect
+
+/-- ★★★ **Paper S2 for the Lüders product `a · b = Q_{√a} b`, at EJA generality.**
+
+`a ↦ Q_{√a} b` is continuous on the effect interval — the composition of the square root, whose
+continuity is the compactness argument above, with `quadJ` in its first argument, which is a
+polynomial map.  ★ The hypothesis on `b` is not used: continuity in the first argument holds for
+every `b` whatsoever. -/
+theorem luders_continuousOn_fst (b : J) :
+    ContinuousOn (fun a : J => quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b)
+      (effectSet J) :=
+  (continuous_quadJ_left b).comp_continuousOn continuousOn_jsqrt
+
+/-- S2 in the vocabulary of the order-unit instance the sequential-product axioms are stated
+over. -/
+theorem luders_continuousOn_isEffect (b : J) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ContinuousOn (fun a : J => quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b)
+      {a : J | OrderUnitSpace.IsEffect a} := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  rw [← effectSet_eq_setOf_isEffect]
+  exact luders_continuousOn_fst b
 
 end RadicalRelativity.EJA
