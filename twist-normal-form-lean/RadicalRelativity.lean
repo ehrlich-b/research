@@ -986,3 +986,14 @@ import RadicalRelativity.EJA.HermMatCarrier
 -- Jacobson coordinatization: `J ≅ H_n(C)` is residue (1) and is still a `sorry` there.
 -- Substrate; it moves no row.
 import RadicalRelativity.EJA.AlbertBridge
+
+-- ★★★ **A continuous one-parameter subgroup of a Banach algebra is differentiable** --
+-- `OneParam.hasDerivAt_of_continuous`.  This is ingredient **(c)** of manifest row 17's
+-- differential clause, the one its cell names as the real obstruction ("a continuous
+-- one-parameter subgroup of a matrix group is differentiable", the easy case of Hilbert's fifth
+-- problem).  Mathlib has no such theorem.  The proof needs no Lie theory: the primitive
+-- `F t = ∫₀ᵗ φ` satisfies `φ(u)·F(t) = F(u+t) − F(u)` by the group law, `F(t)/t → 1` makes some
+-- `F(t₀)` invertible, and `φ(u) = (F(u+t₀) − F(u))·F(t₀)⁻¹` is then manifestly differentiable.
+-- ★ Differentiability is DEDUCED, not assumed -- which is the whole point, since the only thing
+-- known about the map in the application is continuity (paper axiom S2).
+import RadicalRelativity.OneParameter
