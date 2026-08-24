@@ -136,6 +136,18 @@ THE THREE GATES (the names used throughout, and in EJA-DIVIDEND.md)
       order-unit-norm fact, **not** the EJA axiomatization.  ★ My per-row line below asserted the
       ½-ball clause was CLOSED; `OrderUnitSpace.span_isEffect_eq_top` proves *spanning* from
       order-unit boundedness WITHOUT the ball, which is what I mistook for it.
+      ★★★ **THE BALL CLAUSE IS CLOSED AS OF 2026-08-23, and row 5 reached FORMALIZED.**  The
+      withdrawal above stands as the correct call *when it was made* — the clause really was open,
+      and the reason given was exactly right.  What closed it is what the reason asked for: an
+      **abstract order-unit norm**.  `OrderUnitSpace.ouNorm` is now defined as
+      `sInf {t ≥ 0 | −t•𝟙 ≤ x ≤ t•𝟙}`, `ouNorm_mem_ouBound` proves the infimum is *attained* (the
+      one step that consumes `IsArchimedean`, and precisely why the article's ball is a *closed*
+      ball), and `isEffect_half_smul_unit_add` / `closedBall_half_subset_isEffect` are the article's
+      `main.tex:420-431` route verbatim.  The Peirce clause closed the same day via
+      `peirceOneSubOrderUnitSpace` + `span_isEffect_peirceOneSub_eq_top`.
+      ★ Note the distinction this passage drew — spanning from order-unit boundedness is NOT the
+      ball clause — was correct and is what kept the row honest for two weeks.
+
     row 6  `lem:homog` — clause (ii) is **already proved at abstract order-unit generality** as
       `SequentialProductOn.sp_smul_left` (S1–S7 + S2 + `IsArchimedean`), and the manifest cell says
       outright that this "covers the article's statement, whose ambient `J` is an EJA and hence an
