@@ -1080,4 +1080,31 @@ theorem thetaOf_spec {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
     map_jordan_of_orderIso EuclideanJordanAlgebra.one_mul Θ hunit horder x y,
     fun z => (hid z).symm⟩
 
+
+/-- ★★★ **`Θ` at the unit is the identity** — the base point every identity-component argument
+starts from, and `χ(0) = id` for the twist family. -/
+theorem thetaOf_one {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = 1) (hb : (1 : J) = ∑ i, lam i • c i)
+    (hbsos : IsSoS (jmulₗ J) (1 : J)) (hcsos : IsSoS (jmulₗ J) ((1 : J) - 1))
+    (hne : ∀ i, c i ≠ 0 → lam i ≠ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (hbe : OrderUnitSpace.IsEffect (1 : J)) (z : J),
+      thetaOf hfam hsum hb hbsos hcsos hne P hS2 harch hbe z = z := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hbe z
+  obtain ⟨-, -, hid⟩ := thetaOf_spec hfam hsum hb hbsos hcsos hne P hS2 harch hbe
+  have hE : ∀ w : J, quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (1 : J)) w = w := by
+    intro w; rw [jsqrt_one, quadJ_unit_left EuclideanJordanAlgebra.one_mul]
+  have hL : P.seqLeftMulAbs harch hbe z = z := by
+    refine OrderUnitSpace.linearMap_eq_of_eq_on_effects (P.seqLeftMulAbs harch hbe)
+      LinearMap.id (fun a ha => ?_) ▸ rfl
+    rw [P.seqLeftMulAbs_apply_effect harch hbe ha]
+    exact P.sp_unit_left ha
+  have := hid z
+  rw [hL, hE] at this
+  exact this.symm
+
 end RadicalRelativity.EJA
