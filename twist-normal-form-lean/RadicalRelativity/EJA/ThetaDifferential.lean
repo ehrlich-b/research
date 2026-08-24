@@ -357,4 +357,376 @@ theorem exists_blockGenerator {N : ℕ} (F : JordanFrame J N) :
   rw [hc]
   exact hasDerivAt_const _ _
 
+/-! ## Isometry on the Peirce block
+
+`T_{ij} ∈ 𝔰𝔬(V_{ij})` is the row's own word, and it needs `χ` to be an **isometry on the block**.
+That does *not* need the (unavailable) fact that a Jordan automorphism preserves an arbitrary
+associative form.  It needs only this: `⟪u,v⟫ = ⟪u∘v, 1⟫` by `inner_assoc`, and for `x, y ∈ V_{ij}`
+the product `x∘y` lies in `J₁(pᵢ) ⊕ J₁(pⱼ)` — by `peirceHalf_mul_half_eq_zero`
+(`J½ ∘ J½ ⊆ J₁ ⊕ J₀`) and `eigen_zero_mul_zero` at the other atoms — where `Θ` is *pointwise the
+identity* (`theta_id_on_peirceTwo_all`).  So `⟪χx, χy⟫ = ⟪χ(x∘y),1⟫ = ⟪x∘y,1⟫ = ⟪x,y⟫`. -/
+
+theorem inner_mul_one (u v : J) : (inner ℝ (u * v) (1 : J) : ℝ) = inner ℝ u v := by
+  rw [EuclideanJordanAlgebra.inner_assoc u v 1,
+    show (u : J) * 1 = u from by
+      rw [EuclideanJordanAlgebra.mul_comm, EuclideanJordanAlgebra.one_mul]]
+  exact real_inner_comm u v
+
+theorem twistTheta_jordanMul {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0) (x y : J),
+      twistTheta F P hS2 harch r hr (x * y)
+        = twistTheta F P hS2 harch r hr x * twistTheta F P hS2 harch r hr y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r hr x y
+  exact (thetaOf_spec F.orthIdem F.complete (twistElt_eq F r) (twistElt_isSoS F r)
+    (twistElt_compl_isSoS F hr) (fun k _ => (Real.exp_pos (r k)).ne') P hS2 harch
+    (isEffect_twistElt F hr)).2.1 x y
+
+theorem twistTheta_fixes_atom {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0) (i : Fin N),
+      twistTheta F P hS2 harch r hr (F.p i) = F.p i := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r hr i
+  exact theta_fixes_frame_atom F (fun k => Real.exp_pos (r k))
+    (fun k => Real.exp_le_one_iff.mpr (hr k)) P hS2 harch (isEffect_twistElt F hr) _
+    (twistTheta_spec F P hS2 harch r hr) i
+
+/-- ★★★ **`Θ_r` is the identity on `J₁(p_i)`.**  `theta_id_on_peirceTwo_all` at the frame's own
+decomposition of the twist element. -/
+theorem twistTheta_id_on_peirceOne {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0) (i : Fin N)
+      {y : J}, F.p i * y = y → twistTheta F P hS2 harch r hr y = y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  classical
+  intro P hS2 harch r hr i y hy
+  have hdec : twistElt F r
+      = Real.exp (r i) • F.p i + ∑ k ∈ Finset.univ.erase i, Real.exp (r k) • F.p k := by
+    rw [twistElt_eq F r]
+    exact (Finset.add_sum_erase _ _ (Finset.mem_univ i)).symm
+  have ha₀ : F.p i * (∑ k ∈ Finset.univ.erase i, Real.exp (r k) • F.p k) = 0 := by
+    rw [Finset.mul_sum]
+    refine Finset.sum_eq_zero fun k hk => ?_
+    rw [EuclideanJordanAlgebra.mul_comm, EuclideanJordanAlgebra.smul_mul,
+      F.orthIdem.orth k i (Finset.ne_of_mem_erase hk), smul_zero]
+  exact theta_id_on_peirceTwo_all F.orthIdem F.complete (twistElt_eq F r)
+    (twistElt_isSoS F r) (twistElt_compl_isSoS F hr)
+    (fun k _ => (Real.exp_pos (r k)).ne') (F.orthIdem.idem i) hdec ha₀
+    P hS2 harch (isEffect_twistElt F hr) _ (twistTheta_spec F P hS2 harch r hr) hy
+
+/-- ★★★ **The product of two block elements is fixed by `Θ_r`.** -/
+theorem twistTheta_fixes_block_mul {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0)
+      {i j : Fin N}, i ≠ j → ∀ {x y : J}, x ∈ frameBlockRaw F i j → y ∈ frameBlockRaw F i j →
+      twistTheta F P hS2 harch r hr (x * y) = x * y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  classical
+  intro P hS2 harch r hr i j hij x y hx hy
+  obtain ⟨hxi, hxj⟩ := (mem_frameBlockRaw_off hij).mp hx
+  obtain ⟨hyi, hyj⟩ := (mem_frameBlockRaw_off hij).mp hy
+  -- the product has no half-part at `p i` or `p j`, and is killed by every other atom
+  have hhi : peirceHalf (F.p i) (x * y) = 0 :=
+    peirceHalf_mul_half_eq_zero (F.orthIdem.idem i) hxi hyi
+  have hhj : peirceHalf (F.p j) (x * y) = 0 :=
+    peirceHalf_mul_half_eq_zero (F.orthIdem.idem j) hxj hyj
+  have hzero : ∀ k, k ≠ i → k ≠ j → F.p k * (x * y) = 0 := fun k hki hkj =>
+    eigen_zero_mul_zero (F.orthIdem.idem k) (frameBlockRaw_mul_eq_zero F hki hkj hx)
+      (frameBlockRaw_mul_eq_zero F hki hkj hy)
+  -- `p k ∘ (x∘y)` is in `J₁(p k)` whenever the half-part vanishes
+  have hone : ∀ k : Fin N, peirceHalf (F.p k) (x * y) = 0 →
+      F.p k * (F.p k * (x * y)) = F.p k * (x * y) := by
+    intro k hk
+    have hsplit := peirce_add_add (F.p k) (x * y)
+    rw [hk, add_zero] at hsplit
+    have h1 : F.p k * (x * y)
+        = peirceOne (F.p k) (x * y) := by
+      conv_lhs => rw [← hsplit]
+      rw [show F.p k * (peirceOne (F.p k) (x * y) + peirceZero (F.p k) (x * y))
+          = F.p k * peirceOne (F.p k) (x * y) + F.p k * peirceZero (F.p k) (x * y) from by
+        rw [EuclideanJordanAlgebra.mul_comm, EuclideanJordanAlgebra.add_mul,
+          EuclideanJordanAlgebra.mul_comm (peirceOne (F.p k) (x * y)),
+          EuclideanJordanAlgebra.mul_comm (peirceZero (F.p k) (x * y))],
+        mul_peirceOne (F.orthIdem.idem k), mul_peirceZero (F.orthIdem.idem k), add_zero]
+    rw [h1, mul_peirceOne (F.orthIdem.idem k)]
+  -- decompose `x∘y` over the atoms
+  have hdecomp : F.p i * (x * y) + F.p j * (x * y) = x * y := by
+    have hall : ∑ k, F.p k * (x * y) = x * y := by
+      rw [← Finset.sum_mul, F.complete, EuclideanJordanAlgebra.one_mul]
+    have hsplit : ∑ k, F.p k * (x * y)
+        = F.p i * (x * y) + (F.p j * (x * y)
+          + ∑ k ∈ (Finset.univ.erase i).erase j, F.p k * (x * y)) := by
+      rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
+      congr 1
+      exact (Finset.add_sum_erase _ _
+        (Finset.mem_erase.mpr ⟨Ne.symm hij, Finset.mem_univ j⟩)).symm
+    have hz0 : ∑ k ∈ (Finset.univ.erase i).erase j, F.p k * (x * y) = 0 :=
+      Finset.sum_eq_zero fun k hk =>
+        hzero k (Finset.ne_of_mem_erase (Finset.mem_of_mem_erase hk))
+          (Finset.ne_of_mem_erase hk)
+    rw [hsplit, hz0, add_zero] at hall
+    exact hall
+  calc twistTheta F P hS2 harch r hr (x * y)
+      = twistTheta F P hS2 harch r hr (F.p i * (x * y) + F.p j * (x * y)) := by rw [hdecomp]
+    _ = twistTheta F P hS2 harch r hr (F.p i * (x * y))
+        + twistTheta F P hS2 harch r hr (F.p j * (x * y)) := map_add _ _ _
+    _ = F.p i * (x * y) + F.p j * (x * y) := by
+        rw [twistTheta_id_on_peirceOne F P hS2 harch r hr i (hone i hhi),
+          twistTheta_id_on_peirceOne F P hS2 harch r hr j (hone j hhj)]
+    _ = x * y := hdecomp
+
+/-! ## `χ` on the block: automorphism, isometry, and the skew generator -/
+
+theorem linearEquiv_symm_jordanMul {Θ : J ≃ₗ[ℝ] J} (h : ∀ x y : J, Θ (x * y) = Θ x * Θ y)
+    (x y : J) : Θ.symm (x * y) = Θ.symm x * Θ.symm y := by
+  apply Θ.injective
+  rw [Θ.apply_symm_apply, h, Θ.apply_symm_apply, Θ.apply_symm_apply]
+
+theorem linearEquiv_symm_fixes {Θ : J ≃ₗ[ℝ] J} {z : J} (h : Θ z = z) : Θ.symm z = z := by
+  conv_lhs => rw [← h]
+  exact Θ.symm_apply_apply z
+
+theorem twistChi_jordanMul {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (x y : J),
+      twistChi F P hS2 harch r (x * y)
+        = twistChi F P hS2 harch r x * twistChi F P hS2 harch r y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r x y
+  show twistTheta F P hS2 harch (uPart r) (uPart_nonpos r)
+      ((twistTheta F P hS2 harch (vPart r) (vPart_nonpos r)).symm (x * y)) = _
+  rw [linearEquiv_symm_jordanMul (twistTheta_jordanMul F P hS2 harch (vPart r) (vPart_nonpos r)),
+    twistTheta_jordanMul F P hS2 harch (uPart r) (uPart_nonpos r)]
+  rfl
+
+theorem twistChi_fixes_atom {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (i : Fin N),
+      twistChi F P hS2 harch r (F.p i) = F.p i := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r i
+  show twistTheta F P hS2 harch (uPart r) (uPart_nonpos r)
+      ((twistTheta F P hS2 harch (vPart r) (vPart_nonpos r)).symm (F.p i)) = _
+  rw [linearEquiv_symm_fixes (twistTheta_fixes_atom F P hS2 harch (vPart r) (vPart_nonpos r) i),
+    twistTheta_fixes_atom F P hS2 harch (uPart r) (uPart_nonpos r) i]
+
+theorem twistChi_fixes_block_mul {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) {i j : Fin N}, i ≠ j →
+      ∀ {x y : J}, x ∈ frameBlockRaw F i j → y ∈ frameBlockRaw F i j →
+      twistChi F P hS2 harch r (x * y) = x * y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r i j hij x y hx hy
+  show twistTheta F P hS2 harch (uPart r) (uPart_nonpos r)
+      ((twistTheta F P hS2 harch (vPart r) (vPart_nonpos r)).symm (x * y)) = _
+  rw [linearEquiv_symm_fixes
+      (twistTheta_fixes_block_mul F P hS2 harch (vPart r) (vPart_nonpos r) hij hx hy),
+    twistTheta_fixes_block_mul F P hS2 harch (uPart r) (uPart_nonpos r) hij hx hy]
+
+theorem twistChi_mapsTo_frameBlock {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) {i j : Fin N}, i ≠ j →
+      ∀ {x : J}, x ∈ frameBlockRaw F i j → twistChi F P hS2 harch r x ∈ frameBlockRaw F i j := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r i j hij x hx
+  exact jordanAut_maps_frameBlock F (twistChi_jordanMul F P hS2 harch r)
+    (twistChi_fixes_atom F P hS2 harch r) hij hx
+
+/-- ★★★ **`χ_r` is an isometry on `V_{ij}`.**  `⟪u,v⟫ = ⟪u∘v,1⟫`, `χ` is multiplicative, and
+`χ` fixes the product of two block elements. -/
+theorem inner_twistChi_block {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) {i j : Fin N}, i ≠ j →
+      ∀ {x y : J}, x ∈ frameBlockRaw F i j → y ∈ frameBlockRaw F i j →
+      (inner ℝ (twistChi F P hS2 harch r x) (twistChi F P hS2 harch r y) : ℝ) = inner ℝ x y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r i j hij x y hx hy
+  rw [← inner_mul_one (twistChi F P hS2 harch r x) (twistChi F P hS2 harch r y),
+    ← twistChi_jordanMul F P hS2 harch r x y,
+    twistChi_fixes_block_mul F P hS2 harch r hij hx hy, inner_mul_one]
+
+/-! ## The generator is skew, and stays in the block -/
+
+theorem hasDerivAt_chiCLM_apply {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (x : J),
+      HasDerivAt (fun t : ℝ => chiCLM F P hS2 harch (t • r) x)
+        (dChi F P hS2 harch r x) 0 := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r x
+  have h := (ContinuousLinearMap.apply ℝ J x).hasFDerivAt.comp_hasDerivAt (0 : ℝ)
+    (hasDerivAt_dChi F P hS2 harch r)
+  simpa only [Function.comp_def, ContinuousLinearMap.apply_apply] using h
+
+/-- ★★★ **The generator preserves the block.**  Each difference quotient lies in `V_{ij}`
+(`twistChi_mapsTo_frameBlock`), and a finite-dimensional submodule is closed. -/
+theorem dChi_mapsTo_frameBlock {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) {i j : Fin N}, i ≠ j →
+      ∀ {x : J}, x ∈ frameBlockRaw F i j →
+      dChi F P hS2 harch r x ∈ frameBlockRaw F i j := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r i j hij x hx
+  have h0 : chiCLM F P hS2 harch ((0 : ℝ) • r) x = x := by
+    rw [zero_smul, chiCLM_zero]; rfl
+  have hd := hasDerivAt_chiCLM_apply F P hS2 harch r x
+  rw [hasDerivAt_iff_tendsto_slope] at hd
+  refine IsClosed.mem_of_tendsto (frameBlockRaw F i j).closed_of_finiteDimensional hd ?_
+  filter_upwards with t
+  rw [slope, sub_zero, vsub_eq_sub, h0]
+  refine Submodule.smul_mem _ _ (Submodule.sub_mem _ ?_ hx)
+  rw [chiCLM_apply]
+  exact twistChi_mapsTo_frameBlock F P hS2 harch (t • r) hij hx
+
+/-- ★★★ **The generator is skew on the block** — the derivative at `0` of a one-parameter family
+of isometries of `V_{ij}`. -/
+theorem inner_dChi_skew {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) {i j : Fin N}, i ≠ j →
+      ∀ {x y : J}, x ∈ frameBlockRaw F i j → y ∈ frameBlockRaw F i j →
+      (inner ℝ (dChi F P hS2 harch r x) y : ℝ) = -inner ℝ x (dChi F P hS2 harch r y) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r i j hij x y hx hy
+  have h0x : chiCLM F P hS2 harch ((0 : ℝ) • r) x = x := by
+    rw [zero_smul, chiCLM_zero]; rfl
+  have h0y : chiCLM F P hS2 harch ((0 : ℝ) • r) y = y := by
+    rw [zero_smul, chiCLM_zero]; rfl
+  have hprod := HasDerivAt.inner ℝ (hasDerivAt_chiCLM_apply F P hS2 harch r x)
+    (hasDerivAt_chiCLM_apply F P hS2 harch r y)
+  rw [h0x, h0y] at hprod
+  have hconst : (fun t : ℝ => (inner ℝ (chiCLM F P hS2 harch (t • r) x)
+      (chiCLM F P hS2 harch (t • r) y) : ℝ)) = fun _ : ℝ => (inner ℝ x y : ℝ) := by
+    funext t
+    rw [chiCLM_apply, chiCLM_apply]
+    exact inner_twistChi_block F P hS2 harch (t • r) hij hx hy
+  rw [hconst] at hprod
+  have hzero := hprod.unique (hasDerivAt_const (0 : ℝ) (inner ℝ x y : ℝ))
+  linarith [hzero]
+
+/-- ★★★ **`lem:homomorphism`'s differential clause, in the article's own `𝔰𝔬(V_{ij})` form.**
+
+There is a single `T` with `ρ_{ij}(dχ(r)) = (rᵢ−rⱼ)·T` for every `r`, and `T` really is an element
+of `𝔰𝔬(V_{ij})`: it maps the block into itself and is skew-adjoint there.  Both extras come from
+`χ` being, on each block, a one-parameter family of **isometries** of that block — which needs no
+form-uniqueness theorem, only `⟪u,v⟫ = ⟪u∘v,1⟫`, `J½∘J½ ⊆ J₁⊕J₀`, and the fact that `Θ` is
+pointwise the identity on each `J₁(pₖ)`. -/
+theorem exists_blockGenerator_skew {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) {i j : Fin N}, i ≠ j →
+      ∃ T : frameBlockRaw F i j →L[ℝ] J,
+        (∀ x : frameBlockRaw F i j, T x ∈ frameBlockRaw F i j) ∧
+        (∀ x y : frameBlockRaw F i j, (inner ℝ (T x) (y : J) : ℝ) = -inner ℝ (x : J) (T y)) ∧
+        ∀ r : Fin N → ℝ,
+          blockRestrict (frameBlockRaw F i j) (dChi F P hS2 harch r) = (r i - r j) • T := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  classical
+  intro P hS2 harch i j hij
+  obtain ⟨T, hT⟩ := exists_blockGenerator F P hS2 harch hij
+  obtain ⟨r₀, hr₀⟩ : ∃ r₀ : Fin N → ℝ, r₀ i - r₀ j = 1 :=
+    ⟨fun k => if k = i then 1 else 0, by simp [Ne.symm hij]⟩
+  have hTeq : ∀ x : frameBlockRaw F i j, T x = dChi F P hS2 harch r₀ (x : J) := by
+    intro x
+    have h := hT r₀
+    rw [hr₀, one_smul] at h
+    exact (congrArg (fun A : frameBlockRaw F i j →L[ℝ] J => A x) h).symm
+  refine ⟨T, ?_, ?_, hT⟩
+  · intro x
+    rw [hTeq x]
+    exact dChi_mapsTo_frameBlock F P hS2 harch r₀ hij x.2
+  · intro x y
+    rw [hTeq x, hTeq y]
+    exact inner_dChi_skew F P hS2 harch r₀ hij x.2 y.2
+
+/-! ## `χ` lands in `Stab(F)°`
+
+★ The path `t ↦ χ(t·r)` is continuous, starts at the identity (`χ(0) = 1`), ends at `χ(r)`, and
+stays in `Stab(F)` throughout — so its range is a connected subset of the stabilizer containing
+both endpoints.  This needs **no** fact about the identity component being a subgroup, which is
+what a `χ = Θ_u Θ_v⁻¹` argument would otherwise have to supply. -/
+
+theorem chiCLM_mem_stabFrame {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ),
+      chiCLM F P hS2 harch r ∈ stabFrame F := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r
+  refine ⟨(twistChi F P hS2 harch r).bijective, ?_, ?_⟩
+  · intro x y
+    exact twistChi_jordanMul F P hS2 harch r x y
+  · intro i
+    exact twistChi_fixes_atom F P hS2 harch r i
+
+/-- ★★★ **`χ : (ℝⁿ,+) → Stab(F)°`** — the codomain the article's `lem:homomorphism` asserts. -/
+theorem chiCLM_mem_stabFrame_connectedComponent {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ),
+      chiCLM F P hS2 harch r
+        ∈ connectedComponentIn (stabFrame F) (ContinuousLinearMap.id ℝ J) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r
+  have hγc : Continuous fun t : ℝ => chiCLM F P hS2 harch (t • r) :=
+    continuous_chiCLM_smul F P hS2 harch r
+  have hconn : IsPreconnected (Set.range fun t : ℝ => chiCLM F P hS2 harch (t • r)) := by
+    rw [← Set.image_univ]
+    exact (isPreconnected_univ (α := ℝ)).image _ hγc.continuousOn
+  have hsub : (Set.range fun t : ℝ => chiCLM F P hS2 harch (t • r)) ⊆ stabFrame F := by
+    rintro _ ⟨t, rfl⟩
+    exact chiCLM_mem_stabFrame F P hS2 harch (t • r)
+  have hid : ContinuousLinearMap.id ℝ J
+      ∈ Set.range fun t : ℝ => chiCLM F P hS2 harch (t • r) := by
+    refine ⟨0, ?_⟩
+    show chiCLM F P hS2 harch ((0 : ℝ) • r) = _
+    rw [zero_smul, chiCLM_zero]
+    rfl
+  refine hconn.subset_connectedComponentIn hid hsub ⟨1, ?_⟩
+  show chiCLM F P hS2 harch ((1 : ℝ) • r) = _
+  rw [one_smul]
+
 end RadicalRelativity.EJA

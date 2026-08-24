@@ -723,7 +723,7 @@ exact block ranks).
 | vdW Prop. 5.2 in usable form — every S1–S7+S2 product takes the standard value on an operator-commuting pair | `RadicalRelativity.EJA.sp_eq_quadJ_of_opCommute` | `EJA/ThetaAbstract.lean` |
 | `lem:coalescence` — both clauses | `RadicalRelativity.EJA.theta_id_on_peirceTwo_all`, `theta_id_on_frameBlock` | `EJA/ThetaAbstract.lean` |
 | `lem:frame-fix` — all five clauses, including `Θ_r ∈ Stab(F)°` | `RadicalRelativity.EJA.theta_fixes_frame_atom`, `jordanAut_fixes_frameDiag`, `jordanAut_maps_frameBlock`, `theta_mem_stabFrame_connectedComponent`, `seqLeftMul_mapsTo_frameBlock` | `EJA/ThetaAbstract.lean` |
-| `lem:homomorphism` — homomorphism, continuity, `Stab(F)°`, and the extension `χ` to `(ℝⁿ,+)`; **the differential clause is NOT proved** | `RadicalRelativity.EJA.twistTheta_add`, `continuous_toCLM_thetaOf_twistElt`, `twistChi_add`, `twistChi_eq_twistTheta` | `EJA/ThetaAbstract.lean` |
+| `lem:homomorphism` — homomorphism, continuity, `Stab(F)°`, the extension `χ` to `(ℝⁿ,+)`, **and the differential clause in the article's `𝔰𝔬(V_{ij})` form** | `RadicalRelativity.EJA.twistTheta_add`, `continuous_toCLM_thetaOf_twistElt`, `twistChi_add`, `twistChi_eq_twistTheta`, `chiCLM_mem_stabFrame_connectedComponent`, `dChiL`, `exists_blockGenerator_skew`; the analytic input is `OneParam.hasDerivAt_of_continuous` | `EJA/ThetaAbstract.lean`, `EJA/ThetaDifferential.lean`, `OneParameter.lean` |
 
 **Supporting machinery new the same day**, none of it previously in the tree: self-duality of the
 Euclidean Jordan cone (`isSoS_iff_forall_inner_nonneg`), closedness of the cone and **compactness
@@ -734,12 +734,17 @@ of the Jordan product and of `jsqrt` (`continuousOn_jsqrt`), paper S2 upgraded f
 (`sp_sharp_value_le`) and sharp-split lemmas that discharged `prop:central`'s citations, and the
 commutant results `opCommute_idem_mul` / `opCommute_mul` that S7 needs.
 
-★★ **What this section deliberately does not claim.** `lem:homomorphism`'s differential clause
-`ρ_{ij}(dχ(r)) = (rᵢ−rⱼ)T_{ij}` has three of four ingredients proved (`blockAction`,
-`blockAction_twistTheta_eq_id`, `exists_smul_of_vanishing_on_diag`); the missing one is
-**existence of the differential**, which needs "a continuous one-parameter subgroup of a matrix
-group is differentiable". The unknown product's `L_a` is only ever known to be *continuous* in
-`a`, so no closed form shortcuts it.
+★★★ **The differential clause is now proved, 2026-08-24** — the paragraph that stood here said the
+missing ingredient was *existence of the differential*, needing "a continuous one-parameter subgroup
+of a matrix group is differentiable", and that the unknown product's `L_a` being only *continuous*
+in `a` blocked every closed-form shortcut. Both sentences were right. The theorem is now
+`OneParam.hasDerivAt_of_continuous`, proved for any real Banach algebra by integral smoothing
+(`F(t) = ∫₀ᵗφ`; the group law gives `φ(u)F(t) = F(u+t) − F(u)`; some `F(t₀)` is a unit because
+`F(t)/t → 1`) — so differentiability is **deduced from continuity**, which is exactly the input `L_a`
+does supply. `EJA.exists_blockGenerator_skew` then states the clause with `T ∈ 𝔰𝔬(V_{ij})`; the
+skewness avoids "a Jordan automorphism preserves an associative form" (not available here) by
+running the isometry argument **on the block only**, where `x∘y ∈ J₁(pᵢ) ⊕ J₁(pⱼ)` and `Θ` is
+pointwise the identity.
 
 ## 2. Carried as cited interface hypotheses — supplied, not proved
 
