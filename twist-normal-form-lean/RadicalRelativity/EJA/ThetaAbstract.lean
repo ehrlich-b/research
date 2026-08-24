@@ -160,4 +160,172 @@ theorem exists_theta {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
   rw [← isSoS_jmulₗ_iff_mulLₗ, ← isSoS_jmulₗ_iff_mulLₗ]
   exact horder z
 
+
+/-! ## vdW Proposition 5.5: the commutant is fixed
+
+★★★ This is the "fixing property" (`main.tex:791`, and the row-14 clause "Θ_a fixes every `b`
+that operator-commutes with `a`"); it is also **the whole remaining residue of manifest row 16**,
+whose cell isolates it as "the effect-level Prop 5.5 itself".
+
+The mechanism: for operator-commuting effects `b` and `y` the *unknown* product already takes the
+standard value `b · y = Q_{√b} y` — that is `OrthFamily.sp_orthFamily_value` (vdW 5.2) on a
+simultaneous resolution, matched against `luders_of_resolution` on the same one — so
+`Q_{√b}(Θ y) = Q_{√b} y`, and `Q_{√b}` is injective at an invertible `b`. -/
+
+/-- A complete orthogonal idempotent family is an orthogonal family of effects in the order-unit
+sense: every subfamily sums below the unit, because the complement sums into the cone. -/
+theorem isOrthogonalFamily_of_orthIdem {N : ℕ} {q : Fin N → J} (hfam : IsOrthIdemFamily q)
+    (hsum : (∑ i, q i) = 1) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    OrderUnitSpace.IsOrthogonalFamily q := by
+  classical
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  have hsub : ∀ s : Finset (Fin N), (∑ i ∈ s, q i) ≤ (1 : J) := by
+    intro s
+    have hsplit : (1 : J) - ∑ i ∈ s, q i = ∑ i ∈ sᶜ, q i := by
+      rw [← hsum, ← Finset.sum_add_sum_compl s q]; abel
+    have hcone : IsSoS (jmulₗ J) (∑ i ∈ sᶜ, q i) :=
+      isSoS_sum _ _ fun i _ => isSoS_of_idem (hfam.idem i)
+    rw [le_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul, hsplit]
+    exact hcone
+  refine ⟨fun i => ?_, hsub⟩
+  refine (isEffect_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul (q i)).mpr ⟨isSoS_of_idem (hfam.idem i), ?_⟩
+  have h := hsub {i}
+  rw [Finset.sum_singleton, le_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan
+    jmulₗ_formallyReal (1 : J) jmulₗ_one_mul] at h
+  exact h
+
+/-- ★★★ **vdW Proposition 5.2 in the form the fixing property needs**: on an operator-commuting
+pair of effects, *every* S1–S7+S2 product already takes the standard Lüders value. -/
+theorem sp_eq_quadJ_of_opCommute {b y : J}
+    (hbsos : IsSoS (jmulₗ J) b) (hbc : IsSoS (jmulₗ J) ((1 : J) - b))
+    (hysos : IsSoS (jmulₗ J) y) (hyc : IsSoS (jmulₗ J) ((1 : J) - y))
+    (hcomm : ∀ w, b * (y * w) = y * (b * w)) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ P : SequentialProductOn J, P.FirstArgContinuous →
+      P.sp b y = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) y := by
+  classical
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2
+  have harch : OrderUnitSpace.IsArchimedean J :=
+    isArchimedean_ofBilinear jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal jmulₗ_inner_assoc
+      (1 : J) jmulₗ_one_mul
+  obtain ⟨N, q, la, mu, hfam, hsum, hbe, hye⟩ :=
+    exists_simultaneous_resolution 1 EuclideanJordanAlgebra.one_mul hcomm
+  -- trim the coefficients so the range conditions hold at every index
+  set la' : Fin N → ℝ := fun k => if q k = 0 then 0 else la k with hla'def
+  set mu' : Fin N → ℝ := fun k => if q k = 0 then 0 else mu k with hmu'def
+  have htrim : ∀ (f : Fin N → ℝ) (x : J), x = ∑ k, f k • q k →
+      x = ∑ k, (if q k = 0 then 0 else f k) • q k := by
+    intro f x hx
+    rw [hx]
+    refine Finset.sum_congr rfl fun k _ => ?_
+    by_cases h : q k = 0
+    · rw [h, smul_zero, smul_zero]
+    · rw [if_neg h]
+  have hbe' : b = ∑ k, la' k • q k := htrim la b hbe
+  have hye' : y = ∑ k, mu' k • q k := htrim mu y hye
+  have hrange : ∀ (f : Fin N → ℝ) (x : J), x = ∑ k, f k • q k → IsSoS (jmulₗ J) x →
+      IsSoS (jmulₗ J) ((1 : J) - x) →
+      ∀ k, 0 ≤ (if q k = 0 then 0 else f k) ∧ (if q k = 0 then 0 else f k) ≤ 1 := by
+    intro f x hx hxs hxc k
+    by_cases h : q k = 0
+    · simp [h]
+    · rw [if_neg h]
+      constructor
+      · exact nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+          (fun i => hfam.idem i) (fun i j hij => hfam.orth i j hij) hx hxs h
+      · have hx1 : (1 : J) - x = ∑ i, (1 - f i) • q i := by
+          have hh := smul_unit_sub_eq hsum hx 1
+          rwa [one_smul] at hh
+        have := nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+          (fun i => hfam.idem i) (fun i j hij => hfam.orth i j hij) hx1 hxc h
+        linarith
+  have hla := hrange la b hbe hbsos hbc
+  have hmu := hrange mu y hye hysos hyc
+  have hsharp : ∀ k, OrderUnitSpace.IsSharp (q k) := fun k =>
+    isSharpOrderUnit_of_idem (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      jmulₗ_inner_assoc (1 : J) jmulₗ_one_mul (hfam.idem k)
+  -- the unknown product takes the diagonal value
+  have hval := P.sp_orthFamily_value_fin harch hS2 (isOrthogonalFamily_of_orthIdem hfam hsum)
+    hsharp (fun k => (hla k).1) (fun k => (hla k).2)
+    (fun k => (hmu k).1) (fun k => (hmu k).2)
+  -- so does the standard one
+  have hsq : jsqrt 1 EuclideanJordanAlgebra.one_mul b = jsqrtOfResolution q la' :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b hfam hbe'
+  have hstd : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) y = ∑ k, (la' k * mu' k) • q k := by
+    rw [hsq]
+    conv_lhs => rw [hye']
+    exact luders_of_resolution hfam (fun k => (hla k).1) mu'
+  rw [hstd]
+  conv_lhs => rw [hbe', hye']
+  exact hval
+
+
+/-- ★★★ **vdW Proposition 5.5 / `prop:theta`'s fixing clause, at abstract EJA generality.**
+
+`Θ_b` fixes every effect that operator-commutes with `b`.  ★ This is simultaneously the whole
+remaining residue of manifest **row 16** (`lem:coalescence`), whose cell isolates "the effect-level
+Prop 5.5 itself" as what is left of `Θ_fix`. -/
+theorem theta_fixes_of_opCommute {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = 1) (hb : b = ∑ i, lam i • c i)
+    (hbsos : IsSoS (jmulₗ J) b) (hcsos : IsSoS (jmulₗ J) ((1 : J) - b))
+    (hne : ∀ i, c i ≠ 0 → lam i ≠ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J) (hbe : OrderUnitSpace.IsEffect b)
+        (Θ : J ≃ₗ[ℝ] J),
+        (∀ z : J, P.seqLeftMulAbs harch hbe z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) (Θ z)) →
+        ∀ {y : J}, IsSoS (jmulₗ J) y → IsSoS (jmulₗ J) ((1 : J) - y) →
+          (∀ w, b * (y * w) = y * (b * w)) → Θ y = y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hbe Θ hΘ y hysos hyc hcomm
+  have hye : OrderUnitSpace.IsEffect y :=
+    (isEffect_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul y).mpr ⟨hysos, hyc⟩
+  have h1 : P.seqLeftMulAbs harch hbe y = P.sp b y :=
+    P.seqLeftMulAbs_apply_effect harch hbe hye
+  have h2 : P.sp b y = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) y :=
+    sp_eq_quadJ_of_opCommute hbsos hcsos hysos hyc hcomm P hS2
+  have h3 : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) (Θ y)
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) y := by
+    rw [← hΘ y, h1, h2]
+  exact (quadJSqrtEquiv hfam hsum hb hbsos hne).injective h3
+
+/-- ★★★ **`lem:coalescence` (manifest row 16), general clause.**
+
+If an invertible effect `a` is scalar on the Peirce 2-space of an idempotent `q` and has no
+Peirce 1-part — `a = μ • q + a₀` with `q ∘ a₀ = 0` — then `Θ_a` is the identity on `J₂(q)`.
+
+The hypothesis is exactly `opCommute_scalarOn`'s (the cited Faraut–Korányi shape, already in the
+tree at single-idempotent generality), which makes `a` operator-commute with every element of
+`J₂(q)`; the fixing property then does the rest. -/
+theorem theta_id_on_peirceTwo {a : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = 1) (ha : a = ∑ i, lam i • c i)
+    (hasos : IsSoS (jmulₗ J) a) (hacs : IsSoS (jmulₗ J) ((1 : J) - a))
+    (hne : ∀ i, c i ≠ 0 → lam i ≠ 0)
+    {q a₀ : J} {μ : ℝ} (hq : q * q = q) (hdec : a = μ • q + a₀) (ha₀ : q * a₀ = 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J) (hae : OrderUnitSpace.IsEffect a)
+        (Θ : J ≃ₗ[ℝ] J),
+        (∀ z : J, P.seqLeftMulAbs harch hae z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) (Θ z)) →
+        ∀ {y : J}, IsSoS (jmulₗ J) y → IsSoS (jmulₗ J) ((1 : J) - y) → q * y = y → Θ y = y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hae Θ hΘ y hysos hyc hy2
+  exact theta_fixes_of_opCommute hfam hsum ha hasos hacs hne P hS2 harch hae Θ hΘ hysos hyc
+    (opCommute_scalarOn hq hdec ha₀ hy2)
+
 end RadicalRelativity.EJA
