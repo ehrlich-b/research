@@ -699,6 +699,42 @@ not there.
   `twistSequentialProduct` per twist parameter `t`.
 
 
+## 1d. The 2026-08-24 additions, last (rows 20 and 21 — and neither by the article's route)
+
+★★★ `thm:quaternionic` and `thm:albert` closed at the concrete carriers, taking the census to
+**32 FORMALIZED / 2 PARTIAL / 2 ABSENT**.  Both had cells naming obstructions that turned out not to
+bind, and the reason is the same in both cases.
+
+| Row | The obstruction its cell named | Why it did not bind |
+|---|---|---|
+| 20 `thm:quaternionic` | "no concrete quaternionic carrier" — `RCLike` extends the *commutative* `DenselyNormedField`, so `ℍ` can never be an instance | Right about the field-general `Gen` layer; **false about the tree**. `instEuclideanJordanAlgebraHermMat` has always carried the class on `HermMat ι C` for associative composition coefficients, i.e. `ℝ`, `ℂ` **and `ℍ`** |
+| 21 `thm:albert` | Yokota Spin(8)-triality faithfulness, carried as `IsAlbertModel.block_injective`, which `Branches/Albert.lean` says "is not available to prove internally" | Right about *that route*. The conclusion does not need it — see below |
+
+★★★ **The shared mechanism, and it is the session's sharpest result.**  Row 17 gives
+`ρ_{ij}(dχ(r)) = (rᵢ−rⱼ)·T_{ij}` — **linear in `r`, with that exact shape**.  `dChi_jordanDeriv`
+makes `dχ(r)` a derivation, so the Peirce blocks obey
+`d_{ij}(xy) = d_{ik}(x)·y + x·d_{kj}(y)` at a spectator index `k`.  Reading *that* at the two
+standard basis vectors `r = e_i` and `r = e_j` gives
+
+  `t_{ij}(xy) = t_{ik}(x)·y`   and   `t_{ij}(xy) = x·t_{kj}(y)`,
+
+and `x = 1` in the first with `y = 1` in the second exhibits `t_{ij}` as **both** left and right
+multiplication by one element — hence by a **central** one (`EJA.exists_central_blockCoord`).  The
+derivation property on `V_{ij} ∘ V_{ij} ⊆ ℝpᵢ ⊕ ℝpⱼ` then forces it imaginary
+(`EJA.central_blockCoord_im`), and `Z(C) ∩ Im C = 0` finishes.  **No stabilizer classification, no
+triality, no Lie theory.**
+
+★★ **And the argument is associativity-free**, which is the whole reason `𝕆` came along.  The only
+thing `[Ring C]` was doing in `EJA/CarrierInstances.lean` was *finding* the
+`EuclideanJordanAlgebra` instance; making the carrier's fidelity a class (`EJA.HermMatFid`: the
+class product and unit are `jmul` and `hermOne`, `rfl` at every carrier) lets `ℝ`, `ℂ`, `ℍ` and `𝕆`
+share every proof.  `EJA/AlbertBridge.lean` had already recorded that its octonionic instance's
+fields "needed no associativity"; this is what that sentence was worth.
+
+★ `Z(𝕆) ∩ Im 𝕆 = 0` is `EJA.octonion_center_im_trivial`, from the Clifford relation
+`xy + yx = −2⟪x,y⟫·1` fed two orthogonal unit imaginaries.  At `ℍ` the tree already had
+`MasterTheorem.Quaternionic.central_im_zero`.
+
 ## 1c. The 2026-08-24 additions, later the same day (four more rows moved)
 
 ★★★ Rows **22**, **31**, **17** and **26** closed after the eight of §1b, taking the census to

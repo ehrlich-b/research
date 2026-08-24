@@ -53,7 +53,7 @@ theorem quaternionic_twistTheta_id (hn : 3 ≤ n) :
       (hS2 : P.FirstArgContinuous)
       (harch : OrderUnitSpace.IsArchimedean (HermMat (Fin n) (Quaternion ℝ)))
       (r : Fin n → ℝ) (hr : ∀ k, r k ≤ 0) (z : HermMat (Fin n) (Quaternion ℝ)),
-      twistTheta (hermFrame (C := Quaternion ℝ) n) P hS2 harch r hr z = z :=
+      twistTheta (hermFrame) P hS2 harch r hr z = z :=
   twistTheta_id_of_center_im_trivial hn quaternion_center_im_trivial
 
 /-- ★★★ **`thm:quaternionic`, the row's literal conclusion**: the product **is** the Lüders
@@ -66,14 +66,14 @@ theorem quaternionic_luders (hn : 3 ≤ n) :
       (hS2 : P.FirstArgContinuous)
       (harch : OrderUnitSpace.IsArchimedean (HermMat (Fin n) (Quaternion ℝ)))
       (r : Fin n → ℝ) (hr : ∀ k, r k ≤ 0) (z : HermMat (Fin n) (Quaternion ℝ)),
-      P.seqLeftMulAbs harch (isEffect_twistElt (hermFrame (C := Quaternion ℝ) n) hr) z
+      P.seqLeftMulAbs harch (isEffect_twistElt (hermFrame) hr) z
         = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
-            (twistElt (hermFrame (C := Quaternion ℝ) n) r)) z := by
+            (twistElt (hermFrame) r)) z := by
   letI := orderUnitSpaceOfBilinear (jmulₗ (HermMat (Fin n) (Quaternion ℝ)))
     jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal (1 : HermMat (Fin n) (Quaternion ℝ))
     jmulₗ_one_mul
   intro P hS2 harch r hr z
-  rw [twistTheta_spec (hermFrame (C := Quaternion ℝ) n) P hS2 harch r hr z,
+  rw [twistTheta_spec (hermFrame) P hS2 harch r hr z,
     quaternionic_twistTheta_id hn P hS2 harch r hr z]
 
 end RadicalRelativity.EJA

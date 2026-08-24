@@ -52,39 +52,63 @@ orthogonality and completeness of `hermIdem`; the one missing field of `JordanFr
 hermitian condition makes `d_{ii}` real, and an idempotent multiple of `pᵢ` has coefficient `0` or
 `1`. -/
 
+/-! ## Fidelity, as a class
+
+★★★ The whole development below is **associativity-free** — it never uses `[Ring C]` for anything
+but *finding* the `EuclideanJordanAlgebra` instance.  `EJA/AlbertBridge.lean` supplies a second
+instance on `HermMat (Fin 3) Octonion` whose fields are, in its own words, "the general lemma
+`EJA/HermMatCarrier.lean` uses, at the weakest tier — none of them needed associativity".  So the
+right hypothesis is not `[Ring C]` but *this instance's product and unit are the intended ones*,
+which both carriers satisfy by `rfl`.  Making that a class is what lets `ℍ` and `𝕆` share every
+proof. -/
+
+class HermMatFid (ι : Type*) [Fintype ι] [DecidableEq ι] (C : Type*) [NonAssocRing C]
+    [Module ℝ C] [IsScalarTower ℝ C C] [SMulCommClass ℝ C C] [CompositionAlgebra C]
+    [Nontrivial C] [EuclideanJordanAlgebra (HermMat ι C)] : Prop where
+  /-- The class's product is the symmetrised matrix product. -/
+  mul_eq_jmul : ∀ A B : HermMat ι C, A * B = jmul A B
+  /-- The class's unit is the identity matrix. -/
+  one_eq_hermOne : (1 : HermMat ι C) = hermOne
+
+instance instHermMatFidRing {ι : Type*} [Fintype ι] [DecidableEq ι] {C : Type*} [Ring C]
+    [Module ℝ C] [IsScalarTower ℝ C C] [SMulCommClass ℝ C C] [CompositionAlgebra C]
+    [Nontrivial C] : HermMatFid ι C :=
+  ⟨fun _ _ => rfl, rfl⟩
+
 section StdFrame
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι] {C : Type*} [Ring C] [Module ℝ C]
+variable {C : Type*} [NonAssocRing C] [Module ℝ C]
   [IsScalarTower ℝ C C] [SMulCommClass ℝ C C] [CompositionAlgebra C] [Nontrivial C]
+  [EuclideanJordanAlgebra (HermMat (Fin n) C)] [HermMatFid (Fin n) C]
 
 /-- An element of `J₁(pᵢ)` is a real multiple of `pᵢ`. -/
-theorem eq_smul_hermIdem_of_peirceOne {i : ι} {d : HermMat ι C}
-    (hd : (hermIdem i : HermMat ι C) * d = d) :
-    d = (ip ((d : Matrix ι ι C) i i) 1) • (hermIdem i : HermMat ι C) := by
-  have hentry : ∀ a b : ι, ¬(a = i ∧ b = i) → (d : Matrix ι ι C) a b = 0 := by
+theorem eq_smul_hermIdem_of_peirceOne {i : Fin n} {d : HermMat (Fin n) C}
+    (hd : (hermIdem i : HermMat (Fin n) C) * d = d) :
+    d = (ip ((d : Matrix (Fin n) (Fin n) C) i i) 1) • (hermIdem i : HermMat (Fin n) C) := by
+  have hentry : ∀ a b : Fin n, ¬(a = i ∧ b = i) → (d : Matrix (Fin n) (Fin n) C) a b = 0 := by
     intro a b hab
-    have h := congrArg (fun A : HermMat ι C => (A : Matrix ι ι C) a b) hd
-    rw [hermMat_mul_eq_jmul, jmul_coe, hermIdem_coe] at h
+    have h := congrArg (fun A : HermMat (Fin n) C => (A : Matrix (Fin n) (Fin n) C) a b) hd
+    rw [HermMatFid.mul_eq_jmul, jmul_coe, hermIdem_coe] at h
     simp only [Matrix.smul_apply, Matrix.add_apply, Matrix.diagonal_mul, Matrix.mul_diagonal,
       smul_eq_mul] at h
     by_cases hai : a = i
     · subst hai
       have hbi : b ≠ a := fun hb => hab ⟨rfl, hb⟩
       simp only [if_pos rfl, if_neg hbi] at h
-      have : (2 : ℝ)⁻¹ • ((d : Matrix ι ι C) a b + 0) = (d : Matrix ι ι C) a b := by
+      have : (2 : ℝ)⁻¹ • ((d : Matrix (Fin n) (Fin n) C) a b + 0) = (d : Matrix (Fin n) (Fin n) C) a b := by
         simpa using h
       rw [add_zero] at this
-      have h2 : ((2 : ℝ)⁻¹ - 1) • (d : Matrix ι ι C) a b = 0 := by
+      have h2 : ((2 : ℝ)⁻¹ - 1) • (d : Matrix (Fin n) (Fin n) C) a b = 0 := by
         rw [sub_smul, this, one_smul, sub_self]
       have hne : ((2 : ℝ)⁻¹ - 1) ≠ 0 := by norm_num
       exact (smul_eq_zero.mp h2).resolve_left hne
     · by_cases hbi : b = i
       · subst hbi
         simp only [if_neg hai, if_pos rfl] at h
-        have : (2 : ℝ)⁻¹ • ((0 : C) + (d : Matrix ι ι C) a b) = (d : Matrix ι ι C) a b := by
+        have : (2 : ℝ)⁻¹ • ((0 : C) + (d : Matrix (Fin n) (Fin n) C) a b) = (d : Matrix (Fin n) (Fin n) C) a b := by
           simpa using h
         rw [zero_add] at this
-        have h2 : ((2 : ℝ)⁻¹ - 1) • (d : Matrix ι ι C) a b = 0 := by
+        have h2 : ((2 : ℝ)⁻¹ - 1) • (d : Matrix (Fin n) (Fin n) C) a b = 0 := by
           rw [sub_smul, this, one_smul, sub_self]
         have hne : ((2 : ℝ)⁻¹ - 1) ≠ 0 := by norm_num
         exact (smul_eq_zero.mp h2).resolve_left hne
@@ -105,24 +129,24 @@ theorem eq_smul_hermIdem_of_peirceOne {i : ι} {d : HermMat ι C}
     · rw [if_neg hab2, smul_zero]
 
 /-- ★★★ **The diagonal matrix units are primitive.** -/
-theorem hermIdem_ne_zero (i : ι) : (hermIdem i : HermMat ι C) ≠ 0 := by
+theorem hermIdem_ne_zero (i : Fin n) : (hermIdem i : HermMat (Fin n) C) ≠ 0 := by
   intro h
-  have h1 := congrArg (fun A : HermMat ι C => (A : Matrix ι ι C) i i) h
+  have h1 := congrArg (fun A : HermMat (Fin n) C => (A : Matrix (Fin n) (Fin n) C) i i) h
   simp only [hermIdem_coe, Matrix.diagonal_apply_eq, if_pos, ZeroMemClass.coe_zero,
     Matrix.zero_apply, reduceIte] at h1
   exact one_ne_zero h1
 
-theorem hermIdem_isPrimitive (i : ι) : IsPrimitive (hermIdem i : HermMat ι C) := by
-  refine ⟨hermIdem_jmul_self i, hermIdem_ne_zero i, ?_⟩
+theorem hermIdem_isPrimitive (i : Fin n) : IsPrimitive (hermIdem i : HermMat (Fin n) C) := by
+  refine ⟨by rw [HermMatFid.mul_eq_jmul]; exact hermIdem_jmul_self i, hermIdem_ne_zero i, ?_⟩
   intro d hd hcd
   have hsm := eq_smul_hermIdem_of_peirceOne hcd
-  set a : ℝ := ip ((d : Matrix ι ι C) i i) 1 with hadef
+  set a : ℝ := ip ((d : Matrix (Fin n) (Fin n) C) i i) 1 with hadef
   have hsq : a * a = a := by
-    have h1 : d * d = (a * a) • (hermIdem i : HermMat ι C) := by
-      rw [hsm, hermMat_mul_eq_jmul, jmul_smul_left, jmul_smul_right,
+    have h1 : d * d = (a * a) • (hermIdem i : HermMat (Fin n) C) := by
+      rw [hsm, HermMatFid.mul_eq_jmul, jmul_smul_left, jmul_smul_right,
         hermIdem_jmul_self, smul_smul]
     rw [hd, hsm] at h1
-    have h2 : (a - a * a) • (hermIdem i : HermMat ι C) = 0 := by
+    have h2 : (a - a * a) • (hermIdem i : HermMat (Fin n) C) = 0 := by
       rw [sub_smul, ← h1, sub_self]
     rcases smul_eq_zero.mp h2 with h3 | h3
     · linarith [h3]
@@ -134,16 +158,16 @@ theorem hermIdem_isPrimitive (i : ι) : IsPrimitive (hermIdem i : HermMat ι C) 
 
 /-- The Peirce-`½` condition at `pᵢ`, in entries: the `(i,i)` entry vanishes and so does every
 entry with **both** indices off `i`. -/
-theorem peirceHalf_entry {i : ι} {A : HermMat ι C}
-    (h : (hermIdem i : HermMat ι C) * A = (2 : ℝ)⁻¹ • A) :
-    (A : Matrix ι ι C) i i = 0 ∧ ∀ a b : ι, a ≠ i → b ≠ i → (A : Matrix ι ι C) a b = 0 := by
-  have hent : ∀ a b : ι,
-      ((if a = i then (1 : C) else 0) * (A : Matrix ι ι C) a b
-        + (A : Matrix ι ι C) a b * (if b = i then (1 : C) else 0))
-      = (A : Matrix ι ι C) a b := by
+theorem peirceHalf_entry {i : Fin n} {A : HermMat (Fin n) C}
+    (h : (hermIdem i : HermMat (Fin n) C) * A = (2 : ℝ)⁻¹ • A) :
+    (A : Matrix (Fin n) (Fin n) C) i i = 0 ∧ ∀ a b : Fin n, a ≠ i → b ≠ i → (A : Matrix (Fin n) (Fin n) C) a b = 0 := by
+  have hent : ∀ a b : Fin n,
+      ((if a = i then (1 : C) else 0) * (A : Matrix (Fin n) (Fin n) C) a b
+        + (A : Matrix (Fin n) (Fin n) C) a b * (if b = i then (1 : C) else 0))
+      = (A : Matrix (Fin n) (Fin n) C) a b := by
     intro a b
-    have h1 := congrArg (fun M : HermMat ι C => (M : Matrix ι ι C) a b) h
-    rw [hermMat_mul_eq_jmul, jmul_coe, hermIdem_coe] at h1
+    have h1 := congrArg (fun M : HermMat (Fin n) C => (M : Matrix (Fin n) (Fin n) C) a b) h
+    rw [HermMatFid.mul_eq_jmul, jmul_coe, hermIdem_coe] at h1
     simp only [Matrix.smul_apply, Matrix.add_apply, Matrix.diagonal_mul, Matrix.mul_diagonal,
       Submodule.coe_smul, Matrix.smul_apply] at h1
     have h2 := congrArg (fun z : C => (2 : ℝ) • z) h1
@@ -151,41 +175,44 @@ theorem peirceHalf_entry {i : ι} {A : HermMat ι C}
   constructor
   · have h1 := hent i i
     rw [if_pos (rfl : i = i), one_mul, mul_one] at h1
-    have h2 := congrArg (fun z : C => z - (A : Matrix ι ι C) i i) h1
+    have h2 := congrArg (fun z : C => z - (A : Matrix (Fin n) (Fin n) C) i i) h1
     simpa using h2
   · intro a b ha hb
     have h1 := hent a b
     rw [if_neg ha, if_neg hb, zero_mul, mul_zero, add_zero] at h1
     exact h1.symm
 
-theorem hermOff_symm {i j : ι} (hij : i ≠ j) (x : C) :
-    (hermOff hij x : HermMat ι C) = hermOff (Ne.symm hij) (cstar x) := by
+theorem hermOff_symm {i j : Fin n} (hij : i ≠ j) (x : C) :
+    (hermOff hij x : HermMat (Fin n) C) = hermOff (Ne.symm hij) (cstar x) := by
   apply Subtype.ext
   rw [hermOff_coe, hermOff_coe, cstar_cstar, add_comm]
 
 /-- ★★★ **The standard Jordan frame of `H_ι(C)`** — the diagonal matrix units. -/
-def hermFrame (n : ℕ) : JordanFrame (HermMat (Fin n) C) n where
+def hermFrame : JordanFrame (HermMat (Fin n) C) n where
   p := hermIdem
-  orthIdem := ⟨fun i => hermIdem_jmul_self i, fun i j hij => hermIdem_jmul_of_ne hij⟩
+  orthIdem := ⟨fun i => by rw [HermMatFid.mul_eq_jmul]; exact hermIdem_jmul_self i,
+    fun i j hij => by rw [HermMatFid.mul_eq_jmul]; exact hermIdem_jmul_of_ne hij⟩
   primitive := hermIdem_isPrimitive
-  complete := sum_hermIdem
+  complete := by rw [HermMatFid.one_eq_hermOne]; exact sum_hermIdem
 
 @[simp]
-theorem hermFrame_p (n : ℕ) (i : Fin n) :
-    (hermFrame (C := C) n).p i = hermIdem i := rfl
+theorem hermFrame_p (i : Fin n) :
+    (hermFrame (C := C)).p i = hermIdem i := rfl
 
 /-- Off-diagonal elements lie in the corresponding Peirce block. -/
-theorem hermOff_mem_frameBlock {n : ℕ} {i j : Fin n} (hij : i ≠ j) (x : C) :
-    (hermOff hij x : HermMat (Fin n) C) ∈ frameBlockRaw (hermFrame (C := C) n) i j := by
-  refine (mem_frameBlockRaw_off hij).mpr ⟨hermIdem_jmul_hermOff hij x, ?_⟩
-  rw [hermOff_symm hij x]
-  exact hermIdem_jmul_hermOff (Ne.symm hij) (cstar x)
+theorem hermOff_mem_frameBlock {i j : Fin n} (hij : i ≠ j) (x : C) :
+    (hermOff hij x : HermMat (Fin n) C) ∈ frameBlockRaw (hermFrame (C := C)) i j := by
+  refine (mem_frameBlockRaw_off hij).mpr ⟨?_, ?_⟩
+  · rw [hermFrame_p, HermMatFid.mul_eq_jmul]
+    exact hermIdem_jmul_hermOff hij x
+  · rw [hermFrame_p, hermOff_symm hij x, HermMatFid.mul_eq_jmul]
+    exact hermIdem_jmul_hermOff (Ne.symm hij) (cstar x)
 
 /-- ★★★ **The block `V_{ij}` of the standard frame IS a copy of `C`**: every element is
 `hermOff` of its own `(i,j)` entry.  With `hermOff_injective` this is the coordinate
 identification `V_{ij} ≅ C` rows 18 and 20 are stated in. -/
-theorem eq_hermOff_of_mem_frameBlock {n : ℕ} {i j : Fin n} (hij : i ≠ j)
-    {A : HermMat (Fin n) C} (hA : A ∈ frameBlockRaw (hermFrame (C := C) n) i j) :
+theorem eq_hermOff_of_mem_frameBlock {i j : Fin n} (hij : i ≠ j)
+    {A : HermMat (Fin n) C} (hA : A ∈ frameBlockRaw (hermFrame (C := C)) i j) :
     A = hermOff hij ((A : Matrix (Fin n) (Fin n) C) i j) := by
   obtain ⟨hi, hj⟩ := (mem_frameBlockRaw_off hij).mp hA
   obtain ⟨hii, hoffi⟩ := peirceHalf_entry hi
@@ -219,10 +246,10 @@ theorem eq_hermOff_of_mem_frameBlock {n : ℕ} {i j : Fin n} (hij : i ≠ j)
 `C`)`, for pairwise distinct `i, k, j`.  This is what turns the Jordan-derivation identity into an
 identity between coordinate maps `C → C`, and hence the whole classification into algebra over `C`
 rather than over `H_ι(C)`. -/
-theorem hermOff_mul_hermOff {i k j : ι} (hik : i ≠ k) (hkj : k ≠ j) (hij : i ≠ j) (x y : C) :
-    (hermOff hik x : HermMat ι C) * hermOff hkj y = (2 : ℝ)⁻¹ • hermOff hij (x * y) := by
+theorem hermOff_mul_hermOff {i k j : Fin n} (hik : i ≠ k) (hkj : k ≠ j) (hij : i ≠ j) (x y : C) :
+    (hermOff hik x : HermMat (Fin n) C) * hermOff hkj y = (2 : ℝ)⁻¹ • hermOff hij (x * y) := by
   apply Subtype.ext
-  rw [hermMat_mul_eq_jmul, jmul_coe, hermOff_coe, hermOff_coe, Submodule.coe_smul, hermOff_coe]
+  rw [HermMatFid.mul_eq_jmul, jmul_coe, hermOff_coe, hermOff_coe, Submodule.coe_smul, hermOff_coe]
   congr 1
   simp only [Matrix.add_mul, Matrix.mul_add, Matrix.single_mul_single_same]
   rw [Matrix.single_mul_single_of_ne (h := hkj),
@@ -234,8 +261,8 @@ theorem hermOff_mul_hermOff {i k j : ι} (hik : i ≠ k) (hkj : k ≠ j) (hij : 
     cstar_mul]
   abel
 
-theorem hermOff_add {i j : ι} (hij : i ≠ j) (x y : C) :
-    (hermOff hij (x + y) : HermMat ι C) = hermOff hij x + hermOff hij y := by
+theorem hermOff_add {i j : Fin n} (hij : i ≠ j) (x y : C) :
+    (hermOff hij (x + y) : HermMat (Fin n) C) = hermOff hij x + hermOff hij y := by
   apply Subtype.ext
   rw [hermOff_coe, Submodule.coe_add, hermOff_coe, hermOff_coe, cstar_add,
     Matrix.single_add, Matrix.single_add]
@@ -256,15 +283,16 @@ which is what makes the remaining step type-specific rather than Jordan-theoreti
 
 section FrameDeriv
 
-variable {n : ℕ} {C : Type*} [Ring C] [Module ℝ C] [IsScalarTower ℝ C C]
+variable {n : ℕ} {C : Type*} [NonAssocRing C] [Module ℝ C] [IsScalarTower ℝ C C]
   [SMulCommClass ℝ C C] [CompositionAlgebra C] [Nontrivial C]
+  [EuclideanJordanAlgebra (HermMat (Fin n) C)] [HermMatFid (Fin n) C]
 variable {D : HermMat (Fin n) C →ₗ[ℝ] HermMat (Fin n) C}
 
 /-- A frame-fixing derivation preserves every off-diagonal Peirce block. -/
 theorem frameDeriv_mapsTo_block (hD : ∀ A B, D (A * B) = D A * B + A * D B)
     (hfix : ∀ k, D (hermIdem k) = 0) {i j : Fin n} (hij : i ≠ j)
-    {A : HermMat (Fin n) C} (hA : A ∈ frameBlockRaw (hermFrame (C := C) n) i j) :
-    D A ∈ frameBlockRaw (hermFrame (C := C) n) i j := by
+    {A : HermMat (Fin n) C} (hA : A ∈ frameBlockRaw (hermFrame (C := C)) i j) :
+    D A ∈ frameBlockRaw (hermFrame (C := C)) i j := by
   obtain ⟨hi, hj⟩ := (mem_frameBlockRaw_off hij).mp hA
   have step : ∀ k : Fin n, (hermIdem k : HermMat (Fin n) C) * A = (2 : ℝ)⁻¹ • A →
       (hermIdem k : HermMat (Fin n) C) * D A = (2 : ℝ)⁻¹ • D A := by
@@ -345,8 +373,9 @@ final input. -/
 
 section Central
 
-variable {n : ℕ} {C : Type*} [Ring C] [Module ℝ C] [IsScalarTower ℝ C C]
+variable {n : ℕ} {C : Type*} [NonAssocRing C] [Module ℝ C] [IsScalarTower ℝ C C]
   [SMulCommClass ℝ C C] [CompositionAlgebra C] [Nontrivial C] [FiniteDimensional ℝ C]
+  [EuclideanJordanAlgebra (HermMat (Fin n) C)] [HermMatFid (Fin n) C]
 
 theorem exists_third {i j : Fin n} (hn : 3 ≤ n) : ∃ k : Fin n, k ≠ i ∧ k ≠ j := by
   classical
@@ -381,7 +410,7 @@ theorem hermOff_mul_hermOff_one {i j : Fin n} (hij : i ≠ j) (a : C) :
     (hermOff hij a : HermMat (Fin n) C) * hermOff hij 1
       = (ip a 1) • ((hermIdem i : HermMat (Fin n) C) + hermIdem j) := by
   apply Subtype.ext
-  rw [hermMat_mul_eq_jmul, jmul_coe, hermOff_coe, hermOff_coe, Submodule.coe_smul,
+  rw [HermMatFid.mul_eq_jmul, jmul_coe, hermOff_coe, hermOff_coe, Submodule.coe_smul,
     Submodule.coe_add, hermIdem_coe_eq_single, hermIdem_coe_eq_single]
   simp only [Matrix.add_mul, Matrix.mul_add, Matrix.single_mul_single_same]
   rw [Matrix.single_mul_single_of_ne (h := hij),
@@ -408,7 +437,7 @@ theorem exists_central_blockCoord (hn : 3 ≤ n) :
       (harch : OrderUnitSpace.IsArchimedean (HermMat (Fin n) C)) {i j : Fin n} (hij : i ≠ j),
       ∃ γ : C, (∀ x : C, γ * x = x * γ) ∧
         ∀ (r : Fin n → ℝ) (x : C),
-          blockCoord (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap hij x
+          blockCoord (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap hij x
             = (r i - r j) • (γ * x) := by
   letI := orderUnitSpaceOfBilinear (jmulₗ (HermMat (Fin n) C))
     jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal (1 : HermMat (Fin n) C) jmulₗ_one_mul
@@ -416,39 +445,39 @@ theorem exists_central_blockCoord (hn : 3 ≤ n) :
   intro P hS2 harch i j hij
   -- the derivation data
   have hD : ∀ (r : Fin n → ℝ) (A B : HermMat (Fin n) C),
-      (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap (A * B)
-        = (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap A * B
-          + A * (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap B :=
-    fun r => dChi_jordanDeriv (hermFrame (C := C) n) P hS2 harch r
+      (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap (A * B)
+        = (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap A * B
+          + A * (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap B :=
+    fun r => dChi_jordanDeriv (hermFrame (C := C)) P hS2 harch r
   have hfix : ∀ (r : Fin n → ℝ) (k : Fin n),
-      (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap (hermIdem k) = 0 :=
-    fun r k => dChi_frameProj (hermFrame (C := C) n) P hS2 harch r k
+      (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap (hermIdem k) = 0 :=
+    fun r k => dChi_frameProj (hermFrame (C := C)) P hS2 harch r k
   -- row 17 in coordinates, for an arbitrary pair
   have hsmul : ∀ {a b : Fin n} (hab : a ≠ b), ∃ tc : C →ₗ[ℝ] C, ∀ (r : Fin n → ℝ) (x : C),
-      blockCoord (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap hab x
+      blockCoord (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap hab x
         = (r a - r b) • tc x := by
     intro a b hab
     obtain ⟨T, hT⟩ := exists_smul_of_vanishing_on_diag hab
       ({ toFun := fun r => blockCoordₗ
-            (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap hab
+            (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap hab
          map_add' := by
            intro r s
            refine LinearMap.ext fun x => ?_
            simp only [blockCoordₗ_apply, blockCoord, LinearMap.add_apply,
-             dChi_add (hermFrame (C := C) n) P hS2 harch r s]
+             dChi_add (hermFrame (C := C)) P hS2 harch r s]
            rfl
          map_smul' := by
            intro c r
            refine LinearMap.ext fun x => ?_
            simp only [blockCoordₗ_apply, blockCoord, RingHom.id_apply, LinearMap.smul_apply,
-             dChi_smul (hermFrame (C := C) n) P hS2 harch c r]
+             dChi_smul (hermFrame (C := C)) P hS2 harch c r]
            rfl } : (Fin n → ℝ) →ₗ[ℝ] (C →ₗ[ℝ] C))
       (by
         intro r hr
         refine LinearMap.ext fun x => ?_
-        show blockCoord (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap hab x = 0
-        have hz : (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap (hermOff hab x) = 0 :=
-          dChi_apply_eq_zero_of_eq (hermFrame (C := C) n) P hS2 harch r hab hr
+        show blockCoord (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap hab x = 0
+        have hz : (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap (hermOff hab x) = 0 :=
+          dChi_apply_eq_zero_of_eq (hermFrame (C := C)) P hS2 harch r hab hr
             (hermOff_mem_frameBlock hab x)
         rw [blockCoord, hz]
         simp)
@@ -463,7 +492,7 @@ theorem exists_central_blockCoord (hn : 3 ≤ n) :
       (r i - r j) • tij (x * y)
         = ((r i - r k) • tik x) * y + x * ((r k - r j) • tkj y) := by
     intro r x y
-    have h := blockCoord_mul (D := (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap)
+    have h := blockCoord_mul (D := (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap)
       (hD r) (hfix r) (Ne.symm hki) hkj hij x y
     rw [htij r (x * y), htik r x, htkj r y] at h
     exact h
@@ -506,7 +535,7 @@ theorem central_blockCoord_im (hn : 3 ≤ n) :
       (harch : OrderUnitSpace.IsArchimedean (HermMat (Fin n) C)) {i j : Fin n} (hij : i ≠ j)
       (γ : C),
       (∀ (r : Fin n → ℝ) (x : C),
-        blockCoord (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap hij x
+        blockCoord (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap hij x
           = (r i - r j) • (γ * x)) → ip γ 1 = 0 := by
   letI := orderUnitSpaceOfBilinear (jmulₗ (HermMat (Fin n) C))
     jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal (1 : HermMat (Fin n) C) jmulₗ_one_mul
@@ -516,22 +545,22 @@ theorem central_blockCoord_im (hn : 3 ≤ n) :
   have hri : r i - r j = 1 := by
     rw [hrdef, Pi.single_eq_same, Pi.single_eq_of_ne (Ne.symm hij), sub_zero]
   set x : HermMat (Fin n) C := hermOff hij 1 with hxdef
-  have hDx : (dChi (hermFrame (C := C) n) P hS2 harch r) x = hermOff hij γ := by
-    have h := map_hermOff (D := (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap)
-      (fun A B => dChi_jordanDeriv (hermFrame (C := C) n) P hS2 harch r A B)
-      (fun k => dChi_frameProj (hermFrame (C := C) n) P hS2 harch r k) hij 1
+  have hDx : (dChi (hermFrame (C := C)) P hS2 harch r) x = hermOff hij γ := by
+    have h := map_hermOff (D := (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap)
+      (fun A B => dChi_jordanDeriv (hermFrame (C := C)) P hS2 harch r A B)
+      (fun k => dChi_frameProj (hermFrame (C := C)) P hS2 harch r k) hij 1
     rw [hcoord r 1, hri, one_smul, mul_one] at h
     exact h
   have hxx : x * x = (hermIdem i : HermMat (Fin n) C) + hermIdem j := by
     rw [hxdef, hermOff_mul_hermOff_one hij 1, ip_one_one, one_smul]
-  have hDi : (dChi (hermFrame (C := C) n) P hS2 harch r) (hermIdem i : HermMat (Fin n) C) = 0 :=
-    dChi_frameProj (hermFrame (C := C) n) P hS2 harch r i
-  have hDj : (dChi (hermFrame (C := C) n) P hS2 harch r) (hermIdem j : HermMat (Fin n) C) = 0 :=
-    dChi_frameProj (hermFrame (C := C) n) P hS2 harch r j
-  have hDdiag : (dChi (hermFrame (C := C) n) P hS2 harch r)
+  have hDi : (dChi (hermFrame (C := C)) P hS2 harch r) (hermIdem i : HermMat (Fin n) C) = 0 :=
+    dChi_frameProj (hermFrame (C := C)) P hS2 harch r i
+  have hDj : (dChi (hermFrame (C := C)) P hS2 harch r) (hermIdem j : HermMat (Fin n) C) = 0 :=
+    dChi_frameProj (hermFrame (C := C)) P hS2 harch r j
+  have hDdiag : (dChi (hermFrame (C := C)) P hS2 harch r)
       ((hermIdem i : HermMat (Fin n) C) + hermIdem j) = 0 := by
     rw [map_add, hDi, hDj, add_zero]
-  have hderiv := dChi_jordanDeriv (hermFrame (C := C) n) P hS2 harch r x x
+  have hderiv := dChi_jordanDeriv (hermFrame (C := C)) P hS2 harch r x x
   rw [hxx, hDdiag, hDx] at hderiv
   have hcomm : (hermOff hij γ : HermMat (Fin n) C) * x = x * hermOff hij γ :=
     EuclideanJordanAlgebra.mul_comm _ _
@@ -566,46 +595,46 @@ theorem dChi_eq_zero_of_center_im_trivial (hn : 3 ≤ n)
       jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal (1 : HermMat (Fin n) C) jmulₗ_one_mul
     ∀ (P : SequentialProductOn (HermMat (Fin n) C)) (hS2 : P.FirstArgContinuous)
       (harch : OrderUnitSpace.IsArchimedean (HermMat (Fin n) C)) (r : Fin n → ℝ),
-      dChi (hermFrame (C := C) n) P hS2 harch r = 0 := by
+      dChi (hermFrame (C := C)) P hS2 harch r = 0 := by
   letI := orderUnitSpaceOfBilinear (jmulₗ (HermMat (Fin n) C))
     jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal (1 : HermMat (Fin n) C) jmulₗ_one_mul
   classical
   intro P hS2 harch r
   have hoff : ∀ {i j : Fin n} (hij : i ≠ j) (x : C),
-      (dChi (hermFrame (C := C) n) P hS2 harch r) (hermOff hij x) = 0 := by
+      (dChi (hermFrame (C := C)) P hS2 harch r) (hermOff hij x) = 0 := by
     intro i j hij x
     obtain ⟨γ, hcentral, hcoord⟩ := exists_central_blockCoord hn P hS2 harch hij
     have hzero : γ = 0 :=
       hZ γ hcentral (central_blockCoord_im hn P hS2 harch hij γ hcoord)
-    have h := map_hermOff (D := (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap)
-      (fun X Y => dChi_jordanDeriv (hermFrame (C := C) n) P hS2 harch r X Y)
-      (fun k => dChi_frameProj (hermFrame (C := C) n) P hS2 harch r k) hij x
+    have h := map_hermOff (D := (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap)
+      (fun X Y => dChi_jordanDeriv (hermFrame (C := C)) P hS2 harch r X Y)
+      (fun k => dChi_frameProj (hermFrame (C := C)) P hS2 harch r k) hij x
     rw [hcoord r x, hzero, zero_mul, smul_zero] at h
-    have h2 : (dChi (hermFrame (C := C) n) P hS2 harch r) (hermOff hij x)
+    have h2 : (dChi (hermFrame (C := C)) P hS2 harch r) (hermOff hij x)
         = (hermOff hij (0 : C) : HermMat (Fin n) C) := h
     rw [h2]
     apply Subtype.ext
     rw [hermOff_coe]
     simp
   have hker : ∀ s : Sym2 (Fin n),
-      frameBlock (hermFrame (C := C) n) s
-        ≤ LinearMap.ker (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap := by
+      frameBlock (hermFrame (C := C)) s
+        ≤ LinearMap.ker (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap := by
     refine Sym2.ind fun i j => ?_
     intro A hA
     rw [frameBlock_mk] at hA
     rcases eq_or_ne i j with rfl | hij
     · have hA' : (hermIdem i : HermMat (Fin n) C) * A = A := mem_frameBlockRaw_diag.mp hA
-      have hpi : (dChi (hermFrame (C := C) n) P hS2 harch r)
+      have hpi : (dChi (hermFrame (C := C)) P hS2 harch r)
           (hermIdem i : HermMat (Fin n) C) = 0 :=
-        dChi_frameProj (hermFrame (C := C) n) P hS2 harch r i
-      show (dChi (hermFrame (C := C) n) P hS2 harch r) A = 0
+        dChi_frameProj (hermFrame (C := C)) P hS2 harch r i
+      show (dChi (hermFrame (C := C)) P hS2 harch r) A = 0
       rw [eq_smul_hermIdem_of_peirceOne hA', map_smul, hpi, smul_zero]
-    · show (dChi (hermFrame (C := C) n) P hS2 harch r) A = 0
+    · show (dChi (hermFrame (C := C)) P hS2 harch r) A = 0
       rw [eq_hermOff_of_mem_frameBlock hij hA]
       exact hoff hij _
   have htop : (⊤ : Submodule ℝ (HermMat (Fin n) C))
-      ≤ LinearMap.ker (dChi (hermFrame (C := C) n) P hS2 harch r).toLinearMap := by
-    rw [← frameBlock_iSup_eq_top (hermFrame (C := C) n)]
+      ≤ LinearMap.ker (dChi (hermFrame (C := C)) P hS2 harch r).toLinearMap := by
+    rw [← frameBlock_iSup_eq_top (hermFrame (C := C))]
     exact iSup_le hker
   refine ContinuousLinearMap.ext fun z => ?_
   have hz := htop (Submodule.mem_top (x := z))
@@ -619,11 +648,11 @@ theorem twistTheta_id_of_center_im_trivial (hn : 3 ≤ n)
     ∀ (P : SequentialProductOn (HermMat (Fin n) C)) (hS2 : P.FirstArgContinuous)
       (harch : OrderUnitSpace.IsArchimedean (HermMat (Fin n) C)) (r : Fin n → ℝ)
       (hr : ∀ k, r k ≤ 0) (z : HermMat (Fin n) C),
-      twistTheta (hermFrame (C := C) n) P hS2 harch r hr z = z := by
+      twistTheta (hermFrame (C := C)) P hS2 harch r hr z = z := by
   letI := orderUnitSpaceOfBilinear (jmulₗ (HermMat (Fin n) C))
     jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal (1 : HermMat (Fin n) C) jmulₗ_one_mul
   intro P hS2 harch r hr z
-  exact twistTheta_eq_one_of_dChi_eq_zero (hermFrame (C := C) n) P hS2 harch r hr
+  exact twistTheta_eq_one_of_dChi_eq_zero (hermFrame (C := C)) P hS2 harch r hr
     (dChi_eq_zero_of_center_im_trivial hn hZ P hS2 harch r) z
 
 end Central

@@ -1043,3 +1043,15 @@ import RadicalRelativity.EJA.CarrierInstances
 -- `EJA.twistTheta_id_of_center_im_trivial` takes `Z(C) ∩ Im C = 0` as its only type-specific
 -- input, so it fires at `ℝ` as well as at `ℍ`.
 import RadicalRelativity.EJA.QuaternionicLuders
+
+-- ★★★ **`thm:albert` on the concrete carrier, WITHOUT Yokota triality** --
+-- `EJA.albert_twistTheta_id` and `EJA.albert_luders`: on `H₃(𝕆)` the twist automorphism of every
+-- S1-S7 (+S2) product is the identity, so the product IS the Lüders product.
+-- `MasterTheorem/Branches/Albert.lean` reaches this through `IsAlbertModel`'s `block_injective`
+-- (Spin(8)-triality faithfulness), which its own docstring calls a CITED hypothesis that "is not
+-- available to prove internally".  This route goes around it: the argument in
+-- `EJA/CarrierInstances.lean` is ASSOCIATIVITY-FREE, so it applies verbatim at `𝕆` once the
+-- fidelity of the carrier's product is a class (`HermMatFid`) rather than a consequence of
+-- `[Ring C]`; the only octonion-specific input is `Z(𝕆) ∩ Im 𝕆 = 0`, which is the Clifford
+-- relation `xy + yx = −2⟪x,y⟫·1` fed two orthogonal unit imaginaries.
+import RadicalRelativity.EJA.AlbertLuders
