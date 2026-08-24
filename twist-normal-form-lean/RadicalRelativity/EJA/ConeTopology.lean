@@ -548,4 +548,166 @@ theorem blockProj_eq_zero_of_inner_eq_zero {p q : J} (hp : p * p = p) (hq : q * 
   have h2 : (inner ℝ (p * (q * x)) (p * (q * x)) : ℝ) = 0 := by linarith
   exact inner_self_eq_zero.mp h2
 
+
+/-! ### The defect as a positive combination of block pairings
+
+★★★ With `v = ∑ μₖ qₖ` over a complete orthogonal idempotent family, write
+`B k l := ⟪qₖ ∘ (qₗ ∘ x), x⟫`.  Then
+
+  `Φ(v, x) = ½ ∑_{k,l} (μₖ − μₗ)² · B k l`,
+
+every `B k l` is `≥ 0` (`inner_blockProj_nonneg` off the diagonal, a square on it), and `B` is
+symmetric.  So `Φ = 0` forces `B k l = 0` at every pair with `μₖ ≠ μₗ` — which for a spectral
+resolution is every `k ≠ l` — and then `blockProj_eq_zero_of_inner_eq_zero` turns that into
+`qₖ ∘ (qₗ ∘ x) = 0`. -/
+
+/-- The block pairing of `x` against a pair of family members. -/
+def blockPairing (c : Fin n → J) (x : J) (k l : Fin n) : ℝ :=
+  (inner ℝ (c k * (c l * x)) x : ℝ)
+
+omit [FiniteDimensional ℝ J] in
+theorem blockPairing_comm {n : ℕ} (c : Fin n → J) (x : J) (k l : Fin n) :
+    blockPairing c x k l = blockPairing c x l k := by
+  unfold blockPairing
+  rw [EuclideanJordanAlgebra.inner_assoc (c k) (c l * x) x,
+    EuclideanJordanAlgebra.inner_assoc (c l) (c k * x) x, real_inner_comm]
+
+theorem blockPairing_nonneg {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c) (x : J)
+    (k l : Fin n) : 0 ≤ blockPairing c x k l := by
+  unfold blockPairing
+  by_cases hkl : k = l
+  · subst hkl
+    rw [EuclideanJordanAlgebra.inner_assoc (c k) (c k * x) x]
+    exact real_inner_self_nonneg
+  · exact inner_blockProj_nonneg (hfam.idem k) (hfam.idem l) (hfam.orth k l hkl) x
+
+omit [FiniteDimensional ℝ J] in
+/-- Summing a block pairing over its second index recovers the single-idempotent pairing. -/
+theorem sum_blockPairing {n : ℕ} {c : Fin n → J} (hsum : (∑ i, c i) = (1 : J)) (x : J)
+    (k : Fin n) : (∑ l, blockPairing c x k l) = (inner ℝ (c k * x) x : ℝ) := by
+  unfold blockPairing
+  rw [← sum_inner]
+  congr 1
+  rw [← Finset.mul_sum, ← Finset.sum_mul, hsum, EuclideanJordanAlgebra.one_mul]
+
+omit [FiniteDimensional ℝ J] in
+/-- `⟪v∘v, x∘x⟫` in block pairings. -/
+theorem inner_sq_eq_sum_blockPairing {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = (1 : J)) {v : J}
+    (hv : v = ∑ i, lam i • c i) (x : J) :
+    (inner ℝ (v * v) (x * x) : ℝ)
+      = ∑ k, ∑ l, (lam k * lam k) * blockPairing c x k l := by
+  have hvv : v * v = ∑ i, (lam i * lam i) • c i := by
+    rw [hv]; exact sum_smul_mul_sum_smul_of_orthIdem hfam lam lam
+  rw [hvv, sum_inner]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [real_inner_smul_left, ← Finset.mul_sum, sum_blockPairing hsum x k]
+  congr 1
+  exact (EuclideanJordanAlgebra.inner_assoc' (c k) x x).symm
+
+omit [FiniteDimensional ℝ J] in
+/-- `‖v∘x‖²` in block pairings. -/
+theorem inner_mul_self_eq_sum_blockPairing {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    {v : J} (hv : v = ∑ i, lam i • c i) (x : J) :
+    (inner ℝ (v * x) (v * x) : ℝ)
+      = ∑ k, ∑ l, (lam k * lam l) * blockPairing c x k l := by
+  have hvx : v * x = ∑ i, lam i • (c i * x) := by
+    rw [hv, Finset.sum_mul]
+    exact Finset.sum_congr rfl fun i _ => smul_mul_assoc (lam i) (c i) x
+  rw [hvx, sum_inner]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [real_inner_smul_left, inner_sum, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun l _ => ?_
+  rw [real_inner_smul_right]
+  unfold blockPairing
+  rw [EuclideanJordanAlgebra.inner_assoc (c k) x (c l * x), real_inner_comm,
+    EuclideanJordanAlgebra.inner_assoc (c k) (c l * x) x]
+  ring
+
+
+omit [FiniteDimensional ℝ J] in
+/-- ★★★ **The defect as a manifestly nonnegative sum**: `2Φ = ∑_{k,l} (μₖ − μₗ)² B k l`. -/
+theorem two_peirceDefect_eq_sum {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = (1 : J)) {v : J}
+    (hv : v = ∑ i, lam i • c i) (x : J) :
+    2 * peirceDefect v x
+      = ∑ k, ∑ l, (lam k - lam l) ^ 2 * blockPairing c x k l := by
+  have hswap : (∑ k, ∑ l, (lam l * lam l) * blockPairing c x k l)
+      = ∑ k, ∑ l, (lam k * lam k) * blockPairing c x k l := by
+    rw [Finset.sum_comm]
+    exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by
+      rw [blockPairing_comm c x b a]
+  have hsplit : (∑ k, ∑ l, (lam k - lam l) ^ 2 * blockPairing c x k l)
+      = ((∑ k, ∑ l, (lam k * lam k) * blockPairing c x k l)
+          - ∑ k, ∑ l, (lam k * lam l) * blockPairing c x k l)
+        + ((∑ k, ∑ l, (lam l * lam l) * blockPairing c x k l)
+          - ∑ k, ∑ l, (lam k * lam l) * blockPairing c x k l) := by
+    rw [← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun k _ => ?_
+    rw [← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun l _ => by ring
+  rw [hsplit, hswap]
+  unfold peirceDefect
+  rw [inner_sq_eq_sum_blockPairing hfam hsum hv x, inner_mul_self_eq_sum_blockPairing hv x]
+  ring
+
+/-- ★★★ **(B), the equality case.**  If the Peirce defect vanishes, then `x` is annihilated by
+every off-diagonal block projection of the resolution. -/
+theorem blockPairing_eq_zero_of_peirceDefect {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = (1 : J)) {v : J}
+    (hv : v = ∑ i, lam i • c i) {x : J} (hzero : peirceDefect v x = 0)
+    {k l : Fin n} (hkl : lam k ≠ lam l) : c k * (c l * x) = 0 := by
+  have hne : k ≠ l := fun h => hkl (by rw [h])
+  have hsum0 : (∑ k', ∑ l', (lam k' - lam l') ^ 2 * blockPairing c x k' l') = 0 := by
+    rw [← two_peirceDefect_eq_sum hfam hsum hv x, hzero]; ring
+  have hterm_nonneg : ∀ k' ∈ (Finset.univ : Finset (Fin n)),
+      0 ≤ ∑ l', (lam k' - lam l') ^ 2 * blockPairing c x k' l' := fun k' _ =>
+    Finset.sum_nonneg fun l' _ =>
+      mul_nonneg (sq_nonneg _) (blockPairing_nonneg hfam x k' l')
+  have hrow : (∑ l', (lam k - lam l') ^ 2 * blockPairing c x k l') = 0 :=
+    (Finset.sum_eq_zero_iff_of_nonneg hterm_nonneg).mp hsum0 k (Finset.mem_univ k)
+  have hcell : (lam k - lam l) ^ 2 * blockPairing c x k l = 0 :=
+    (Finset.sum_eq_zero_iff_of_nonneg
+      (fun l' _ => mul_nonneg (sq_nonneg _) (blockPairing_nonneg hfam x k l'))).mp hrow l
+      (Finset.mem_univ l)
+  have hsqpos : (lam k - lam l) ^ 2 ≠ 0 := pow_ne_zero 2 (sub_ne_zero.mpr hkl)
+  have hB : blockPairing c x k l = 0 := by
+    rcases mul_eq_zero.mp hcell with h | h
+    · exact absurd h hsqpos
+    · exact h
+  exact blockProj_eq_zero_of_inner_eq_zero (hfam.idem k) (hfam.idem l) (hfam.orth k l hne) hB
+
+
+/-- ★★ **`⟪v∘v, x∘x⟫ ≥ ‖v∘x‖²` in any Euclidean Jordan algebra** — a Cauchy–Schwarz-shaped
+inequality that appears to be new here, and the sign half of the defect analysis. -/
+theorem peirceDefect_nonneg {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hsum : (∑ i, c i) = (1 : J)) {v : J}
+    (hv : v = ∑ i, lam i • c i) (x : J) : 0 ≤ peirceDefect v x := by
+  have h := two_peirceDefect_eq_sum hfam hsum hv x
+  have hnn : 0 ≤ ∑ k, ∑ l, (lam k - lam l) ^ 2 * blockPairing c x k l :=
+    Finset.sum_nonneg fun k _ => Finset.sum_nonneg fun l _ =>
+      mul_nonneg (sq_nonneg _) (blockPairing_nonneg hfam x k l)
+  linarith
+
+/-- ★★★ **`prop:bridge`, the converse, analytic half complete.**
+
+Lüders compatibility `Q_{√a} b = Q_{√b} a` forces `a` to be annihilated by every off-diagonal
+block projection of `√b`'s spectral resolution — i.e. **`a` is Peirce-diagonal for `b`'s spectral
+family**, which is the content of operator commutation.
+
+★ This is the composition of the two halves: `luders_comm_peirceDefect_eq_zero` (the Frobenius
+certificate) and `blockPairing_eq_zero_of_peirceDefect` (the block-projection equality case).
+What remains between here and `⁅L_a, L_b⁆ = 0` is the structural passage from "Peirce-diagonal"
+to a shared resolution, which is what S5–S7 consume anyway. -/
+theorem luders_comm_blockDiagonal {a b : J}
+    (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (h : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+       = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a)
+    {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c)
+    (hsum : (∑ i, c i) = (1 : J))
+    (hv : jsqrt 1 EuclideanJordanAlgebra.one_mul b = ∑ i, lam i • c i)
+    {k l : Fin n} (hkl : lam k ≠ lam l) : c k * (c l * a) = 0 :=
+  blockPairing_eq_zero_of_peirceDefect hfam hsum hv
+    (luders_comm_peirceDefect_eq_zero ha hb h) hkl
+
 end RadicalRelativity.EJA
