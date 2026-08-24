@@ -6,6 +6,7 @@ Authors: Bryan Ehrlich
 import RadicalRelativity.OrthFamily
 import Mathlib.Topology.MetricSpace.Sequences
 import Mathlib.Analysis.Normed.Module.FiniteDimension
+import Mathlib.LinearAlgebra.Basis.Basic
 
 set_option linter.style.longLine false
 
@@ -637,6 +638,55 @@ theorem compatible_of_isGLB_of_firstArgContinuous (harch : IsArchimedean V)
     ((firstArgContinuousOu_iff_firstArgContinuous P harch).mpr hS2) ha hb hblim hanti hglb hcomp
 
 end SequentialProductOn
+
+
+/-! ## A basis of effects
+
+★★★ The effects span (`span_isEffect_eq_top`), so a finite-dimensional order-unit space has a
+**basis consisting of effects**.  That is what upgrades paper S2 — which is continuity of
+`a ↦ a · b` for each fixed *effect* `b` — into continuity of the operator-valued map
+`a ↦ L_a`: a family of linear maps on a finite-dimensional space is continuous as soon as its
+values on a basis are, and here each basis vector is an effect, where S2 applies. -/
+
+theorem exists_effect_basis (V : Type*) [OrderUnitSpace V] [FiniteDimensional ℝ V] :
+    ∃ (t : Set V) (hli : LinearIndependent ℝ ((↑) : t → V)),
+      (∀ x ∈ t, IsEffect x) ∧ Submodule.span ℝ t = ⊤ := by
+  obtain ⟨t, hsub, hspan, hli⟩ := exists_linearIndependent ℝ {x : V | IsEffect x}
+  refine ⟨t, hli, fun x hx => hsub hx, ?_⟩
+  rw [hspan]
+  exact span_isEffect_eq_top
+
+
+/-- ★★★ **Pointwise continuity on a basis upgrades to operator continuity**, in finite dimension.
+
+A family of linear endomorphisms of a finite-dimensional normed space depends continuously on a
+parameter as soon as its values on the vectors of one basis do — because reconstruction from
+basis values is a linear map out of a finite-dimensional space, hence automatically continuous.
+
+★ This is the step that turns paper S2 (continuity of `a ↦ a · b` for each fixed effect `b`) into
+continuity of `a ↦ L_a` as an operator-valued map, once the basis is taken to consist of effects
+(`exists_effect_basis`). -/
+theorem continuous_toCLM_of_basis {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
+    [FiniteDimensional ℝ W] {ι : Type*} [Fintype ι] (e : Module.Basis ι ℝ W)
+    {X : Type*} [TopologicalSpace X] (L : X → (W →ₗ[ℝ] W))
+    (h : ∀ i, Continuous fun x => L x (e i)) :
+    Continuous fun x => LinearMap.toContinuousLinearMap (L x) := by
+  classical
+  have hrep : ∀ x, L x = e.constr ℝ (fun i => L x (e i)) := by
+    intro x
+    refine e.ext fun i => ?_
+    rw [Module.Basis.constr_basis]
+  have hlin : Continuous fun v : ι → W => LinearMap.toContinuousLinearMap (e.constr ℝ v) :=
+    LinearMap.continuous_of_finiteDimensional
+      ((LinearMap.toContinuousLinearMap : (W →ₗ[ℝ] W) ≃ₗ[ℝ] (W →L[ℝ] W)).toLinearMap.comp
+        (e.constr ℝ).toLinearMap)
+  have hcomp : (fun x => LinearMap.toContinuousLinearMap (L x))
+      = (fun v : ι → W => LinearMap.toContinuousLinearMap (e.constr ℝ v))
+        ∘ (fun x i => L x (e i)) := by
+    funext x
+    simp only [Function.comp_apply, ← hrep x]
+  rw [hcomp]
+  exact hlin.comp (continuous_pi h)
 
 /-! ## van de Wetering's hypothesis package: a convex σ-sequential effect algebra
 
