@@ -68,6 +68,41 @@ theorem isEffect_prod_iff {a : V × W} :
     · exact ⟨h.1.1, h.2.1⟩
     · exact ⟨h.1.2, h.2.2⟩
 
+
+/-! ## The `m`-fold direct sum
+
+`prop:central` is stated for `J = ⊕_{α=1}^m J_α`, so the binary product above is not by itself
+the article's hypothesis.  The finite Pi type carries the same structure, and order-unit
+boundedness needs no supremum: with each `r i ≥ 0`, the *sum* `∑ i, r i` dominates every `r i`,
+which is exactly the bound required. -/
+
+section Pi
+
+variable {ι : Type*} [Fintype ι] {V : ι → Type*} [∀ i, OrderUnitSpace (V i)]
+
+/-- **A finite direct sum of order-unit spaces is an order-unit space.** -/
+noncomputable instance instPi : OrderUnitSpace (∀ i, V i) where
+  toPartialOrder := Pi.partialOrder
+  add_le_add_left := fun a b h c i => add_le_add_left (a i) (b i) (h i) (c i)
+  ousUnit := fun _ => ousUnit
+  smul_nonneg_mono := fun r hr {_ _} h i => smul_nonneg_mono r hr (h i)
+  ousUnit_nonneg := fun _ => ousUnit_nonneg
+  archimedean := fun a => by
+    choose r hr0 hr using fun i => archimedean (a i)
+    refine ⟨∑ i, r i, Finset.sum_nonneg fun i _ => hr0 i, fun i => ?_⟩
+    exact le_trans (hr i) (smul_le_smul_of_le_of_nonneg
+      (Finset.single_le_sum (fun j _ => hr0 j) (Finset.mem_univ i)) ousUnit_nonneg)
+
+@[simp]
+theorem pi_ousUnit (i : ι) : (ousUnit : ∀ i, V i) i = (ousUnit : V i) := rfl
+
+/-- **An effect of a finite direct sum is exactly a family of effects.** -/
+theorem isEffect_pi_iff {a : ∀ i, V i} : IsEffect a ↔ ∀ i, IsEffect (a i) := by
+  simp only [IsEffect, Pi.le_def, Pi.zero_apply, pi_ousUnit]
+  exact ⟨fun h i => ⟨h.1 i, h.2 i⟩, fun h => ⟨fun i => (h i).1, fun i => (h i).2⟩⟩
+
+end Pi
+
 end OrderUnitSpace
 namespace SequentialProductOn
 
@@ -119,6 +154,52 @@ def prod (P : SequentialProductOn V) (Q : SequentialProductOn W) :
   sp_effect ha hb := by
     rw [isEffect_prod_iff] at ha hb
     exact isEffect_prod_iff.mpr ⟨P.sp_effect ha.1 hb.1, Q.sp_effect ha.2 hb.2⟩
+
+
+section Pi
+
+variable {ι : Type*} [Fintype ι] {V : ι → Type*} [∀ i, OrderUnitSpace (V i)]
+
+open OrderUnitSpace
+
+/-- **The `m`-fold direct sum of sequential products**, the article's converse clause: summand
+products assemble into a product on `⊕ Jα`.  Every axiom is a pointwise identity. -/
+def pi (Q : ∀ i, SequentialProductOn (V i)) : SequentialProductOn (∀ i, V i) where
+  sp a b := fun i => (Q i).sp (a i) (b i)
+  sp_add_right ha hb hc hbc := by
+    rw [isEffect_pi_iff] at ha hb hc
+    exact funext fun i => (Q i).sp_add_right (ha i) (hb i) (hc i) (hbc i)
+  sp_unit_left ha := by
+    rw [isEffect_pi_iff] at ha
+    exact funext fun i => (Q i).sp_unit_left (ha i)
+  sp_zero_symm ha hb h := by
+    rw [isEffect_pi_iff] at ha hb
+    exact funext fun i =>
+      (Q i).sp_zero_symm (ha i) (hb i) (by simpa using congrFun h i)
+  sp_assoc_of_compatible ha hb hc h := by
+    rw [isEffect_pi_iff] at ha hb hc
+    exact funext fun i =>
+      (Q i).sp_assoc_of_compatible (ha i) (hb i) (hc i) (congrFun h i)
+  compatible_ortho ha hb h := by
+    rw [isEffect_pi_iff] at ha hb
+    exact funext fun i => (Q i).compatible_ortho (ha i) (hb i) (congrFun h i)
+  compatible_add ha hb hc hbc h h' := by
+    rw [isEffect_pi_iff] at ha hb hc
+    exact funext fun i =>
+      (Q i).compatible_add (ha i) (hb i) (hc i) (hbc i) (congrFun h i) (congrFun h' i)
+  compatible_sp ha hb hc h h' := by
+    rw [isEffect_pi_iff] at ha hb hc
+    exact funext fun i =>
+      (Q i).compatible_sp (ha i) (hb i) (hc i) (congrFun h i) (congrFun h' i)
+  sp_effect ha hb := by
+    rw [isEffect_pi_iff] at ha hb ⊢
+    exact fun i => (Q i).sp_effect (ha i) (hb i)
+
+@[simp]
+theorem pi_sp (Q : ∀ i, SequentialProductOn (V i)) (a b : ∀ i, V i) :
+    (pi Q).sp a b = fun i => (Q i).sp (a i) (b i) := rfl
+
+end Pi
 
 @[simp]
 theorem prod_sp (P : SequentialProductOn V) (Q : SequentialProductOn W) (a b : V × W) :

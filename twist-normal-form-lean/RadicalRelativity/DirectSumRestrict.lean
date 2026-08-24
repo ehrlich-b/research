@@ -396,4 +396,269 @@ theorem sp_eq_prod_restrict {A B : V × W} (hA : IsEffect A) (hB : IsEffect B) :
   P.sp_componentwise hA hB
 
 
+
+/-! ## The `m`-fold direct sum
+
+`prop:central` is stated for `J = ⊕_{α=1}^m J_α`, so the binary case above is a warm-up: this
+section redoes it over a finite index type, where the summand inclusions are `Pi.single` and the
+central units are `Pi.single i 𝟙`.  Nothing new is needed — the same three `OrthFamily` lemmas
+(`sp_sharp_value_le`, `sp_sharp_split_left`, `sp_sharp_split_right`) carry it. -/
+
+section Pi
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι] {V : ι → Type*} [∀ i, OrderUnitSpace (V i)]
+
+theorem single_le_unit {i : ι} {x : V i} (hx : x ≤ (𝟙 : V i)) :
+    Pi.single i x ≤ (𝟙 : ∀ j, V j) := by
+  intro j
+  rw [pi_ousUnit]
+  by_cases hj : j = i
+  · subst hj; rw [Pi.single_eq_same]; exact hx
+  · rw [Pi.single_eq_of_ne hj]; exact ousUnit_nonneg
+
+theorem isEffect_single {i : ι} {a : V i} (ha : IsEffect a) : IsEffect (Pi.single i a) := by
+  rw [isEffect_pi_iff]
+  intro j
+  by_cases hj : j = i
+  · subst hj; rw [Pi.single_eq_same]; exact ha
+  · rw [Pi.single_eq_of_ne hj]; exact isEffect_zero
+
+theorem single_le_single {i : ι} {x y : V i} (h : x ≤ y) :
+    Pi.single i x ≤ Pi.single (M := V) i y := by
+  intro j
+  by_cases hj : j = i
+  · subst hj; rw [Pi.single_eq_same, Pi.single_eq_same]; exact h
+  · exact le_of_eq (by rw [Pi.single_eq_of_ne hj, Pi.single_eq_of_ne hj])
+
+/-- The central unit of the `i`-th summand is sharp. -/
+theorem isSharp_single_unit (i : ι) : IsSharp (Pi.single i (𝟙 : V i)) := by
+  refine ⟨isEffect_single isEffect_unit, fun z hz hz1 hz2 => ?_⟩
+  rw [isEffect_pi_iff] at hz
+  funext j
+  rw [Pi.zero_apply]
+  by_cases hj : j = i
+  · subst hj
+    have h2 := hz2 j
+    rw [Pi.sub_apply, Pi.single_eq_same, pi_ousUnit, sub_self] at h2
+    exact le_antisymm h2 (hz j).1
+  · have h1 := hz1 j
+    rw [Pi.single_eq_of_ne hj] at h1
+    exact le_antisymm h1 (hz j).1
+
+variable (P : SequentialProductOn (∀ i, V i))
+
+/-- The restricted product on the `i`-th summand. -/
+def spPi (i : ι) (a b : V i) : V i := P.sp (Pi.single i a) (Pi.single i b) i
+
+theorem sp_single_apply_ne {i j : ι} (hj : j ≠ i) {a b : V i}
+    (ha : IsEffect a) (hb : IsEffect b) :
+    P.sp (Pi.single i a) (Pi.single i b) j = 0 := by
+  have hlo := P.sp_nonneg (isEffect_single ha) (isEffect_single hb) j
+  have hhi := P.sp_le_left (isEffect_single ha) (isEffect_single hb) j
+  rw [Pi.single_eq_of_ne hj] at hhi
+  rw [Pi.zero_apply] at hlo
+  exact le_antisymm hhi hlo
+
+theorem sp_single_eq {i : ι} {a b : V i} (ha : IsEffect a) (hb : IsEffect b) :
+    P.sp (Pi.single i a) (Pi.single i b) = Pi.single i (P.spPi i a b) := by
+  funext j
+  by_cases hj : j = i
+  · subst hj; rw [Pi.single_eq_same]; rfl
+  · rw [Pi.single_eq_of_ne hj]; exact P.sp_single_apply_ne hj ha hb
+
+theorem sp_single_comm {i : ι} {a b : V i} (ha : IsEffect a) (hb : IsEffect b)
+    (h : P.spPi i a b = P.spPi i b a) :
+    P.sp (Pi.single i a) (Pi.single i b) = P.sp (Pi.single i b) (Pi.single i a) := by
+  rw [P.sp_single_eq ha hb, P.sp_single_eq hb ha, h]
+
+/-! ### The complement of a central unit -/
+
+theorem single_add_compl_self {i : ι} (x : V i) :
+    (Pi.single i x + ((𝟙 : ∀ j, V j) - Pi.single i (𝟙 : V i))) i = x := by
+  rw [Pi.add_apply, Pi.sub_apply, Pi.single_eq_same, Pi.single_eq_same, pi_ousUnit, sub_self,
+    add_zero]
+
+theorem single_add_compl_ne {i j : ι} (hj : j ≠ i) (x : V i) :
+    (Pi.single i x + ((𝟙 : ∀ j, V j) - Pi.single i (𝟙 : V i))) j = (𝟙 : V j) := by
+  rw [Pi.add_apply, Pi.sub_apply, Pi.single_eq_of_ne hj, Pi.single_eq_of_ne hj, sub_zero,
+    zero_add, pi_ousUnit]
+
+theorem single_add_compl_le {i : ι} {x : V i} (hx : x ≤ (𝟙 : V i)) :
+    Pi.single i x + ((𝟙 : ∀ j, V j) - Pi.single i (𝟙 : V i)) ≤ (𝟙 : ∀ j, V j) := by
+  intro j
+  rw [pi_ousUnit]
+  by_cases hj : j = i
+  · subst hj; rw [single_add_compl_self]; exact hx
+  · rw [single_add_compl_ne hj]
+
+theorem compl_add_single_le {i : ι} {x : V i} (hx : x ≤ (𝟙 : V i)) :
+    ((𝟙 : ∀ j, V j) - Pi.single i (𝟙 : V i)) + Pi.single i x ≤ (𝟙 : ∀ j, V j) := by
+  rw [add_comm]; exact single_add_compl_le hx
+
+theorem unit_sub_single_add_compl {i : ι} (x : V i) :
+    (𝟙 : ∀ j, V j) - (Pi.single i x + ((𝟙 : ∀ j, V j) - Pi.single i (𝟙 : V i)))
+      = Pi.single i ((𝟙 : V i) - x) := by
+  funext j
+  by_cases hj : j = i
+  · subst hj
+    rw [Pi.sub_apply, single_add_compl_self, Pi.single_eq_same, pi_ousUnit]
+  · rw [Pi.sub_apply, single_add_compl_ne hj, Pi.single_eq_of_ne hj, pi_ousUnit, sub_self]
+
+theorem isEffect_single_add_compl {i : ι} {x : V i} (hx : IsEffect x) :
+    IsEffect (Pi.single i x + ((𝟙 : ∀ j, V j) - Pi.single i (𝟙 : V i))) := by
+  rw [isEffect_pi_iff]
+  intro j
+  by_cases hj : j = i
+  · subst hj; rw [single_add_compl_self]; exact hx
+  · rw [single_add_compl_ne hj]; exact isEffect_unit
+
+/-! ### The restriction -/
+
+/-- ★★★ **`prop:central`, restriction half, at the article's own `m`-fold generality.**  An
+arbitrary S1–S7 product on `⊕ Jα` restricts to an S1–S7 product on `(Jα, ≤, eα)`. -/
+def restrictPi (i : ι) : SequentialProductOn (V i) where
+  sp := P.spPi i
+  sp_add_right := fun {a b c} ha hb hc hbc => by
+    have hbc' : Pi.single i b + Pi.single i c ≤ (𝟙 : ∀ j, V j) := by
+      rw [← Pi.single_add]; exact single_le_unit hbc
+    have h := P.sp_add_right (isEffect_single ha) (isEffect_single hb) (isEffect_single hc) hbc'
+    rw [← Pi.single_add] at h
+    exact congrFun h i
+  sp_unit_left := fun {a} ha => by
+    have h := P.sp_sharp_value_le (isSharp_single_unit i) (isEffect_single ha)
+      (single_le_single ha.2)
+    have h2 := congrFun h i
+    rwa [Pi.single_eq_same] at h2
+  sp_zero_symm := fun {a b} ha hb h => by
+    have hz : P.sp (Pi.single i a) (Pi.single i b) = 0 := by
+      rw [P.sp_single_eq ha hb, h, Pi.single_zero]
+    have h2 := P.sp_zero_symm (isEffect_single ha) (isEffect_single hb) hz
+    have h3 := congrFun h2 i
+    rwa [Pi.zero_apply] at h3
+  sp_assoc_of_compatible := fun {a b c} ha hb hc h => by
+    have h2 := P.sp_assoc_of_compatible (isEffect_single ha) (isEffect_single hb)
+      (isEffect_single hc) (P.sp_single_comm ha hb h)
+    rw [P.sp_single_eq hb hc, P.sp_single_eq ha hb] at h2
+    exact congrFun h2 i
+  compatible_ortho := fun {a b} ha hb h => by
+    have hqs : IsSharp ((𝟙 : ∀ j, V j) - Pi.single i (𝟙 : V i)) :=
+      IsSharp.compl (isSharp_single_unit i)
+    have hcompA :=
+      (P.sp_comm_sharp_orth hqs (isEffect_single ha) (compl_add_single_le ha.2)).symm
+    have hsum := P.compatible_add (isEffect_single ha) (isEffect_single hb) hqs.1
+      (single_add_compl_le hb.2) (P.sp_single_comm ha hb h) hcompA
+    have hres := P.compatible_ortho (isEffect_single ha) (isEffect_single_add_compl hb) hsum
+    rw [unit_sub_single_add_compl] at hres
+    exact congrFun hres i
+  compatible_add := fun {a b c} ha hb hc hbc h h' => by
+    have hbc' : Pi.single i b + Pi.single i c ≤ (𝟙 : ∀ j, V j) := by
+      rw [← Pi.single_add]; exact single_le_unit hbc
+    have h2 := P.compatible_add (isEffect_single ha) (isEffect_single hb) (isEffect_single hc)
+      hbc' (P.sp_single_comm ha hb h) (P.sp_single_comm ha hc h')
+    rw [← Pi.single_add] at h2
+    exact congrFun h2 i
+  compatible_sp := fun {a b c} ha hb hc h h' => by
+    have h2 := P.compatible_sp (isEffect_single ha) (isEffect_single hb) (isEffect_single hc)
+      (P.sp_single_comm ha hb h) (P.sp_single_comm ha hc h')
+    rw [P.sp_single_eq hb hc] at h2
+    exact congrFun h2 i
+  sp_effect := fun {a b} ha hb => by
+    have h := P.sp_effect (isEffect_single ha) (isEffect_single hb)
+    rw [P.sp_single_eq ha hb, isEffect_pi_iff] at h
+    have h2 := h i
+    rwa [Pi.single_eq_same] at h2
+
+
+/-! ### The componentwise formula and the round trip, `m`-fold -/
+
+theorem sub_single_self_apply {i : ι} (A : ∀ j, V j) : (A - Pi.single i (A i)) i = 0 := by
+  rw [Pi.sub_apply, Pi.single_eq_same, sub_self]
+
+theorem sub_single_self_apply_ne {i j : ι} (hj : j ≠ i) (A : ∀ j, V j) :
+    (A - Pi.single i (A i)) j = A j := by
+  rw [Pi.sub_apply, Pi.single_eq_of_ne hj, sub_zero]
+
+theorem isEffect_sub_single {i : ι} {A : ∀ j, V j} (hA : IsEffect A) :
+    IsEffect (A - Pi.single i (A i)) := by
+  rw [isEffect_pi_iff]
+  intro j
+  by_cases hj : j = i
+  · subst hj; rw [sub_single_self_apply]; exact isEffect_zero
+  · rw [sub_single_self_apply_ne hj]; exact (isEffect_pi_iff.mp hA) j
+
+theorem single_add_sub_single {i : ι} (A : ∀ j, V j) :
+    Pi.single i (A i) + (A - Pi.single i (A i)) = A := by abel
+
+theorem unit_single_add_sub_le {i : ι} {A : ∀ j, V j} (hA : IsEffect A) :
+    Pi.single i (𝟙 : V i) + (A - Pi.single i (A i)) ≤ (𝟙 : ∀ j, V j) := by
+  intro j
+  rw [pi_ousUnit, Pi.add_apply]
+  by_cases hj : j = i
+  · subst hj
+    rw [Pi.single_eq_same, sub_single_self_apply, add_zero]
+  · rw [Pi.single_eq_of_ne hj, sub_single_self_apply_ne hj, zero_add]
+    exact ((isEffect_pi_iff.mp hA) j).2
+
+/-- ★★★ **An unknown product commutes with each central unit `e_α`, derived.** -/
+theorem sp_central_single {A : ∀ j, V j} (hA : IsEffect A) (i : ι) :
+    P.sp A (Pi.single i (𝟙 : V i)) = Pi.single i (A i)
+      ∧ P.sp (Pi.single i (𝟙 : V i)) A = Pi.single i (A i) := by
+  have hAi : IsEffect (A i) := (isEffect_pi_iff.mp hA) i
+  have hxy : Pi.single i (A i) + (A - Pi.single i (A i)) ≤ (𝟙 : ∀ j, V j) := by
+    rw [single_add_sub_single]; exact hA.2
+  have hL := P.sp_sharp_split_left (isSharp_single_unit i) (isEffect_single hAi)
+    (isEffect_sub_single hA) (single_le_single hAi.2) (unit_single_add_sub_le hA) hxy
+  have hR := P.sp_sharp_split_right (isSharp_single_unit i) (isEffect_single hAi)
+    (isEffect_sub_single hA) (single_le_single hAi.2) (unit_single_add_sub_le hA) hxy
+  rw [single_add_sub_single] at hL hR
+  exact ⟨hL, hR⟩
+
+/-- S5 collapses the first argument onto its `i`-th component. -/
+theorem sp_apply_single {A : ∀ j, V j} (hA : IsEffect A) {i : ι} {b : V i} (hb : IsEffect b) :
+    P.sp A (Pi.single i b) = P.sp (Pi.single i (A i)) (Pi.single i b) := by
+  obtain ⟨hAp, hpA⟩ := P.sp_central_single hA i
+  have hfix : P.sp (Pi.single i (𝟙 : V i)) (Pi.single i b) = Pi.single i b :=
+    P.sp_sharp_value_le (isSharp_single_unit i) (isEffect_single hb) (single_le_single hb.2)
+  have h := P.sp_assoc_of_compatible hA (isSharp_single_unit i).1 (isEffect_single hb)
+    (hAp.trans hpA.symm)
+  rw [hfix, hAp] at h
+  exact h
+
+/-- ★★★ **`prop:central` in full, at the article's `m`-fold generality and with no citation.**
+
+`a ◦' b = ∑_α (a_α ◦'_α b_α)` — S1 splits `b = ∑_α e_α ∘ b` in the second argument, and
+`sp_apply_single` collapses the first argument onto its component through the derived central
+compatibility.  Combined with `restrictPi` and `pi`, every S1–S7 product on a finite direct sum
+is exactly the assembly of its restrictions. -/
+theorem sp_componentwise_pi {A B : ∀ j, V j} (hA : IsEffect A) (hB : IsEffect B) :
+    P.sp A B = fun i => P.spPi i (A i) (B i) := by
+  classical
+  have hdecomp : (∑ i, Pi.single i (B i)) = B := Finset.univ_sum_single B
+  have hall : (∑ i ∈ (Finset.univ : Finset ι), Pi.single i (B i)) ≤ (𝟙 : ∀ j, V j) := by
+    rw [hdecomp]; exact hB.2
+  have h := P.sp_sum_right hA
+    (fun i _ => isEffect_single ((isEffect_pi_iff.mp hB) i)) hall
+  rw [hdecomp] at h
+  rw [h, Finset.sum_congr rfl (fun i _ => by
+    rw [P.sp_apply_single hA ((isEffect_pi_iff.mp hB) i),
+      P.sp_single_eq ((isEffect_pi_iff.mp hA) i) ((isEffect_pi_iff.mp hB) i)] :
+      ∀ i ∈ (Finset.univ : Finset ι), P.sp A (Pi.single i (B i))
+        = Pi.single i (P.spPi i (A i) (B i)))]
+  exact Finset.univ_sum_single _
+
+@[simp]
+theorem restrictPi_pi (Q : ∀ i, SequentialProductOn (V i)) (i : ι) :
+    (pi Q).restrictPi i = Q i := by
+  refine ext (funext fun a => funext fun b => ?_)
+  change ((pi Q).sp (Pi.single i a) (Pi.single i b)) i = (Q i).sp a b
+  simp only [pi_sp, Pi.single_eq_same]
+
+/-- **The correspondence, `m`-fold**: on effects, an arbitrary product is the assembly of its
+restrictions.  (On effects only, for the reason recorded at `sp_eq_prod_restrict`.) -/
+theorem sp_eq_pi_restrict {A B : ∀ j, V j} (hA : IsEffect A) (hB : IsEffect B) :
+    P.sp A B = (pi (fun i => P.restrictPi i)).sp A B :=
+  P.sp_componentwise_pi hA hB
+
+end Pi
+
 end SequentialProductOn
