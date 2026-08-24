@@ -72,6 +72,10 @@ concrete carrier it is a theorem, which is why the concrete statements do not me
   hypothesized complete resolution into sharp effects, with every eigenvalue hypothesis
   guarded at nonzero family members.  `exists_pseudoInvCoef` supplies the normalization;
   `sum_smul_filter_ne` and `isEffect_sum_smul_of_ne` are the support-restriction helpers.
+  The payoff layer adds order reflection and injectivity (`seqLeftMulAbs_reflectsNonneg`,
+  `seqLeftMulAbs_injective`, via `seqLeftMulAbs_pseudoInv_comp`) and — the other half of
+  vdW Def. 4.17's "order preserving" — lower-interval surjectivity
+  (`sp_lowerInterval_surjOn`).
 
 The concrete theorems in `Necessity/SharpEffects.lean` and `Necessity/PseudoInverse.lean`
 are left in place untouched; other rows consume them under their matrix-stated hypotheses.
@@ -763,6 +767,68 @@ theorem seqLeftMulAbs_injective (harch : IsArchimedean V) (hS2 : P.FirstArgConti
   have hc := congrArg (seqLeftMulAbs P harch hν) hxy
   rw [hcomp x, hcomp y] at hc
   have h := congrArg (fun v : V => co⁻¹ • v) hc
+  simpa [smul_smul, inv_mul_cancel₀ hco0.ne'] using h
+
+/-- **Lower-interval surjectivity (vdW Def. 4.17, the onto half) at abstract order-unit-space
+generality**: the left multiplication by an invertible effect `b` carries the effect interval
+`[0, 𝟙]` *onto* the order interval `[0, b]` — every `y` with `0 ≤ y ≤ b` is `b ◦' x` for some
+effect `x`.  Together with `seqLeftMulAbs_reflectsNonneg` (vdW 4.19, order reflection) this is
+the article's "order preserving" for the unknown product, completing the pair the manifest's
+row 13 records as half-done.
+
+Same resolution-relative hypotheses as the pseudo-inverse layer: hypothesized sharp complete
+resolution, eigenvalue bounds guarded at nonzero members, explicit `IsArchimedean`, S2 through
+`sp_smul_left`.  The witness is `co⁻¹ • (ν ◦' y)` for the normalized pseudo-inverse `ν`: it is
+an effect because `ν ◦' y ≤ ν ◦' b = co•𝟙` by monotonicity, and `b ◦' (ν ◦' y) = co • y` by S5
+through the compatibility of `b` and `ν` — no linear extension is needed, since `y ≤ b ≤ 𝟙`
+makes every element in sight an effect. -/
+theorem sp_lowerInterval_surjOn (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1)
+    {y : V} (hy0 : (0 : V) ≤ y) (hyb : y ≤ ∑ i ∈ s, lam i • c i) :
+    ∃ x : V, IsEffect x ∧ P.sp (∑ i ∈ s, lam i • c i) x = y := by
+  obtain ⟨co, hco0, hco1, hcole⟩ := exists_pseudoInvCoef hpos hle1
+  have hce : ∀ i ∈ s, IsEffect (c i) := fun i hi => (hsharp i hi).1
+  have hν : IsEffect (∑ i ∈ s, (co / lam i) • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => div_nonneg hco0.le (hpos i hi hne).le)
+      (fun i hi hne => (div_le_one (hpos i hi hne)).mpr (hcole i hi hne))
+  have hbe : IsEffect (∑ i ∈ s, lam i • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => (hpos i hi hne).le) hle1
+  have hye : IsEffect y := ⟨hy0, le_trans hyb hbe.2⟩
+  have hνy0 : (0 : V) ≤ P.sp (∑ i ∈ s, (co / lam i) • c i) y := P.sp_nonneg hν hye
+  have hνyle : P.sp (∑ i ∈ s, (co / lam i) • c i) y
+      ≤ P.sp (∑ i ∈ s, (co / lam i) • c i) (∑ i ∈ s, lam i • c i) :=
+    P.sp_mono_right hν hye hbe hyb
+  have hνb : P.sp (∑ i ∈ s, (co / lam i) • c i) (∑ i ∈ s, lam i • c i) = co • (𝟙 : V) :=
+    P.sp_pseudoInv_eq_smul_one harch hS2 hsharp hsum hpos hle1 hco0.le hcole
+  set x := co⁻¹ • P.sp (∑ i ∈ s, (co / lam i) • c i) y with hxdef
+  have hx0 : (0 : V) ≤ x := smul_nonneg' (inv_nonneg.mpr hco0.le) hνy0
+  have hx1 : x ≤ (𝟙 : V) := by
+    have h := smul_nonneg_mono co⁻¹ (inv_nonneg.mpr hco0.le) hνyle
+    rw [hνb, smul_smul, inv_mul_cancel₀ hco0.ne', one_smul] at h
+    exact h
+  have hxe : IsEffect x := ⟨hx0, hx1⟩
+  refine ⟨x, hxe, ?_⟩
+  have hbν : P.sp (∑ i ∈ s, lam i • c i) (∑ i ∈ s, (co / lam i) • c i)
+      = P.sp (∑ i ∈ s, (co / lam i) • c i) (∑ i ∈ s, lam i • c i) :=
+    (P.sp_pseudoInv_comm harch hS2 hsharp hsum hpos hle1 hco0.le hcole).symm
+  have hcox : co • x = P.sp (∑ i ∈ s, (co / lam i) • c i) y := by
+    rw [hxdef, smul_smul, mul_inv_cancel₀ hco0.ne', one_smul]
+  have key : co • P.sp (∑ i ∈ s, lam i • c i) x = co • y := by
+    calc co • P.sp (∑ i ∈ s, lam i • c i) x
+        = P.sp (∑ i ∈ s, lam i • c i) (co • x) :=
+          (P.sp_smul_right_of_unitInterval harch hbe hxe hco0.le hco1).symm
+      _ = P.sp (∑ i ∈ s, lam i • c i) (P.sp (∑ i ∈ s, (co / lam i) • c i) y) := by
+          rw [hcox]
+      _ = P.sp (P.sp (∑ i ∈ s, lam i • c i) (∑ i ∈ s, (co / lam i) • c i)) y :=
+          P.sp_assoc_of_compatible hbe hν hye hbν
+      _ = P.sp (co • (𝟙 : V)) y := by rw [hbν, hνb]
+      _ = co • P.sp (𝟙 : V) y := P.sp_smul_left harch hS2 isEffect_unit hye hco0.le hco1
+      _ = co • y := by rw [P.sp_unit_left hye]
+  have h := congrArg (fun v : V => co⁻¹ • v) key
   simpa [smul_smul, inv_mul_cancel₀ hco0.ne'] using h
 
 end SequentialProductOn
