@@ -1317,6 +1317,129 @@ theorem adU_cfcPow_eq_rotation (a : HermitianMat n ℂ) (t : ℝ)
   exact h
 
 
+/-! ### `𝒥` in block coordinates, and `E(x,y)` as a rotation
+
+`blockCoef r t i j = √(xy)·e^{i·t·log(x/y)}` is a **complex scalar acting on the block
+coordinate**; the article writes the same quantity as `√(xy)·exp(t·log(x/y)·𝒥_n)`, an *operator*
+on the block.  Those are the same statement exactly once `𝒥` is known to be multiplication by
+`i` on that coordinate — which is `orientationJ_frameProj_blockHerm` below.  Without it, a row
+stating the scalar form and a row stating the operator form are statements about two unlinked
+objects, which is the defect species `STATEMENT-MANIFEST.md` tracks. -/
+
+theorem blockHerm_add (i j : n) (z w : ℂ) :
+    blockHerm i j (z + w) = blockHerm i j z + blockHerm i j w := by
+  ext1
+  simp only [blockHerm_mat, HermitianMat.mat_add, star_add, add_smul]
+  abel
+
+theorem blockHerm_real_smul (i j : n) (c : ℝ) (z : ℂ) :
+    blockHerm i j ((c : ℂ) * z) = c • blockHerm i j z := by
+  ext k l
+  simp only [blockHerm_mat, HermitianMat.mat_smul, Matrix.add_apply, Matrix.smul_apply,
+    smul_eq_mul, star_mul', Complex.star_def, Complex.conj_ofReal, Complex.real_smul]
+  push_cast
+  ring
+
+/-- The corner of `x` at two *atoms* of the standard frame is the single entry `x i j`. -/
+theorem coherenceCorner_frameProj (i j : n) (x : HermitianMat n ℂ) :
+    coherenceCorner (frameProj i) (frameProj j) x = Matrix.single i j (x.mat i j) := by
+  rw [coherenceCorner, frameProj_mat_eq_single, frameProj_mat_eq_single,
+    Matrix.single_mul_mul_single, one_mul, mul_one]
+
+theorem single_conjTranspose_val (i j : n) (z : ℂ) :
+    (Matrix.single i j z)ᴴ = Matrix.single j i (star z) := by
+  ext k l
+  simp only [Matrix.conjTranspose_apply, Matrix.single_apply]
+  by_cases h : j = k <;> by_cases h' : i = l <;> simp [h, h', and_comm]
+
+/-- `𝒥_{p_i,p_j}` sends `x` to the block element built from `i·x_{ij}`. -/
+theorem orientationJFun_frameProj (i j : n) (x : HermitianMat n ℂ) :
+    orientationJFun (frameProj i) (frameProj j) x
+      = blockHerm i j (Complex.I * x.mat i j) := by
+  have hs : ∀ (a b : n) (c : ℂ), Matrix.single a b c = c • Matrix.single a b (1 : ℂ) := by
+    intro a b c; rw [Matrix.smul_single, smul_eq_mul, mul_one]
+  ext1
+  rw [orientationJFun_mat, coherenceCorner_frameProj, single_conjTranspose_val, blockHerm_mat,
+    hs i j (x.mat i j), hs j i (star (x.mat i j)), smul_smul, smul_smul,
+    show star (Complex.I * x.mat i j) = -(Complex.I * star (x.mat i j)) from by
+      rw [star_mul', Complex.star_def, Complex.conj_I]; ring]
+  module
+
+/-- ★★★ **`𝒥` is multiplication by `i` on the block coordinate.**  This is the identification
+that turns the article's operator formula `exp(t·log(x/y)·𝒥_n)` and the tree's scalar formula
+`e^{i·t·log(x/y)}` into the same statement. -/
+theorem orientationJ_frameProj_blockHerm {i j : n} (hij : i ≠ j) (z : ℂ) :
+    orientationJ (frameProj i) (frameProj j) (blockHerm i j z)
+      = blockHerm i j (Complex.I * z) := by
+  rw [orientationJ_apply, orientationJFun_frameProj, blockHerm_entry hij]
+
+/-- ★★★ **`exp(φ·𝒥)` on the block is multiplication by `e^{iφ}`.**  `𝒥² = −id` there, so the
+rotation `cos φ + sin φ·𝒥` and the scalar `e^{iφ}` agree. -/
+theorem blockHerm_rotation {i j : n} (hij : i ≠ j) (φ : ℝ) (z : ℂ) :
+    Real.cos φ • blockHerm i j z
+        + Real.sin φ • orientationJ (frameProj i) (frameProj j) (blockHerm i j z)
+      = blockHerm i j (Complex.exp ((φ : ℂ) * Complex.I) * z) := by
+  rw [orientationJ_frameProj_blockHerm hij, ← blockHerm_real_smul, ← blockHerm_real_smul,
+    ← blockHerm_add]
+  congr 1
+  rw [Complex.exp_mul_I, ← Complex.ofReal_cos, ← Complex.ofReal_sin]
+  ring
+
+/-- **`𝒥` is unitarily covariant.**  Distinct from `orientationJ_adU`, which is about a `u` that
+*fixes* `q` and `p`: here `q` and `p` are transported along with `x`, which is what a statement
+"at the frame of `a`" needs when the frame is `Ad_U` of the standard one. -/
+theorem orientationJ_conj {q p : HermitianMat n ℂ} {u : Matrix n n ℂ} (huu : uᴴ * u = 1)
+    (x : HermitianMat n ℂ) :
+    orientationJ (adU u q) (adU u p) (adU u x) = adU u (orientationJ q p x) := by
+  have hcorner : coherenceCorner (adU u q) (adU u p) (adU u x)
+      = u * coherenceCorner q p x * uᴴ := by
+    rw [coherenceCorner, coherenceCorner]
+    simp only [adU_apply, HermitianMat.conj_apply_mat]
+    calc u * q.mat * uᴴ * (u * x.mat * uᴴ) * (u * p.mat * uᴴ)
+        = u * q.mat * (uᴴ * u) * x.mat * (uᴴ * u) * p.mat * uᴴ := by noncomm_ring
+      _ = u * (q.mat * x.mat * p.mat) * uᴴ := by
+          rw [huu, Matrix.mul_one, Matrix.mul_one]; noncomm_ring
+  ext1
+  rw [orientationJ_apply, orientationJFun_mat, hcorner, adU_apply,
+    HermitianMat.conj_apply_mat, orientationJ_apply, orientationJFun_mat]
+  rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose]
+  simp only [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_smul, Matrix.smul_mul]
+  congr 2 <;> noncomm_ring
+
+/-! ### The singular end of the family: the Lüders value
+
+The article's clause (i) records that the block coefficient `√(λ₊λ₋)` "takes the Lüders value `0`
+at `λ₋ = 0`".  The exponential parametrisation `λ = e^r` cannot reach `λ₋ = 0`, so that end of the
+family is stated at the singular effect itself: at a **projection** the twist factor is the
+projection (whatever `t`), and it annihilates the coherence block. -/
+
+/-- `p^{1/2+it} = p` for a projection `p` — the functional calculus of `√x·e^{it\log x}` sends
+`1 ↦ 1` and `0 ↦ 0`, so no `t` survives. -/
+theorem twistFactor_of_idem {a : HermitianMat n ℂ} (hidem : a.mat * a.mat = a.mat) (s : ℝ) :
+    HermitianMat.twistFactor a s = a.mat := by
+  have hre : (HermitianMat.twistRe a s).mat = a.mat := by
+    rw [HermitianMat.twistRe, HermitianMat.mat_cfc_of_idem a hidem]
+    simp
+  have him : (HermitianMat.twistIm a s).mat = 0 := by
+    rw [HermitianMat.twistIm, HermitianMat.mat_cfc_of_idem a hidem]
+    simp
+  rw [HermitianMat.twistFactor, hre, him, smul_zero, add_zero]
+
+/-- ★★★ **The Lüders value at the singular end.**  A frame atom annihilates every coherence
+element of a block it meets, for **every** twist parameter — so the article's `√(λ₊λ₋)` really
+does degenerate to `0` there, and the degeneration is not an artefact of the parametrisation. -/
+theorem twistSeq_frameProj_blockHerm {i j : n} (hij : i ≠ j) (s : ℝ) (z : ℂ) :
+    HermitianMat.twistSeq s (frameProj i) (blockHerm i j z) = 0 := by
+  have hdiag : (blockHerm i j z).mat i i = 0 := by
+    rw [blockHerm_mat]
+    simp [Matrix.single_apply, hij, Ne.symm hij]
+  ext1
+  rw [HermitianMat.twistSeq, HermitianMat.conj_apply_mat,
+    twistFactor_of_idem (frameProj_idem i) s, frameProj_mat_eq_single,
+    single_conjTranspose_val, star_one, Matrix.single_mul_mul_single, hdiag,
+    HermitianMat.mat_zero]
+  simp
+
 end Orientation
 
 /-! ## `prop:n2-necessity` in the article's own `𝒥_n` (row 29, the encoding half)

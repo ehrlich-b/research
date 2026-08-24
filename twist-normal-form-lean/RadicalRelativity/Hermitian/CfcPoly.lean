@@ -190,4 +190,18 @@ theorem mat_cfc_mul_of_eigen (A : HermitianMat n 𝕜) (f : ℝ → ℝ) {q : Ma
   rw [Polynomial.eval_map, Polynomial.eval₂_at_apply,
     hnode_eval lam (Finset.mem_insert_self _ _)]
 
+/-- ★★ **The functional calculus at a projection**, read straight off the eigen-action above:
+`p` acts on `p` by `1` and on `1 − p` by `0`, and those two add up to `1`. -/
+theorem mat_cfc_of_idem (A : HermitianMat n 𝕜) (hidem : A.mat * A.mat = A.mat) (f : ℝ → ℝ) :
+    (A.cfc f).mat
+      = (algebraMap ℝ 𝕜 (f 1)) • A.mat + (algebraMap ℝ 𝕜 (f 0)) • (1 - A.mat) := by
+  have h1 : A.mat * A.mat = (algebraMap ℝ 𝕜 (1 : ℝ)) • A.mat := by
+    rw [hidem, map_one, one_smul]
+  have h0 : A.mat * (1 - A.mat) = (algebraMap ℝ 𝕜 (0 : ℝ)) • (1 - A.mat) := by
+    rw [Matrix.mul_sub, hidem, Matrix.mul_one, sub_self, map_zero, zero_smul]
+  calc (A.cfc f).mat
+      = (A.cfc f).mat * (A.mat + (1 - A.mat)) := by rw [add_sub_cancel, Matrix.mul_one]
+    _ = (A.cfc f).mat * A.mat + (A.cfc f).mat * (1 - A.mat) := Matrix.mul_add _ _ _
+    _ = _ := by rw [mat_cfc_mul_of_eigen A f h1, mat_cfc_mul_of_eigen A f h0]
+
 end HermitianMat

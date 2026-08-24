@@ -2067,3 +2067,98 @@ theorem restrictSp_surjective : Function.Surjective (restrictSp (V := V)) :=
   fun E => ⟨extendSp E, restrictSp_extendSp E⟩
 
 end PaperA
+
+namespace RankTwo
+
+/-! ## `thm:qubit-boundary`(i), the coherence half
+
+★★★ **Added 2026-08-24, closing the residue `STATEMENT-MANIFEST.md` row 31 records.** The row's
+clause (i) has two halves. The effects-to-effects half was already in the tree; the second half —
+`main.tex:1720–1758`, that on the **ordered spectral frame** of a nonscalar `a = λ₊P_n + λ₋P_{-n}`
+the coherence action on `W_n` is `√(λ₊λ₋)·exp(ℓ·τ(a)·𝒥_n)` with `ℓ = log(λ₊/λ₋)` — was not, and the
+manifest names three reasons, all of them **encoding** reasons rather than mathematical ones: the
+in-tree block-action statement lived at `MasterTheorem.RankTwo.sp` rather than
+`HermitianMat.twistSeq`; it lived at `diagFamily r` with a free `t` rather than at a frame with
+`t = τ(a)`; and it was written with a scalar coefficient rather than in the article's `𝒥_n`.
+
+All three are settled here, by assembly rather than by new mathematics:
+
+* `Necessity.orientationJ_frameProj_blockHerm` identifies `𝒥` with multiplication by `i` on the
+  block coordinate, and `Necessity.blockHerm_rotation` turns `cos φ + sin φ·𝒥` into `e^{iφ}` —
+  the article's **vocabulary**;
+* `Necessity.twistSeq_diagFamily_blockHerm` supplies the block action with its coefficient
+  `blockCoef = √(xy)·e^{i·t·log(x/y)}`, in the `twistSeq` encoding row 30 uses — the **family**;
+* `n2Sp` is *by definition* `twistSeq (n2Tau t a) a`, so evaluating at `a` puts `τ(a)` in the
+  parameter slot with nothing to prove, and `Necessity.twistSeq_adU_mat` together with
+  `Necessity.orientationJ_conj` transports both sides to the **frame** `Ad_U` of the standard one.
+
+★ The frame is passed as four defining hypotheses rather than being reconstructed inside the
+statement, so the theorem reads as the article does: *at this ordered frame*, with `q = Ad_U p_0`
+and `p = Ad_U p_1` its two atoms in order. -/
+
+/-- ★★★ **The coherence action of the frame-dependent qubit product, at the effect's own ordered
+frame.**  For `a = Ad_U diag(λ₊,λ₋)` with atoms `q, p` and a coherence element `x` of the block
+they span, `a · x = √(λ₊λ₋)·exp(ℓ·τ(a)·𝒥_{q,p}) x` with `ℓ = log(λ₊/λ₋)`.
+
+★ **The Lüders degeneracy is visible in the coefficient**: the rotation is scaled by
+`√(λ₊λ₋)`, so at `λ₋ → 0` the coherence action vanishes, which is the article's "taking the
+Lüders value `0` at `λ₋ = 0`".  `n2Sp_coherence_action_singular` states that limit case at the
+singular effect itself, where the parametrisation `λ = e^r` cannot reach. -/
+theorem n2Sp_coherence_action (U : Matrix.unitaryGroup (Fin 2) ℂ) (r : Fin 2 → ℝ) (z : ℂ)
+    {a x q p : HermitianMat (Fin 2) ℂ}
+    (ha : a = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r))
+    (hx : x = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.blockHerm 0 1 z))
+    (hq : q = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.frameProj 0))
+    (hp : p = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.frameProj 1)) :
+    n2Sp tauModuliRP2 a x
+      = Real.sqrt (Real.exp (r 0) * Real.exp (r 1)) •
+          (Real.cos (Real.log (Real.exp (r 0) / Real.exp (r 1)) * n2Tau tauModuliRP2 a) • x
+            + Real.sin (Real.log (Real.exp (r 0) / Real.exp (r 1)) * n2Tau tauModuliRP2 a)
+                • Necessity.orientationJ q p x) := by
+  have hU : (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * (U : Matrix (Fin 2) (Fin 2) ℂ) = 1 :=
+    Necessity.unitaryGroup_conjTranspose_mul U
+  have hU' : (U : Matrix (Fin 2) (Fin 2) ℂ) * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 :=
+    Necessity.unitaryGroup_mul_conjTranspose U
+  have hlog : Real.log (Real.exp (r 0) / Real.exp (r 1)) = r 0 - r 1 := by
+    rw [Real.log_div (Real.exp_ne_zero _) (Real.exp_ne_zero _), Real.log_exp, Real.log_exp]
+  have hsqrt : Real.sqrt (Real.exp (r 0)) * Real.sqrt (Real.exp (r 1))
+      = Real.sqrt (Real.exp (r 0) * Real.exp (r 1)) :=
+    (Real.sqrt_mul (Real.exp_nonneg _) _).symm
+  subst ha; subst hx; subst hq; subst hp
+  rw [hlog]
+  set s : ℝ := n2Tau tauModuliRP2
+    (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) with hs
+  have hcoef : Necessity.blockCoef r s 0 1
+      = ((Real.sqrt (Real.exp (r 0) * Real.exp (r 1)) : ℝ) : ℂ)
+        * Complex.exp ((((r 0 - r 1) * s : ℝ) : ℂ) * Complex.I) := by
+    rw [Necessity.blockCoef, hsqrt]
+    congr 2
+    push_cast
+    ring
+  rw [n2Sp, ← hs, Necessity.twistSeq_adU_mat s hU hU',
+    Necessity.twistSeq_diagFamily_blockHerm r s (by decide : (0 : Fin 2) ≠ 1) z,
+    hcoef, mul_assoc, Necessity.blockHerm_real_smul,
+    ← Necessity.blockHerm_rotation (by decide : (0 : Fin 2) ≠ 1) ((r 0 - r 1) * s) z,
+    Necessity.adU_smul, Necessity.adU_add, Necessity.adU_smul, Necessity.adU_smul,
+    ← Necessity.orientationJ_conj hU]
+
+/-- ★★ **The Lüders value at `λ₋ = 0`.**  The exponential parametrisation `λ = e^r` of
+`n2Sp_coherence_action` cannot reach a singular effect, so the article's "taking the Lüders value
+`0` at `λ₋ = 0`" is stated here at the singular effect itself: a frame atom annihilates the
+coherence block, for every value of the frame function. -/
+theorem n2Sp_coherence_action_singular (U : Matrix.unitaryGroup (Fin 2) ℂ) (z : ℂ)
+    {a x : HermitianMat (Fin 2) ℂ}
+    (ha : a = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.frameProj 0))
+    (hx : x = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.blockHerm 0 1 z)) :
+    n2Sp tauModuliRP2 a x = 0 := by
+  have hU : (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * (U : Matrix (Fin 2) (Fin 2) ℂ) = 1 :=
+    Necessity.unitaryGroup_conjTranspose_mul U
+  have hU' : (U : Matrix (Fin 2) (Fin 2) ℂ) * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 :=
+    Necessity.unitaryGroup_mul_conjTranspose U
+  subst ha; subst hx
+  rw [n2Sp, Necessity.twistSeq_adU_mat _ hU hU',
+    Necessity.twistSeq_frameProj_blockHerm (by decide : (0 : Fin 2) ≠ 1) _ z]
+  ext1
+  simp [Necessity.adU_apply, HermitianMat.conj_apply_mat]
+
+end RankTwo
