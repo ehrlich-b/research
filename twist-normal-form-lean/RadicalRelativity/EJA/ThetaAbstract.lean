@@ -1107,4 +1107,44 @@ theorem thetaOf_one {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
   rw [hL, hE] at this
   exact this.symm
 
+
+/-! ## The frame stabilizer
+
+★★★ `Stab(F)` is the set of Jordan automorphisms of `J` fixing every atom of the frame `F`,
+realised inside the operator space `J →L[ℝ] J` so that it carries a topology — which is what
+`Stab(F)°`, the identity component, needs.  Rows 15 and 17 both quantify over it. -/
+
+/-- **The frame stabilizer**, as a subset of the operator space. -/
+def stabFrame {N : ℕ} (F : JordanFrame J N) : Set (J →L[ℝ] J) :=
+  {Φ | Function.Bijective Φ ∧ (∀ x y : J, Φ (x * y) = Φ x * Φ y) ∧ ∀ i, Φ (F.p i) = F.p i}
+
+theorem id_mem_stabFrame {N : ℕ} (F : JordanFrame J N) :
+    ContinuousLinearMap.id ℝ J ∈ stabFrame F :=
+  ⟨Function.bijective_id, fun _ _ => rfl, fun _ => rfl⟩
+
+/-- ★★★ **`Θ_r` lies in the frame stabilizer.**  It is a Jordan automorphism (`thetaOf_spec`) and
+it fixes every frame atom (`theta_fixes_frame_atom`). -/
+theorem theta_mem_stabFrame {N : ℕ} (F : JordanFrame J N) {f : Fin N → ℝ}
+    (hf0 : ∀ k, 0 < f k) (hf1 : ∀ k, f k ≤ 1) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J)
+      (hae : OrderUnitSpace.IsEffect (∑ k, f k • F.p k))
+      (hasos : IsSoS (jmulₗ J) (∑ k, f k • F.p k))
+      (hacs : IsSoS (jmulₗ J) ((1 : J) - ∑ k, f k • F.p k)),
+      LinearMap.toContinuousLinearMap
+        (thetaOf F.orthIdem F.complete rfl hasos hacs (fun k _ => (hf0 k).ne')
+          P hS2 harch hae).toLinearMap ∈ stabFrame F := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hae hasos hacs
+  obtain ⟨-, hmul, hid⟩ :=
+    thetaOf_spec F.orthIdem F.complete rfl hasos hacs (fun k _ => (hf0 k).ne') P hS2 harch hae
+  refine ⟨?_, hmul, ?_⟩
+  · exact (thetaOf F.orthIdem F.complete rfl hasos hacs (fun k _ => (hf0 k).ne')
+      P hS2 harch hae).bijective
+  · intro i
+    exact theta_fixes_frame_atom F hf0 hf1 P hS2 harch hae _ hid i
+
 end RadicalRelativity.EJA
