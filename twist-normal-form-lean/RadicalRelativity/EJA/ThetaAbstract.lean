@@ -933,6 +933,19 @@ theorem twistElt_compl_isSoS {N : ℕ} (F : JordanFrame J N) {r : Fin N → ℝ}
   have : Real.exp (r k) ≤ 1 := Real.exp_le_one_iff.mpr (hr k)
   linarith
 
+/-- The **standard** product already carries the group law: `Q_{√a(r)} a(s) = a(r+s)`. -/
+theorem quadJ_twistElt {N : ℕ} (F : JordanFrame J N) (r s : Fin N → ℝ) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F r)) (twistElt F s)
+      = twistElt F (r + s) := by
+  have hsq : jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F r)
+      = jsqrtOfResolution F.p (fun k => Real.exp (r k)) :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul _ F.orthIdem (twistElt_eq F r)
+  rw [hsq, twistElt_eq F s,
+    luders_of_resolution F.orthIdem (fun k => (Real.exp_pos (r k)).le)]
+  show _ = ∑ k, Real.exp ((r + s) k) • F.p k
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [Pi.add_apply, Real.exp_add]
+
 /-- ★★★ **The group law at the element level**: `a(r) · a(s) = a(r+s)`, for every S1–S7+S2
 product. -/
 theorem sp_twistElt {N : ℕ} (F : JordanFrame J N) {r s : Fin N → ℝ}
@@ -1396,5 +1409,81 @@ theorem twistTheta_unique {N : ℕ} (F : JordanFrame J N) :
         (twistTheta F P hS2 harch r hr z)
   rw [← hΘ z]
   exact twistTheta_spec F P hS2 harch r hr z
+
+
+/-- ★★★ **`lem:homomorphism`, in the wrapper's vocabulary**: `Θ_{r+s} = Θ_r ∘ Θ_s` on the
+twist cone, as an identity between functions of the parameter with no transport left over. -/
+theorem twistTheta_add {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r s : Fin N → ℝ)
+      (hr : ∀ k, r k ≤ 0) (hs : ∀ k, s k ≤ 0) (hrs : ∀ k, (r + s) k ≤ 0) (z : J),
+      twistTheta F P hS2 harch (r + s) hrs z
+        = twistTheta F P hS2 harch r hr (twistTheta F P hS2 harch s hs z) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r s hr hs hrs z
+  refine (twistTheta_unique F P hS2 harch (r + s) hrs
+    (fun w => twistTheta F P hS2 harch r hr (twistTheta F P hS2 harch s hs w)) ?_ z).symm
+  intro w
+  -- S5 splits the left multiplication
+  have hcompat : P.sp (twistElt F r) (twistElt F s) = P.sp (twistElt F s) (twistElt F r) := by
+    rw [sp_twistElt F hr hs P hS2, sp_twistElt F hs hr P hS2, add_comm]
+  have hLsplit : P.seqLeftMulAbs harch (isEffect_twistElt F hrs)
+      = (P.seqLeftMulAbs harch (isEffect_twistElt F hr)).comp
+        (P.seqLeftMulAbs harch (isEffect_twistElt F hs)) := by
+    refine OrderUnitSpace.linearMap_eq_of_eq_on_effects _ _ fun v hv => ?_
+    rw [P.seqLeftMulAbs_apply_effect harch (isEffect_twistElt F hrs) hv]
+    show _ = P.seqLeftMulAbs harch (isEffect_twistElt F hr)
+      (P.seqLeftMulAbs harch (isEffect_twistElt F hs) v)
+    rw [P.seqLeftMulAbs_apply_effect harch (isEffect_twistElt F hs) hv,
+      P.seqLeftMulAbs_apply_effect harch (isEffect_twistElt F hr)
+        (P.sp_effect (isEffect_twistElt F hs) hv),
+      P.sp_assoc_of_compatible (isEffect_twistElt F hr) (isEffect_twistElt F hs) hv hcompat,
+      sp_twistElt F hr hs P hS2]
+  -- `Q` splits too, and `Θ_r` fixes `√a(s)`
+  have hQ : ∀ y : J, quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F (r + s))) y
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F r))
+          (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F s)) y) := by
+    intro y
+    rw [← quadJ_twistElt F r s]
+    exact quadJ_jsqrt_luders_comp F.orthIdem F.complete
+      (fun k => (Real.exp_pos (r k)).le) (fun k => (Real.exp_pos (s k)).le)
+      (twistElt_eq F r) (twistElt_eq F s) y
+  have hfix : twistTheta F P hS2 harch r hr
+      (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F s))
+      = jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F s) := by
+    have hsq : jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F s)
+        = ∑ k, Real.sqrt (Real.exp (s k)) • F.p k :=
+      jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul _ F.orthIdem (twistElt_eq F s)
+    have hsos : IsSoS (jmulₗ J) (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F s)) := by
+      rw [hsq]; exact isSoS_sum _ _ fun k _ => isSoS_smul_idem (Real.sqrt_nonneg _) (F.orthIdem.idem k)
+    have hcs : IsSoS (jmulₗ J)
+        ((1 : J) - jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F s)) := by
+      rw [hsq]
+      have hh := smul_unit_sub_eq F.complete
+        (rfl : (∑ k, Real.sqrt (Real.exp (s k)) • F.p k) = _) 1
+      rw [one_smul] at hh
+      rw [hh]
+      refine isSoS_sum _ _ fun k _ => isSoS_smul_idem ?_ (F.orthIdem.idem k)
+      have : Real.sqrt (Real.exp (s k)) ≤ 1 := by
+        rw [show (1:ℝ) = Real.sqrt 1 by simp]
+        exact Real.sqrt_le_sqrt (Real.exp_le_one_iff.mpr (hs k))
+      linarith
+    exact theta_fixes_of_opCommute F.orthIdem F.complete (twistElt_eq F r)
+      (twistElt_isSoS F r) (twistElt_compl_isSoS F hr)
+      (fun k _ => (Real.exp_pos (r k)).ne') P hS2 harch (isEffect_twistElt F hr) _
+      (twistTheta_spec F P hS2 harch r hr) hsos hcs
+      (opCommute_of_shared_resolution' F.orthIdem (twistElt_eq F r) hsq)
+  -- assemble
+  have hmul : ∀ x y : J, twistTheta F P hS2 harch r hr (x * y)
+      = twistTheta F P hS2 harch r hr x * twistTheta F P hS2 harch r hr y :=
+    (thetaOf_spec F.orthIdem F.complete (twistElt_eq F r) (twistElt_isSoS F r)
+      (twistElt_compl_isSoS F hr) (fun k _ => (Real.exp_pos (r k)).ne') P hS2 harch
+      (isEffect_twistElt F hr)).2.1
+  rw [hQ, ← hfix, ← map_quadJ_of_jordanHom hmul,
+    ← twistTheta_spec F P hS2 harch s hs w, ← twistTheta_spec F P hS2 harch r hr]
+  exact congrFun (congrArg (fun f : J →ₗ[ℝ] J => (f : J → J)) hLsplit) w
 
 end RadicalRelativity.EJA
