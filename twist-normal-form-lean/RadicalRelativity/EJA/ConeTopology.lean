@@ -1248,4 +1248,86 @@ theorem luders_compat_sp {a b c : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmu
   refine luders_comm_of_opCommute ha (quadJ_isSoS _ hc) ?_
   exact opCommute_quadJ hOsq hOac (fun hu hv => opCommute_mul hu hv)
 
+
+/-! ## The Lüders product as a `SequentialProductOn`, at EJA generality
+
+★★★ Everything above assembles.  `a · b := Q_{√a} b` on a finite-dimensional Euclidean Jordan
+algebra satisfies **S1 and S3–S7** as the eight fields of `SequentialProductOn`, and **S2**
+separately as `luders_continuousOn_isEffect`.  This is the `SequentialProductOnEJA` inhabitant
+that manifest rows 8, 16 and 21 have been waiting on. -/
+
+theorem jsqrt_one : jsqrt 1 EuclideanJordanAlgebra.one_mul (1 : J) = 1 :=
+  jsqrt_idem (EuclideanJordanAlgebra.one_mul 1)
+
+/-- The Lüders product of two effects is an effect: `1 − Q_v b = (1 − a) + Q_v(1 − b)`, and both
+summands are in the cone. -/
+theorem luders_mem_effectSet {a b : J} (ha : a ∈ effectSet J) (hb : b ∈ effectSet J) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b ∈ effectSet J := by
+  obtain ⟨ha0, ha1⟩ := ha
+  obtain ⟨hb0, hb1⟩ := hb
+  refine ⟨quadJ_isSoS _ hb0, ?_⟩
+  have hqv1 : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) (1 : J) = a := by
+    rw [quadJ_unit EuclideanJordanAlgebra.one_mul, jsqrt_sq_of_isSoS ha0]
+  have hsplit : (1 : J) - quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+      = ((1 : J) - a) + quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) ((1 : J) - b) := by
+    rw [map_sub, hqv1]; abel
+  rw [hsplit]
+  exact IsSoS.add ha1 (quadJ_isSoS _ hb1)
+
+/-- ★★★ **The Lüders product is a sequential product on any finite-dimensional Euclidean Jordan
+algebra.**  All eight fields of `SequentialProductOn` — S1 and S3–S7 — at EJA generality. -/
+noncomputable def ludersSequentialProduct :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    SequentialProductOn J := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  refine
+    { sp := fun a b => quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+      sp_add_right := fun _ _ _ _ => map_add _ _ _
+      sp_unit_left := fun {a} _ => ?_
+      sp_zero_symm := fun {a b} ha hb h => ?_
+      sp_assoc_of_compatible := fun {a b c} ha hb _ h => ?_
+      compatible_ortho := fun {a b} ha hb h => ?_
+      compatible_add := fun {a b c} ha hb hc hbc h h' => ?_
+      compatible_sp := fun {a b c} ha hb hc h h' => ?_
+      sp_effect := fun {a b} ha hb => ?_ }
+  · show quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (1 : J)) a = a
+    rw [jsqrt_one, quadJ_unit_left EuclideanJordanAlgebra.one_mul]
+  · exact quadJ_jsqrt_zero_symm (mem_effectSet_iff_isEffect.mpr ha).1
+      (mem_effectSet_iff_isEffect.mpr hb).1 h
+  · exact luders_assoc_of_compat (mem_effectSet_iff_isEffect.mpr ha).1
+      (mem_effectSet_iff_isEffect.mpr hb).1 h c
+  · exact luders_compat_one_sub (mem_effectSet_iff_isEffect.mpr ha).1
+      (mem_effectSet_iff_isEffect.mpr hb).1
+      (mem_effectSet_iff_isEffect.mpr hb).2 h
+  · exact luders_compat_add (mem_effectSet_iff_isEffect.mpr ha).1
+      (mem_effectSet_iff_isEffect.mpr hb).1 (mem_effectSet_iff_isEffect.mpr hc).1
+      (mem_effectSet_iff_isEffect.mpr (OrderUnitSpace.IsEffect.add_of_le_unit hb hc hbc)).1 h h'
+  · exact luders_compat_sp (mem_effectSet_iff_isEffect.mpr ha).1
+      (mem_effectSet_iff_isEffect.mpr hb).1 (mem_effectSet_iff_isEffect.mpr hc).1 h h'
+  · exact mem_effectSet_iff_isEffect.mp
+      (luders_mem_effectSet (mem_effectSet_iff_isEffect.mpr ha)
+        (mem_effectSet_iff_isEffect.mpr hb))
+
+
+@[simp]
+theorem ludersSequentialProduct_sp (a b : J) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    (ludersSequentialProduct (J := J)).sp a b
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b := rfl
+
+/-- ★★★ **S2 for the inhabitant.**  With this, the Lüders product on a finite-dimensional
+Euclidean Jordan algebra satisfies **all of S1–S7**: S1 and S3–S7 as the fields of
+`ludersSequentialProduct`, and S2 here. -/
+theorem ludersSequentialProduct_firstArgContinuous :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    (ludersSequentialProduct (J := J)).FirstArgContinuous := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro b _
+  exact luders_continuousOn_isEffect b
+
 end RadicalRelativity.EJA
