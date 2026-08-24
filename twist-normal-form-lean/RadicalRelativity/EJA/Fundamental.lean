@@ -867,4 +867,35 @@ theorem quadJ_quadJ_quadJ (x y z : J) :
     : ℝ) • h197 + h198 - (2 : ℝ) • h199 - (2 : ℝ) • h200 + (4 : ℝ) • h201 - (8 : ℝ) • h202 - (8 : ℝ)
     • h203 - (4 : ℝ) • h204 - (4 : ℝ) • h205 - (4 : ℝ) • h206 - (4 : ℝ) • h207 + (4 : ℝ) • h208
 
+
+/-! ## Corollaries of the fundamental formula
+
+The first consequence, and the one a sequential product needs: `Q` squares the way its subscript
+does.  It is the fundamental formula read at `y = 1`, where `Q_1` is the identity
+(`quadJ_unit_left`) and `Q_x 1 = x²` (`quadJ_unit`). -/
+
+/-- **`Q_{x²} = Q_x ∘ Q_x`.**  The fundamental formula at `y = 1`.
+
+★ This is what ties `Q_{√a}` to `Q_a`: taking `x := √a` and using `√a · √a = a` gives
+`Q_a = Q_{√a} ∘ Q_{√a}`, which is the identity every step of S5–S7 for the Lüders product
+`a · b = Q_{√a} b` runs on.  Before the fundamental formula there was no route to it. -/
+theorem quadJ_sq {e : J} (he : ∀ y : J, e * y = y) (x z : J) :
+    quadJ (x * x) z = quadJ x (quadJ x z) := by
+  have hff := quadJ_quadJ_quadJ x e z
+  rw [quadJ_unit he x] at hff
+  rw [hff, quadJ_unit_left he]
+
+/-- **`Q_a = Q_{√a} ∘ Q_{√a}`** for any `a` carrying a resolution with nonnegative eigenvalues.
+
+The Lüders product is `a · b = Q_{√a} b`, so this says applying it twice with the same `a` is
+`Q_a` — the first structural fact about iterating the product. -/
+theorem quadJ_jsqrt_sq [IsFormallyReal J] [Module.Finite ℝ J] {e : J}
+    (he : ∀ y : J, e * y = y) {a : J}
+    {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c)
+    (hinj : Function.Injective lam) (ha : a = ∑ i, lam i • c i)
+    (hnn : ∀ i, c i ≠ 0 → 0 ≤ lam i) (z : J) :
+    quadJ a z = quadJ (jsqrt e he a) (quadJ (jsqrt e he a) z) := by
+  have hsq : jsqrt e he a * jsqrt e he a = a := jsqrt_mul_self' e he a hfam hinj ha hnn
+  rw [← quadJ_sq he (jsqrt e he a) z, hsq]
+
 end RadicalRelativity.EJA
