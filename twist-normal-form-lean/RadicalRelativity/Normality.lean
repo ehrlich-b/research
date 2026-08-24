@@ -637,3 +637,53 @@ theorem compatible_of_isGLB_of_firstArgContinuous (harch : IsArchimedean V)
     ((firstArgContinuousOu_iff_firstArgContinuous P harch).mpr hS2) ha hb hblim hanti hglb hcomp
 
 end SequentialProductOn
+
+/-! ## van de Wetering's hypothesis package: a convex σ-sequential effect algebra
+
+★★★ vdW's Theorem A.6 says the standard product makes the effects of a f.d. EJA a *convex
+σ-sequential effect algebra*, hence a *sequential effect space*.  Unpacked into this tree's own
+vocabulary that is exactly three things about a `P : SequentialProductOn V`: the S1, S3–S7
+structure it already is, paper S2, normality in the `↓`-sense, and convexity of the effect
+interval.  ★ "hence an SES" is vdW's *name* for a convex σ-SEA on an order-unit space, not an
+additional assertion, so nothing further is claimed by it here. -/
+
+/-- **vdW's convex σ-sequential effect algebra**, for a sequential product on a fixed order-unit
+space: paper S2, normality, and convexity of the effects.  The S1, S3–S7 half is the type of `P`
+itself. -/
+structure IsConvexSigmaSEA {V : Type*} [OrderUnitSpace V] (P : SequentialProductOn V) : Prop where
+  /-- Paper S2: continuity in the first argument. -/
+  s2 : P.FirstArgContinuousOu
+  /-- The `σ` half: `b_k ↓ b ⇒ a·b_k ↓ a·b`. -/
+  normal : ∀ {a : V}, IsEffect a → ∀ {b : ℕ → V} {blim : V}, (∀ k, IsEffect (b k)) →
+    IsEffect blim → Antitone b → IsGLB (Set.range b) blim →
+    IsGLB (Set.range fun k => P.sp a (b k)) (P.sp a blim)
+  /-- Convexity of the effect interval. -/
+  convex : ∀ {a b : V}, IsEffect a → IsEffect b → ∀ t : ℝ, 0 ≤ t → t ≤ 1 →
+    IsEffect (t • a + (1 - t) • b)
+
+/-- The effect interval of any order-unit space is convex. -/
+theorem isEffect_convexCombo {V : Type*} [OrderUnitSpace V] {a b : V}
+    (ha : IsEffect a) (hb : IsEffect b) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
+    IsEffect (t • a + (1 - t) • b) := by
+  have h1t : (0 : ℝ) ≤ 1 - t := by linarith
+  refine ⟨add_nonneg (smul_nonneg' ht0 ha.1) (smul_nonneg' h1t hb.1), ?_⟩
+  have hle : t • a + (1 - t) • b ≤ t • (𝟙 : V) + (1 - t) • (𝟙 : V) :=
+    add_le_add' (OrderUnitSpace.smul_nonneg_mono t ht0 ha.2)
+      (OrderUnitSpace.smul_nonneg_mono (1 - t) h1t hb.2)
+  have heq : t • (𝟙 : V) + (1 - t) • (𝟙 : V) = (𝟙 : V) := by
+    rw [← add_smul]; norm_num
+  rwa [heq] at hle
+
+/-- **Any `SequentialProductOn` on a f.d. Archimedean order-unit space with S2 is a convex
+σ-SEA.**  Normality is `sp_isGLB_of_isGLB`; convexity is `isEffect_convexCombo`; S2 is the
+hypothesis. -/
+theorem isConvexSigmaSEA_of_firstArgContinuousOu {V : Type*} [OrderUnitSpace V]
+    [FiniteDimensional ℝ V] (P : SequentialProductOn V) (harch : IsArchimedean V)
+    (hS2 : P.FirstArgContinuousOu) : IsConvexSigmaSEA P := by
+  refine { s2 := hS2, normal := ?_, convex := ?_ }
+  · intro a ha b blim hb hblim hanti hglb
+    exact P.sp_isGLB_of_isGLB harch ha hb hblim hanti hglb
+  · intro a b ha hb t ht0 ht1
+    exact isEffect_convexCombo ha hb t ht0 ht1
+
+

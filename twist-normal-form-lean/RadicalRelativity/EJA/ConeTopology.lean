@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.EJA.PseudoTransfer
+import RadicalRelativity.Normality
 import Mathlib.Analysis.Calculus.FDeriv.Bilinear
 
 set_option linter.style.longLine false
@@ -1329,5 +1330,27 @@ theorem ludersSequentialProduct_firstArgContinuous :
     (1 : J) jmulₗ_one_mul
   intro b _
   exact luders_continuousOn_isEffect b
+
+
+/-- ★★★ **`lem:simple-bridge` clause (i)**: the standard product makes the effects of a
+finite-dimensional Euclidean Jordan algebra a **convex σ-sequential effect algebra**, hence a
+sequential effect space.
+
+The three components are the S1/S3–S7 structure (`ludersSequentialProduct` itself), paper S2
+(`ludersSequentialProduct_firstArgContinuous`), normality (`Normality.sp_isGLB_of_isGLB`, which
+holds for *every* pinned product on a f.d. Archimedean order-unit space) and convexity of the
+effect interval.  ★ "hence an SES" is vdW's name for this package, not a further claim. -/
+theorem ludersSequentialProduct_isConvexSigmaSEA :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    IsConvexSigmaSEA (ludersSequentialProduct (J := J)) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  have harch : OrderUnitSpace.IsArchimedean J :=
+    isArchimedean_ofBilinear jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal jmulₗ_inner_assoc
+      (1 : J) jmulₗ_one_mul
+  refine isConvexSigmaSEA_of_firstArgContinuousOu _ harch ?_
+  exact (SequentialProductOn.firstArgContinuousOu_iff_firstArgContinuous _ harch).mpr
+    ludersSequentialProduct_firstArgContinuous
 
 end RadicalRelativity.EJA
