@@ -997,3 +997,12 @@ import RadicalRelativity.EJA.AlbertBridge
 -- ★ Differentiability is DEDUCED, not assumed -- which is the whole point, since the only thing
 -- known about the map in the application is continuity (paper axiom S2).
 import RadicalRelativity.OneParameter
+
+-- ★★★ **The differential of `χ`** -- `EJA.exists_blockGenerator`: for a frame `F` and `i ≠ j`,
+-- there is a single `T` with `ρ_{ij}(dχ(r)) = (rᵢ − rⱼ)·T` for every `r`.  This is manifest
+-- row 17's last clause, assembled from the four ingredients its cell names: `blockRestrict` (a),
+-- `twistChi_id_on_frameBlock` -- row 16 pushed from `Θ` to `χ` (b), `hasDerivAt_dChi` off
+-- `OneParam.hasDerivAt_of_continuous` (c), and `exists_smul_of_vanishing_on_diag` (d).  ★ The
+-- only input about `χ` is CONTINUITY (`continuous_chiCLM`, which carries the `Θ_{v(r)}⁻¹` factor
+-- through continuity of inversion at a unit of a Banach algebra); differentiability is deduced.
+import RadicalRelativity.EJA.ThetaDifferential
