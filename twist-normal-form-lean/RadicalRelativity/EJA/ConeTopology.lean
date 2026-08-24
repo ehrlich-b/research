@@ -1135,4 +1135,117 @@ theorem luders_assoc_of_compat {a b : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS 
   (quadJ_jsqrt_assoc_of_opCommute ha hb
     (fun w => (opCommute_of_luders_comm ha hb h w).symm) c).symm
 
+
+/-! ### S7: the commutant of a general element is a subalgebra
+
+★★★ The idempotent case is `opCommute_idem_mul`.  Getting from there to a general `a` needs
+commutation to pass from `a` to its *spectral idempotents*, and that is where the polynomial
+calculus earns its keep: a simultaneous resolution of `a` and `x` also resolves `jeval a p` for
+every polynomial `p` (`jeval_of_resolution`), and each spectral idempotent with a nonzero
+eigenvalue **is** such a `jeval` (`idem_eq_jeval_lagrange`).  The idempotent at eigenvalue `0`,
+which is not a polynomial in `a`, is handled as `1 −` the sum of the others. -/
+
+omit [FiniteDimensional ℝ J] in
+theorem opCommute_sum {ι : Type*} (s : Finset ι) (g : ι → J) {x : J}
+    (h : ∀ i ∈ s, ∀ w, g i * (x * w) = x * (g i * w)) (w : J) :
+    (∑ i ∈ s, g i) * (x * w) = x * ((∑ i ∈ s, g i) * w) := by
+  rw [Finset.sum_mul, Finset.sum_mul, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i hi => h i hi w
+
+/-- **Commutation passes to every polynomial in the element.** -/
+theorem opCommute_jeval_of_opCommute {a x : J} (hax : ∀ w, a * (x * w) = x * (a * w))
+    (p : Polynomial ℝ) (w : J) : jeval a p * (x * w) = x * (jeval a p * w) := by
+  obtain ⟨N, q, la, mu, hfam, hsum, hae, hxe⟩ :=
+    exists_simultaneous_resolution 1 EuclideanJordanAlgebra.one_mul hax
+  have hj : jeval a p = ∑ k, (la k * p.eval (la k)) • q k := by
+    rw [hae]; exact jeval_of_resolution hfam la p
+  exact opCommute_of_shared_resolution' hfam hj hxe w
+
+/-- Commutation passes to a spectral idempotent with nonzero eigenvalue, which is the Lagrange
+polynomial in `a`. -/
+theorem opCommute_spectralIdem_of_ne_zero {a x : J} (hax : ∀ w, a * (x * w) = x * (a * w))
+    {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c)
+    (hinj : Function.Injective lam) (hae : a = ∑ i, lam i • c i) {k : Fin n}
+    (hk : lam k ≠ 0) (w : J) : c k * (x * w) = x * (c k * w) := by
+  have h := opCommute_jeval_of_opCommute hax
+    (Polynomial.C (lam k)⁻¹ * Lagrange.basis Finset.univ lam k) w
+  rwa [hae, idem_eq_jeval_lagrange hfam hinj k hk] at h
+
+/-- ★★★ **Commutation passes to every spectral idempotent.** -/
+theorem opCommute_spectralIdem {a x : J} (hax : ∀ w, a * (x * w) = x * (a * w))
+    {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c)
+    (hsum : (∑ i, c i) = (1 : J)) (hinj : Function.Injective lam)
+    (hae : a = ∑ i, lam i • c i) (k : Fin n) (w : J) : c k * (x * w) = x * (c k * w) := by
+  classical
+  by_cases hk : lam k = 0
+  · have hck : c k = (1 : J) - ∑ j ∈ Finset.univ.erase k, c j := by
+      have hs := hsum
+      rw [← Finset.add_sum_erase _ _ (Finset.mem_univ k)] at hs
+      exact eq_sub_of_add_eq hs
+    have hrest : ∀ v, (∑ j ∈ Finset.univ.erase k, c j) * (x * v)
+        = x * ((∑ j ∈ Finset.univ.erase k, c j) * v) := by
+      refine opCommute_sum _ _ fun j hj v => ?_
+      refine opCommute_spectralIdem_of_ne_zero hax hfam hinj hae ?_ v
+      intro hlj
+      exact (Finset.mem_erase.mp hj).1 (hinj (by rw [hlj, hk]))
+    rw [hck, sub_mul, sub_mul, EuclideanJordanAlgebra.one_mul, mul_sub,
+      EuclideanJordanAlgebra.one_mul, hrest w]
+  · exact opCommute_spectralIdem_of_ne_zero hax hfam hinj hae hk w
+
+/-- ★★★ **The operator-commutant of any element is closed under the Jordan product.**
+
+This is S7's structural content.  Commutation with `a` passes to each spectral idempotent
+(`opCommute_spectralIdem`); at an idempotent the commutant is a subalgebra
+(`opCommute_idem_mul`); and `a = ∑ λₖcₖ` reassembles. -/
+theorem opCommute_mul {a x y : J} (hax : ∀ w, a * (x * w) = x * (a * w))
+    (hay : ∀ w, a * (y * w) = y * (a * w)) (w : J) :
+    a * ((x * y) * w) = (x * y) * (a * w) := by
+  classical
+  obtain ⟨n, c, lam, hfam, hsum, hae, hinj⟩ :=
+    exists_resolution_distinct 1 EuclideanJordanAlgebra.one_mul a
+  have hk : ∀ k : Fin n, ∀ v, c k * ((x * y) * v) = (x * y) * (c k * v) := fun k v =>
+    opCommute_idem_mul (hfam.idem k)
+      (fun u => opCommute_spectralIdem hax hfam hsum hinj hae k u)
+      (fun u => opCommute_spectralIdem hay hfam hsum hinj hae k u) v
+  rw [hae, Finset.sum_mul, Finset.sum_mul, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [smul_mul_assoc, smul_mul_assoc, mul_smul_comm, hk k w]
+
+
+omit [FiniteDimensional ℝ J] in
+/-- The commutant of any element is closed under the quadratic representation. -/
+theorem opCommute_quadJ {a x y : J} (hax : ∀ w, a * (x * w) = x * (a * w))
+    (hay : ∀ w, a * (y * w) = y * (a * w))
+    (hmul : ∀ {u v : J}, (∀ w, a * (u * w) = u * (a * w)) → (∀ w, a * (v * w) = v * (a * w)) →
+      ∀ w, a * ((u * v) * w) = (u * v) * (a * w)) (w : J) :
+    a * (quadJ x y * w) = quadJ x y * (a * w) := by
+  rw [quadJ_apply, sub_mul, sub_mul, mul_sub, smul_mul_assoc, smul_mul_assoc, mul_smul_comm,
+    hmul hax (hmul hax hay) w, hmul (hmul hax hax) hay w]
+
+/-- ★★★ **S7 for the Lüders product**: compatibility with `b` and with `c` gives compatibility
+with `b · c`.
+
+All three uses of the bridge are here — twice forward to get operator commutation out of the
+hypotheses, once back to turn the conclusion into compatibility — with
+`opCommute_jsqrt_of_opCommute`, `opCommute_mul` and `opCommute_quadJ` in between. -/
+theorem luders_compat_sp {a b c : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (hc : IsSoS (jmulₗ J) c)
+    (hab : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+         = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a)
+    (hac : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) c
+         = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul c) a) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a)
+        (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) c)
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
+          (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) c)) a := by
+  have hOab : ∀ w, a * (b * w) = b * (a * w) := fun w =>
+    (opCommute_of_luders_comm ha hb hab w).symm
+  have hOac : ∀ w, a * (c * w) = c * (a * w) := fun w =>
+    (opCommute_of_luders_comm ha hc hac w).symm
+  have hOsq : ∀ w, a * (jsqrt 1 EuclideanJordanAlgebra.one_mul b * w)
+      = jsqrt 1 EuclideanJordanAlgebra.one_mul b * (a * w) :=
+    opCommute_jsqrt_of_opCommute hOab
+  refine luders_comm_of_opCommute ha (quadJ_isSoS _ hc) ?_
+  exact opCommute_quadJ hOsq hOac (fun hu hv => opCommute_mul hu hv)
+
 end RadicalRelativity.EJA
