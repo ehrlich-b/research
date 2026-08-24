@@ -758,4 +758,150 @@ theorem theta_comm {N : ℕ} {q : Fin N → J} {la mu : Fin N → ℝ}
   rw [quadJSqrtEquiv_apply, quadJSqrtEquiv_apply, hone, htwo]
   exact congrFun (congrArg (fun f : J →ₗ[ℝ] J => (f : J → J)) hLlin) y
 
+
+/-! ## `lem:frame-fix` (manifest row 15): what `Θ_r` does to a Jordan frame
+
+★★★ Each frame atom is an effect that operator-commutes with `a(r) = ∑ f k • pₖ` — both are
+resolved by the frame family — so the fixing property pins `Θ_r pᵢ = pᵢ` at once.  Linearity then
+fixes the whole diagonal, and being a Jordan automorphism that fixes every atom makes `Θ_r`
+preserve every Peirce block. -/
+
+/-- Each atom of a Jordan frame is an effect. -/
+theorem isEffect_frame_atom {N : ℕ} (F : JordanFrame J N) (i : Fin N) :
+    IsSoS (jmulₗ J) (F.p i) ∧ IsSoS (jmulₗ J) ((1 : J) - F.p i) :=
+  ⟨isSoS_of_idem (F.orthIdem.idem i), isSoS_one_sub_idem (F.orthIdem.idem i)⟩
+
+/-- An atom is resolved by its own frame family, with the indicator coefficients. -/
+theorem frame_atom_resolution {N : ℕ} (F : JordanFrame J N) (i : Fin N) :
+    F.p i = ∑ k, (if k = i then (1 : ℝ) else 0) • F.p k := by
+  classical
+  rw [Finset.sum_eq_single i (fun k _ hk => by rw [if_neg hk, zero_smul])
+    (fun hk => absurd (Finset.mem_univ i) hk), if_pos rfl, one_smul]
+
+/-- ★★★ **`lem:frame-fix`, atom clause**: `Θ` fixes every atom of the frame that produced `a`. -/
+theorem theta_fixes_frame_atom {N : ℕ} (F : JordanFrame J N) {f : Fin N → ℝ}
+    (hf0 : ∀ k, 0 < f k) (hf1 : ∀ k, f k ≤ 1) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J)
+        (hae : OrderUnitSpace.IsEffect (∑ k, f k • F.p k)) (Θ : J ≃ₗ[ℝ] J),
+        (∀ z : J, P.seqLeftMulAbs harch hae z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (∑ k, f k • F.p k)) (Θ z)) →
+        ∀ i : Fin N, Θ (F.p i) = F.p i := by
+  classical
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hae Θ hΘ i
+  have hasos : IsSoS (jmulₗ J) (∑ k, f k • F.p k) :=
+    isSoS_sum _ _ fun k _ => isSoS_smul_idem (hf0 k).le (F.orthIdem.idem k)
+  have hacs : IsSoS (jmulₗ J) ((1 : J) - ∑ k, f k • F.p k) := by
+    have hrw : (1 : J) - ∑ k, f k • F.p k = ∑ k, (1 - f k) • F.p k := by
+      have hh := smul_unit_sub_eq F.complete (rfl : (∑ k, f k • F.p k) = _) 1
+      rwa [one_smul] at hh
+    rw [hrw]
+    exact isSoS_sum _ _ fun k _ => isSoS_smul_idem (by linarith [hf1 k]) (F.orthIdem.idem k)
+  obtain ⟨hpsos, hpcs⟩ := isEffect_frame_atom F i
+  exact theta_fixes_of_opCommute F.orthIdem F.complete (rfl : (∑ k, f k • F.p k) = _)
+    hasos hacs (fun k _ => (hf0 k).ne') P hS2 harch hae Θ hΘ hpsos hpcs
+    (opCommute_of_shared_resolution' F.orthIdem (rfl : (∑ k, f k • F.p k) = _)
+      (frame_atom_resolution F i))
+
+/-- ★★★ **`lem:frame-fix`, Peirce-block clause**: a Jordan automorphism fixing every frame atom
+preserves every Peirce block of the frame. -/
+theorem jordanAut_maps_frameBlock {N : ℕ} (F : JordanFrame J N) {Θ : J ≃ₗ[ℝ] J}
+    (hmul : ∀ x y : J, Θ (x * y) = Θ x * Θ y) (hfix : ∀ i, Θ (F.p i) = F.p i)
+    {i j : Fin N} (hij : i ≠ j) {x : J} (hx : x ∈ frameBlockRaw F i j) :
+    Θ x ∈ frameBlockRaw F i j := by
+  obtain ⟨h1, h2⟩ := (mem_frameBlockRaw_off hij).mp hx
+  refine (mem_frameBlockRaw_off hij).mpr ⟨?_, ?_⟩
+  · have := congrArg Θ h1
+    rwa [hmul, hfix, map_smul] at this
+  · have := congrArg Θ h2
+    rwa [hmul, hfix, map_smul] at this
+
+
+/-- A frame-diagonal element acts on an off-diagonal Peirce block by the mean of its two
+coefficients. -/
+theorem frameDiag_mul_block {N : ℕ} (F : JordanFrame J N) (g : Fin N → ℝ) {i j : Fin N}
+    (hij : i ≠ j) {x : J} (hx : x ∈ frameBlockRaw F i j) :
+    (∑ k, g k • F.p k) * x = ((g i + g j) / 2) • x := by
+  classical
+  obtain ⟨hi, hj⟩ := (mem_frameBlockRaw_off hij).mp hx
+  rw [Finset.sum_mul]
+  have hterm : ∀ k ∈ (Finset.univ : Finset (Fin N)),
+      (g k • F.p k) * x = (if k = i then g i / 2 else if k = j then g j / 2 else 0) • x := by
+    intro k _
+    rw [smul_mul_assoc]
+    by_cases hki : k = i
+    · subst hki; rw [hi, if_pos rfl, smul_smul]; ring_nf
+    by_cases hkj : k = j
+    · subst hkj; rw [hj, if_neg hki, if_pos rfl, smul_smul]; ring_nf
+    · rw [frame_mul_eq_zero_of_eigen_half F hij hki hkj hi hj, smul_zero, if_neg hki,
+        if_neg hkj, zero_smul]
+  rw [Finset.sum_congr rfl hterm, ← Finset.sum_smul]
+  congr 1
+  have hji : j ∈ Finset.univ.erase i := Finset.mem_erase.mpr ⟨Ne.symm hij, Finset.mem_univ j⟩
+  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i), if_pos rfl,
+    ← Finset.add_sum_erase _ _ hji, if_neg (Ne.symm hij), if_pos rfl]
+  have hrest : ∑ k ∈ (Finset.univ.erase i).erase j,
+      (if k = i then g i / 2 else if k = j then g j / 2 else 0) = 0 := by
+    refine Finset.sum_eq_zero fun k hk => ?_
+    rw [if_neg (Finset.mem_erase.mp (Finset.mem_erase.mp hk).2).1,
+      if_neg (Finset.mem_erase.mp hk).1]
+  rw [hrest]
+  ring
+
+/-- ★★★ **`lem:frame-fix`, block-diagonality**: `Q` of a frame-diagonal element acts on the
+off-diagonal Peirce block `V_{ij}` as the scalar `gᵢgⱼ`. -/
+theorem quadJ_frameDiag_block {N : ℕ} (F : JordanFrame J N) (g : Fin N → ℝ) {i j : Fin N}
+    (hij : i ≠ j) {x : J} (hx : x ∈ frameBlockRaw F i j) :
+    quadJ (∑ k, g k • F.p k) x = (g i * g j) • x := by
+  have h1 : (∑ k, g k • F.p k) * x = ((g i + g j) / 2) • x := frameDiag_mul_block F g hij hx
+  have hsq : (∑ k, g k • F.p k) * (∑ k, g k • F.p k) = ∑ k, (g k * g k) • F.p k :=
+    sum_smul_mul_sum_smul_of_orthIdem F.orthIdem g g
+  have h2 : (∑ k, (g k * g k) • F.p k) * x = ((g i * g i + g j * g j) / 2) • x :=
+    frameDiag_mul_block F (fun k => g k * g k) hij hx
+  rw [quadJ_apply, h1, hsq, h2, mul_smul_comm, h1, smul_smul]
+  match_scalars
+  ring
+
+
+omit [FiniteDimensional ℝ J] in
+/-- ★★★ **`lem:frame-fix`, diagonal clause**: fixing the atoms fixes the whole frame diagonal, by
+linearity. -/
+theorem jordanAut_fixes_frameDiag {N : ℕ} (F : JordanFrame J N) {Θ : J ≃ₗ[ℝ] J}
+    (hfix : ∀ i, Θ (F.p i) = F.p i) (g : Fin N → ℝ) :
+    Θ (∑ k, g k • F.p k) = ∑ k, g k • F.p k := by
+  rw [map_sum]
+  exact Finset.sum_congr rfl fun k _ => by rw [map_smul, hfix k]
+
+/-- ★★★ **`lem:frame-fix`, final clause**: `L_{a(r)} = Q_{√a} ∘ Θ` maps every off-diagonal Peirce
+block into itself, i.e. **`L_{a(r)}` is Peirce-block-diagonal**.
+
+`Θ` preserves the block (it is a Jordan automorphism fixing the atoms) and `Q_{√a}` acts on the
+block by the scalar `√fᵢ√fⱼ`. -/
+theorem seqLeftMul_mapsTo_frameBlock {N : ℕ} (F : JordanFrame J N) {f : Fin N → ℝ}
+    (hf0 : ∀ k, 0 < f k) (hf1 : ∀ k, f k ≤ 1) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J)
+        (hae : OrderUnitSpace.IsEffect (∑ k, f k • F.p k)) (Θ : J ≃ₗ[ℝ] J),
+        (∀ x y : J, Θ (x * y) = Θ x * Θ y) →
+        (∀ z : J, P.seqLeftMulAbs harch hae z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (∑ k, f k • F.p k)) (Θ z)) →
+        ∀ {i j : Fin N}, i ≠ j → ∀ {x : J}, x ∈ frameBlockRaw F i j →
+          P.seqLeftMulAbs harch hae x ∈ frameBlockRaw F i j := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hae Θ hmul hΘ i j hij x hx
+  have hfix := theta_fixes_frame_atom F hf0 hf1 P hS2 harch hae Θ hΘ
+  have hΘx : Θ x ∈ frameBlockRaw F i j := jordanAut_maps_frameBlock F hmul hfix hij hx
+  have hsq : jsqrt 1 EuclideanJordanAlgebra.one_mul (∑ k, f k • F.p k)
+      = ∑ k, Real.sqrt (f k) • F.p k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul _ F.orthIdem rfl
+  rw [hΘ x, hsq, quadJ_frameDiag_block F _ hij hΘx]
+  exact Submodule.smul_mem _ _ hΘx
+
 end RadicalRelativity.EJA
