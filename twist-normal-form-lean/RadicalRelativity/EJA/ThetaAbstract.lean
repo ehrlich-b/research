@@ -1147,4 +1147,45 @@ theorem theta_mem_stabFrame {N : ℕ} (F : JordanFrame J N) {f : Fin N → ℝ}
   · intro i
     exact theta_fixes_frame_atom F hf0 hf1 P hS2 harch hae _ hid i
 
+
+/-! ## The path from the identity to `Θ_r`
+
+★★★ The last step for `Θ_r ∈ Stab(F)°`.  On the twist family everything is explicit: the
+spectral inverse of `a(r)` is `a(−r)`, so `Θ_r = Q_{√a(−r)} ∘ L_{a(r)}` with **no `Classical.choose`
+anywhere in the formula**, and continuity in `r` follows from the two operator-continuity theorems.
+Clamping the parameter to `[0,1]` makes the path total on `ℝ`, so its range is connected. -/
+
+theorem jinvOfResolution_twistElt {N : ℕ} (F : JordanFrame J N) (r : Fin N → ℝ) :
+    jinvOfResolution F.p (fun k => Real.exp (r k)) = twistElt F (-r) := by
+  show (∑ k, (Real.exp (r k))⁻¹ • F.p k : J) = ∑ k, Real.exp ((-r) k) • F.p k
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [Pi.neg_apply, Real.exp_neg]
+
+/-- ★★★ **`Θ_r` in closed form on the twist family**: `Θ_r = Q_{√a(−r)} ∘ L_{a(r)}`. -/
+theorem thetaOf_twistElt_apply {N : ℕ} (F : JordanFrame J N) {r : Fin N → ℝ}
+    (hr : ∀ k, r k ≤ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J)
+      (hae : OrderUnitSpace.IsEffect (twistElt F r)) (z : J),
+      thetaOf F.orthIdem F.complete (rfl : twistElt F r = _) (twistElt_isSoS F r)
+          (twistElt_compl_isSoS F hr) (fun k _ => (Real.exp_pos (r k)).ne')
+          P hS2 harch hae z
+        = quadJ (∑ k, Real.sqrt (Real.exp (-r k)) • F.p k)
+            (P.seqLeftMulAbs harch hae z) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hae z
+  have hval : thetaOf F.orthIdem F.complete (rfl : twistElt F r = _) (twistElt_isSoS F r)
+      (twistElt_compl_isSoS F hr) (fun k _ => (Real.exp_pos (r k)).ne') P hS2 harch hae z
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
+          (jinvOfResolution F.p (fun k => Real.exp (r k)))) (P.seqLeftMulAbs harch hae z) := rfl
+  rw [hval, jinvOfResolution_twistElt F r]
+  congr 1
+  have := jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul (twistElt F (-r))
+    F.orthIdem (rfl : twistElt F (-r) = _)
+  rw [this]
+  rfl
+
 end RadicalRelativity.EJA
