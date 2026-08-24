@@ -472,4 +472,174 @@ theorem theta_id_on_frameBlock {N : ℕ} (F : JordanFrame J N) {f : Fin N → �
   exact theta_id_on_peirceTwo_all F.orthIdem F.complete hadef hasos hacs
     (fun k _ => (hf0 k).ne') hq hdec ha₀ P hS2 harch hae Θ hΘ hy2
 
+
+/-! ## `prop:theta`, multiplicativity
+
+★★★ `Θ_{b•b'} = Θ_b Θ_{b'} = Θ_{b'} Θ_b` for operator-commuting invertible effects.  The proof
+cancels `Q` on both sides of the defining identity, so it needs two structural facts:
+`Q_{√(b•b')} = Q_{√b} Q_{√b'}` (the square root of the product is the product of the square roots
+on a shared resolution, and `quadJ_mul_of_opCommute` turns that into composition), and that a
+Jordan automorphism intertwines `Q`. -/
+
+omit [FiniteDimensional ℝ J] in
+/-- A Jordan homomorphism intertwines the quadratic representation. -/
+theorem map_quadJ_of_jordanHom {Θ : J ≃ₗ[ℝ] J} (hmul : ∀ x y : J, Θ (x * y) = Θ x * Θ y)
+    (v x : J) : Θ (quadJ v x) = quadJ (Θ v) (Θ x) := by
+  rw [quadJ_apply, quadJ_apply, map_sub, map_smul, hmul, hmul, hmul, hmul]
+
+/-- On a shared resolution, the square root of the Lüders product is the product of the square
+roots. -/
+theorem jsqrt_luders_eq {N : ℕ} {q : Fin N → J} {la mu : Fin N → ℝ}
+    (hfam : IsOrthIdemFamily q) (hla0 : ∀ k, 0 ≤ la k) (hmu0 : ∀ k, 0 ≤ mu k)
+    {b b' : J} (hb : b = ∑ k, la k • q k) (hb' : b' = ∑ k, mu k • q k) :
+    jsqrt 1 EuclideanJordanAlgebra.one_mul
+        (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) b')
+      = jsqrt 1 EuclideanJordanAlgebra.one_mul b * jsqrt 1 EuclideanJordanAlgebra.one_mul b' := by
+  have hsb : jsqrt 1 EuclideanJordanAlgebra.one_mul b = ∑ k, Real.sqrt (la k) • q k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b hfam hb
+  have hsb' : jsqrt 1 EuclideanJordanAlgebra.one_mul b' = ∑ k, Real.sqrt (mu k) • q k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b' hfam hb'
+  have hprod : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) b'
+      = ∑ k, (la k * mu k) • q k := by
+    rw [hsb]
+    conv_lhs => rw [hb']
+    exact luders_of_resolution hfam hla0 mu
+  rw [jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul _ hfam hprod, hsb, hsb',
+    sum_smul_mul_sum_smul_of_orthIdem hfam]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [Real.sqrt_mul (hla0 k)]
+
+/-- `Q_{√(b•b')} = Q_{√b} ∘ Q_{√b'}` on a shared resolution. -/
+theorem quadJ_jsqrt_luders_comp {N : ℕ} {q : Fin N → J} {la mu : Fin N → ℝ}
+    (hfam : IsOrthIdemFamily q) (hsum : (∑ k, q k) = 1)
+    (hla0 : ∀ k, 0 ≤ la k) (hmu0 : ∀ k, 0 ≤ mu k)
+    {b b' : J} (hb : b = ∑ k, la k • q k) (hb' : b' = ∑ k, mu k • q k) (z : J) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
+        (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) b')) z
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b)
+          (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b') z) := by
+  have hsb : jsqrt 1 EuclideanJordanAlgebra.one_mul b = ∑ k, Real.sqrt (la k) • q k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b hfam hb
+  have hsb' : jsqrt 1 EuclideanJordanAlgebra.one_mul b' = ∑ k, Real.sqrt (mu k) • q k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b' hfam hb'
+  rw [jsqrt_luders_eq hfam hla0 hmu0 hb hb']
+  exact quadJ_mul_of_opCommute EuclideanJordanAlgebra.one_mul
+    (opCommute_of_shared_resolution' hfam hsb hsb') z
+
+
+/-- ★★★ **`prop:theta`, multiplicativity clause, at abstract EJA generality.**
+
+For operator-commuting invertible effects `b`, `b'` presented on a shared resolution,
+`Θ_{b•b'} = Θ_b Θ_{b'} = Θ_{b'} Θ_b`.
+
+★ Stated without a global choice of `Θ`, because the defining identity `L_b = Q_{√b} ∘ Θ_b`
+determines `Θ_b` uniquely; the hypotheses are just that each of the three maps satisfies its own
+identity.  The proof cancels `Q_{√(b•b')} = Q_{√b} Q_{√b'}` after moving `Θ_b` past `Q_{√b'}`,
+which is legal because `Θ_b` is a Jordan automorphism fixing `√b'`. -/
+theorem theta_mul {N : ℕ} {q : Fin N → J} {la mu : Fin N → ℝ}
+    (hfam : IsOrthIdemFamily q) (hsum : (∑ k, q k) = 1)
+    (hla0 : ∀ k, 0 ≤ la k) (hla1 : ∀ k, la k ≤ 1)
+    (hmu0 : ∀ k, 0 ≤ mu k) (hmu1 : ∀ k, mu k ≤ 1)
+    (hlane : ∀ k, q k ≠ 0 → la k ≠ 0) (hmune : ∀ k, q k ≠ 0 → mu k ≠ 0)
+    {b b' : J} (hb : b = ∑ k, la k • q k) (hb' : b' = ∑ k, mu k • q k) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J)
+        (hbe : OrderUnitSpace.IsEffect b) (hb'e : OrderUnitSpace.IsEffect b')
+        (hbb'e : OrderUnitSpace.IsEffect (P.sp b b'))
+        (Θb Θb' Θbb' : J ≃ₗ[ℝ] J),
+        (∀ x y : J, Θb (x * y) = Θb x * Θb y) →
+        (∀ z : J, P.seqLeftMulAbs harch hbe z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) (Θb z)) →
+        (∀ z : J, P.seqLeftMulAbs harch hb'e z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b') (Θb' z)) →
+        (∀ z : J, P.seqLeftMulAbs harch hbb'e z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (P.sp b b')) (Θbb' z)) →
+        ∀ y : J, Θbb' y = Θb (Θb' y) := by
+  classical
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hbe hb'e hbb'e Θb Θb' Θbb' hΘbmul hΘb hΘb' hΘbb' y
+  -- cone data
+  have hbsos : IsSoS (jmulₗ J) b :=
+    (isEffect_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul b).mp hbe |>.1
+  have hbcs : IsSoS (jmulₗ J) ((1 : J) - b) :=
+    (isEffect_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul b).mp hbe |>.2
+  have hb'sos : IsSoS (jmulₗ J) b' :=
+    (isEffect_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul b').mp hb'e |>.1
+  have hb'cs : IsSoS (jmulₗ J) ((1 : J) - b') :=
+    (isEffect_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul b').mp hb'e |>.2
+  have hsb : jsqrt 1 EuclideanJordanAlgebra.one_mul b = ∑ k, Real.sqrt (la k) • q k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b hfam hb
+  have hsb' : jsqrt 1 EuclideanJordanAlgebra.one_mul b' = ∑ k, Real.sqrt (mu k) • q k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b' hfam hb'
+  have hcomm : ∀ w, b * (b' * w) = b' * (b * w) :=
+    opCommute_of_shared_resolution' hfam hb hb'
+  -- `b • b'` is the Lüders product and has the diagonal resolution
+  have hsp : P.sp b b' = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) b' :=
+    sp_eq_quadJ_of_opCommute hbsos hbcs hb'sos hb'cs hcomm P hS2
+  have hspres : P.sp b b' = ∑ k, (la k * mu k) • q k := by
+    rw [hsp, hsb]
+    conv_lhs => rw [hb']
+    exact luders_of_resolution hfam hla0 mu
+  have hspne : ∀ k, q k ≠ 0 → la k * mu k ≠ 0 := fun k hk =>
+    mul_ne_zero (hlane k hk) (hmune k hk)
+  have hspsos : IsSoS (jmulₗ J) (P.sp b b') :=
+    (isEffect_ofBilinear (m := jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul _).mp hbb'e |>.1
+  -- `Θb` fixes `√b'`
+  have hsb'sos : IsSoS (jmulₗ J) (jsqrt 1 EuclideanJordanAlgebra.one_mul b') := by
+    rw [hsb']
+    exact isSoS_sum _ _ fun k _ => isSoS_smul_idem (Real.sqrt_nonneg _) (hfam.idem k)
+  have hsb'cs : IsSoS (jmulₗ J) ((1 : J) - jsqrt 1 EuclideanJordanAlgebra.one_mul b') := by
+    have hrw : (1 : J) - jsqrt 1 EuclideanJordanAlgebra.one_mul b'
+        = ∑ k, (1 - Real.sqrt (mu k)) • q k := by
+      have hh := smul_unit_sub_eq hsum hsb' 1
+      rwa [one_smul] at hh
+    rw [hrw]
+    refine isSoS_sum _ _ fun k _ => isSoS_smul_idem ?_ (hfam.idem k)
+    have : Real.sqrt (mu k) ≤ 1 := by
+      rw [show (1 : ℝ) = Real.sqrt 1 by simp]; exact Real.sqrt_le_sqrt (hmu1 k)
+    linarith
+  have hfix : Θb (jsqrt 1 EuclideanJordanAlgebra.one_mul b') =
+      jsqrt 1 EuclideanJordanAlgebra.one_mul b' :=
+    theta_fixes_of_opCommute hfam hsum hb hbsos hbcs hlane P hS2 harch hbe Θb hΘb
+      hsb'sos hsb'cs (opCommute_of_shared_resolution' hfam hb hsb')
+  -- the two sides agree after applying `Q_{√(b•b')}`
+  have hkey : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (P.sp b b')) (Θbb' y)
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (P.sp b b')) (Θb (Θb' y)) := by
+    rw [← hΘbb' y]
+    have hcompose : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (P.sp b b')) (Θb (Θb' y))
+        = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b)
+            (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b') (Θb (Θb' y))) := by
+      rw [hsp]
+      exact quadJ_jsqrt_luders_comp hfam hsum hla0 hmu0 hb hb' _
+    rw [hcompose]
+    have hmove : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b') (Θb (Θb' y))
+        = Θb (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b') (Θb' y)) := by
+      rw [map_quadJ_of_jordanHom hΘbmul, hfix]
+    rw [hmove, ← hΘb' y, ← hΘb (P.seqLeftMulAbs harch hb'e y)]
+    -- S5: `L_{b•b'} = L_b ∘ L_{b'}`
+    have hcompat : P.sp b b' = P.sp b' b := by
+      rw [hsp, sp_eq_quadJ_of_opCommute hb'sos hb'cs hbsos hbcs (fun w => (hcomm w).symm) P hS2]
+      exact luders_comm_of_opCommute hbsos hb'sos hcomm
+    have hS5 : ∀ z : J, OrderUnitSpace.IsEffect z →
+        P.seqLeftMulAbs harch hbb'e z = P.seqLeftMulAbs harch hbe (P.seqLeftMulAbs harch hb'e z) := by
+      intro z hz
+      rw [P.seqLeftMulAbs_apply_effect harch hbb'e hz,
+        P.seqLeftMulAbs_apply_effect harch hb'e hz,
+        P.seqLeftMulAbs_apply_effect harch hbe (P.sp_effect hb'e hz)]
+      exact (P.sp_assoc_of_compatible hbe hb'e hz hcompat).symm
+    have hlin : P.seqLeftMulAbs harch hbb'e
+        = (P.seqLeftMulAbs harch hbe).comp (P.seqLeftMulAbs harch hb'e) :=
+      OrderUnitSpace.linearMap_eq_of_eq_on_effects _ _ fun z hz => hS5 z hz
+    rw [hlin]
+    rfl
+  exact (quadJSqrtEquiv hfam hsum hspres hspsos hspne).injective hkey
+
 end RadicalRelativity.EJA
