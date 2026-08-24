@@ -418,3 +418,76 @@ the sharp-effect case has a plausible attack, and sharp effects are exactly what
    cone — not attempted.
 5. Route new work UP into `EJA/Class.lean` via the `jmulL` tuple, never DOWN from `mulLL`.
 
+# ═══════════════════════════════════════════════════════════════════════════
+# 2026-08-24 — THE FUNDAMENTAL FORMULA IS PROVED. Scope reversed by Bryan.
+# ═══════════════════════════════════════════════════════════════════════════
+
+Bryan reversed the ARC-5/6 external pre-registration ("reach ground on everything / formalize
+anything you need that's imported") and added that upstreamable work is a feature, not a detour.
+The reversal is recorded at the head of `STATEMENT-MANIFEST.md` with his words verbatim.
+
+## The chain built tonight, in dependency order. All sorry-free, axioms `[propext, Classical.choice, Quot.sound]`.
+
+```
+PeirceMul.lean   lin_jordan_apply          fully linearised Jordan identity, torsion cancelled
+                 lin_jordan_diag           its diagonal case
+Fundamental.lean mulL_comm_sq              [L_a, L_{a^2}] = 0
+                 quadJ_mulL_comm           Q_a L_a = L_a Q_a
+                 tripleJ / tripleJ_eq_mulL the Jordan triple product, {x,y,.} = L_xy + [L_x,L_y]
+                 quadJ_polarisation        Q_{x+y} - Q_x - Q_y = 2{x,.,y}
+                 tripleJ_quadJ_comm        V_{x,y} U_x = U_x V_{y,x}          <- the crux
+                 quadJ_quadJ_quadJ         U_{U_x y} = U_x U_y U_x            <- THE FUNDAMENTAL FORMULA
+                 quadJ_sq                  Q_{x^2} = Q_x o Q_x   (FF at y = 1)
+                 quadJ_jsqrt_sq            Q_a = Q_{sqrt a} o Q_{sqrt a}
+Spectral.lean    quadJ_of_resolution       Q acts COEFFICIENTWISE on a shared resolution
+                 quadJ_jinvOfResolution    Q_x(x^-1) = x
+                 luders_jsqrt_jinv         a . a^-1 = 1 for the Luders product   <- HALF OF ROW 13
+                 luders_of_resolution      the Luders product is coefficientwise
+OrthFamily.lean  sp_orthFamily_value       vdW 5.2 value law at OrderUnitSpace generality
+                 sp_orthFamily_comm        + the compatibility transfer, + Fin-indexed corollaries
+```
+
+★ **`quadJ_quadJ_quadJ` is not in Mathlib** — its only Jordan file is `Algebra/Jordan/Basic.lean`,
+carrying `IsJordan`/`IsCommJordan` and nothing else (verified). Neither is `lin_jordan_apply` nor
+the quadratic representation. These are upstreamable on their own.
+
+## How the fundamental formula was actually proved — the method matters more than the theorem
+
+1. **Solve, do not guess.** A symbolic solver over the free commutative non-associative Q-algebra
+   finds the certificate by linear algebra: expand goal and candidate relations into monomial
+   trees, solve for rational coefficients. `scratchpad/ff2args.py`.
+2. **Verify the target numerically BEFORE proving it.** Both identities were checked on random
+   symmetric 3x3 reals under `a.b = (ab+ba)/2` to ~1e-14 first. Cheap insurance.
+3. **The transport problem, and its fix.** `linear_combination (norm := module)` compares atoms
+   SYNTACTICALLY, so a commutative-model certificate does not transfer. `simp only [mul_comm]`
+   does NOT help — as a general lemma it rewrites by term order and never normalises nested
+   products. What works: **oriented GROUND `mul_comm` instances**, one per out-of-order product
+   node, pointed at a fixed total order on trees. Each strictly decreases a well-founded order so
+   `simp only` terminates. FF1 needed 21 such instances; FF2 needed 364 (784 trees -> 302 atoms).
+4. FF2's certificate is **208 terms** and cannot be made much smaller — a basic solution has at
+   most `rank` nonzeros and the rank is ~200. It compiled first try, ~47s, `maxHeartbeats 2400000`.
+
+## What is left on rows 13 / 16
+
+S1, S3, S4 are proved for the candidate product `a . b := quadJ (jsqrt a) b`
+(`quadJ_add`, `quadJ_unit_left` + `quadJ_jsqrt_one`, `quadJ_jsqrt_zero_symm`).
+**S2, S5, S6, S7 remain, and they now reduce to ONE theorem**: operator-commuting elements admit a
+SIMULTANEOUS resolution. `luders_of_resolution` makes the product coefficientwise on a shared
+family, so every remaining axiom becomes arithmetic on reals once that lands.
+
+## ★★★ THREE OF MY OWN CLAIMS WERE WRONG TONIGHT. All corrected in place.
+
+1. **"FF1 is not in the degree-5 span"** — a confident measured negative result, and false. My
+   commutativity relations swapped only at the ROOT of each monomial; relating trees differing at
+   a DEEP node needs commutativity in context. Retracted in `Fundamental.lean` with the reason.
+2. **"The canonicity chain is complete, nothing carried"** — false. `idem_unique_of_resolutions`
+   wanted the FULL eigenvalue images while `nonzero_spectrum_eq_of_resolutions` supplies only the
+   FILTERED ones. Fixed by rerouting through `jann`-congruence rather than polynomial equality
+   (`idem_unique_of_nonzero_spectrum`).
+3. **Palomar: two wrong hypotheses in a row** (theorem count, then Challenge file size). The real
+   cause is a **Palomar-side review outage** starting between 15:32 and 18:57 on 2026-08-23:
+   successful reviews take 3-4.5 minutes, every failure since takes 17-21 seconds. Full evidence
+   in `~/scratch/palomar/queue.txt`; the queue is DISARMED so nothing resubmits.
+
+★ Every one of the three was found by trying to USE the thing, never by re-reading it.
+
