@@ -455,6 +455,34 @@ theorem luders_lowerInterval_surj {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin
   exact quadJ_isSoS _ hyb
 
 
+/-- **Invertibility forces every present eigenvalue to be nonzero.**
+
+If `b` has a Jordan inverse at all — some `w` with `b ∘ w = 1` — then no idempotent actually
+occurring in a resolution of `b` can carry the eigenvalue `0`.
+
+Pairing is what does it: `⟪cₖ, 1⟫ = ⟪cₖ, b ∘ w⟫ = ⟪b ∘ cₖ, w⟫`, and `b ∘ cₖ = λₖ cₖ = 0`, so the
+left side vanishes — but it also equals `⟪cₖ ∘ cₖ, 1⟫ = ⟪cₖ, cₖ⟫ = ‖cₖ‖² > 0`.
+
+★ This is what turns the resolution-relative statements of this file into statements about
+**every** invertible effect, which is how `main.tex:719` quantifies the proposition. -/
+theorem lam_ne_zero_of_invertible {b : J} {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ}
+    (hfam : IsOrthIdemFamily c) (hb : b = ∑ i, lam i • c i)
+    {w : J} (hw : b * w = 1) : ∀ i, c i ≠ 0 → lam i ≠ 0 := by
+  intro k hck hlk
+  have hbc : b * c k = lam k • c k := by
+    rw [hb]; exact sum_smul_mul_idem hfam lam k
+  rw [hlk, zero_smul] at hbc
+  have h1 : (inner ℝ (c k) (1 : J) : ℝ) = inner ℝ w (b * c k) := by
+    rw [← hw, real_inner_comm]
+    exact EuclideanJordanAlgebra.inner_assoc b w (c k)
+  rw [hbc, inner_zero_right] at h1
+  have h2 : (inner ℝ (c k) (1 : J) : ℝ) = inner ℝ (c k) (c k) := by
+    conv_lhs => rw [← hfam.idem k]
+    rw [EuclideanJordanAlgebra.inner_assoc (c k) (c k) (1 : J),
+      mul_comm (c k) (1 : J), EuclideanJordanAlgebra.one_mul]
+  rw [h2] at h1
+  exact hck (inner_self_eq_zero.mp h1)
+
 /-! ## `prop:pseudo-transfer`, assembled
 
 The article's proposition, in one statement.  Every conjunct is a theorem proved above; this
