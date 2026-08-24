@@ -793,4 +793,51 @@ theorem dChi_frameProj {N : ℕ} (F : JordanFrame J N) :
   rw [hc]
   exact hasDerivAt_const _ _
 
+/-! ## Vanishing differential ⟹ trivial twist
+
+★★★ This is the step that converts the *linear-algebra* conclusion rows 20 and 21 reach — `dχ = 0`,
+i.e. all `T_{ij}` vanish — into their *stated* conclusion `Θ_r = id`, hence `a·b = Q_{√a}b`.  It
+needs no exponential map: `OneParam.hasDerivAt_of_continuous` gives `φ'(u) = φ(u)·φ'(0)`, so
+`φ'(0) = 0` forces `φ' ≡ 0`, and a map with vanishing derivative on `ℝ` is constant. -/
+
+theorem chiCLM_eq_one_of_dChi_eq_zero {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ),
+      dChi F P hS2 harch r = 0 → chiCLM F P hS2 harch r = 1 := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r hd
+  have hderiv : ∀ u : ℝ, HasDerivAt (fun t : ℝ => chiCLM F P hS2 harch (t • r)) 0 u := by
+    intro u
+    have h := hasDerivAt_chiCLM_smul F P hS2 harch r u
+    have hz : deriv (fun t : ℝ => chiCLM F P hS2 harch (t • r)) 0 = 0 := hd
+    rw [hz, mul_zero] at h
+    exact h
+  have hconst := is_const_of_deriv_eq_zero
+    (fun u => (hderiv u).differentiableAt) (fun u => (hderiv u).deriv) 1 0
+  have h0 : chiCLM F P hS2 harch ((0 : ℝ) • r) = 1 := by
+    rw [zero_smul, chiCLM_zero]
+  have h1 : chiCLM F P hS2 harch ((1 : ℝ) • r) = chiCLM F P hS2 harch ((0 : ℝ) • r) := hconst
+  rw [one_smul] at h1
+  rw [h1, h0]
+
+/-- ★★★ **`Θ_r = id` on the twist cone, from a vanishing differential.**  This is the form rows 20
+(`thm:quaternionic`) and 21 (`thm:albert`) state: with `Θ_r = id` the defining identity
+`L_{a(r)} = Q_{√a(r)} ∘ Θ_r` collapses to `a·b = Q_{√a}b`, the Lüders product. -/
+theorem twistTheta_eq_one_of_dChi_eq_zero {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0),
+      dChi F P hS2 harch r = 0 → ∀ z : J, twistTheta F P hS2 harch r hr z = z := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r hr hd z
+  have h := chiCLM_eq_one_of_dChi_eq_zero F P hS2 harch r hd
+  have hz : chiCLM F P hS2 harch r z = z := by rw [h]; rfl
+  rw [chiCLM_apply, twistChi_eq_twistTheta F P hS2 harch r hr] at hz
+  exact hz
+
 end RadicalRelativity.EJA
