@@ -904,4 +904,95 @@ theorem seqLeftMul_mapsTo_frameBlock {N : ℕ} (F : JordanFrame J N) {f : Fin N 
   rw [hΘ x, hsq, quadJ_frameDiag_block F _ hij hΘx]
   exact Submodule.smul_mem _ _ hΘx
 
+
+/-! ## `lem:homomorphism` (manifest row 17): the group law
+
+★★★ The twist family `a(r) := ∑ e^{rₖ} pₖ` carries the additive group law of the parameters into
+the *sequential product*: `a(r) · a(s) = a(r+s)` for **any** S1–S7+S2 product, not just the
+standard one, because the two are operator-commuting effects and `sp_eq_quadJ_of_opCommute` pins
+the value.  Combined with `theta_mul` this is the homomorphism clause `Θ_{r+s} = Θ_r Θ_s`. -/
+
+/-- The twist family of a Jordan frame at parameter `r ∈ (−∞,0]ⁿ`. -/
+def twistElt {N : ℕ} (F : JordanFrame J N) (r : Fin N → ℝ) : J :=
+  ∑ k, Real.exp (r k) • F.p k
+
+theorem twistElt_isSoS {N : ℕ} (F : JordanFrame J N) (r : Fin N → ℝ) :
+    IsSoS (jmulₗ J) (twistElt F r) :=
+  isSoS_sum _ _ fun k _ => isSoS_smul_idem (Real.exp_pos _).le (F.orthIdem.idem k)
+
+theorem twistElt_compl_isSoS {N : ℕ} (F : JordanFrame J N) {r : Fin N → ℝ}
+    (hr : ∀ k, r k ≤ 0) : IsSoS (jmulₗ J) ((1 : J) - twistElt F r) := by
+  have hrw : (1 : J) - twistElt F r = ∑ k, (1 - Real.exp (r k)) • F.p k := by
+    have hh := smul_unit_sub_eq F.complete (rfl : twistElt F r = _) 1
+    rwa [one_smul] at hh
+  rw [hrw]
+  refine isSoS_sum _ _ fun k _ => isSoS_smul_idem ?_ (F.orthIdem.idem k)
+  have : Real.exp (r k) ≤ 1 := Real.exp_le_one_iff.mpr (hr k)
+  linarith
+
+/-- ★★★ **The group law at the element level**: `a(r) · a(s) = a(r+s)`, for every S1–S7+S2
+product. -/
+theorem sp_twistElt {N : ℕ} (F : JordanFrame J N) {r s : Fin N → ℝ}
+    (hr : ∀ k, r k ≤ 0) (hs : ∀ k, s k ≤ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      P.sp (twistElt F r) (twistElt F s) = twistElt F (r + s) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2
+  have hcomm : ∀ w, twistElt F r * (twistElt F s * w) = twistElt F s * (twistElt F r * w) :=
+    opCommute_of_shared_resolution' F.orthIdem rfl rfl
+  rw [sp_eq_quadJ_of_opCommute (twistElt_isSoS F r) (twistElt_compl_isSoS F hr)
+    (twistElt_isSoS F s) (twistElt_compl_isSoS F hs) hcomm P hS2]
+  have hsq : jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F r)
+      = jsqrtOfResolution F.p (fun k => Real.exp (r k)) :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul _ F.orthIdem rfl
+  rw [hsq, show twistElt F s = ∑ k, Real.exp (s k) • F.p k from rfl,
+    luders_of_resolution F.orthIdem (fun k => (Real.exp_pos (r k)).le)]
+  show _ = ∑ k, Real.exp ((r + s) k) • F.p k
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [Pi.add_apply, Real.exp_add]
+
+
+/-- ★★★ **`lem:homomorphism`, the homomorphism clause**: `Θ_{r+s} = Θ_r Θ_s` (and the two commute).
+
+`sp_twistElt` identifies the product element `a(r) · a(s)` with `a(r+s)`, so the twist
+automorphism indexed there is the one at `r + s`; `theta_mul` and `theta_comm` then supply both
+equalities.  ★ Stated against `P.sp (a r) (a s)` rather than against `a (r+s)` so that no
+dependent transport along `sp_twistElt` is needed — the two are the same element by that lemma. -/
+theorem theta_twistElt_hom {N : ℕ} (F : JordanFrame J N) {r s : Fin N → ℝ}
+    (hr : ∀ k, r k ≤ 0) (hs : ∀ k, s k ≤ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J)
+        (her : OrderUnitSpace.IsEffect (twistElt F r))
+        (hes : OrderUnitSpace.IsEffect (twistElt F s))
+        (hers : OrderUnitSpace.IsEffect (P.sp (twistElt F r) (twistElt F s)))
+        (Θr Θs Θrs : J ≃ₗ[ℝ] J),
+        (∀ x y : J, Θr (x * y) = Θr x * Θr y) →
+        (∀ x y : J, Θs (x * y) = Θs x * Θs y) →
+        (∀ z : J, P.seqLeftMulAbs harch her z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F r)) (Θr z)) →
+        (∀ z : J, P.seqLeftMulAbs harch hes z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (twistElt F s)) (Θs z)) →
+        (∀ z : J, P.seqLeftMulAbs harch hers z
+            = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
+                (P.sp (twistElt F r) (twistElt F s))) (Θrs z)) →
+        (∀ y : J, Θrs y = Θr (Θs y)) ∧ (∀ y : J, Θr (Θs y) = Θs (Θr y)) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch her hes hers Θr Θs Θrs hΘrmul hΘsmul hΘr hΘs hΘrs
+  have hexp0 : ∀ (t : Fin N → ℝ) (k : Fin N), 0 ≤ Real.exp (t k) := fun t k =>
+    (Real.exp_pos _).le
+  have hexp1 : ∀ {t : Fin N → ℝ}, (∀ k, t k ≤ 0) → ∀ k, Real.exp (t k) ≤ 1 := fun ht k =>
+    Real.exp_le_one_iff.mpr (ht k)
+  have hexpne : ∀ (t : Fin N → ℝ) (k : Fin N), F.p k ≠ 0 → Real.exp (t k) ≠ 0 := fun t k _ =>
+    (Real.exp_pos _).ne'
+  exact ⟨theta_mul F.orthIdem F.complete (hexp0 r) (hexp1 hr) (hexp0 s) (hexp1 hs)
+      (hexpne r) (hexpne s) rfl rfl P hS2 harch her hes hers Θr Θs Θrs hΘrmul hΘr hΘs hΘrs,
+    theta_comm F.orthIdem F.complete (hexp0 r) (hexp1 hr) (hexp0 s) (hexp1 hs)
+      (hexpne r) (hexpne s) rfl rfl P hS2 harch her hes hers Θr Θs hΘrmul hΘsmul hΘr hΘs⟩
+
 end RadicalRelativity.EJA
