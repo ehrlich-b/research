@@ -1143,6 +1143,24 @@ theorem jsqrtOfResolution_mul_self' {n : ℕ} {c : Fin n → J} (hfam : IsOrthId
   · rw [hi, smul_zero, smul_zero]
   · rw [Real.mul_self_sqrt (hlam i hi)]
 
+/-- **`a · a⁻¹ = 1` for the Lüders product** — the standard-product half of
+`STATEMENT-MANIFEST.md` row 13 (`prop:pseudo-transfer`), at EJA generality.
+
+The Lüders product is `a · b = Q_{√a} b`, and `Q` acts coefficientwise with the subscript's
+eigenvalues squared, so `a · a⁻¹` has coefficients `(√λᵢ)²·λᵢ⁻¹ = λᵢ·λᵢ⁻¹ = 1` and the sum is the
+completeness relation `∑ᵢ cᵢ = e`.  Nonnegativity is needed to undo the square root, and
+nonvanishing to invert.
+
+★ The row's *other* half — the same identity for an **unknown** S1–S7 product — is not this
+theorem and does not follow from it. -/
+theorem luders_jsqrt_jinv {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hnn : ∀ i, 0 ≤ lam i) (hne : ∀ i, lam i ≠ 0)
+    {e : J} (hsum : (∑ i, c i) = e) :
+    quadJ (jsqrtOfResolution c lam) (jinvOfResolution c lam) = e := by
+  rw [jsqrtOfResolution, jinvOfResolution, quadJ_of_resolution hfam, ← hsum]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Real.mul_self_sqrt (hnn i), mul_inv_cancel₀ (hne i), one_smul]
+
 /-! ### `jsqrt`: the square root as a function
 
 `sqrt_sum_eq_of_resolutions` says the sum `∑ √λᵢ cᵢ` does not depend on which resolution produced
