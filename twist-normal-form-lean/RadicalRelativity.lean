@@ -1018,3 +1018,16 @@ import RadicalRelativity.EJA.ThetaDifferential
 -- the columns, with the invariant that the sweep only rotates in planes disjoint from the
 -- already-cleared set, so cleared columns are never disturbed.
 import RadicalRelativity.Necessity.Givens
+
+-- ★★★ **The abstract layer, fired at the quaternionic and exceptional carriers.**
+-- `STATEMENT-MANIFEST.md` row 20 recorded its obstruction as "no concrete quaternionic carrier",
+-- blaming `RCLike` (which extends the COMMUTATIVE `DenselyNormedField`, so `ℍ` can never be an
+-- instance).  That is right about the field-general `Gen` layer and WRONG about the tree:
+-- `instEuclideanJordanAlgebraHermMat` carries the class on `HermMat ι C` for associative
+-- composition coefficients -- `ℝ`, `ℂ` and `ℍ` -- and `EJA/AlbertBridge.lean` carries it on
+-- `HermMat (Fin 3) Octonion`.  `quaternionicLuders` / `albertLuders` and the two `dChi_deriv`
+-- theorems fire the instantiation so the correction is machine-checked, not a grep.  ★ It supplies
+-- NO stabilizer classification: what rows 18, 20 and 21 still need is the action of the
+-- frame-fixing derivations on `V_{ij}`, which this file makes into a question about a carrier the
+-- tree HAS rather than about a carrier it lacks.
+import RadicalRelativity.EJA.CarrierInstances

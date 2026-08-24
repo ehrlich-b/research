@@ -729,4 +729,68 @@ theorem chiCLM_mem_stabFrame_connectedComponent {N : ℕ} (F : JordanFrame J N) 
   show chiCLM F P hS2 harch ((1 : ℝ) • r) = _
   rw [one_smul]
 
+/-! ## `dχ(r)` is a frame-fixing derivation
+
+★★★ This is the structural link between row 17's output and what rows 18, 20 and 21 need as
+input.  Those rows classify the *frame stabilizer* and its Peirce action; what row 17 produces is
+`dχ(r)`, an operator.  Differentiating `χ_t(x∘y) = χ_t x ∘ χ_t y` and `χ_t(p_k) = p_k` at `t = 0`
+identifies it as a **derivation of the Jordan algebra annihilating every frame atom** — the Lie
+algebra element those rows are about. -/
+
+/-- The Jordan product, bundled as a continuous bilinear map. -/
+def jmulCLM : J →L[ℝ] (J →L[ℝ] J) :=
+  LinearMap.toContinuousLinearMap
+    ((LinearMap.toContinuousLinearMap :
+        (J →ₗ[ℝ] J) ≃ₗ[ℝ] (J →L[ℝ] J)).toLinearMap.comp (jmulₗ J))
+
+@[simp]
+theorem jmulCLM_apply (x y : J) : jmulCLM x y = x * y := rfl
+
+/-- ★★★ **`dχ(r)` is a derivation.** -/
+theorem dChi_jordanDeriv {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (x y : J),
+      dChi F P hS2 harch r (x * y)
+        = dChi F P hS2 harch r x * y + x * dChi F P hS2 harch r y := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r x y
+  have h0x : chiCLM F P hS2 harch ((0 : ℝ) • r) x = x := by
+    rw [zero_smul, chiCLM_zero]; rfl
+  have h0y : chiCLM F P hS2 harch ((0 : ℝ) • r) y = y := by
+    rw [zero_smul, chiCLM_zero]; rfl
+  have hx := hasDerivAt_chiCLM_apply F P hS2 harch r x
+  have hy := hasDerivAt_chiCLM_apply F P hS2 harch r y
+  have hc : HasDerivAt (fun t : ℝ => jmulCLM (chiCLM F P hS2 harch (t • r) x))
+      (jmulCLM (dChi F P hS2 harch r x)) 0 := by
+    have h := jmulCLM.hasFDerivAt.comp_hasDerivAt (0 : ℝ) hx
+    simpa only [Function.comp_def] using h
+  have hprod := hc.clm_apply hy
+  rw [h0x, h0y] at hprod
+  simp only [jmulCLM_apply] at hprod
+  refine (hasDerivAt_chiCLM_apply F P hS2 harch r (x * y)).unique ?_
+  refine hprod.congr_of_eventuallyEq ?_
+  filter_upwards with t
+  rw [chiCLM_apply, chiCLM_apply, chiCLM_apply, twistChi_jordanMul]
+
+/-- ★★★ **`dχ(r)` annihilates every frame atom** — so it lies in the Lie algebra of `Stab(F)`. -/
+theorem dChi_frameProj {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (k : Fin N),
+      dChi F P hS2 harch r (F.p k) = 0 := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r k
+  refine (hasDerivAt_chiCLM_apply F P hS2 harch r (F.p k)).unique ?_
+  have hc : (fun t : ℝ => chiCLM F P hS2 harch (t • r) (F.p k)) = fun _ : ℝ => F.p k := by
+    funext t
+    rw [chiCLM_apply]
+    exact twistChi_fixes_atom F P hS2 harch (t • r) k
+  rw [hc]
+  exact hasDerivAt_const _ _
+
 end RadicalRelativity.EJA
