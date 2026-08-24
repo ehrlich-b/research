@@ -996,4 +996,31 @@ theorem quadJ_mul_of_opCommute [IsFormallyReal J] [Module.Finite ℝ J] {e : J}
   have k2 := hkey (2 * T) h2
   linear_combination (norm := module) (2 : ℝ) • k1 - k2
 
+
+/-! ## `Q_a` is invertible at an invertible element
+
+`a` and its spectral inverse are diagonal in one family, hence operator-commute
+(`opCommute_of_shared_resolution`), so `quadJ_mul_of_opCommute` factors `Q` over their product —
+which is the unit.  That makes `Q_a` invertible with inverse `Q_{a⁻¹}`, the classical
+`Q_a⁻¹ = Q_{a⁻¹}`. -/
+
+/-- **`Q_a ∘ Q_{a⁻¹} = id`** for an element with a complete resolution and no vanishing eigenvalue.
+
+★ This is what order reflection for the *standard* product needs: `Q_a` has a two-sided inverse,
+so `Q_a x ≥ 0` can be pulled back.  `STATEMENT-MANIFEST.md` row 13's clause (iii) asks for order
+preservation for **both** products; the unknown-product side is `EJA/PseudoTransfer.lean`'s
+`sp_orderReflection`, and this is the first step of the standard-product side. -/
+theorem quadJ_comp_jinvOfResolution [IsFormallyReal J] [Module.Finite ℝ J] {e : J}
+    (he : ∀ y : J, e * y = y) {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hne : ∀ i, lam i ≠ 0) (hsum : (∑ i, c i) = e) (z : J) :
+    quadJ (∑ i, lam i • c i) (quadJ (jinvOfResolution c lam) z) = z := by
+  have hprod : (∑ i, lam i • c i) * jinvOfResolution c lam = e := by
+    rw [jinvOfResolution, sum_smul_mul_sum_smul_of_orthIdem hfam, ← hsum]
+    exact Finset.sum_congr rfl fun i _ => by rw [mul_inv_cancel₀ (hne i), one_smul]
+  have hoc : ∀ w : J, (∑ i, lam i • c i) * (jinvOfResolution c lam * w)
+      = jinvOfResolution c lam * ((∑ i, lam i • c i) * w) := by
+    rw [jinvOfResolution]
+    exact opCommute_of_shared_resolution hfam lam (fun i => (lam i)⁻¹) rfl rfl
+  rw [← quadJ_mul_of_opCommute he hoc, hprod, quadJ_unit_left he]
+
 end RadicalRelativity.EJA
