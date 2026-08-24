@@ -2582,8 +2582,11 @@ coordinate axis, which is exactly `AdjAxis`.  Hence `frameTwist_eq_of_adjBlock`.
 connectivity for the article's graph (`lem:frame-connectivity`) does **not** follow from
 `adjAxis_connected` — it is a strictly stronger statement, needing every unitary to
 factor into rank-two block rotations (a Givens/Jacobi decomposition) rather than into the
-three axis-fixing Householder factors `exists_axisFixing_factor` provides.  That row stays
-open; see `THEOREM-MAP.md`. -/
+three axis-fixing Householder factors `exists_axisFixing_factor` provides.
+★★★ **That factorization landed 2026-08-24**: `Necessity/Givens.lean` builds the Givens sweep and
+`Necessity.adjBlock_connected` proves the article's graph connected for every `N ≥ 2`.  The
+sentence that stood here ("that row stays open") is superseded, and the *reason* it gave remains
+correct — the two relations really are different, and the stronger one needed its own proof. -/
 
 /-- **The article's frame adjacency.**  `F` and `G` differ by a rotation inside the rank-two
 block on indices `i ≠ j` and agree on every other atom: `F*G` is diagonal outside `{i, j}`,

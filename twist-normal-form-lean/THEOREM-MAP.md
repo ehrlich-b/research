@@ -166,8 +166,10 @@ rank-two block rotations — a Givens/Jacobi decomposition — where the tree cu
 `exists_axisFixing_factor`, a factorization into three axis-fixing unitaries (★ corrected
 2026-08-22: *two* of the three are Householder reflections, which clear the `i₀` column; the
 third is the residual unitary that fixes that axis — its own docstring at
-`Necessity/UnitaryGeneration.lean`:365–369 says so). That row stays PARTIAL and
-the remainder is exactly the Givens decomposition.
+`Necessity/UnitaryGeneration.lean`:365–369 says so). ★★★ **That Givens decomposition landed 2026-08-24** (`Necessity/Givens.lean`), and
+`Necessity.adjBlock_connected` closes the row for every `N ≥ 2`. The paragraph above is kept
+because its diagnosis was correct — the two relations are genuinely different and the stronger one
+needed its own proof, which is why pairing them in the ARC-5 orders was an error.
 
 ### `lem:homog`(ii) — at abstract order-unit-space generality (2026-08-08, ARC-6 rung 6.3)
 
@@ -375,7 +377,7 @@ vendored `Projectivization.wigner_rigidity`).
 | the same, with the frame-graph apparatus replaced by one internal hypothesis (`frameTwist` constant) | `Necessity.complex_classification_of_frameTwistConst` | `Necessity/ComplexResidue.lean` |
 | **the residue, discharged**: `frameTwist` is constant | `Necessity.frameTwistConst` | `Necessity/ComplexRowUnconditional.lean` |
 | cross-coherence: axis-adjacent frames have equal twist parameter | `Necessity.frameTwist_eq_of_adjAxis` | `Necessity/FrameConstancy.lean` |
-| `lem:frame-connectivity`: any two frames are joined by an axis-adjacency walk | `Necessity.adjAxis_connected` | `Necessity/UnitaryGeneration.lean` |
+| `lem:frame-connectivity`: any two frames are joined by an axis-adjacency walk, **and by an `AdjBlock` walk — the article's own graph** | `Necessity.adjAxis_connected`; `Necessity.adjBlock_connected` off the Givens sweep (`givens`, `givens_conjTranspose_mul`, `exists_givens_clear`, `exists_clear_col`, `isBlockProd_of_colsCleared`) | `Necessity/UnitaryGeneration.lean`, `Necessity/Givens.lean` |
 | every unitary is a product of three axis-fixing unitaries (`N ≥ 3`) | `Necessity.exists_axisFixing_factor` | `Necessity/UnitaryGeneration.lean` |
 | the twist form at an arbitrary frame (frame a free parameter) | `Necessity.sp_eq_twistSeq_frame` | `Necessity/FrameConstancy.lean` |
 | **non-vacuity**: the hypothesis class is inhabited | `Necessity.twistProductOn_classified` | `Necessity/ComplexRowUnconditional.lean` |

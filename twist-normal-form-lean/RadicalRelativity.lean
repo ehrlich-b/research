@@ -1006,3 +1006,15 @@ import RadicalRelativity.OneParameter
 -- only input about `χ` is CONTINUITY (`continuous_chiCLM`, which carries the `Θ_{v(r)}⁻¹` factor
 -- through continuity of inversion at a unit of a Banach algebra); differentiability is deduced.
 import RadicalRelativity.EJA.ThetaDifferential
+
+-- ★★★ **`lem:frame-connectivity`** -- `Necessity.adjBlock_connected`: the graph on Jordan frames
+-- with `F ∼ F'` iff they share all but two atoms is connected, for every `N ≥ 2`.  This is
+-- manifest row 26, and it does NOT follow from `adjAxis_connected`: `AdjBlock` asks that all but
+-- two axes be fixed where `AdjAxis` asks only that some axis be, so it needs every unitary to
+-- factor into rank-two block rotations rather than into three axis-fixing Householder factors.
+-- The factorization is the Givens sweep: `givens` is written `(1 − P) + B` with `P` the block
+-- projection, which makes unitarity three `single`-algebra identities; `exists_clear_col` is the
+-- inner induction over the rows of one column and `isBlockProd_of_colsCleared` the outer one over
+-- the columns, with the invariant that the sweep only rotates in planes disjoint from the
+-- already-cleared set, so cleared columns are never disturbed.
+import RadicalRelativity.Necessity.Givens
