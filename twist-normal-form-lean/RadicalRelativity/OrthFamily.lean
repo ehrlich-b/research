@@ -64,9 +64,16 @@ concrete carrier it is a theorem, which is why the concrete statements do not me
 * **`sp_orthFamily_value`** and **`sp_orthFamily_comm`** — the vdW 5.2 value law and
   compatibility transfer, plus `Fin`-indexed corollaries stated with
   `IsOrthogonalFamily` (`sp_orthFamily_value_fin`, `sp_orthFamily_comm_fin`).
+* **The pseudo-inverse layer** (`prop:pseudo-transfer`, unknown-product half; port of
+  `Necessity/PseudoInverse.lean`): the normalized identities `sp_pseudoInv_eq_smul_one` /
+  `sp_pseudoInv_comm` / `sp_pseudoInv_cancel` and the article-form, coefficient-free
+  `spCone_specInv_eq_one` / `spConeRight_specInv_eq_one` / `spCone_specInv_both`, over a
+  hypothesized complete resolution into sharp effects, with every eigenvalue hypothesis
+  guarded at nonzero family members.  `exists_pseudoInvCoef` supplies the normalization;
+  `sum_smul_filter_ne` and `isEffect_sum_smul_of_ne` are the support-restriction helpers.
 
-The concrete theorems in `Necessity/SharpEffects.lean` are left in place untouched;
-other rows consume them under their matrix-stated hypotheses.
+The concrete theorems in `Necessity/SharpEffects.lean` and `Necessity/PseudoInverse.lean`
+are left in place untouched; other rows consume them under their matrix-stated hypotheses.
 -/
 
 noncomputable section
@@ -363,5 +370,305 @@ theorem sp_orthFamily_comm_fin (harch : IsArchimedean V) (hS2 : P.FirstArgContin
       = P.sp (∑ i, mu i • p i) (∑ i, lam i • p i) :=
   P.sp_orthFamily_comm harch hS2 (fun i _ => hsharp i) (hfam.2 Finset.univ)
     (fun i _ => hlam0 i) (fun i _ => hlam1 i) (fun i _ => hmu0 i) (fun i _ => hmu1 i)
+
+end SequentialProductOn
+
+/-! ## The pseudo-inverse layer: `prop:pseudo-transfer`, unknown-product half
+
+Port of the LEDGER 2.1e layer of `Necessity/PseudoInverse.lean` — the normalized identities
+`ν ◦' b = b ◦' ν = c•𝟙` (`sp_pseudoInv_eq_smul_one`, `sp_pseudoInv_comm`), the cancellation
+`ν ◦' (b ◦' x) = c•x` (`sp_pseudoInv_cancel`), and the article-form, coefficient-free
+`b⁻¹ · b = b · b⁻¹ = 𝟙` through the cone extensions (`spCone_specInv_eq_one`,
+`spConeRight_specInv_eq_one`) — from the concrete carrier to the same `[OrderUnitSpace V]`
+generality as the value law above.  This is the **unknown-product half** of
+`STATEMENT-MANIFEST.md` row 13; the standard-product half is `EJA/Spectral.lean`'s
+`luders_jsqrt_jinv`, and the statements here are resolution-relative in exactly the same
+sense as that one.
+
+Three deliberate differences from the concrete statements, all in the hypotheses:
+
+1. **The spectral data is hypothesized, not computed.**  The concrete `b.eigFinset` /
+   `b.specProj μ` become a family `c : ι → V` of `IsSharp` effects with completeness
+   `∑ i ∈ s, c i = 𝟙` and a resolution `b = ∑ i ∈ s, lam i • c i` — the shape
+   `EJA.exists_resolution_distinct` produces (its idempotents are sharp for the constructed
+   order by `EJA.isSharpOrderUnit_of_idem`, and its completeness lands on `𝟙` by
+   `EJA.ousUnit_ofBilinear`).  As with the value law, no Jordan product appears.
+
+2. ★ **Every eigenvalue hypothesis is guarded at nonzero family members** (`c i ≠ 0 → …`).
+   An abstract resolution can carry `c i = 0` with an unconstrained coefficient —
+   `0 • 0 = 37 • 0` — so the universal form is not dischargeable from the cone
+   (`EJA/Order.lean`'s `nonneg_coeff_of_isSoS` speaks only at nonzero idempotents), while
+   the guarded form is.  Inside the proofs the sums are restricted to the support
+   (`sum_smul_filter_ne`), where the guards become the unguarded bounds the value law wants.
+   The concrete statements had no such guard because `eigFinset` indexes actual eigenvalues
+   and `PosDef` speaks about all of them; the abstract guard costs the concrete consumer
+   nothing (it may ignore the premise `c i ≠ 0`).
+
+3. **The normalization is any admissible constant, not a fixed product.**  Instead of
+   `pseudoInvCoef b = ∏ μ`, the theorems take any `co` with `0 ≤ co` (and `co ≤ 1` where
+   used) and `co ≤ lam i` on the support.  `exists_pseudoInvCoef` shows the constraint set
+   is inhabited — by the product of the eigenvalues **over the support**, via the same
+   product-of-unit-interval arithmetic as the concrete `pseudoInvCoef_le`, and like it with
+   no nonemptiness side condition (an empty support gives `co = 1`, and then `𝟙 = 0`
+   degenerately).  In the article-form theorems `co` is internal and the statements carry
+   no normalization at all.
+
+As everywhere in this file, `IsArchimedean V` is carried explicitly (part of the article's
+order-unit-space definition, deliberately not bundled in the class), and S2 enters only
+through `sp_smul_left` and the value law.  The concrete theorems in
+`Necessity/PseudoInverse.lean` are left in place untouched. -/
+
+namespace OrderUnitSpace
+
+variable {V : Type*} [OrderUnitSpace V]
+
+/-- Terms at a vanishing family member drop from a diagonal combination: the sum restricts
+to the support of the family.  This is what lets guarded coefficient hypotheses replace
+universal ones. -/
+theorem sum_smul_filter_ne {ι : Type*} (s : Finset ι) (g : ι → ℝ) (p : ι → V)
+    [DecidablePred fun i => p i ≠ 0] :
+    ∑ i ∈ s.filter (fun i => p i ≠ 0), g i • p i = ∑ i ∈ s, g i • p i :=
+  Finset.sum_filter_of_ne fun i _ hne hp0 => hne (by rw [hp0, smul_zero])
+
+/-- `isEffect_sum_smul` with the coefficient bounds required only at **nonzero** members —
+the form dischargeable from the cone, where a coefficient at a zero member is
+unconstrained and its term contributes nothing. -/
+theorem isEffect_sum_smul_of_ne {ι : Type*} {s : Finset ι} {p : ι → V}
+    (hp : ∀ i ∈ s, IsEffect (p i)) (hsum : (∑ i ∈ s, p i) ≤ 𝟙)
+    {lam : ι → ℝ} (hlam0 : ∀ i ∈ s, p i ≠ 0 → 0 ≤ lam i)
+    (hlam1 : ∀ i ∈ s, p i ≠ 0 → lam i ≤ 1) :
+    IsEffect (∑ i ∈ s, lam i • p i) := by
+  classical
+  rw [← sum_smul_filter_ne s lam p]
+  have hsub : s.filter (fun i => p i ≠ 0) ⊆ s := Finset.filter_subset _ _
+  exact isEffect_sum_smul (fun i hi => hp i (hsub hi))
+    (le_trans (finsetSum_le_finsetSum_of_subset hsub fun i hi => (hp i hi).1) hsum)
+    (fun i hi => hlam0 i (hsub hi) (Finset.mem_filter.mp hi).2)
+    (fun i hi => hlam1 i (hsub hi) (Finset.mem_filter.mp hi).2)
+
+end OrderUnitSpace
+
+namespace SequentialProductOn
+
+variable {V : Type*} [OrderUnitSpace V] (P : SequentialProductOn V)
+
+/-- **An admissible normalization always exists**: the product of the eigenvalues over the
+support.  Abstract twin of the `pseudoInvCoef` lemmas (`pseudoInvCoef_pos`,
+`pseudoInvCoef_le_one`, `pseudoInvCoef_le`) — the same product-of-unit-interval real
+arithmetic, restricted to the support so that garbage coefficients at zero members never
+enter the product, and as in the concrete version with no nonemptiness side condition. -/
+theorem exists_pseudoInvCoef {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1) :
+    ∃ co : ℝ, 0 < co ∧ co ≤ 1 ∧ ∀ i ∈ s, c i ≠ 0 → co ≤ lam i := by
+  classical
+  have hsub : s.filter (fun j => c j ≠ 0) ⊆ s := Finset.filter_subset _ _
+  have hpos' : ∀ i ∈ s.filter (fun j => c j ≠ 0), 0 < lam i := fun i hi =>
+    hpos i (hsub hi) (Finset.mem_filter.mp hi).2
+  have hle1' : ∀ i ∈ s.filter (fun j => c j ≠ 0), lam i ≤ 1 := fun i hi =>
+    hle1 i (hsub hi) (Finset.mem_filter.mp hi).2
+  refine ⟨∏ i ∈ s.filter (fun j => c j ≠ 0), lam i, Finset.prod_pos hpos',
+    Finset.prod_le_one (fun i hi => (hpos' i hi).le) hle1', ?_⟩
+  intro i his hine
+  have hit : i ∈ s.filter (fun j => c j ≠ 0) := Finset.mem_filter.mpr ⟨his, hine⟩
+  have herase : ∏ j ∈ (s.filter (fun j => c j ≠ 0)).erase i, lam j ≤ 1 :=
+    Finset.prod_le_one (fun j hj => (hpos' j (Finset.mem_of_mem_erase hj)).le)
+      (fun j hj => hle1' j (Finset.mem_of_mem_erase hj))
+  rw [← Finset.mul_prod_erase (s.filter (fun j => c j ≠ 0)) lam hit]
+  calc lam i * ∏ j ∈ (s.filter (fun j => c j ≠ 0)).erase i, lam j
+      ≤ lam i * 1 := mul_le_mul_of_nonneg_left herase (hpos' i hit).le
+    _ = lam i := mul_one _
+
+/-- The value computation over a clean resolution (every hypothesis unguarded); the public
+theorems restrict to the support and apply this. -/
+private theorem sp_pseudoInv_value_aux (harch : IsArchimedean V)
+    (hS2 : P.FirstArgContinuous) {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, 0 < lam i) (hle1 : ∀ i ∈ s, lam i ≤ 1)
+    {co : ℝ} (hco0 : 0 ≤ co) (hcole : ∀ i ∈ s, co ≤ lam i) :
+    P.sp (∑ i ∈ s, (co / lam i) • c i) (∑ i ∈ s, lam i • c i) = co • (𝟙 : V) := by
+  have hdiv0 : ∀ i ∈ s, 0 ≤ co / lam i := fun i hi => div_nonneg hco0 (hpos i hi).le
+  have hdiv1 : ∀ i ∈ s, co / lam i ≤ 1 := fun i hi =>
+    (div_le_one (hpos i hi)).mpr (hcole i hi)
+  have hmu0 : ∀ i ∈ s, 0 ≤ lam i := fun i hi => (hpos i hi).le
+  have hval := P.sp_orthFamily_value harch hS2 hsharp (le_of_eq hsum) hdiv0 hdiv1 hmu0 hle1
+  rw [hval]
+  calc ∑ i ∈ s, (co / lam i * lam i) • c i
+      = ∑ i ∈ s, co • c i :=
+        Finset.sum_congr rfl fun i hi => by rw [div_mul_cancel₀ _ (hpos i hi).ne']
+    _ = co • ∑ i ∈ s, c i := (Finset.smul_sum).symm
+    _ = co • (𝟙 : V) := by rw [hsum]
+
+/-- The compatibility transfer over a clean resolution (every hypothesis unguarded). -/
+private theorem sp_pseudoInv_comm_aux (harch : IsArchimedean V)
+    (hS2 : P.FirstArgContinuous) {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, 0 < lam i) (hle1 : ∀ i ∈ s, lam i ≤ 1)
+    {co : ℝ} (hco0 : 0 ≤ co) (hcole : ∀ i ∈ s, co ≤ lam i) :
+    P.sp (∑ i ∈ s, (co / lam i) • c i) (∑ i ∈ s, lam i • c i)
+      = P.sp (∑ i ∈ s, lam i • c i) (∑ i ∈ s, (co / lam i) • c i) := by
+  have hdiv0 : ∀ i ∈ s, 0 ≤ co / lam i := fun i hi => div_nonneg hco0 (hpos i hi).le
+  have hdiv1 : ∀ i ∈ s, co / lam i ≤ 1 := fun i hi =>
+    (div_le_one (hpos i hi)).mpr (hcole i hi)
+  have hmu0 : ∀ i ∈ s, 0 ≤ lam i := fun i hi => (hpos i hi).le
+  exact P.sp_orthFamily_comm harch hS2 hsharp (le_of_eq hsum) hdiv0 hdiv1 hmu0 hle1
+
+/-- **The pseudo-inverse identity `ν ◦' b = c•𝟙` at abstract order-unit-space generality.**
+Abstract twin of `Necessity.sp_pseudoInv_eq_smul_one`; see the section docstring for the
+three hypothesis differences (hypothesized sharp resolution, guards at nonzero members,
+abstract normalization `co`). -/
+theorem sp_pseudoInv_eq_smul_one (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1)
+    {co : ℝ} (hco0 : 0 ≤ co) (hcole : ∀ i ∈ s, c i ≠ 0 → co ≤ lam i) :
+    P.sp (∑ i ∈ s, (co / lam i) • c i) (∑ i ∈ s, lam i • c i) = co • (𝟙 : V) := by
+  classical
+  have hsub : s.filter (fun j => c j ≠ 0) ⊆ s := Finset.filter_subset _ _
+  have hmem : ∀ i ∈ s.filter (fun j => c j ≠ 0), c i ≠ 0 :=
+    fun i hi => (Finset.mem_filter.mp hi).2
+  have hcsum : (∑ i ∈ s.filter (fun j => c j ≠ 0), c i) = 𝟙 :=
+    (Finset.sum_filter_of_ne fun i _ h => h).trans hsum
+  have e1 : (∑ i ∈ s, (co / lam i) • c i)
+      = ∑ i ∈ s.filter (fun j => c j ≠ 0), (co / lam i) • c i :=
+    (sum_smul_filter_ne s (fun i => co / lam i) c).symm
+  have e2 : (∑ i ∈ s, lam i • c i)
+      = ∑ i ∈ s.filter (fun j => c j ≠ 0), lam i • c i :=
+    (sum_smul_filter_ne s lam c).symm
+  rw [e1, e2]
+  exact sp_pseudoInv_value_aux P harch hS2 (fun i hi => hsharp i (hsub hi)) hcsum
+    (fun i hi => hpos i (hsub hi) (hmem i hi)) (fun i hi => hle1 i (hsub hi) (hmem i hi))
+    hco0 (fun i hi => hcole i (hsub hi) (hmem i hi))
+
+/-- **The reverse order**: `ν` and `b` are ◦'-compatible.  Abstract twin of
+`Necessity.sp_pseudoInv_comm`. -/
+theorem sp_pseudoInv_comm (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1)
+    {co : ℝ} (hco0 : 0 ≤ co) (hcole : ∀ i ∈ s, c i ≠ 0 → co ≤ lam i) :
+    P.sp (∑ i ∈ s, (co / lam i) • c i) (∑ i ∈ s, lam i • c i)
+      = P.sp (∑ i ∈ s, lam i • c i) (∑ i ∈ s, (co / lam i) • c i) := by
+  classical
+  have hsub : s.filter (fun j => c j ≠ 0) ⊆ s := Finset.filter_subset _ _
+  have hmem : ∀ i ∈ s.filter (fun j => c j ≠ 0), c i ≠ 0 :=
+    fun i hi => (Finset.mem_filter.mp hi).2
+  have hcsum : (∑ i ∈ s.filter (fun j => c j ≠ 0), c i) = 𝟙 :=
+    (Finset.sum_filter_of_ne fun i _ h => h).trans hsum
+  have e1 : (∑ i ∈ s, (co / lam i) • c i)
+      = ∑ i ∈ s.filter (fun j => c j ≠ 0), (co / lam i) • c i :=
+    (sum_smul_filter_ne s (fun i => co / lam i) c).symm
+  have e2 : (∑ i ∈ s, lam i • c i)
+      = ∑ i ∈ s.filter (fun j => c j ≠ 0), lam i • c i :=
+    (sum_smul_filter_ne s lam c).symm
+  rw [e1, e2]
+  exact sp_pseudoInv_comm_aux P harch hS2 (fun i hi => hsharp i (hsub hi)) hcsum
+    (fun i hi => hpos i (hsub hi) (hmem i hi)) (fun i hi => hle1 i (hsub hi) (hmem i hi))
+    hco0 (fun i hi => hcole i (hsub hi) (hmem i hi))
+
+/-- **The cancellation identity `ν ◦' (b ◦' x) = c•x` on effects**, by S5 through the
+compatibility, first-argument homogeneity, and S3.  Abstract twin of
+`Necessity.sp_pseudoInv_cancel`; `co ≤ 1` is the one constraint on the normalization this
+theorem uses beyond its siblings (the concrete `pseudoInvCoef_le_one`). -/
+theorem sp_pseudoInv_cancel (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1)
+    {co : ℝ} (hco0 : 0 ≤ co) (hco1 : co ≤ 1) (hcole : ∀ i ∈ s, c i ≠ 0 → co ≤ lam i)
+    {x : V} (hx : IsEffect x) :
+    P.sp (∑ i ∈ s, (co / lam i) • c i) (P.sp (∑ i ∈ s, lam i • c i) x) = co • x := by
+  have hce : ∀ i ∈ s, IsEffect (c i) := fun i hi => (hsharp i hi).1
+  have hν : IsEffect (∑ i ∈ s, (co / lam i) • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => div_nonneg hco0 (hpos i hi hne).le)
+      (fun i hi hne => (div_le_one (hpos i hi hne)).mpr (hcole i hi hne))
+  have hbe : IsEffect (∑ i ∈ s, lam i • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => (hpos i hi hne).le) hle1
+  rw [P.sp_assoc_of_compatible hν hbe hx
+      (P.sp_pseudoInv_comm harch hS2 hsharp hsum hpos hle1 hco0 hcole),
+    P.sp_pseudoInv_eq_smul_one harch hS2 hsharp hsum hpos hle1 hco0 hcole,
+    P.sp_smul_left harch hS2 isEffect_unit hx hco0 hco1, P.sp_unit_left hx]
+
+/-- **`prop:pseudo-transfer`, first slot, at the article's own normalization and at
+abstract order-unit-space generality**: the cone-extended unknown product satisfies
+`b⁻¹ · b = 𝟙` with the true spectral inverse `∑ (lam i)⁻¹ • c i` and **no** coefficient.
+Abstract twin of `Necessity.spCone_specInv_eq_one`; the normalization is produced by
+`exists_pseudoInvCoef` and divides out. -/
+theorem spCone_specInv_eq_one (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1) :
+    P.spCone (∑ i ∈ s, (lam i)⁻¹ • c i) (∑ i ∈ s, lam i • c i) = 𝟙 := by
+  obtain ⟨co, hco0, hco1, hcole⟩ := exists_pseudoInvCoef hpos hle1
+  have hce : ∀ i ∈ s, IsEffect (c i) := fun i hi => (hsharp i hi).1
+  have hν : IsEffect (∑ i ∈ s, (co / lam i) • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => div_nonneg hco0.le (hpos i hi hne).le)
+      (fun i hi hne => (div_le_one (hpos i hi hne)).mpr (hcole i hi hne))
+  have hbe : IsEffect (∑ i ∈ s, lam i • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => (hpos i hi hne).le) hle1
+  have hkey : (∑ i ∈ s, (lam i)⁻¹ • c i) = co⁻¹ • ∑ i ∈ s, (co / lam i) • c i := by
+    rw [Finset.smul_sum]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [smul_smul, div_eq_mul_inv, ← mul_assoc, inv_mul_cancel₀ hco0.ne', one_mul]
+  have hw0 : (0 : V) ≤ ∑ i ∈ s, (lam i)⁻¹ • c i := by
+    rw [hkey]
+    exact smul_nonneg' (inv_nonneg.mpr hco0.le) hν.1
+  have hnorm : IsConeNorm (∑ i ∈ s, (lam i)⁻¹ • c i) co⁻¹ := by
+    refine ⟨inv_pos.mpr hco0, ?_⟩
+    rw [hkey, smul_smul, inv_inv, mul_inv_cancel₀ hco0.ne', one_smul]
+    exact hν
+  rw [P.spCone_eq harch hS2 hw0 hnorm hbe, hkey, smul_smul, inv_inv,
+    mul_inv_cancel₀ hco0.ne', one_smul,
+    P.sp_pseudoInv_eq_smul_one harch hS2 hsharp hsum hpos hle1 hco0.le hcole,
+    smul_smul, inv_mul_cancel₀ hco0.ne', one_smul]
+
+/-- **`prop:pseudo-transfer`, second slot**: `b · b⁻¹ = 𝟙` through the right-slot cone
+extension.  Abstract twin of `Necessity.spConeRight_specInv_eq_one`.  As there, the
+right-slot *extension* needs no S2, but this identity consumes S2 through
+`sp_pseudoInv_comm` and `sp_pseudoInv_eq_smul_one`. -/
+theorem spConeRight_specInv_eq_one (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1) :
+    P.spConeRight (∑ i ∈ s, lam i • c i) (∑ i ∈ s, (lam i)⁻¹ • c i) = 𝟙 := by
+  obtain ⟨co, hco0, hco1, hcole⟩ := exists_pseudoInvCoef hpos hle1
+  have hce : ∀ i ∈ s, IsEffect (c i) := fun i hi => (hsharp i hi).1
+  have hν : IsEffect (∑ i ∈ s, (co / lam i) • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => div_nonneg hco0.le (hpos i hi hne).le)
+      (fun i hi hne => (div_le_one (hpos i hi hne)).mpr (hcole i hi hne))
+  have hbe : IsEffect (∑ i ∈ s, lam i • c i) :=
+    isEffect_sum_smul_of_ne hce (le_of_eq hsum)
+      (fun i hi hne => (hpos i hi hne).le) hle1
+  have hkey : (∑ i ∈ s, (lam i)⁻¹ • c i) = co⁻¹ • ∑ i ∈ s, (co / lam i) • c i := by
+    rw [Finset.smul_sum]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [smul_smul, div_eq_mul_inv, ← mul_assoc, inv_mul_cancel₀ hco0.ne', one_mul]
+  have hw0 : (0 : V) ≤ ∑ i ∈ s, (lam i)⁻¹ • c i := by
+    rw [hkey]
+    exact smul_nonneg' (inv_nonneg.mpr hco0.le) hν.1
+  have hnorm : IsConeNorm (∑ i ∈ s, (lam i)⁻¹ • c i) co⁻¹ := by
+    refine ⟨inv_pos.mpr hco0, ?_⟩
+    rw [hkey, smul_smul, inv_inv, mul_inv_cancel₀ hco0.ne', one_smul]
+    exact hν
+  rw [P.spConeRight_eq harch hbe hw0 hnorm, hkey, smul_smul, inv_inv,
+    mul_inv_cancel₀ hco0.ne', one_smul,
+    ← P.sp_pseudoInv_comm harch hS2 hsharp hsum hpos hle1 hco0.le hcole,
+    P.sp_pseudoInv_eq_smul_one harch hS2 hsharp hsum hpos hle1 hco0.le hcole,
+    smul_smul, inv_mul_cancel₀ hco0.ne', one_smul]
+
+/-- **Both slots at once** — the article's `prop:pseudo-transfer` identity as it is
+stated, at abstract order-unit-space generality.  Abstract twin of
+`Necessity.spCone_specInv_both`. -/
+theorem spCone_specInv_both (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {ι : Type*} {s : Finset ι} {c : ι → V} {lam : ι → ℝ}
+    (hsharp : ∀ i ∈ s, IsSharp (c i)) (hsum : (∑ i ∈ s, c i) = 𝟙)
+    (hpos : ∀ i ∈ s, c i ≠ 0 → 0 < lam i) (hle1 : ∀ i ∈ s, c i ≠ 0 → lam i ≤ 1) :
+    P.spCone (∑ i ∈ s, (lam i)⁻¹ • c i) (∑ i ∈ s, lam i • c i) = 𝟙 ∧
+      P.spConeRight (∑ i ∈ s, lam i • c i) (∑ i ∈ s, (lam i)⁻¹ • c i) = 𝟙 :=
+  ⟨P.spCone_specInv_eq_one harch hS2 hsharp hsum hpos hle1,
+    P.spConeRight_specInv_eq_one harch hS2 hsharp hsum hpos hle1⟩
 
 end SequentialProductOn

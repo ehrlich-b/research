@@ -677,6 +677,14 @@ import RadicalRelativity.EJA.Order
 -- product placed on top of the inner-product space so only one `AddCommGroup` is ever in play.
 -- Substrate for the Jordan-von Neumann-Wigner campaign; it moves no row.
 import RadicalRelativity.EJA.Class
+-- Row 13's unknown-product half, discharged at EJA generality.  `EJA.PseudoTransfer`
+-- instantiates `OrthFamily`'s abstract pseudo-inverse layer on the order `EJA.Order`
+-- constructs, over the class: for an invertible effect given by a complete resolution,
+-- every S1-S7+S2 product satisfies `b⁻¹ · b = b · b⁻¹ = 1` for the spectral inverse
+-- `∑ (lam i)⁻¹ • c i`, through the cone extensions and with no coefficient -- the
+-- machine check that the abstract layer's guarded hypotheses are dischargeable from
+-- the cone (`nonneg_coeff_of_isSoS` on `b` and on `1 - b`).
+import RadicalRelativity.EJA.PseudoTransfer
 -- Peirce subalgebras.  `J2(c)` and `J0(c)` carry Euclidean Jordan structures of their own,
 -- with units `c` and `1 - c`; the vehicle is `Submodule` rather than `NonUnitalSubalgebra`, so
 -- no instance transfer is needed.  Substrate; it moves no row.
