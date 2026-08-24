@@ -923,7 +923,7 @@ theorem twistElt_isSoS {N : ℕ} (F : JordanFrame J N) (r : Fin N → ℝ) :
 theorem twistElt_compl_isSoS {N : ℕ} (F : JordanFrame J N) {r : Fin N → ℝ}
     (hr : ∀ k, r k ≤ 0) : IsSoS (jmulₗ J) ((1 : J) - twistElt F r) := by
   have hrw : (1 : J) - twistElt F r = ∑ k, (1 - Real.exp (r k)) • F.p k := by
-    have hh := smul_unit_sub_eq F.complete (rfl : twistElt F r = _) 1
+    have hh := smul_unit_sub_eq F.complete (rfl : twistElt F r = ∑ k, Real.exp (r k) • F.p k) 1
     rwa [one_smul] at hh
   rw [hrw]
   refine isSoS_sum _ _ fun k _ => isSoS_smul_idem ?_ (F.orthIdem.idem k)
@@ -1169,7 +1169,7 @@ theorem thetaOf_twistElt_apply {N : ℕ} (F : JordanFrame J N) {r : Fin N → �
     ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
       (harch : OrderUnitSpace.IsArchimedean J)
       (hae : OrderUnitSpace.IsEffect (twistElt F r)) (z : J),
-      thetaOf F.orthIdem F.complete (rfl : twistElt F r = _) (twistElt_isSoS F r)
+      thetaOf F.orthIdem F.complete (rfl : twistElt F r = ∑ k, Real.exp (r k) • F.p k) (twistElt_isSoS F r)
           (twistElt_compl_isSoS F hr) (fun k _ => (Real.exp_pos (r k)).ne')
           P hS2 harch hae z
         = quadJ (∑ k, Real.sqrt (Real.exp (-r k)) • F.p k)
@@ -1177,7 +1177,7 @@ theorem thetaOf_twistElt_apply {N : ℕ} (F : JordanFrame J N) {r : Fin N → �
   letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
     (1 : J) jmulₗ_one_mul
   intro P hS2 harch hae z
-  have hval : thetaOf F.orthIdem F.complete (rfl : twistElt F r = _) (twistElt_isSoS F r)
+  have hval : thetaOf F.orthIdem F.complete (rfl : twistElt F r = ∑ k, Real.exp (r k) • F.p k) (twistElt_isSoS F r)
       (twistElt_compl_isSoS F hr) (fun k _ => (Real.exp_pos (r k)).ne') P hS2 harch hae z
       = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
           (jinvOfResolution F.p (fun k => Real.exp (r k)))) (P.seqLeftMulAbs harch hae z) := rfl
@@ -1204,7 +1204,7 @@ theorem continuous_toCLM_thetaOf_twistElt {N : ℕ} (F : JordanFrame J N)
       (harch : OrderUnitSpace.IsArchimedean J)
       (hae : ∀ x, OrderUnitSpace.IsEffect (twistElt F (ρ x))),
       Continuous fun x => LinearMap.toContinuousLinearMap
-        (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ x) = _)
+        (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ x) = ∑ k, Real.exp (ρ x k) • F.p k)
           (twistElt_isSoS F (ρ x)) (twistElt_compl_isSoS F (hρ0 x))
           (fun k _ => (Real.exp_pos (ρ x k)).ne') P hS2 harch (hae x)).toLinearMap := by
   letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
@@ -1222,7 +1222,7 @@ theorem continuous_toCLM_thetaOf_twistElt {N : ℕ} (F : JordanFrame J N)
   have hL := continuousOn_toCLM_seqLeftMulAbs P hS2 harch (fun x => twistElt F (ρ x)) hg hae
   -- assemble
   have hrw : (fun x => LinearMap.toContinuousLinearMap
-      (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ x) = _)
+      (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ x) = ∑ k, Real.exp (ρ x k) • F.p k)
         (twistElt_isSoS F (ρ x)) (twistElt_compl_isSoS F (hρ0 x))
         (fun k _ => (Real.exp_pos (ρ x k)).ne') P hS2 harch (hae x)).toLinearMap)
       = fun x => (LinearMap.toContinuousLinearMap
@@ -1234,5 +1234,85 @@ theorem continuous_toCLM_thetaOf_twistElt {N : ℕ} (F : JordanFrame J N)
   rw [hrw]
   exact (isBoundedBilinearMap_comp (𝕜 := ℝ) (E := J) (F := J) (G := J)).continuous.comp
     ((continuous_toCLM_quadJ.comp hv).prodMk hL)
+
+
+/-- The twist element at parameter `0` is the unit. -/
+theorem twistElt_zero {N : ℕ} (F : JordanFrame J N) : twistElt F (0 : Fin N → ℝ) = 1 := by
+  show ∑ k, Real.exp ((0 : Fin N → ℝ) k) • F.p k = 1
+  simp only [Pi.zero_apply, Real.exp_zero, one_smul]
+  exact F.complete
+
+/-- ★★★ **`lem:frame-fix` clause (4) and `lem:homomorphism`'s target: `Θ_r ∈ Stab(F)°`.**
+
+The path `t ↦ Θ_{(t clamped to [0,1])·r}` runs inside `Stab(F)` from the identity to `Θ_r`, it is
+continuous by `continuous_toCLM_thetaOf_twistElt`, and its range is therefore a connected subset
+of `Stab(F)` containing both endpoints. -/
+theorem theta_mem_stabFrame_connectedComponent {N : ℕ} (F : JordanFrame J N) {r : Fin N → ℝ}
+    (hr : ∀ k, r k ≤ 0) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J)
+      (hae : ∀ t : ℝ, OrderUnitSpace.IsEffect (twistElt F ((max 0 (min 1 t)) • r))),
+      LinearMap.toContinuousLinearMap
+        (thetaOf F.orthIdem F.complete (rfl : twistElt F ((max 0 (min 1 (1:ℝ))) • r)
+            = ∑ k, Real.exp (((max 0 (min 1 (1:ℝ))) • r) k) • F.p k)
+          (twistElt_isSoS F _) (twistElt_compl_isSoS F (fun k => by
+            have h1 : (0:ℝ) ≤ max 0 (min 1 (1:ℝ)) := le_max_left _ _
+            have := mul_nonpos_of_nonneg_of_nonpos h1 (hr k)
+            exact this))
+          (fun k _ => (Real.exp_pos _).ne') P hS2 harch (hae 1)).toLinearMap
+        ∈ connectedComponentIn (stabFrame F) (ContinuousLinearMap.id ℝ J) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch hae
+  set ρ : ℝ → (Fin N → ℝ) := fun t => (max 0 (min 1 t)) • r with hρdef
+  have hρ0 : ∀ t k, ρ t k ≤ 0 := fun t k =>
+    mul_nonpos_of_nonneg_of_nonpos (le_max_left _ _) (hr k)
+  have hρc : Continuous ρ :=
+    (continuous_const.max (continuous_const.min continuous_id)).smul continuous_const
+  set γ : ℝ → (J →L[ℝ] J) := fun t => LinearMap.toContinuousLinearMap
+    (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ t) = ∑ k, Real.exp (ρ t k) • F.p k)
+      (twistElt_isSoS F (ρ t)) (twistElt_compl_isSoS F (hρ0 t))
+      (fun k _ => (Real.exp_pos (ρ t k)).ne') P hS2 harch (hae t)).toLinearMap with hγdef
+  have hγc : Continuous γ :=
+    continuous_toCLM_thetaOf_twistElt F ρ hρc hρ0 P hS2 harch hae
+  -- the path stays in the stabilizer
+  have hγmem : ∀ t, γ t ∈ stabFrame F := fun t =>
+    theta_mem_stabFrame F (fun k => Real.exp_pos (ρ t k))
+      (fun k => Real.exp_le_one_iff.mpr (hρ0 t k)) P hS2 harch (hae t) _ _
+  -- the path starts at the identity
+  have hρ00 : ρ 0 = 0 := by
+    rw [hρdef]; simp
+  have hunit : twistElt F (ρ 0) = 1 := by rw [hρ00]; exact twistElt_zero F
+  have hγ0 : γ 0 = ContinuousLinearMap.id ℝ J := by
+    refine ContinuousLinearMap.ext fun z => ?_
+    have hL : P.seqLeftMulAbs harch (hae 0) = LinearMap.id :=
+      OrderUnitSpace.linearMap_eq_of_eq_on_effects _ _ fun v hv => by
+        rw [P.seqLeftMulAbs_apply_effect harch (hae 0) hv, hunit]
+        exact P.sp_unit_left hv
+    have hq : (∑ k, Real.sqrt (Real.exp (-(ρ 0 k))) • F.p k) = 1 := by
+      rw [hρ00]
+      simp only [Pi.zero_apply, neg_zero, Real.exp_zero, Real.sqrt_one, one_smul]
+      exact F.complete
+    show LinearMap.toContinuousLinearMap _ z = z
+    rw [show LinearMap.toContinuousLinearMap
+        (thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ 0) = ∑ k, Real.exp (ρ 0 k) • F.p k)
+          (twistElt_isSoS F (ρ 0)) (twistElt_compl_isSoS F (hρ0 0))
+          (fun k _ => (Real.exp_pos (ρ 0 k)).ne') P hS2 harch (hae 0)).toLinearMap z
+        = thetaOf F.orthIdem F.complete (rfl : twistElt F (ρ 0) = ∑ k, Real.exp (ρ 0 k) • F.p k)
+          (twistElt_isSoS F (ρ 0)) (twistElt_compl_isSoS F (hρ0 0))
+          (fun k _ => (Real.exp_pos (ρ 0 k)).ne') P hS2 harch (hae 0) z from rfl]
+    rw [thetaOf_twistElt_apply F (hρ0 0) P hS2 harch (hae 0) z, hq,
+      quadJ_unit_left EuclideanJordanAlgebra.one_mul]
+    exact congrFun (congrArg (fun f : J →ₗ[ℝ] J => (f : J → J)) hL) z
+  -- the range is a connected subset of the stabilizer containing both endpoints
+  have hconn : IsPreconnected (Set.range γ) := by
+    rw [← Set.image_univ]
+    exact (isPreconnected_univ (α := ℝ)).image γ hγc.continuousOn
+  have hsub : Set.range γ ⊆ stabFrame F := by
+    rintro _ ⟨t, rfl⟩; exact hγmem t
+  have hid : ContinuousLinearMap.id ℝ J ∈ Set.range γ := ⟨0, hγ0⟩
+  exact hconn.subset_connectedComponentIn hid hsub ⟨1, rfl⟩
 
 end RadicalRelativity.EJA
