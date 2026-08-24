@@ -1227,6 +1227,236 @@ theorem jsqrt_mul_self' (e : J) (he : ∀ y : J, e * y = y) (x : J)
   rw [jsqrt_eq_of_resolution e he x hfam hinj hx, hx]
   exact jsqrtOfResolution_mul_self' hfam hnn
 
+/-! ### Simultaneous resolution of operator-commuting elements
+
+The Jordan half of Faraut–Korányi Lemma X.2.2: two elements whose multiplication operators
+commute are diagonal in a *single* complete orthogonal idempotent family
+(`exists_simultaneous_resolution`).  Combined with `luders_of_resolution` this makes the
+Lüders product of compatible effects coefficientwise — `a·b = ∑ᵢ λᵢμᵢcᵢ` — so the S1–S7
+axioms on compatible pairs reduce to arithmetic on the eigenvalue lists.
+
+★ **The route dodges the zero-eigenvalue trap, and how it does so is the point.**  The
+tempting argument — each `cᵢ` is a polynomial in `a` (`idem_eq_jeval_lagrange`), so `L_b`
+commutes with each `L_{cᵢ}` — runs through `jeval`, which is `x·p(x)` and cannot see the zero
+eigenvalue; it also needs `⁅L_a, L_b⁆ = 0 → ⁅L_{a²}, L_b⁆ = 0`, which the Jordan identity
+alone does not give.  Neither is used.  Instead everything runs on **associative** iterates of
+`L_a` applied to `b`: with `uᵢ := cᵢ ∘ b`, operator commutation gives `L_a^k b = ∑ᵢ λᵢ^k uᵢ`
+and `L_{cᵢ} L_a^k b = λᵢ^k uᵢ` — a plain Vandermonde system over the *full* eigenvalue list,
+zero included — and the Lagrange interpolant at `λᵢ` isolates `cᵢ ∘ uᵢ = uᵢ`.  So each `uᵢ`
+lands in the Peirce-1 space of its own `cᵢ`, where `exists_resolution_rel` refines it.  No
+polynomial in the element `a` ever appears, and no dimension induction is needed. -/
+
+/-- **Relative spectral resolution.**  An element of the Peirce-1 space of an idempotent `c`
+is resolved by an orthogonal idempotent family drawn from that same Peirce space and
+*complete for `c`* — the idempotent plays the unit's role.  `spectral_resolution` supplies
+the family inside `jspan x`, which lies in the Peirce-1 space because that space is closed
+under the product (`eigen_one_mul_one`); the deficit `c − ∑ⱼ dⱼ` is appended with coefficient
+`0`, exactly as `spectral_resolution_complete` appends `e − ∑ᵢ cᵢ`. -/
+theorem exists_resolution_rel {c x : J} (hc : c * c = c) (hx : c * x = x) :
+    ∃ (n : ℕ) (d : Fin n → J) (mu : Fin n → ℝ),
+      IsOrthIdemFamily d ∧ (∀ j, c * d j = d j) ∧ (∑ j, d j) = c ∧ x = ∑ j, mu j • d j := by
+  obtain ⟨n, d, mu, hdfam, hdspan, hxd⟩ := spectral_resolution x
+  have hjp : ∀ k, c * jpow x k = jpow x k := by
+    intro k
+    induction k with
+    | zero => simpa using hx
+    | succ k ih => rw [jpow_succ]; exact eigen_one_mul_one hc hx ih
+  have hmemspan : ∀ z ∈ jspan x, c * z = z := by
+    intro z hz
+    induction hz using Submodule.span_induction with
+    | mem w hw => obtain ⟨k, rfl⟩ := hw; exact hjp k
+    | zero => exact mul_zero c
+    | add p q _ _ hp hq => rw [mul_add, hp, hq]
+    | smul r p _ hp => rw [mul_smul_comm', hp]
+  have hmem : ∀ j, c * d j = d j := fun j => hmemspan _ (hdspan j)
+  have hcs : c * (∑ j, d j) = ∑ j, d j := by
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl fun j _ => hmem j
+  have hss : (∑ j, d j) * (∑ j, d j) = ∑ j, d j := hdfam.sum_idem Finset.univ
+  have hsd : ∀ k, (∑ j, d j) * d k = d k := by
+    intro k
+    rw [Finset.sum_mul, Finset.sum_eq_single k (fun j _ hjk => hdfam.orth j k hjk)
+      (fun h => absurd (Finset.mem_univ k) h)]
+    exact hdfam.idem k
+  have hlast : (c - ∑ j, d j) * (c - ∑ j, d j) = c - ∑ j, d j := by
+    rw [sub_mul, mul_sub, mul_sub, hc, hcs, mul_comm (∑ j, d j) c, hcs, hss, sub_self, sub_zero]
+  have horthlast : ∀ k, (c - ∑ j, d j) * d k = 0 := by
+    intro k
+    rw [sub_mul, hmem k, hsd k, sub_self]
+  refine ⟨n + 1, Fin.snoc d (c - ∑ j, d j), Fin.snoc mu 0, ⟨?_, ?_⟩, ?_, ?_, ?_⟩
+  · intro i
+    induction i using Fin.lastCases with
+    | last => simpa using hlast
+    | cast i => simpa using hdfam.idem i
+  · intro i j hij
+    induction i using Fin.lastCases with
+    | last =>
+        induction j using Fin.lastCases with
+        | last => exact absurd rfl hij
+        | cast j => simpa using horthlast j
+    | cast i =>
+        induction j using Fin.lastCases with
+        | last => simpa [mul_comm] using horthlast i
+        | cast j => simpa using hdfam.orth i j fun h => hij (by rw [h])
+  · intro j
+    induction j using Fin.lastCases with
+    | last =>
+        simp only [Fin.snoc_last]
+        rw [mul_sub, hc, hcs]
+    | cast j => simpa using hmem j
+  · rw [Fin.sum_univ_castSucc]
+    simp
+  · rw [Fin.sum_univ_castSucc]
+    simpa using hxd
+
+/-- **Simultaneous spectral resolution of operator-commuting elements** — the Jordan half of
+Faraut–Korányi Lemma X.2.2, at the typeclass generality of this file.
+
+Resolve `a` with *distinct* eigenvalues (`exists_resolution_distinct`).  Operator commutation
+pins each component `uᵢ = cᵢ ∘ b` into the Peirce-1 space of its own `cᵢ` — the Vandermonde
+argument of the section docstring — where `exists_resolution_rel` refines `cᵢ` into a
+resolution of `uᵢ`.  Idempotents of different blocks annihilate each other because the
+Peirce-1 spaces of orthogonal idempotents do (`eigen_one_mul_zero`), so the union of the
+blocks is one orthogonal family, complete for `e`, diagonalising `a` blockwise-constantly and
+`b` by construction. -/
+theorem exists_simultaneous_resolution (e : J) (he : ∀ y : J, e * y = y) {a b : J}
+    (hab : ∀ w, a * (b * w) = b * (a * w)) :
+    ∃ (N : ℕ) (q : Fin N → J) (lam mu : Fin N → ℝ),
+      IsOrthIdemFamily q ∧ (∑ k, q k) = e ∧
+      a = ∑ k, lam k • q k ∧ b = ∑ k, mu k • q k := by
+  classical
+  obtain ⟨n, c, lam, hfam, hsum, hae, hinj⟩ := exists_resolution_distinct e he a
+  set u : Fin n → J := fun i => c i * b with hudef
+  have hbu : b = ∑ i, u i := by
+    have h : (∑ i, c i) * b = ∑ i, c i * b := Finset.sum_mul _ _ _
+    rw [hsum, he b] at h
+    simpa [hudef] using h
+  have hac : ∀ i, a * c i = lam i • c i := by
+    intro i
+    rw [hae]
+    exact sum_smul_mul_idem hfam lam i
+  have hau : ∀ i, a * u i = lam i • u i := by
+    intro i
+    simp only [hudef]
+    calc a * (c i * b) = a * (b * c i) := by rw [mul_comm (c i) b]
+      _ = b * (a * c i) := hab (c i)
+      _ = b * (lam i • c i) := by rw [hac i]
+      _ = lam i • (b * c i) := mul_smul_comm' _ _ _
+      _ = lam i • (c i * b) := by rw [mul_comm b (c i)]
+  have hccw : ∀ i j w, c i * (c j * w) = c j * (c i * w) := by
+    intro i j w
+    rcases eq_or_ne i j with rfl | hij
+    · rfl
+    · exact mul_comm_of_eigen_zero (hfam.idem i) (hfam.orth i j hij) w
+  have hca : ∀ i w, c i * (a * w) = a * (c i * w) := by
+    intro i w
+    rw [hae, Finset.sum_mul, Finset.mul_sum, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    rw [smul_mul_assoc, smul_mul_assoc, mul_smul_comm', hccw i j w]
+  -- the associative iterates of `L_a` on `b`, evaluated two ways
+  have hvsum : ∀ k : ℕ, (fun w => a * w)^[k] b = ∑ j, lam j ^ k • u j := by
+    intro k
+    induction k with
+    | zero => simpa using hbu
+    | succ k ih =>
+        simp only [Function.iterate_succ_apply']
+        rw [ih, Finset.mul_sum]
+        refine Finset.sum_congr rfl fun j _ => ?_
+        rw [mul_smul_comm', hau j, smul_smul, ← pow_succ]
+  have hcv : ∀ i (k : ℕ), c i * (fun w => a * w)^[k] b = lam i ^ k • u i := by
+    intro i k
+    induction k with
+    | zero => simp [hudef]
+    | succ k ih =>
+        simp only [Function.iterate_succ_apply']
+        rw [hca i, ih, mul_smul_comm', hau i, smul_smul, ← pow_succ]
+  have hmono : ∀ i (k : ℕ), (∑ j, lam j ^ k • (c i * u j)) = lam i ^ k • u i := by
+    intro i k
+    rw [← hcv i k, hvsum k, Finset.mul_sum]
+    exact Finset.sum_congr rfl fun j _ => (mul_smul_comm' _ _ _).symm
+  have hpoly : ∀ i (p : Polynomial ℝ),
+      (∑ j, p.eval (lam j) • (c i * u j)) = p.eval (lam i) • u i := by
+    intro i p
+    induction p using Polynomial.induction_on' with
+    | add p q hp hq =>
+        simp only [Polynomial.eval_add, add_smul]
+        rw [Finset.sum_add_distrib, hp, hq]
+    | monomial k coef =>
+        simp only [Polynomial.eval_monomial, mul_smul]
+        rw [← Finset.smul_sum, hmono i k]
+  -- the Lagrange interpolant at `λᵢ` isolates `cᵢ ∘ uᵢ = uᵢ`
+  have hcu : ∀ i, c i * u i = u i := by
+    intro i
+    have h := hpoly i (Lagrange.basis Finset.univ lam i)
+    rw [Finset.sum_eq_single i (fun j _ hji => by
+        rw [Lagrange.eval_basis_of_ne (Ne.symm hji) (Finset.mem_univ j), zero_smul])
+      (fun hi => absurd (Finset.mem_univ i) hi),
+      Lagrange.eval_basis_self hinj.injOn (Finset.mem_univ i), one_smul, one_smul] at h
+    exact h
+  -- refine each block
+  choose m d nu hdfam hdmem hdsum hud using fun i => exists_resolution_rel (hfam.idem i) (hcu i)
+  have hcross : ∀ i i', i ≠ i' → ∀ (j : Fin (m i)) (j' : Fin (m i')), d i j * d i' j' = 0 := by
+    intro i i' hii' j j'
+    have h1 : d i' j' * c i = 0 :=
+      eigen_one_mul_zero (hfam.idem i') (hdmem i' j') (hfam.orth i' i (Ne.symm hii'))
+    exact eigen_one_mul_zero (hfam.idem i) (hdmem i j) (by rw [mul_comm] at h1; exact h1)
+  have horth : ∀ σ τ : (i : Fin n) × Fin (m i), σ ≠ τ → d σ.1 σ.2 * d τ.1 τ.2 = 0 := by
+    rintro ⟨i, j⟩ ⟨i', j'⟩ hne
+    rcases eq_or_ne i i' with rfl | hii'
+    · exact (hdfam i).orth j j' fun h => hne (by rw [h])
+    · exact hcross i i' hii' j j'
+  -- assemble over the sigma type
+  let σe := Fintype.equivFin ((i : Fin n) × Fin (m i))
+  have hsum_sigma : ∀ (g : ∀ i, Fin (m i) → J),
+      (∑ k, g (σe.symm k).1 (σe.symm k).2) = ∑ i, ∑ j, g i j := by
+    intro g
+    calc (∑ k, g (σe.symm k).1 (σe.symm k).2)
+        = ∑ σ : (i : Fin n) × Fin (m i), g σ.1 σ.2 :=
+          Equiv.sum_comp σe.symm (fun σ => g σ.1 σ.2)
+      _ = ∑ i, ∑ j, g i j := by rw [← Finset.univ_sigma_univ, Finset.sum_sigma]
+  refine ⟨Fintype.card ((i : Fin n) × Fin (m i)),
+    fun k => d (σe.symm k).1 (σe.symm k).2,
+    fun k => lam (σe.symm k).1,
+    fun k => nu (σe.symm k).1 (σe.symm k).2,
+    ⟨fun k => (hdfam (σe.symm k).1).idem (σe.symm k).2,
+     fun k k' hkk' => horth _ _ fun h => hkk' (by simpa using congrArg σe h)⟩,
+    ?_, ?_, ?_⟩
+  · exact (hsum_sigma d).trans ((Finset.sum_congr rfl fun i _ => hdsum i).trans hsum)
+  · refine hae.trans ?_
+    refine (Finset.sum_congr rfl fun i _ => ?_).trans (hsum_sigma fun i j => lam i • d i j).symm
+    rw [← hdsum i, Finset.smul_sum]
+  · refine hbu.trans ?_
+    exact (Finset.sum_congr rfl fun i _ => hud i).trans (hsum_sigma fun i j => nu i j • d i j).symm
+
+omit [IsFormallyReal J] [Module.Finite ℝ J] in
+/-- **The converse: elements diagonal in one orthogonal idempotent family operator-commute.**
+Together with `exists_simultaneous_resolution` this makes operator commutation *equivalent*
+to simultaneous diagonalisability.  This direction needs neither formal reality nor finite
+dimension: it is the pairwise operator commutation of orthogonal idempotents
+(`mul_comm_of_eigen_zero`), extended bilinearly. -/
+theorem opCommute_of_shared_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {a b : J} (la mu : Fin n → ℝ) (ha : a = ∑ i, la i • c i) (hb : b = ∑ i, mu i • c i)
+    (w : J) : a * (b * w) = b * (a * w) := by
+  have hccw : ∀ i j, c i * (c j * w) = c j * (c i * w) := by
+    intro i j
+    rcases eq_or_ne i j with rfl | hij
+    · rfl
+    · exact mul_comm_of_eigen_zero (hfam.idem i) (hfam.orth i j hij) w
+  have key : ∀ f g : Fin n → ℝ,
+      (∑ i, f i • c i) * ((∑ j, g j • c j) * w)
+        = ∑ i, ∑ j, (f i * g j) • (c i * (c j * w)) := by
+    intro f g
+    calc (∑ i, f i • c i) * ((∑ j, g j • c j) * w)
+        = ∑ i, (f i • c i) * ((∑ j, g j • c j) * w) := Finset.sum_mul _ _ _
+      _ = ∑ i, ∑ j, (f i * g j) • (c i * (c j * w)) := by
+          refine Finset.sum_congr rfl fun i _ => ?_
+          rw [Finset.sum_mul _ (fun j => g j • c j) w, Finset.mul_sum]
+          refine Finset.sum_congr rfl fun j _ => ?_
+          rw [smul_mul_assoc, smul_mul_assoc, mul_smul_comm', smul_smul]
+  rw [ha, hb, key la mu, key mu la, Finset.sum_comm]
+  refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
+  rw [hccw y x, mul_comm (la y) (mu x)]
+
 end Split
 
 
