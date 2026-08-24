@@ -169,6 +169,15 @@ import RadicalRelativity.Necessity.SharpEffects
 -- The concrete twins above stay in place; `isProjection_isSharp` bridges them.
 import RadicalRelativity.OrthFamily
 
+-- Row 9 (`lem:normality`) at ABSTRACT order-unit-space generality, replacing the concrete
+-- carrier's finite-dimensionality route: left multiplication by an effect is a CONTRACTION
+-- for the order-unit norm (positivity plus `L 1 = a <= 1`), so second-argument continuity is
+-- `delta := epsilon` with no dimension hypothesis and no S2.  Adds the article's order-INFIMUM
+-- form (`b_k` decreasing to `b` gives `a.b_k` decreasing to `a.b`, as a genuine `IsGLB`), which
+-- the concrete carrier did not carry, and the compatibility clause -- the one place S2 is
+-- actually needed, since it moves the FIRST argument.
+import RadicalRelativity.Normality
+
 -- M2 necessity core, fourth unit (LEDGER 2.1e, vdW 4.19-4.20): the normalized
 -- spectral pseudo-inverse of a positive-definite effect, the cancellation
 -- L'_nu (L'_b x) = c x through S5 and the 2.1d value law, and the payoff:
