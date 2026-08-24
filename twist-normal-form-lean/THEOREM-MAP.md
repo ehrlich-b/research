@@ -54,7 +54,8 @@ three kinds, and only the first is conditional on §2:
 | Paper statement | Lean declaration | File |
 | --- | --- | --- |
 | `mthm:master` — **dependency skeleton only**, see §3; the complex row is now proved concretely, see the subsection below | `MasterTheorem.master_chain` | `MasterTheorem/Master.lean` |
-| `prop:central`, **componentwise identity only** — the summand inheritance of S1–S7 and the converse assembly remain paper proofs | `MasterTheorem.Central.central_decomposition` | `MasterTheorem/Central.lean` |
+| `prop:central` — ★★★ **COMPLETE 2026-08-24, at the article's `⊕_{α=1}^m` generality and with every citation discharged**; the entry below was true until then and is kept as the prior record | `SequentialProductOn.restrictPi`, `SequentialProductOn.pi`, `restrictPi_pi`, `sp_componentwise_pi`, `sp_eq_pi_restrict`, `sp_central_decomposition` | `RadicalRelativity/DirectSumRestrict.lean`, `RadicalRelativity/DirectSum.lean`, `RadicalRelativity/OrthFamily.lean` |
+| `prop:central`, **componentwise identity only** (superseded 2026-08-24 by the row above; it carried the bridge/vdW-5.2 facts as hypotheses, which `sp_central_decomposition` now proves) | `MasterTheorem.Central.central_decomposition` | `MasterTheorem/Central.lean` |
 | `prop:real` (real type rigid) | `MasterTheorem.luders_real_produced` | `MasterTheorem/Master.lean` |
 | `thm:quaternionic` (quaternionic rigid) | `MasterTheorem.luders_quaternionic_produced` | `MasterTheorem/Master.lean` |
 | `thm:albert` (exceptional rigid) | `MasterTheorem.luders_albert_produced` | `MasterTheorem/Master.lean` |
@@ -694,6 +695,51 @@ not there.
   S5–S7 from these; S2 as *global* norm continuity of `a ↦ a &ₜ b` (squeeze at the
   spectral origin); and the packaged `twistSequentialProductCore` /
   `twistSequentialProduct` per twist parameter `t`.
+
+
+## 1b. The 2026-08-24 additions (eight rows moved)
+
+★★★ This section discharges the standing rule that this map is updated alongside
+`STATEMENT-MANIFEST.md`; the manifest's own header records a past violation of it as a debt.
+Every declaration below is `sorry`-free with closure exactly
+`[propext, Classical.choice, Quot.sound]`.
+
+★ **The keystone.** `prop:bridge` had been priced as research. It is a *Frobenius certificate*
+transcribed into Jordan vocabulary as the **Peirce defect** `Φ(v,x) = ⟪v∘v,x∘x⟫ − ‖v∘x‖²`: the
+hypothesis kills it, and `Φ = 0` forces operator commutation because `4L_{q_k}L_{q_l}` is a
+self-adjoint idempotent — which sidesteps the joint Peirce decomposition entirely. Both identities
+were checked numerically before being built (`Φ = ¼‖⁅v,x⁆‖²_F` to 2.8e-14; `‖P²−P‖ ≤ 1.3e-15` with
+exact block ranks).
+
+| Paper statement | Lean declaration | File |
+| --- | --- | --- |
+| `prop:bridge` — the three-way equivalence, **both converses**, at EJA generality | `RadicalRelativity.EJA.bridge_tfae`, `luders_comm_iff_opCommute`, `opCommute_of_luders_comm`, `opCommute_of_quadJ_comm` | `EJA/ConeTopology.lean` |
+| `def:sp` inhabited at EJA generality — the Lüders product is a `SequentialProductOn` (S1, S3–S7) with S2 | `RadicalRelativity.EJA.ludersSequentialProduct`, `ludersSequentialProduct_firstArgContinuous` | `EJA/ConeTopology.lean` |
+| `lem:simple-bridge` clause (i) — convex σ-sequential effect algebra | `RadicalRelativity.EJA.ludersSequentialProduct_isConvexSigmaSEA`, `IsConvexSigmaSEA` | `EJA/ConeTopology.lean`, `Normality.lean` |
+| `lem:normality` — both clauses, order-`↓` in and order-`↓` out | `SequentialProductOn.sp_isGLB_of_isGLB`, `compatible_of_isGLB_of_firstArgContinuous` | `Normality.lean` |
+| `lem:normality` — the analytic inputs, proved not assumed | `OrderUnitSpace.tendstoOu_of_antitone_isGLB` (monotone convergence), `ouNormEquiv_of_finiteDimensional` (norm equivalence) | `Normality.lean` |
+| `prop:pseudo-transfer` — all four assertions, quantified over every invertible effect | `RadicalRelativity.EJA.prop_pseudoTransfer`, `lam_ne_zero_of_invertible` | `EJA/PseudoTransfer.lean` |
+| `prop:theta` — existence, fixing (vdW Prop. 5.5), and both multiplicativity equalities | `RadicalRelativity.EJA.exists_theta`, `theta_fixes_of_opCommute`, `theta_mul`, `theta_comm` | `EJA/ThetaAbstract.lean` |
+| vdW Prop. 5.2 in usable form — every S1–S7+S2 product takes the standard value on an operator-commuting pair | `RadicalRelativity.EJA.sp_eq_quadJ_of_opCommute` | `EJA/ThetaAbstract.lean` |
+| `lem:coalescence` — both clauses | `RadicalRelativity.EJA.theta_id_on_peirceTwo_all`, `theta_id_on_frameBlock` | `EJA/ThetaAbstract.lean` |
+| `lem:frame-fix` — all five clauses, including `Θ_r ∈ Stab(F)°` | `RadicalRelativity.EJA.theta_fixes_frame_atom`, `jordanAut_fixes_frameDiag`, `jordanAut_maps_frameBlock`, `theta_mem_stabFrame_connectedComponent`, `seqLeftMul_mapsTo_frameBlock` | `EJA/ThetaAbstract.lean` |
+| `lem:homomorphism` — homomorphism, continuity, `Stab(F)°`, and the extension `χ` to `(ℝⁿ,+)`; **the differential clause is NOT proved** | `RadicalRelativity.EJA.twistTheta_add`, `continuous_toCLM_thetaOf_twistElt`, `twistChi_add`, `twistChi_eq_twistTheta` | `EJA/ThetaAbstract.lean` |
+
+**Supporting machinery new the same day**, none of it previously in the tree: self-duality of the
+Euclidean Jordan cone (`isSoS_iff_forall_inner_nonneg`), closedness of the cone and **compactness
+of the effect interval** (`isCompact_effectSet`), **uniqueness** of the positive square root
+(`jsqrt_mul_self_of_isSoS` — `jsqrt` was known to be *a* square root, never *the* one), continuity
+of the Jordan product and of `jsqrt` (`continuousOn_jsqrt`), paper S2 upgraded from pointwise to
+**operator** continuity (`continuousOn_toCLM_seqLeftMulAbs`), the S2-free sharp value law
+(`sp_sharp_value_le`) and sharp-split lemmas that discharged `prop:central`'s citations, and the
+commutant results `opCommute_idem_mul` / `opCommute_mul` that S7 needs.
+
+★★ **What this section deliberately does not claim.** `lem:homomorphism`'s differential clause
+`ρ_{ij}(dχ(r)) = (rᵢ−rⱼ)T_{ij}` has three of four ingredients proved (`blockAction`,
+`blockAction_twistTheta_eq_id`, `exists_smul_of_vanishing_on_diag`); the missing one is
+**existence of the differential**, which needs "a continuous one-parameter subgroup of a matrix
+group is differentiable". The unknown product's `L_a` is only ever known to be *continuous* in
+`a`, so no closed form shortcuts it.
 
 ## 2. Carried as cited interface hypotheses — supplied, not proved
 
