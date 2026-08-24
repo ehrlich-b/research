@@ -1161,6 +1161,26 @@ theorem luders_jsqrt_jinv {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Real.mul_self_sqrt (hnn i), mul_inv_cancel₀ (hne i), one_smul]
 
+/-- **The Lüders product is coefficientwise on a shared resolution:**
+`a · b = ∑ᵢ λᵢμᵢ cᵢ` when `a = ∑ λᵢcᵢ` and `b = ∑ μᵢcᵢ` over one orthogonal idempotent family.
+
+`Q` squares its subscript's eigenvalues (`quadJ_of_resolution`) and `√` halves them, so the two
+operations cancel and the product reads off as multiplication of coefficients.
+
+★ **This is the engine for S1–S7 on simultaneously-resolved elements.**  Every sequential-product
+axiom — additivity, unitality, orthogonality symmetry, compatible associativity, the two
+multiplicativity clauses — becomes a statement about real numbers once both arguments are
+diagonal in one family, because `λᵢμᵢ` is commutative and associative.  What that does *not* do is
+prove the axioms in general: it reduces them to the claim that the relevant elements share a
+resolution, which for compatible effects is simultaneous diagonalisation and is **not** proved
+here. -/
+theorem luders_of_resolution {n : ℕ} {c : Fin n → J} (hfam : IsOrthIdemFamily c)
+    {lam : Fin n → ℝ} (hnn : ∀ i, 0 ≤ lam i) (mu : Fin n → ℝ) :
+    quadJ (jsqrtOfResolution c lam) (∑ i, mu i • c i) = ∑ i, (lam i * mu i) • c i := by
+  rw [jsqrtOfResolution, quadJ_of_resolution hfam]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Real.mul_self_sqrt (hnn i)]
+
 /-! ### `jsqrt`: the square root as a function
 
 `sqrt_sum_eq_of_resolutions` says the sum `∑ √λᵢ cᵢ` does not depend on which resolution produced
