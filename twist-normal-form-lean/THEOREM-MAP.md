@@ -699,6 +699,28 @@ not there.
   `twistSequentialProduct` per twist parameter `t`.
 
 
+## 1c. The 2026-08-24 additions, later the same day (four more rows moved)
+
+★★★ Rows **22**, **31**, **17** and **26** closed after the eight of §1b, taking the census to
+**30 FORMALIZED / 4 PARTIAL / 2 ABSENT**.  Three of the four were unlocked by one theorem each, and
+in every case the theorem is the one the row's own cell had *named* as its obstruction — which is
+the pattern this file exists to make checkable.
+
+| Row | The obstruction its cell named | The theorem that closed it | File |
+|---|---|---|---|
+| 22 `lem:orientation` | `a^{it}·q = λ^{it}·q` known "only for the diagonal family" | `HermitianMat.mat_cfc_mul_of_eigen` — Lagrange-interpolate `f` over `σ(a) ∪ {λ}`, so `f(a)q = f(λ)q` for **any** `q` with `aq = λq`; `cfcPhase` then builds `e^{ig(a)}` from two *real* calculi, avoiding a unitary functional calculus | `Hermitian/CfcPoly.lean`, `Necessity/ComplexRowUnconditional.lean` |
+| 31 `thm:qubit-boundary` | clause (i)'s coherence half missing in three *encodings* (family, frame, vocabulary) | `RankTwo.n2Sp_coherence_action` + `n2Sp_coherence_action_singular`, resting on `orientationJ_frameProj_blockHerm` (`𝒥` **is** multiplication by `i` on the block coordinate) | `RankTwo/Sufficiency.lean`, `Necessity/ComplexRowUnconditional.lean` |
+| 17 `lem:homomorphism` | "a continuous one-parameter subgroup of a matrix group is differentiable" — the easy case of Hilbert's fifth | `OneParam.hasDerivAt_of_continuous`, by integral smoothing: `F(t) = ∫₀ᵗφ`, `φ(u)F(t) = F(u+t) − F(u)`, some `F(t₀)` a unit. Then `exists_blockGenerator_skew` | `OneParameter.lean`, `EJA/ThetaDifferential.lean` |
+| 26 `lem:frame-connectivity` | every unitary must factor into rank-two block rotations (Givens/Jacobi) | `Necessity.adjBlock_connected`, off the Givens sweep — `G = (1 − P) + B`, then a double induction whose invariant is that the sweep only rotates in planes disjoint from the cleared set | `Necessity/Givens.lean` |
+
+★★ **Two of these avoided a theorem the tree does not have, rather than proving it.**  Row 17's
+`𝔰𝔬(V_{ij})` looks like it needs "a Jordan automorphism preserves an associative form" (false route:
+the class carries an abstract `inner_assoc` form, and uniqueness up to scalar is not in this tree);
+it needs only `⟪u,v⟫ = ⟪u∘v,1⟫`, `J½∘J½ ⊆ J₁⊕J₀`, and `Θ` being pointwise the identity on each
+`J₁(pₖ)` — an isometry **on the block**, which is the only place `𝔰𝔬` lives.  And `χ ∈ Stab(F)°`
+avoids "the identity component is a subgroup": the path `t ↦ χ(t·r)` runs from `1` to `χ(r)` inside
+`Stab(F)`, so its range is connected and contains both endpoints.
+
 ## 1b. The 2026-08-24 additions (eight rows moved)
 
 ★★★ This section discharges the standing rule that this map is updated alongside
