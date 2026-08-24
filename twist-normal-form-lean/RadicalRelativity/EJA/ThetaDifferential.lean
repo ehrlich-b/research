@@ -840,4 +840,25 @@ theorem twistTheta_eq_one_of_dChi_eq_zero {N : ℕ} (F : JordanFrame J N) :
   rw [chiCLM_apply, twistChi_eq_twistTheta F P hS2 harch r hr] at hz
   exact hz
 
+/-- ★★★ **`dχ(r)` vanishes on `V_{ij}` on the coalescence hyperplane**, pointwise.  This is the
+inner step of `exists_blockGenerator`, exposed on its own because the concrete branches consume it
+in coordinates rather than through `blockRestrict`. -/
+theorem dChi_apply_eq_zero_of_eq {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) {i j : Fin N}, i ≠ j → r i = r j →
+      ∀ {x : J}, x ∈ frameBlockRaw F i j → dChi F P hS2 harch r x = 0 := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r i j hij hrij x hx
+  refine (hasDerivAt_chiCLM_apply F P hS2 harch r x).unique ?_
+  have hc : (fun t : ℝ => chiCLM F P hS2 harch (t • r) x) = fun _ : ℝ => x := by
+    funext t
+    rw [chiCLM_apply]
+    exact twistChi_id_on_frameBlock F P hS2 harch (t • r) hij
+      (by simp only [Pi.smul_apply, smul_eq_mul, hrij]) hx
+  rw [hc]
+  exact hasDerivAt_const _ _
+
 end RadicalRelativity.EJA

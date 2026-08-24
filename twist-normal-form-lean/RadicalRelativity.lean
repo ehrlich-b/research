@@ -1031,3 +1031,15 @@ import RadicalRelativity.Necessity.Givens
 -- frame-fixing derivations on `V_{ij}`, which this file makes into a question about a carrier the
 -- tree HAS rather than about a carrier it lacks.
 import RadicalRelativity.EJA.CarrierInstances
+
+-- ★★★ **`thm:quaternionic` on the concrete carrier** -- `EJA.quaternionic_twistTheta_id` and
+-- `EJA.quaternionic_luders`: on `H_n(ℍ)` with `n ≥ 3` the twist automorphism of every S1-S7 (+S2)
+-- product is the identity, so the product IS the Lüders product `a·b = Q_{√a}b`.  This is manifest
+-- row 20, and it needed no classification of frame-fixing derivations: row 17's
+-- `ρ_{ij}(dχ(r)) = (rᵢ−rⱼ)T_{ij}` is LINEAR IN `r`, so reading the cross-block relation at
+-- `r = e_i` and `r = e_j` exhibits the block coordinate as both left AND right multiplication by
+-- one element, hence by a CENTRAL one; the derivation property on `V_{ij} ∘ V_{ij} ⊆ ℝpᵢ ⊕ ℝpⱼ`
+-- makes it imaginary; and `Z(ℍ) ∩ Im ℍ = 0` finishes.  ★ The general statement
+-- `EJA.twistTheta_id_of_center_im_trivial` takes `Z(C) ∩ Im C = 0` as its only type-specific
+-- input, so it fires at `ℝ` as well as at `ℍ`.
+import RadicalRelativity.EJA.QuaternionicLuders
