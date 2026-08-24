@@ -1067,4 +1067,72 @@ theorem opCommute_idem_quadJ {p x y : J} (hp : p * p = p)
     peirceHalf_mul_eq_zero hp (peirceHalf_mul_eq_zero hp hhx hhx) hhy
   rw [map_sub, map_smul, h1, h2, smul_zero, sub_zero]
 
+
+/-! ### S6 for the Lüders product, and closure under the square root -/
+
+/-- **The commutant is closed under `jsqrt`**: a simultaneous resolution of `x` and `b` also
+resolves `√b`, because `jsqrt` reads off any resolution. -/
+theorem opCommute_jsqrt_of_opCommute {x b : J} (hxb : ∀ w, x * (b * w) = b * (x * w)) (w : J) :
+    x * (jsqrt 1 EuclideanJordanAlgebra.one_mul b * w)
+      = jsqrt 1 EuclideanJordanAlgebra.one_mul b * (x * w) := by
+  obtain ⟨N, q, la, mu, hfam, hsum, hxe, hbe⟩ :=
+    exists_simultaneous_resolution 1 EuclideanJordanAlgebra.one_mul hxb
+  have hsq : jsqrt 1 EuclideanJordanAlgebra.one_mul b = ∑ k, Real.sqrt (mu k) • q k :=
+    jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul b hfam hbe
+  exact opCommute_of_shared_resolution' hfam hxe hsq w
+
+omit [FiniteDimensional ℝ J] in
+/-- **S6a at the operator level**: commutation passes to the orthocomplement, since
+`L_{1−b} = id − L_b`. -/
+theorem opCommute_one_sub {a b : J} (hab : ∀ w, a * (b * w) = b * (a * w)) (w : J) :
+    a * (((1 : J) - b) * w) = ((1 : J) - b) * (a * w) := by
+  rw [sub_mul, sub_mul, EuclideanJordanAlgebra.one_mul, mul_sub,
+    EuclideanJordanAlgebra.one_mul, hab w]
+
+omit [FiniteDimensional ℝ J] in
+/-- **S6b at the operator level**: commutation is additive in the second argument. -/
+theorem opCommute_add {a b c : J} (hab : ∀ w, a * (b * w) = b * (a * w))
+    (hac : ∀ w, a * (c * w) = c * (a * w)) (w : J) :
+    a * ((b + c) * w) = (b + c) * (a * w) := by
+  rw [add_mul, add_mul, mul_add, hab w, hac w]
+
+/-- ★★★ **S6a for the Lüders product**: if `a` and `b` are compatible then so are `a` and `1 − b`.
+Both directions of the bridge are used — the hypothesis is translated into operator commutation,
+the conclusion translated back. -/
+theorem luders_compat_one_sub {a b : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (hb1 : IsSoS (jmulₗ J) ((1 : J) - b))
+    (h : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+       = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) ((1 : J) - b)
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul ((1 : J) - b)) a :=
+  luders_comm_of_opCommute ha hb1
+    (opCommute_one_sub (fun w => (opCommute_of_luders_comm ha hb h w).symm))
+
+/-- ★★★ **S6b for the Lüders product**: compatibility with `b` and with `c` gives compatibility
+with `b + c`. -/
+theorem luders_compat_add {a b c : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (hc : IsSoS (jmulₗ J) c) (hbc : IsSoS (jmulₗ J) (b + c))
+    (hab : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+         = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a)
+    (hac : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) c
+         = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul c) a) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) (b + c)
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul (b + c)) a :=
+  luders_comm_of_opCommute ha hbc
+    (opCommute_add (fun w => (opCommute_of_luders_comm ha hb hab w).symm)
+      (fun w => (opCommute_of_luders_comm ha hc hac w).symm))
+
+/-- ★★★ **S5 for the Lüders product, with the axiom's own hypothesis.**  `EJA/Class.lean` proves
+associativity under *operator commutation*; the bridge supplies that from the compatibility the
+axiom actually states. -/
+theorem luders_assoc_of_compat {a b : J} (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (h : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+       = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a) (c : J) :
+    quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a)
+        (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) c)
+      = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul
+          (quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b)) c :=
+  (quadJ_jsqrt_assoc_of_opCommute ha hb
+    (fun w => (opCommute_of_luders_comm ha hb h w).symm) c).symm
+
 end RadicalRelativity.EJA
