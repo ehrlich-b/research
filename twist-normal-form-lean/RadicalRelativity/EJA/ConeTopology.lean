@@ -710,4 +710,48 @@ theorem luders_comm_blockDiagonal {a b : J}
   blockPairing_eq_zero_of_peirceDefect hfam hsum hv
     (luders_comm_peirceDefect_eq_zero ha hb h) hkl
 
+
+/-! ### From block-diagonality to the vanishing of the Peirce half-part
+
+★★★ `c k ∘ (c l ∘ a) = 0` for every `l ≠ k` sums, over the completeness relation `∑ c l = 1`, to
+`c k ∘ a = c k ∘ (c k ∘ a)` — that is, `L_{c k}` and `L_{c k}²` agree on `a`.  Since `L_{c k}` has
+eigenvalues `0, ½, 1`, that forces the `½`-component to vanish: `peirceHalf (c k) a = 0`.  This is
+the usable form of "`a` is Peirce-diagonal", and it is one lemma away from a shared resolution of
+`a` and `b`, which is what S5–S7 actually consume. -/
+
+omit [FiniteDimensional ℝ J] in
+theorem mul_eq_mul_mul_of_blockDiagonal {n : ℕ} {c : Fin n → J} (hsum : (∑ i, c i) = (1 : J))
+    {a : J} {k : Fin n} (hoff : ∀ l, l ≠ k → c k * (c l * a) = 0) :
+    c k * a = c k * (c k * a) := by
+  classical
+  have ha : a = ∑ l, c l * a := by
+    rw [← Finset.sum_mul, hsum, EuclideanJordanAlgebra.one_mul]
+  calc c k * a = c k * ∑ l, c l * a := by rw [← ha]
+    _ = ∑ l, c k * (c l * a) := by rw [Finset.mul_sum]
+    _ = c k * (c k * a) := by
+        rw [Finset.sum_eq_single k (fun l _ hl => hoff l hl) (fun hk => absurd (Finset.mem_univ k) hk)]
+
+omit [FiniteDimensional ℝ J] in
+/-- ★★★ **The Peirce half-part vanishes**: `a` sits in `J₁(cₖ) ⊕ J₀(cₖ)` for every member of the
+resolution. -/
+theorem peirceHalf_eq_zero_of_blockDiagonal {n : ℕ} {c : Fin n → J}
+    (hsum : (∑ i, c i) = (1 : J)) {a : J} {k : Fin n}
+    (hoff : ∀ l, l ≠ k → c k * (c l * a) = 0) : peirceHalf (c k) a = 0 := by
+  rw [peirceHalf_apply]
+  nth_rewrite 1 [mul_eq_mul_mul_of_blockDiagonal hsum hoff]
+  rw [sub_self]
+
+/-- ★★★ **`prop:bridge`, converse: Lüders compatibility puts `a` in the Peirce-diagonal part of
+`b`'s spectral resolution.**  The `½`-part of `a` vanishes at every spectral idempotent of `b`. -/
+theorem luders_comm_peirceHalf_eq_zero {a b : J}
+    (ha : IsSoS (jmulₗ J) a) (hb : IsSoS (jmulₗ J) b)
+    (h : quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul a) b
+       = quadJ (jsqrt 1 EuclideanJordanAlgebra.one_mul b) a)
+    {n : ℕ} {c : Fin n → J} {lam : Fin n → ℝ} (hfam : IsOrthIdemFamily c)
+    (hsum : (∑ i, c i) = (1 : J)) (hinj : Function.Injective lam)
+    (hv : jsqrt 1 EuclideanJordanAlgebra.one_mul b = ∑ i, lam i • c i)
+    (k : Fin n) : peirceHalf (c k) a = 0 := by
+  refine peirceHalf_eq_zero_of_blockDiagonal hsum fun l hl => ?_
+  exact luders_comm_blockDiagonal ha hb h hfam hsum hv (fun hEq => hl (hinj hEq).symm)
+
 end RadicalRelativity.EJA
