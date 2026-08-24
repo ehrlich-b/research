@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Necessity.UnitaryGeneration
+import RadicalRelativity.Hermitian.CfcPoly
 
 set_option linter.style.longLine false
 
@@ -828,17 +829,19 @@ What is proved here, clause by clause, and at what generality:
 * **(ii)** `orientationJ_adU`.  Proved **unrestricted** — for every `x`, not only on `X` — because
   the article's own computation `q(uxu*)p_k = u(q x p_k)u*` never uses the coherence condition.
   Stronger than the article's clause.
-* **(iii)** `adU_eq_rotation_on_crossCoherent`.  ★ **This is where the row stays PARTIAL, and the
-  gap is named rather than papered over.**  What is proved is the article's own proof step at its
-  own generality: any `u` acting on `q` and on `p_k` by scalars whose ratio is a phase rotates `X`
-  through that phase's angle, in the orientation fixed by `𝒥_{q,k}` (unitarity of `u` is not
-  even needed).  What is
-  **not** proved is that `a^{it}` is such a unitary for an arbitrary `a = λq + Σ_{l≥3} λ_l p_l`;
-  that needs `cfc f a · q = f(λ)·q` for a spectral projection `q` of `a`, which this tree has only
-  for the diagonal family.  `torusU_framePair` supplies exactly that identification at the standard
-  frame, where `a^{it}` **is** `U_t(r)` — so the hypothesis class is inhabited by the article's own
-  object and the angle really is `t(\log λ − \log λ_k)`, but the passage from an arbitrary spectral
-  decomposition to it is open.
+* **(iii)** `adU_eq_rotation_on_crossCoherent`, and its general instantiation
+  `adU_cfcPow_eq_rotation`.  The mechanism is proved at the article's own generality: any `u`
+  acting on `q` and on `p_k` by scalars whose ratio is a phase rotates `X` through that phase's
+  angle, in the orientation fixed by `𝒥_{q,k}` (unitarity of `u` is not even needed).
+  ★ The hypothesis class is then inhabited **at an arbitrary spectral decomposition**, not only at
+  the diagonal one.  `HermitianMat.mat_cfc_mul_of_eigen` proves `f(a)·q = f(λ)·q` for every real
+  `f` and every `q` with `a q = λ q` — by Lagrange interpolation on the finite matrix spectrum —
+  and `cfcPhase a g := cos(g(a)) + i·sin(g(a))` assembles the unitary `e^{i g(a)}` out of two
+  *real* functional calculi, so its scalar action is `e^{i g(λ)}` (`cfcPhase_mul_of_eigen`;
+  `cfcPhase_mul_conjTranspose` certifies it really is unitary).  At `g = t·log` this is `a^{it}`,
+  and `adU_cfcPow_eq_rotation` delivers the article's angle `t(\log λ − \log λ_k)` for an
+  arbitrary `a = λq + Σ_{l≥3} λ_l p_l`.  `torusU_framePair` remains as the independent check that
+  at the standard frame `a^{it}` **is** `U_t(r)`.
 
 `blockHerm_isCrossCoherent` together with `blockHerm_ne_zero` certifies that `X` is not the zero
 space, so none of the three clauses is vacuously true.  And `adU_torusU_eq_rotation` **composes**
@@ -1211,6 +1214,107 @@ theorem adU_torusU_eq_rotation {i j k : n} (hij : i ≠ j) (hki : k ≠ i) (hkj 
   obtain ⟨h1, h2, h3⟩ := torusU_framePair hij hki hkj t hr
   exact adU_eq_rotation_on_crossCoherent (framePair_mul_frameProj hki hkj)
     (framePair_idem hij) (frameProj_idem k) h1 h2 h3 hx
+
+/-! ### `a^{it}` at an *arbitrary* spectral decomposition — clause (iii)'s residue, closed
+
+The gap recorded above was: clause (iii) needs a `u` acting on `q` and on `p_k` by scalars, and
+the tree could exhibit such a `u` only at the standard diagonal frame (`torusU_framePair`).  What
+was missing was `f(a)·q = f(λ)·q` for an arbitrary `q` with `a q = λ q`.
+
+`HermitianMat.mat_cfc_mul_of_eigen` now supplies exactly that, for *every* real `f` and *every*
+such `q`, by Lagrange interpolation on the finite matrix spectrum.  Two applications — at `cos∘g`
+and at `sin∘g` — assemble the unitary `e^{i g(a)}` out of the **real** functional calculus, so no
+unitary calculus is needed, and its scalar action is `e^{i g(λ)}`.  Taking `g = t·log` gives the
+article's `a^{it}` and the article's angle `t(\log λ − \log λ_k)` at an arbitrary decomposition
+`a = λ q + Σ_l λ_l p_l`, not merely at the diagonal one. -/
+
+/-- **`e^{i·g(a)}`, built from two real functional calculi.**  At `g = fun x => t * Real.log x`
+this is the article's `a^{it}`; at `g = fun x => t * x` it is `exp(ita)`. -/
+noncomputable def cfcPhase (a : HermitianMat n ℂ) (g : ℝ → ℝ) : Matrix n n ℂ :=
+  (a.cfc fun x => Real.cos (g x)).mat + Complex.I • (a.cfc fun x => Real.sin (g x)).mat
+
+/-- `(C + iS)(C − iS) = C² + S²` when `C` and `S` commute — the algebraic core of unitarity
+of `e^{i g(a)}`, isolated from the functional calculus. -/
+theorem sq_add_sq_of_commute {C S : Matrix n n ℂ} (hcomm : C * S = S * C) :
+    (C + Complex.I • S) * (C + (-Complex.I) • S) = C * C + S * S := by
+  simp only [Matrix.add_mul, Matrix.mul_add, Matrix.smul_mul, Matrix.mul_smul]
+  rw [hcomm]
+  match_scalars <;> simp [Complex.I_sq]
+
+/-- `e^{i g(a)}` is unitary — `cos² + sin² = 1` inside the functional calculus. -/
+theorem cfcPhase_mul_conjTranspose (a : HermitianMat n ℂ) (g : ℝ → ℝ) :
+    cfcPhase a g * (cfcPhase a g)ᴴ = 1 := by
+  have hsum : (a.cfc fun x => Real.cos (g x)).mat * (a.cfc fun x => Real.cos (g x)).mat
+      + (a.cfc fun x => Real.sin (g x)).mat * (a.cfc fun x => Real.sin (g x)).mat = 1 := by
+    have hone : (fun x : ℝ => Real.cos (g x) * Real.cos (g x) + Real.sin (g x) * Real.sin (g x))
+        = fun _ : ℝ => (1 : ℝ) := by
+      funext x
+      nlinarith [Real.sin_sq_add_cos_sq (g x)]
+    have h := HermitianMat.cfc_add_apply (A := a)
+      (f := fun x => Real.cos (g x) * Real.cos (g x))
+      (g := fun x => Real.sin (g x) * Real.sin (g x))
+    rw [hone, HermitianMat.cfc_const, one_smul] at h
+    have h' := congrArg HermitianMat.mat h
+    rw [HermitianMat.mat_one, HermitianMat.mat_add, HermitianMat.mat_cfc_mul_apply,
+      HermitianMat.mat_cfc_mul_apply] at h'
+    exact h'.symm
+  have hconj : (cfcPhase a g)ᴴ
+      = (a.cfc fun x => Real.cos (g x)).mat
+        + (-Complex.I) • (a.cfc fun x => Real.sin (g x)).mat := by
+    rw [cfcPhase, Matrix.conjTranspose_add, Matrix.conjTranspose_smul,
+      (a.cfc fun x => Real.cos (g x)).H, (a.cfc fun x => Real.sin (g x)).H,
+      RCLike.star_def, Complex.conj_I]
+  rw [hconj, cfcPhase, sq_add_sq_of_commute (HermitianMat.cfc_self_commute a _ _), hsum]
+
+/-- ★★★ **The scalar action of `e^{i g(a)}` on an arbitrary eigenprojection.**  No relation
+between `q` and `a`'s own spectral family is assumed beyond `a q = λ q`. -/
+theorem cfcPhase_mul_of_eigen (a : HermitianMat n ℂ) (g : ℝ → ℝ) {q : Matrix n n ℂ} {lam : ℝ}
+    (h : a.mat * q = (lam : ℂ) • q) :
+    cfcPhase a g * q = Complex.exp ((g lam : ℂ) * Complex.I) • q := by
+  have h' : a.mat * q = (algebraMap ℝ ℂ lam) • q := by rwa [Complex.coe_algebraMap]
+  have hc := HermitianMat.mat_cfc_mul_of_eigen a (fun x => Real.cos (g x)) h'
+  have hs := HermitianMat.mat_cfc_mul_of_eigen a (fun x => Real.sin (g x)) h'
+  rw [cfcPhase, Matrix.add_mul, hc, Matrix.smul_mul, hs, Complex.coe_algebraMap,
+    smul_smul, ← add_smul]
+  congr 1
+  rw [Complex.exp_mul_I, ← Complex.ofReal_cos, ← Complex.ofReal_sin]
+  ring
+
+/-- ★★★ **Clause (iii) at an arbitrary spectral decomposition.**  If `a` acts on the orthogonal
+idempotents `q` and `p` by `λ` and `μ`, then `e^{i g(a)}` rotates the cross-coherence space
+`X_{q,p}` through the angle `g(λ) − g(μ)`, in the orientation fixed by `𝒥_{q,p}`.
+
+This is the general form the row's residue asked for: the hypothesis class of
+`adU_eq_rotation_on_crossCoherent` is now inhabited by the functional calculus of *any* Hermitian
+`a`, at *any* pair of eigenprojections, not only by `U_t(r)` at the standard frame. -/
+theorem adU_cfcPhase_eq_rotation (a : HermitianMat n ℂ) (g : ℝ → ℝ)
+    {q p : HermitianMat n ℂ} (hqp : q.mat * p.mat = 0) (hq : q.mat * q.mat = q.mat)
+    (hp : p.mat * p.mat = p.mat) {lam mu : ℝ}
+    (hqe : a.mat * q.mat = (lam : ℂ) • q.mat) (hpe : a.mat * p.mat = (mu : ℂ) • p.mat)
+    {x : HermitianMat n ℂ} (hx : IsCrossCoherent q p x) :
+    adU (cfcPhase a g) x
+      = Real.cos (g lam - g mu) • x + Real.sin (g lam - g mu) • orientationJ q p x := by
+  refine adU_eq_rotation_on_crossCoherent hqp hq hp
+    (cfcPhase_mul_of_eigen a g hqe) (cfcPhase_mul_of_eigen a g hpe) ?_ hx
+  rw [← Complex.exp_conj, ← Complex.exp_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+  congr 1
+  push_cast
+  ring
+
+/-- ★★★ **The article's statement.**  `a^{it} := e^{i·t·\log a}` rotates `X_{q,p_k}` through
+`t(\log λ − \log λ_k)` — the article's own angle, for an arbitrary `a = λ q + Σ_l λ_l p_l`. -/
+theorem adU_cfcPow_eq_rotation (a : HermitianMat n ℂ) (t : ℝ)
+    {q p : HermitianMat n ℂ} (hqp : q.mat * p.mat = 0) (hq : q.mat * q.mat = q.mat)
+    (hp : p.mat * p.mat = p.mat) {lam mu : ℝ}
+    (hqe : a.mat * q.mat = (lam : ℂ) • q.mat) (hpe : a.mat * p.mat = (mu : ℂ) • p.mat)
+    {x : HermitianMat n ℂ} (hx : IsCrossCoherent q p x) :
+    adU (cfcPhase a fun y => t * Real.log y) x
+      = Real.cos (t * (Real.log lam - Real.log mu)) • x
+        + Real.sin (t * (Real.log lam - Real.log mu)) • orientationJ q p x := by
+  have h := adU_cfcPhase_eq_rotation a (fun y => t * Real.log y) hqp hq hp hqe hpe hx
+  rw [show t * Real.log lam - t * Real.log mu
+      = t * (Real.log lam - Real.log mu) from by ring] at h
+  exact h
 
 
 end Orientation

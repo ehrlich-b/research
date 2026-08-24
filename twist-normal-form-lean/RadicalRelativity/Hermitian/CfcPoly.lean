@@ -4,6 +4,8 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Hermitian.OrderUnit
+import RadicalRelativity.Hermitian.Resolution
+import Mathlib.LinearAlgebra.Lagrange
 
 set_option linter.style.longLine false
 
@@ -156,5 +158,36 @@ theorem aeval_mul_of_eigen {M q : Matrix n n 𝕜} {μ : 𝕜} (h : M * q = μ �
     rw [Polynomial.aeval_monomial, Polynomial.eval_monomial,
       Algebra.algebraMap_eq_smul_one, Matrix.smul_mul, Matrix.one_mul, Matrix.smul_mul,
       pow_mul_of_eigen h k, smul_smul]
+
+/-- ★★★ **The functional calculus acts on an eigenprojection by the scalar `f λ`.**
+
+This is manifest **row 22**'s missing general step.  The tree previously knew
+`a^{it} q = λ^{it} q` only when `q` was drawn from `a`'s own diagonal family; here `q`
+is *any* matrix satisfying `a q = λ q`, and `f` is *any* real function — no continuity,
+no positivity, no relation between `q` and `a`'s eigenprojections.
+
+The proof is the interpolation argument: a matrix spectrum is finite, so `f` agrees on
+`σ(a) ∪ {λ}` with the Lagrange interpolant `p`; `cfc_congr` replaces `f` by `p`;
+`mat_cfc_polynomial` turns `A.cfc p` into the matrix polynomial `p(A)`; and
+`aeval_mul_of_eigen` propagates the eigenrelation through `p`.  Note that no hypothesis
+`λ ∈ σ(a)` is needed — `λ` is simply added to the interpolation nodes. -/
+theorem mat_cfc_mul_of_eigen (A : HermitianMat n 𝕜) (f : ℝ → ℝ) {q : Matrix n n 𝕜} {lam : ℝ}
+    (h : A.mat * q = (algebraMap ℝ 𝕜 lam) • q) :
+    (A.cfc f).mat * q = (algebraMap ℝ 𝕜 (f lam)) • q := by
+  classical
+  set nodes : Finset ℝ := insert lam A.eigFinset with hnodes
+  set p : Polynomial ℝ := Lagrange.interpolate nodes id f with hp
+  have hnode_eval : ∀ z ∈ nodes, p.eval z = f z := by
+    intro z hz
+    simpa using! Lagrange.eval_interpolate_at_node (r := f) (Set.injOn_id _) hz
+  have hcongr : A.cfc f = A.cfc (fun x => p.eval x) := by
+    apply HermitianMat.cfc_congr
+    intro x hx
+    exact (hnode_eval x (Finset.mem_insert_of_mem
+      (Finset.mem_coe.mp (HermitianMat.spectrum_subset_eigFinset A hx)))).symm
+  rw [hcongr, mat_cfc_polynomial, aeval_mul_of_eigen h]
+  congr 1
+  rw [Polynomial.eval_map, Polynomial.eval₂_at_apply,
+    hnode_eval lam (Finset.mem_insert_self _ _)]
 
 end HermitianMat
