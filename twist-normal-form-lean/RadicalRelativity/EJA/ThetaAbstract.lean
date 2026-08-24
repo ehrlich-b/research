@@ -1486,4 +1486,240 @@ theorem twistTheta_add {N : ℕ} (F : JordanFrame J N) :
     ← twistTheta_spec F P hS2 harch s hs w, ← twistTheta_spec F P hS2 harch r hr]
   exact congrFun (congrArg (fun f : J →ₗ[ℝ] J => (f : J → J)) hLsplit) w
 
+
+/-! ## The extension `χ` to `(ℝⁿ, +)`
+
+★★★ `Θ` is defined on the cone `(−∞,0]ⁿ` because `a(r)` is an effect only there.  Every
+`r ∈ ℝⁿ` is a difference `u − v` of two cone parameters, so the homomorphism extends to the group
+they generate — which is all of `ℝⁿ` — by `χ(r) := Θ_u Θ_v⁻¹`.  Well-definedness is the group
+identity `u + v' = u' + v ⟹ Θ_uΘ_{v'} = Θ_{u'}Θ_v`, i.e. the homomorphism plus commutativity. -/
+
+theorem twistTheta_congr {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) {r r' : Fin N → ℝ}, r = r' →
+      ∀ (hr : ∀ k, r k ≤ 0) (hr' : ∀ k, r' k ≤ 0),
+        twistTheta F P hS2 harch r hr = twistTheta F P hS2 harch r' hr' := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  rintro P hS2 harch r r' rfl hr hr'
+  rfl
+
+/-- The homomorphism in group form. -/
+theorem twistTheta_mul {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r s : Fin N → ℝ)
+      (hr : ∀ k, r k ≤ 0) (hs : ∀ k, s k ≤ 0) (hrs : ∀ k, (r + s) k ≤ 0),
+      twistTheta F P hS2 harch (r + s) hrs
+        = twistTheta F P hS2 harch r hr * twistTheta F P hS2 harch s hs := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r s hr hs hrs
+  exact LinearEquiv.toLinearMap_injective
+    (LinearMap.ext (twistTheta_add F P hS2 harch r s hr hs hrs))
+
+/-- The twist automorphisms at different parameters commute. -/
+theorem twistTheta_commute {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r s : Fin N → ℝ)
+      (hr : ∀ k, r k ≤ 0) (hs : ∀ k, s k ≤ 0),
+      Commute (twistTheta F P hS2 harch r hr) (twistTheta F P hS2 harch s hs) := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r s hr hs
+  have hrs : ∀ k, (r + s) k ≤ 0 := fun k => by
+    have := hr k; have := hs k; simp only [Pi.add_apply]; linarith
+  have hsr : ∀ k, (s + r) k ≤ 0 := fun k => by
+    have := hr k; have := hs k; simp only [Pi.add_apply]; linarith
+  show _ * _ = _ * _
+  rw [← twistTheta_mul F P hS2 harch r s hr hs hrs,
+    ← twistTheta_mul F P hS2 harch s r hs hr hsr]
+  exact twistTheta_congr F P hS2 harch (add_comm r s) hrs hsr
+
+/-- The cone parts of a parameter. -/
+def uPart {N : ℕ} (r : Fin N → ℝ) : Fin N → ℝ := fun k => min (r k) 0
+
+/-- The complementary cone part. -/
+def vPart {N : ℕ} (r : Fin N → ℝ) : Fin N → ℝ := fun k => min (-(r k)) 0
+
+theorem uPart_nonpos {N : ℕ} (r : Fin N → ℝ) (k : Fin N) : uPart r k ≤ 0 := min_le_right _ _
+
+theorem vPart_nonpos {N : ℕ} (r : Fin N → ℝ) (k : Fin N) : vPart r k ≤ 0 := min_le_right _ _
+
+theorem uPart_sub_vPart {N : ℕ} (r : Fin N → ℝ) : uPart r - vPart r = r := by
+  funext k
+  simp only [uPart, vPart, Pi.sub_apply]
+  rcases le_or_gt 0 (r k) with h | h
+  · rw [min_eq_right h, min_eq_left (by linarith : -(r k) ≤ 0)]; ring
+  · rw [min_eq_left h.le, min_eq_right (by linarith : (0:ℝ) ≤ -(r k))]; ring
+
+
+/-- ★★★ **Well-definedness of the extension**: `Θ_u Θ_v⁻¹` depends only on `u − v`. -/
+theorem twistTheta_div_congr {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) {u v u' v' : Fin N → ℝ}
+      (hu : ∀ k, u k ≤ 0) (hv : ∀ k, v k ≤ 0) (hu' : ∀ k, u' k ≤ 0) (hv' : ∀ k, v' k ≤ 0),
+      u - v = u' - v' →
+      twistTheta F P hS2 harch u hu * (twistTheta F P hS2 harch v hv)⁻¹
+        = twistTheta F P hS2 harch u' hu' * (twistTheta F P hS2 harch v' hv')⁻¹ := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch u v u' v' hu hv hu' hv' hdiff
+  have hsum : u + v' = u' + v := by
+    have := hdiff
+    funext k
+    have h2 := congrFun this k
+    simp only [Pi.sub_apply] at h2
+    simp only [Pi.add_apply]
+    linarith
+  have huv' : ∀ k, (u + v') k ≤ 0 := fun k => by
+    simp only [Pi.add_apply]; linarith [hu k, hv' k]
+  have hu'v : ∀ k, (u' + v) k ≤ 0 := fun k => by
+    simp only [Pi.add_apply]; linarith [hu' k, hv k]
+  have key : twistTheta F P hS2 harch u hu * twistTheta F P hS2 harch v' hv'
+      = twistTheta F P hS2 harch u' hu' * twistTheta F P hS2 harch v hv := by
+    rw [← twistTheta_mul F P hS2 harch u v' hu hv' huv',
+      ← twistTheta_mul F P hS2 harch u' v hu' hv hu'v]
+    exact twistTheta_congr F P hS2 harch hsum huv' hu'v
+  have hc : twistTheta F P hS2 harch v hv * twistTheta F P hS2 harch v' hv'
+      = twistTheta F P hS2 harch v' hv' * twistTheta F P hS2 harch v hv :=
+    twistTheta_commute F P hS2 harch v v' hv hv'
+  refine mul_right_cancel (b := twistTheta F P hS2 harch v hv * twistTheta F P hS2 harch v' hv') ?_
+  calc twistTheta F P hS2 harch u hu * (twistTheta F P hS2 harch v hv)⁻¹
+        * (twistTheta F P hS2 harch v hv * twistTheta F P hS2 harch v' hv')
+      = twistTheta F P hS2 harch u hu * twistTheta F P hS2 harch v' hv' := by group
+    _ = twistTheta F P hS2 harch u' hu' * twistTheta F P hS2 harch v hv := key
+    _ = twistTheta F P hS2 harch u' hu' * (twistTheta F P hS2 harch v' hv')⁻¹
+        * (twistTheta F P hS2 harch v' hv' * twistTheta F P hS2 harch v hv) := by group
+    _ = twistTheta F P hS2 harch u' hu' * (twistTheta F P hS2 harch v' hv')⁻¹
+        * (twistTheta F P hS2 harch v hv * twistTheta F P hS2 harch v' hv') := by rw [hc]
+
+/-- ★★★ **`lem:homomorphism`'s extension clause**: `χ : (ℝⁿ,+) → Stab(F)°`. -/
+noncomputable def twistChi {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J), P.FirstArgContinuous →
+      ∀ (harch : OrderUnitSpace.IsArchimedean J), (Fin N → ℝ) → (J ≃ₗ[ℝ] J) :=
+  fun P hS2 harch r =>
+    twistTheta F P hS2 harch (uPart r) (uPart_nonpos r)
+      * (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r))⁻¹
+
+/-- ★★★ **`χ` is a homomorphism on all of `(ℝⁿ,+)`.** -/
+theorem twistChi_add {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r s : Fin N → ℝ),
+      twistChi F P hS2 harch (r + s)
+        = twistChi F P hS2 harch r * twistChi F P hS2 harch s := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r s
+  have hU : ∀ k, (uPart r + uPart s) k ≤ 0 := fun k => by
+    simp only [Pi.add_apply]; linarith [uPart_nonpos r k, uPart_nonpos s k]
+  have hV : ∀ k, (vPart r + vPart s) k ≤ 0 := fun k => by
+    simp only [Pi.add_apply]; linarith [vPart_nonpos r k, vPart_nonpos s k]
+  have hdiff : uPart (r + s) - vPart (r + s) = (uPart r + uPart s) - (vPart r + vPart s) := by
+    rw [uPart_sub_vPart]
+    have h1 := uPart_sub_vPart r
+    have h2 := uPart_sub_vPart s
+    funext k
+    have e1 := congrFun h1 k
+    have e2 := congrFun h2 k
+    simp only [Pi.sub_apply, Pi.add_apply] at e1 e2 ⊢
+    linarith
+  show twistTheta F P hS2 harch (uPart (r + s)) _ * _ = _
+  rw [twistTheta_div_congr F P hS2 harch (uPart_nonpos (r + s)) (vPart_nonpos (r + s)) hU hV hdiff,
+    twistTheta_mul F P hS2 harch (uPart r) (uPart s) (uPart_nonpos r) (uPart_nonpos s) hU,
+    twistTheta_mul F P hS2 harch (vPart r) (vPart s) (vPart_nonpos r) (vPart_nonpos s) hV]
+  have hc1 : Commute (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r))
+      (twistTheta F P hS2 harch (uPart s) (uPart_nonpos s)) :=
+    twistTheta_commute F P hS2 harch _ _ _ _
+  have hc2 : Commute (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r))
+      (twistTheta F P hS2 harch (vPart s) (vPart_nonpos s)) :=
+    twistTheta_commute F P hS2 harch _ _ _ _
+  show _ = twistTheta F P hS2 harch (uPart r) _ * (twistTheta F P hS2 harch (vPart r) _)⁻¹
+    * (twistTheta F P hS2 harch (uPart s) _ * (twistTheta F P hS2 harch (vPart s) _)⁻¹)
+  have e1 : (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r)
+      * twistTheta F P hS2 harch (vPart s) (vPart_nonpos s))⁻¹
+      = (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r))⁻¹
+        * (twistTheta F P hS2 harch (vPart s) (vPart_nonpos s))⁻¹ := by
+    rw [mul_inv_rev]
+    exact (hc2.inv_left.inv_right).symm.eq
+  have e2 : twistTheta F P hS2 harch (uPart s) (uPart_nonpos s)
+      * (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r))⁻¹
+      = (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r))⁻¹
+        * twistTheta F P hS2 harch (uPart s) (uPart_nonpos s) := hc1.inv_left.symm.eq
+  calc twistTheta F P hS2 harch (uPart r) (uPart_nonpos r)
+        * twistTheta F P hS2 harch (uPart s) (uPart_nonpos s)
+        * (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r)
+          * twistTheta F P hS2 harch (vPart s) (vPart_nonpos s))⁻¹
+      = twistTheta F P hS2 harch (uPart r) (uPart_nonpos r)
+        * (twistTheta F P hS2 harch (uPart s) (uPart_nonpos s)
+          * (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r))⁻¹)
+        * (twistTheta F P hS2 harch (vPart s) (vPart_nonpos s))⁻¹ := by
+          rw [e1]; group
+    _ = twistTheta F P hS2 harch (uPart r) (uPart_nonpos r)
+        * ((twistTheta F P hS2 harch (vPart r) (vPart_nonpos r))⁻¹
+          * twistTheta F P hS2 harch (uPart s) (uPart_nonpos s))
+        * (twistTheta F P hS2 harch (vPart s) (vPart_nonpos s))⁻¹ := by rw [e2]
+    _ = twistTheta F P hS2 harch (uPart r) (uPart_nonpos r)
+          * (twistTheta F P hS2 harch (vPart r) (vPart_nonpos r))⁻¹
+        * (twistTheta F P hS2 harch (uPart s) (uPart_nonpos s)
+          * (twistTheta F P hS2 harch (vPart s) (vPart_nonpos s))⁻¹) := by group
+
+
+/-- `Θ` at parameter `0` is the identity. -/
+theorem twistTheta_zero {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (h0 : ∀ k, (0 : Fin N → ℝ) k ≤ 0),
+      twistTheta F P hS2 harch 0 h0 = 1 := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch h0
+  refine LinearEquiv.toLinearMap_injective (LinearMap.ext fun z => ?_)
+  have hL : P.seqLeftMulAbs harch (isEffect_twistElt F h0) = LinearMap.id :=
+    OrderUnitSpace.linearMap_eq_of_eq_on_effects _ _ fun v hv => by
+      rw [P.seqLeftMulAbs_apply_effect harch (isEffect_twistElt F h0) hv, twistElt_zero F]
+      exact P.sp_unit_left hv
+  have hq : (∑ k, Real.sqrt (Real.exp (-((0 : Fin N → ℝ) k))) • F.p k) = 1 := by
+    simp only [Pi.zero_apply, neg_zero, Real.exp_zero, Real.sqrt_one, one_smul]
+    exact F.complete
+  show twistTheta F P hS2 harch 0 h0 z = z
+  rw [show twistTheta F P hS2 harch 0 h0 z
+      = thetaOf F.orthIdem F.complete (twistElt_eq F 0) (twistElt_isSoS F 0)
+        (twistElt_compl_isSoS F h0) (fun k _ => (Real.exp_pos ((0 : Fin N → ℝ) k)).ne')
+        P hS2 harch (isEffect_twistElt F h0) z from rfl,
+    thetaOf_twistElt_apply F h0 P hS2 harch (isEffect_twistElt F h0) z, hq,
+    quadJ_unit_left EuclideanJordanAlgebra.one_mul]
+  exact congrFun (congrArg (fun f : J →ₗ[ℝ] J => (f : J → J)) hL) z
+
+/-- ★★★ **`χ` extends `Θ`**: on the cone `(−∞,0]ⁿ` the extension agrees with the original. -/
+theorem twistChi_eq_twistTheta {N : ℕ} (F : JordanFrame J N) :
+    letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+      (1 : J) jmulₗ_one_mul
+    ∀ (P : SequentialProductOn J) (hS2 : P.FirstArgContinuous)
+      (harch : OrderUnitSpace.IsArchimedean J) (r : Fin N → ℝ) (hr : ∀ k, r k ≤ 0),
+      twistChi F P hS2 harch r = twistTheta F P hS2 harch r hr := by
+  letI := orderUnitSpaceOfBilinear (jmulₗ J) jmulₗ_comm jmulₗ_jordan jmulₗ_formallyReal
+    (1 : J) jmulₗ_one_mul
+  intro P hS2 harch r hr
+  have hu : uPart r = r := by
+    funext k; exact min_eq_left (hr k)
+  have hv : vPart r = 0 := by
+    funext k; exact min_eq_right (by linarith [hr k])
+  show twistTheta F P hS2 harch (uPart r) _ * (twistTheta F P hS2 harch (vPart r) _)⁻¹ = _
+  rw [twistTheta_congr F P hS2 harch hu (uPart_nonpos r) hr,
+    twistTheta_congr F P hS2 harch hv (vPart_nonpos r) (fun k => le_rfl),
+    twistTheta_zero F P hS2 harch, inv_one, mul_one]
+
 end RadicalRelativity.EJA
