@@ -119,7 +119,7 @@ theorem isClosed_isSoS : IsClosed {x : J | IsSoS (jmulₗ J) x} := by
   have hset : {x : J | IsSoS (jmulₗ J) x}
       = ⋂ y ∈ {y : J | IsSoS (jmulₗ J) y}, {x : J | (0 : ℝ) ≤ inner ℝ x y} := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_iInter₂]
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter₂]
     exact ⟨fun hx y hy => inner_nonneg_of_isSoS hx hy,
       fun h => isSoS_iff_forall_inner_nonneg.mpr h⟩
   rw [hset]
@@ -166,5 +166,38 @@ This is what the continuity of the Jordan square root — hence paper S2 for the
 is going to be extracted from. -/
 theorem isCompact_effectSet : IsCompact (effectSet J) :=
   Metric.isCompact_of_isClosed_isBounded isClosed_effectSet isBounded_effectSet
+
+
+/-! ## Uniqueness of the positive square root
+
+`jsqrt` is *defined* by a chosen resolution, so "it is a square root" (`jsqrt_mul_self`) and "it
+is *the* square root" are different statements, and only the first was in the tree.  The second
+is what injectivity of squaring on the cone needs, and injectivity is half of what the
+compactness argument for continuity needs. -/
+
+/-- **`jsqrt` inverts squaring on the cone.**  Reading `jsqrt` off the squared resolution gives
+`∑ √(σᵢ²) • cᵢ = ∑ |σᵢ| • cᵢ`, and the cone pins `σᵢ ≥ 0` at every nonzero idempotent
+(`nonneg_coeff_of_isSoS`), where alone the term matters. -/
+theorem jsqrt_mul_self_of_isSoS {s : J} (hs : IsSoS (jmulₗ J) s) :
+    jsqrt 1 EuclideanJordanAlgebra.one_mul (s * s) = s := by
+  classical
+  obtain ⟨n, c, sig, hfam, -, hs', -⟩ :=
+    exists_resolution_distinct 1 EuclideanJordanAlgebra.one_mul s
+  have hnn : ∀ i, c i ≠ 0 → 0 ≤ sig i := fun i hci =>
+    nonneg_coeff_of_isSoS jmulₗ_comm jmulₗ_jordan jmulₗ_inner_assoc
+      (fun k => hfam.idem k) (fun k l hkl => hfam.orth k l hkl) hs' hs hci
+  have hsq : s * s = ∑ i, (sig i * sig i) • c i := by
+    rw [hs']
+    exact sum_smul_mul_sum_smul_of_orthIdem hfam sig sig
+  rw [jsqrt_eq_of_resolution' 1 EuclideanJordanAlgebra.one_mul (s * s) hfam hsq, hs']
+  refine Finset.sum_congr rfl fun i _ => ?_
+  by_cases hci : c i = 0
+  · rw [hci, smul_zero, smul_zero]
+  · rw [Real.sqrt_mul_self (hnn i hci)]
+
+/-- ★★★ **Squaring is injective on the cone** — the positive square root is unique. -/
+theorem eq_of_mul_self_eq_of_isSoS {s t : J} (hs : IsSoS (jmulₗ J) s) (ht : IsSoS (jmulₗ J) t)
+    (h : s * s = t * t) : s = t := by
+  rw [← jsqrt_mul_self_of_isSoS hs, h, jsqrt_mul_self_of_isSoS ht]
 
 end RadicalRelativity.EJA
